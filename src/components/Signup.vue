@@ -50,9 +50,11 @@ export default {
              })
              .then(response => {
                // Handle success
+                console.log(response);
              })
              .catch(error => {
                // Handle error
+                console.log(error);
              });
         }, goToLogin() {
             this.$router.push('/login');
