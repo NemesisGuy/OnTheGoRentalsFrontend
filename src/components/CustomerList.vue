@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="content-container">
       <h1>Customers</h1>
       <table>
         <thead>
@@ -36,7 +36,7 @@
     methods: {
       fetchCustomers() {
         axios
-          .get('http://localhost:8080/customers')
+          .get('http://localhost:8080/api/customers')
           .then(response => {
             this.customers = response.data;
           })

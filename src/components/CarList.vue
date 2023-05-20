@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="content-container">
         <h1>List of Cars</h1>
         <table>
             <thead>
@@ -41,8 +41,7 @@ export default {
     },
     methods: {
         fetchCars() {
-            axios
-                .get('http://localhost:8080/cars')
+            axios.get('http://localhost:8080/api/cars')
 
                 .then((response) => {
                     this.cars = response.data;
