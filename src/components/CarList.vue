@@ -1,28 +1,30 @@
 <template>
   <div class="content-container">
-    <h1>List of {{ category }} Cars</h1>
-    <table>
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Make</th>
-        <th>Model</th>
-        <th>Year</th>
-        <th>Category</th>
-        <th>License Plate</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="car in cars" :key="car.id">
-        <td>{{ car.id }}</td>
-        <td>{{ car.make }}</td>
-        <td>{{ car.model }}</td>
-        <td>{{ car.year }}</td>
-        <td>{{ car.category }}</td>
-        <td>{{ car.licensePlate }}</td>
-      </tr>
-      </tbody>
-    </table>
+    <div class="card-container">
+      <h1>List of {{ category }} Cars</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Make</th>
+              <th>Model</th>
+              <th>Year</th>
+              <th>Category</th>
+              <th>License Plate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="car in cars" :key="car.id">
+              <td>{{ car.id }}</td>
+              <td>{{ car.make }}</td>
+              <td>{{ car.model }}</td>
+              <td>{{ car.year }}</td>
+              <td>{{ car.category }}</td>
+              <td>{{ car.licensePlate }}</td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
   </div>
 </template>
 

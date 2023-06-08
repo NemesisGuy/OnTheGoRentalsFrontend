@@ -32,30 +32,5 @@ export default {
 </script>
 
 <style>
-nav {
-    background-color: #333;
-}
 
-nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-}
-
-nav li {
-    margin: 0;
-    padding: 0;
-}
-
-nav a {
-    display: block;
-    color: #fff;
-    padding: 15px;
-    text-decoration: none;
-}
-
-nav a:hover {
-    background-color: #663;
-}
 </style>

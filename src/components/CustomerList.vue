@@ -1,22 +1,24 @@
 <template>
     <div class="content-container">
-      <h1>Customers</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Contact Info</th>
-            <th>Borrowing History</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="customer in customers" :key="customer.customerId">
-            <td>{{ customer.name }}</td>
-            <td>{{ customer.contactInfo }}</td>
-            <td>{{ customer.borrowingHistory }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="card-container">
+        <h1>Customers</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Contact Info</th>
+                <th>Borrowing History</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="customer in customers" :key="customer.customerId">
+                <td>{{ customer.name }}</td>
+                <td>{{ customer.contactInfo }}</td>
+                <td>{{ customer.borrowingHistory }}</td>
+              </tr>
+            </tbody>
+          </table>
+      </div>
     </div>
   </template>
   
