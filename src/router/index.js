@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '@/components/HomePage.vue';
 import CarList from '@/components/CarList.vue';
 import CustomerList from '@/components/CustomerList.vue';
-import Home from "@/components/home.vue";
+import Home from "@/components/Home.vue";
 import ErrorPage from '@/components/ErrorPage.vue';
 import Signup from "@/components/Signup.vue";
 import Login from "@/components/Login.vue";
@@ -12,12 +12,17 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         {
+            path: '/',
+            component: Home
+        },
+        {
             path: '/home',
             component: Home
         },
 
         {
-            path: '/cars',
+            path: '/cars/:category',
+            name: 'CarList',
             component: CarList
         },
         {

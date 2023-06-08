@@ -9,22 +9,7 @@
 
 
         </div>
-        <div class="some-buttons">
 
-            <router-link to="/customers" class="btn btn-primary">
-                <div class="button-container">
-                    <button class="btn btn-primary">List of Customers</button>
-                </div>
-            </router-link>
-            <router-link to="/cars" class="btn btn-primary">
-                <div class="button-container">
-                    <button class="btn btn-primary">List of Cars</button>
-                </div>
-            </router-link>
-
-
-        
-        </div>
         <div>
             <router-view></router-view>
         </div>

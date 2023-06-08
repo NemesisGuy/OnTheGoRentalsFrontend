@@ -1,11 +1,14 @@
 <template>
     <div>
-        <carousel :images="car.images"></carousel>
+        <h1>{{ car.name }}</h1>
+        <p>{{ car.description }}</p>
+        <p>Price: {{ car.price }}</p>
+
     </div>
 </template>
 
 <script>
-import Carousel from './components/Carousel.vue';
+
 
 export default {
     name: 'CarDetail',

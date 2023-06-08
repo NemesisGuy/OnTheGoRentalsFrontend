@@ -11,9 +11,11 @@ const routes = [
         component: HomePage
     },
     {
-        path: '/api/cars',
+        path: '/cars/:category',
+        name: 'CarList',
         component: CarList
     },
+
     {
         path: '/customers',
         component: CustomerList

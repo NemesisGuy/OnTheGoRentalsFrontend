@@ -16,7 +16,9 @@
                             <h3 class="card-title">Economy Cars</h3>
                             <p class="card-text">Affordable cars for your everyday needs.</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <a href="#" class="btn btn-sm btn-outline-secondary">View details</a>
+                              <router-link :to="{ name: 'CarList', params: { category: 'economy' } }">
+                                  View details
+                              </router-link>
                                 <small class="text-muted">Starting at $25/day</small>
                             </div>
                         </div>
@@ -28,7 +30,9 @@
                             <h3 class="card-title">Luxury Cars</h3>
                             <p class="card-text">Experience the thrill of driving in style.</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <a href="#" class="btn btn-sm btn-outline-secondary">View details</a>
+                              <router-link :to="{ name: 'CarList', params: { category: 'luxury' } }" class="btn btn-sm btn-outline-secondary">
+                                  View details
+                              </router-link>
                                 <small class="text-muted">Starting at $100/day</small>
                             </div>
                         </div>
@@ -40,7 +44,9 @@
                             <h3 class="card-title">Special Offers</h3>
                             <p class="card-text">Check out our latest deals and discounts.</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <a href="#" class="btn btn-sm btn-outline-secondary">View details</a>
+                              <router-link :to="{ name: 'CarList', params: { category: 'special' } }" class="btn btn-sm btn-outline-secondary">
+                                  View details
+                              </router-link>
                                 <small class="text-muted">Limited time only</small>
                             </div>
                         </div>

@@ -1,18 +1,17 @@
 <template>
     <nav>
         <ul>
-            <li><a href="#">Button 1</a></li>
-            <li><a href="#">Button 2</a></li>
+          <li><router-link to="/">Home</router-link></li>
+          <li><router-link to="/cars/all">List Cars</router-link></li>
+          <li><router-link to="/customers">List Customers</router-link></li>
             <li><a  @click="openLoginForm">Login</a></li>
             <li><a  @click="openRegisterForm">Signup</a></li>
-
-
         </ul>
     </nav>
 </template>
 
 <script>
-import RegisterForm from './Signup.vue';
+
 
 export default {
     name: 'Navbar',
@@ -25,6 +24,7 @@ export default {
             this.$router.push('/login');
 
         }
+
     }
 }
 
@@ -56,6 +56,6 @@ nav a {
 }
 
 nav a:hover {
-    background-color: #666;
+    background-color: #663;
 }
 </style>
