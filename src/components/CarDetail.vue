@@ -1,10 +1,13 @@
 <template>
+  <div class="content-container">
     <div>
         <h1>{{ car.name }}</h1>
         <p>{{ car.description }}</p>
         <p>Price: {{ car.price }}</p>
 
     </div>
+  </div>
+
 </template>
 
 <script>

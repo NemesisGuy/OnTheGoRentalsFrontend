@@ -6,6 +6,7 @@
           <li><router-link to="/customers">List Customers</router-link></li>
             <li><a  @click="openLoginForm">Login</a></li>
             <li><a  @click="openRegisterForm">Signup</a></li>
+          <li><router-link to="/admin">Admin Dashboard</router-link></li>
         </ul>
     </nav>
 </template>

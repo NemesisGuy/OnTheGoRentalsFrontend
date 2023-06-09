@@ -96,6 +96,49 @@ nav a:active {
 
 }
 
+
+/*  ----------------------------------------     Sidebar Styles     -------------------------------------------------- */
+.content-container {
+    display: flex;
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #6610f2;
+    position: fixed; /* Add this line */
+    left: 0; /* Add this line */
+    top: 55px; /* Add this line */
+    bottom: 0; /* Add this line */
+    color: floralwhite;
+    box-shadow: 0px 0px 5px 0px #000;
+    border-radius: 2px;
+
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar li {
+    padding: 10px;
+}
+.sidebar a {
+    display: block;
+    color: floralwhite;
+    text-decoration: none;
+}
+.sidebar a:hover {
+    background-color: #10f2f2 ;
+    color: floralwhite;
+
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
 /*  ----------------------------------------     Forms Styles     -------------------------------------------------- */
 
 .form-container {

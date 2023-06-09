@@ -6,6 +6,8 @@ import Home from "@/components/Home.vue";
 import ErrorPage from '@/components/ErrorPage.vue';
 import Signup from "@/components/Signup.vue";
 import Login from "@/components/Login.vue";
+import AdminPage from "@/components/AdminPage.vue";
+import createCar from "@/components/CreateCar.vue";
 
 
 const router = createRouter({
@@ -18,6 +20,15 @@ const router = createRouter({
         {
             path: '/home',
             component: Home
+        },
+        {
+            path: '/admin',
+            component: AdminPage
+        },
+
+        {
+            path: '/admin/createcar',
+            component: createCar
         },
 
         {
