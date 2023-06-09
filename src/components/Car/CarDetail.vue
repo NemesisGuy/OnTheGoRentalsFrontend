@@ -3,7 +3,7 @@
     <div>
         <h1>{{ car.name }}</h1>
         <p>{{ car.description }}</p>
-        <p>Price: {{ car.price }}</p>
+        <p>Price: {{ car.pricegroup }}</p>
 
     </div>
   </div>

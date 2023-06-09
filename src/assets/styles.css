@@ -36,6 +36,17 @@ body
 
 
 }
+/*change the color on the disabled inputs*/
+input:disabled
+{
+    background-color: #6610f2;
+    color: floralwhite;
+    /*can we make the inputs look disabled*/
+    opacity: 0.7;
+
+
+}
+
 /*
 fill page with app-container
 */

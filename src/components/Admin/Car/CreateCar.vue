@@ -1,7 +1,8 @@
 <template>
   <div class="add-car-form">
-    <h2>Add Car</h2>
+
     <form @submit.prevent="addCar">
+      <h2 class="form-header">Add Car</h2>
       <div class="form-group">
         <label for="make">Make:</label>
         <input type="text" id="make" v-model="car.make" required>
@@ -48,6 +49,9 @@ export default {
   data() {
     return {
       car: {
+        /*generate a random int for the id*/
+
+        id: '0',
         make: 'Mercedes',
         model: 'SLK 200 Kompressor',
         year: 1900,
@@ -59,6 +63,9 @@ export default {
   },
   methods: {
     addCar() {
+      // Generate a random ID
+      this.car.id = Math.floor(Math.random() * 100000000); //max java in is 2147483647....Adjust the range as needed
+
       // Send the car data to the backend API or perform any other necessary actions
     //  this.car.priceGroup = PriceGroup.valueOf(car.priceGroup);
       axios.post('http://localhost:8080/api/admin/cars/create', this.car)
@@ -78,6 +85,7 @@ export default {
     resetForm() {
       // Reset the form fields
       this.car = {
+        id:'',
         make: '',
         model: '',
         year: 0,

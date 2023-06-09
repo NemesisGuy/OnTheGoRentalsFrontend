@@ -1,6 +1,6 @@
 import VueRouter from 'vue-router';
 import HomePage from '@/components/HomePage.vue';
-import CarList from '@/components/CarList.vue';
+import CarList from '@/components/Car/CarList.vue';
 import CustomerList from '@/components/CustomerList.vue';
 import ErrorPageDefault from "@/components/ErrorPage.vue";
 import Signup from "@/components/Signup.vue";
