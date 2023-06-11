@@ -21,17 +21,7 @@
       </div>
       <div class="form-group">
         <label for="priceGroup">Price Group:</label>
-        <select id="priceGroup" v-model="car.priceGroup" required>
-<!--        ECONOMY, STANDARD, LUXURY, PREMIUM, EXOTIC, SPECIAL, OTHER, NONE -->
-          <option value="ECONOMY">ECONOMY </option>
-          <option value="STANDARD">STANDARD</option>
-          <option value="LUXURY">LUXURY</option>
-          <option value="PREMIUM">PREMIUM</option>
-          <option value="EXOTIC">EXOTIC</option>
-          <option value="SPECIAL">SPECIAL</option>
-          <option value="OTHER">OTHER</option>
-          <option value="NONE">NONE</option>
-        </select>
+
       </div>
       <div class="form-group">
         <label for="licensePlate">License Plate:</label>
