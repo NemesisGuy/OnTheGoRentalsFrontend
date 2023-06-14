@@ -10,6 +10,12 @@ import AdminPage from "@/components/Admin/AdminPage.vue";
 import CreateCar from "@/components/Admin/Car/CreateCar.vue";
 import DeleteCar from "@/components/Admin/Car/DeleteCar.vue";
 import UpdateCar from "@/components/Admin/Car/UpdateCar.vue";
+import UserList from "@/components/Admin/User/UserList.vue";
+import UpdateUser from "@/components/Admin/User/UpdateUser.vue";
+import CreateUser from "@/components/Admin/User/CreateUser.vue";
+import DeleteUser from "@/components/Admin/User/DeleteUser.vue";
+import ViewUser from "@/components/Admin/User/ViewUser.vue";
+import SelectUser from "@/components/Admin/User/SelectUser.vue";
 
 
 const router = createRouter({
@@ -33,6 +39,7 @@ const router = createRouter({
 
         {
             path: '/admin/cars/create',
+            name: 'CreateCar',
             component: CreateCar,
         },
         {
@@ -53,21 +60,57 @@ const router = createRouter({
         },
         {
             path: '/customers',
+            name: 'CustomerList',
             component: CustomerList,
         },
         {
             path: '/signup',
+            name: 'Signup',
             component: Signup,
         },
         {
             path: '/login',
+            name: 'Login',
             component: Login,
         },
         {
+            path: '/admin/users/create',
+            name: 'CreateUser',
+            component: CreateUser,
+        },
+        {
+            path: '/admin/users/read',
+            name: 'ViewUser',
+            component: ViewUser,
+        },
+        {
+            path: '/admin/users/select',
+            name: 'SelectUser',
+            component: SelectUser,
+        },
+        {
+            path: '/admin/users/:category',
+            name: 'UserList',
+            component: UserList,
+        },
+        {
+            path: '/admin/users/update',
+            name: 'UpdateUser',
+            component: UpdateUser,
+        },
+        {
+            path: '/admin/users/delete',
+            name: 'DeleteUser',
+            component: DeleteUser,
+        },
+        {
             path: '/error',
+
             component: ErrorPage,
         },
-        { path: '/:pathMatch(.*)*', component: ErrorPage
+        {   path: '/:pathMatch(.*)*',
+            name: 'ErrorPage',
+            component: ErrorPage,
         }
     ]
 });

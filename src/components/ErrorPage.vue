@@ -3,6 +3,11 @@
         <h1>Oops!</h1>
         <p>Something went wrong.</p>
         <p>Try again later.</p>
+<!--      add error icon here from frontawesome-->
+
+
+
+        <p> Try again later.</p>
     </div>
 </template>
 

@@ -109,4 +109,9 @@ export default {
   background-color: #bd1b1b;
   color: #181818;
 }
+.content-container {
+
+
+}
+
 </style>

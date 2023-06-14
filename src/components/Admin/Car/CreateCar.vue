@@ -1,5 +1,5 @@
 <template>
-  <div class="add-car-form">
+  <div class="add-car-form form">
 
     <form @submit.prevent="addCar">
       <h2 class="form-header">Add Car</h2>
@@ -89,35 +89,5 @@ export default {
 </script>
 
 <style scoped>
-.add-car-form {
-  max-width: 400px;
-  margin: auto;
-}
 
-.form-group {
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-input[type="text"],
-input[type="number"],
-select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-button[type="submit"] {
-  padding: 10px 20px;
-  background-color: #6610f2;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
 </style>
