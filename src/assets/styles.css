@@ -417,6 +417,22 @@ admin-sidebar {
 .sidebar li:hover .submenu a {
 
 }
+.user-profile {
+    max-width: 400px;
+    margin: auto;
+}
+
+.profile-details {
+    margin-top: 20px;
+}
+
+label {
+    font-weight: bold;
+}
+
+span {
+    margin-left: 10px;
+}
 
 
 /* -----------------------------------  Media Queries for Responsive Layout  ------------------------------------*/

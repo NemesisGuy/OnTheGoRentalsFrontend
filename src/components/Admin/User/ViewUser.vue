@@ -62,20 +62,5 @@ export default {
 </script>
 
 <style scoped>
-.user-profile {
-  max-width: 400px;
-  margin: auto;
-}
 
-.profile-details {
-  margin-top: 20px;
-}
-
-label {
-  font-weight: bold;
-}
-
-span {
-  margin-left: 10px;
-}
 </style>

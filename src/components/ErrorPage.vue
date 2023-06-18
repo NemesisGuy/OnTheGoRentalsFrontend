@@ -3,11 +3,11 @@
         <h1>Oops!</h1>
         <p>Something went wrong.</p>
         <p>Try again later.</p>
-<!--      add error icon here from frontawesome-->
+        <img src="@/assets/rick-roll.gif" alt="Rick Roll GIF" />
 
 
 
-        <p> Try again later.</p>
+
     </div>
 </template>
 
