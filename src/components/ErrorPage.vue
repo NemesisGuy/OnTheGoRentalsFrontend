@@ -1,6 +1,7 @@
 <template>
     <div class="error-page">
-        <h1>Oops!</h1>
+      <h1>OnTheGoRentals</h1>
+        <h2>Oops!</h2>
         <p>Something went wrong.</p>
         <p>Try again later.</p>
         <img src="@/assets/rick-roll.gif" alt="Rick Roll GIF" />
