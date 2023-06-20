@@ -1,15 +1,17 @@
+<!--Filename : AdminSidebar.vue-->
 <template>
+
   <div class="sidebar admin-sidebar">
     <ul>
       <li>
-        <router-link to="#">
+        <router-link to="/admin/cars">
           Cars
           <ul class="submenu">
             <li><router-link to="/cars/all">List Cars</router-link></li>
-            <li><router-link to="/admin/cars/create">Add Car</router-link></li>
-            <li><router-link to="/admin/cars/read">View Car</router-link></li>
-            <li><router-link to="/admin/cars/update">Update Car</router-link></li>
-            <li><router-link to="/admin/cars/delete">Delete Car</router-link></li>
+<!--            <li><router-link to="/admin/cars/create">Add Car</router-link></li>-->
+            <li><router-link to="/admin/cars/select">View Car</router-link></li>
+<!--            <li><router-link to="/admin/cars/update">Update Car</router-link></li>
+            <li><router-link to="/admin/cars/delete">Delete Car</router-link></li>-->
           </ul>
         </router-link>
       </li>

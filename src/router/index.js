@@ -16,6 +16,11 @@ import CreateUser from "@/components/Admin/User/CreateUser.vue";
 import DeleteUser from "@/components/Admin/User/DeleteUser.vue";
 import ViewUser from "@/components/Admin/User/ViewUser.vue";
 import SelectUser from "@/components/Admin/User/SelectUser.vue";
+import SelectCar from "@/components/Admin/Car/SelectCar.vue";
+import ViewCar from "@/components/Admin/Car/ViewCar.vue";
+import Users from "@/components/Admin/User/Users.vue";
+import Cars from "@/components/Admin/Car/Cars.vue";
+import ConfirmationModal from "@/components/ConfirmationModal.vue";
 
 
 const router = createRouter({
@@ -31,18 +36,14 @@ const router = createRouter({
             name: 'Home',
             component: Home,
         },
-        {
-            path: '/admin',
-            name: 'AdminPage',
-            component: AdminPage,
-        },
 
-        {
+
+      /*  {
             path: '/admin/cars/create',
             name: 'CreateCar',
             component: CreateCar,
-        },
-        {
+        },*/
+       /* {
             path: '/admin/cars/update',
             name: 'UpdateCar',
             component: UpdateCar,
@@ -51,13 +52,23 @@ const router = createRouter({
             path: '/admin/cars/delete',
             name: 'DeleteCar',
             component: DeleteCar,
-        },
+        },*/
 
         {
             path: '/cars/:category',
             name: 'CarList',
             component: CarList,
         },
+        /*{
+            path: '/admin/cars/read',
+            name: 'ViewCar',
+            component: ViewCar,
+        },
+        {
+            path: '/admin/cars/select',
+            name: 'SelectCar',
+            component: SelectCar,
+        },*/
         {
             path: '/customers',
             name: 'CustomerList',
@@ -79,7 +90,7 @@ const router = createRouter({
             component: CreateUser,
         },
         {
-            path: '/admin/users/read',
+            path: '/admin/users/read/:userId',
             name: 'ViewUser',
             component: ViewUser,
         },
@@ -104,6 +115,29 @@ const router = createRouter({
             component: DeleteUser,
         },
         {
+            path: '/admin/users/',
+            name: 'Users',
+            component: Users,
+
+        },
+      /*  {
+            path: '/admin/cars/',
+            name: 'Cars',
+            component: Cars,
+
+        },*/
+        {
+            path: '/admin/cars/read/:id',
+            name: 'ViewCar',
+            component: ViewCar,
+        },
+        {
+            path: '/admin/cars/edit/:id',
+            name: 'UpdateCar',
+            component: UpdateCar,
+        },
+
+        {
             path: '/error',
 
             component: ErrorPage,
@@ -111,7 +145,77 @@ const router = createRouter({
         {   path: '/:pathMatch(.*)*',
             name: 'ErrorPage',
             component: ErrorPage,
-        }
+        },
+
+        {
+            path: "/admin",
+            component: AdminPage,
+            children: [
+                {
+                    path: "cars",
+                    components: {
+                        adminContent: Cars, // Render CarList component in the 'adminContent' named view
+                        confirmationModal: ConfirmationModal, // Render ConfirmationModal component in the 'confirmationModal' named view
+                    },
+                },
+                {
+                    path: "cars/create",
+                    components: {
+                        adminContent: CreateCar,
+                    },
+                },
+                {
+                    path: "cars/select",
+                    components: {
+                        adminContent: ViewCar,
+                    },
+                },
+                {
+                    path: "cars/update",
+                    components: {
+                        adminContent: UpdateCar,
+                    },
+                },
+                {
+                    path: "cars/delete",
+                    components: {
+                        adminContent: DeleteCar,
+                    },
+                },
+                {
+                    path: "users",
+                    components: {
+                        adminContent: UserList,
+                    },
+                },
+                {
+                    path: "users/create",
+                    components: {
+                        adminContent: CreateUser,
+                    },
+                },
+                {
+                    path: "users/select",
+                    components: {
+                        adminContent: ViewUser,
+                    },
+                },
+                {
+                    path: "users/update",
+                    components: {
+                        adminContent: UpdateUser,
+                    },
+                },
+                {
+                    path: "users/delete",
+                    components: {
+                        adminContent: DeleteUser,
+                    },
+                },
+            ],
+        },
+
+
     ]
 });
 export default router;

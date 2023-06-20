@@ -1,7 +1,8 @@
 <template>
   <div class="content-container">
     <div class="card-container">
-      <h1>List of {{ category }} Cars</h1>
+      <h1>Update  Cars</h1>
+      <h2>List of {{ category }} Cars</h2>
       <table>
         <thead>
         <tr>
