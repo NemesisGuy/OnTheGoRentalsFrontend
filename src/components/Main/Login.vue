@@ -1,20 +1,21 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
 
     <div class="form-container">
         <form>
-        <h1 class="form-header">Login</h1>
+          <div class="form-header"> <h1> <i class="fas fa-sign-in-alt"></i> Login</h1> </div>
+          <div class="form-group">
+            <label for="email"><i class="fas fa-envelope"></i> Email</label>
+            <input type="email" placeholder="Enter email" id="email">
+          </div>
+            <div class="form-group">
+              <label for="password"><i class="fas fa-lock"></i> Password</label>
+              <input type="password" placeholder="Enter password" id="password" autocomplete="current-password">
+            </div>
+            <button type="submit"><i class="fas fa-sign-in-alt"></i> Login</button>
+            <button @click="goToSignup"><i class="fas fa-user-plus"></i> Signup</button>
 
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" placeholder="Enter email" id="email">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" placeholder="Enter password" id="password">
-            </div>
-            <button type="submit">Login</button>
-            <button @click="goToSignup">Signup</button>
         </form>
+
     </div>
 </template>
 

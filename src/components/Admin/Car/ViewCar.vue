@@ -1,34 +1,36 @@
 <template>
-  <div class="car-profile">
-    <h1>Car Profile</h1>
-    <div class="profile-details" v-if="car">
-      <div>
-        <label>Make:</label>
-        <span>{{ car.make }}</span>
+  <div class="card-container">
+    <div class="car-profile">
+      <h1>Car Profile</h1>
+      <div class="profile-details" v-if="car">
+        <div>
+          <label>Make:</label>
+          <span>{{ car.make }}</span>
+        </div>
+        <div>
+          <label>Model:</label>
+          <span>{{ car.model }}</span>
+        </div>
+        <div>
+          <label>Year:</label>
+          <span>{{ car.year }}</span>
+        </div>
+        <div>
+          <label>Category:</label>
+          <span>{{ car.category }}</span>
+        </div>
+        <div>
+          <label>Price Group:</label>
+          <span>{{ car.priceGroup }}</span>
+        </div>
+        <div>
+          <label>License Plate:</label>
+          <span>{{ car.licensePlate }}</span>
+        </div>
       </div>
-      <div>
-        <label>Model:</label>
-        <span>{{ car.model }}</span>
+      <div v-else>
+        <p>Loading car profile...</p>
       </div>
-      <div>
-        <label>Year:</label>
-        <span>{{ car.year }}</span>
-      </div>
-      <div>
-        <label>Category:</label>
-        <span>{{ car.category }}</span>
-      </div>
-      <div>
-        <label>Price Group:</label>
-        <span>{{ car.priceGroup }}</span>
-      </div>
-      <div>
-        <label>License Plate:</label>
-        <span>{{ car.licensePlate }}</span>
-      </div>
-    </div>
-    <div v-else>
-      <p>Loading car profile...</p>
     </div>
   </div>
 </template>
@@ -65,6 +67,11 @@ export default {
 </script>
 
 <style scoped>
+.card-container {
+
+padding: 50px;
+  justify-content: center;
+}
 .car-profile {
   margin-top: 20px;
 }

@@ -22,11 +22,23 @@
       <div class="form-group">
         <label for="priceGroup">Price Group:</label>
 
+        <select id="priceGroup" v-model="car.priceGroup" required>
+          <option value="ECONOMY">Economy</option>
+          <option value="STANDARD">Standard</option>
+          <option value="LUXURY">Luxury</option>
+          <option value="PREMIUM">Premium</option>
+          <option value="EXOTIC">Exotic</option>
+          <option value="SPECIAL">Special</option>
+          <option value="OTHER">Other</option>
+          <option value="NONE">None</option>
+        </select>
+
       </div>
       <div class="form-group">
         <label for="licensePlate">License Plate:</label>
         <input type="text" id="licensePlate" v-model="car.licensePlate" required>
       </div>
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       <button type="submit">Add Car</button>
     </form>
   </div>
@@ -34,44 +46,56 @@
 
 <script>
 import axios from "axios";
+import { PriceGroup } from "@/enums/PriceGroup";
 
 export default {
   data() {
     return {
       car: {
-        /*generate a random int for the id*/
 
-        id: '0',
+
+
         make: 'Mercedes',
         model: 'SLK 200 Kompressor',
         year: 1900,
         category: 'Sedan',
-        priceGroup: '',
+        priceGroup: PriceGroup.LUXURY,
         licensePlate: '000000'
-      }
+      },errorMessage: '' // Added error message data property
     };
   },
   methods: {
     addCar() {
-      // Generate a random ID
-      this.car.id = Math.floor(Math.random() * 100000000); //max java in is 2147483647....Adjust the range as needed
+      this.errorMessage = ''; // Reset the error message
 
-      // Send the car data to the backend API or perform any other necessary actions
-    //  this.car.priceGroup = PriceGroup.valueOf(car.priceGroup);
       axios.post('http://localhost:8080/api/admin/cars/create', this.car)
-        .then(response => {
-          // Handle success
-          console.log(response);
-        })
-        .catch(error => {
-          // Handle error
-          console.log(error);
-        });
+          .then(response => {
+            // Handle success
+            console.log('Car added successfully');
+            console.log(response.data);
+            console.log(response);
+          })
+          .catch(error => {
+            // Handle error
+            console.log(error);
+            if (error.response && error.response.status === 400) {
+              // Display an error message to the user
+              this.errorMessage = 'Invalid data. Please check the entered values.';
+              console.log(error.response.data); // The response data contains details about the validation errors or data issues
+              console.log(error.response.status);
+              console.log(error.response);
+            } else {
+              // Display a generic error message
+              this.errorMessage = 'An error occurred while adding the car.';
+            }
+          });
+
       // You can access the car object using 'this.car' in this method
       console.log('Adding car:', this.car);
+
       // Reset the form after adding the car
       this.resetForm();
-    },
+      },
     resetForm() {
       // Reset the form fields
       this.car = {
@@ -89,5 +113,8 @@ export default {
 </script>
 
 <style scoped>
-
+.error-message {
+  color: red;
+  margin-top: 5px;
+}
 </style>

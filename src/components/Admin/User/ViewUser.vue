@@ -1,7 +1,7 @@
 <template>
   <div class="user-profile">
     <h1>User Profile</h1>
-    <div class="profile-details">
+    <div v-if="user" class="profile-details">
       <div>
         <label>Username:</label>
         <span>{{ user.userName }}</span>
@@ -27,29 +27,39 @@
         <span>{{ user.role }}</span>
       </div>
     </div>
+    <div v-else>
+      <loading-modal v-if="loading" />
+      Loading user profile...
+    </div>
   </div>
 </template>
 
+
 <script>
 import axios from 'axios';
+import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
+
 
 export default {
   name: 'UserProfile',
   data() {
     return {
       user: null,
+      loading: false,
     };
   },
   mounted() {
     this.fetchUserProfile();
   },
   methods: {
+
     fetchUserProfile() {
+      this.loading = true;
       // Assuming you have the user ID or any other identifier to fetch the user's profile
-      const userId = '123'; // Replace with the actual user ID
+      const userId = this.$route.params.id; // Get the user ID from the route parameter
 
       axios
-          .get(`http://localhost:8080/api/user/${userId}`)
+          .get(`http://localhost:8080/api/admin/users/read/${userId}`)
           .then((response) => {
             this.user = response.data;
           })
@@ -57,6 +67,9 @@ export default {
             console.log(error);
           });
     },
+  },
+  components: {
+    LoadingModal,
   },
 };
 </script>

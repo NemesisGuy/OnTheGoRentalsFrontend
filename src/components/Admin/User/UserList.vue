@@ -32,6 +32,7 @@
 
 <script>
 import axios from 'axios';
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 
 export default {
   name: 'UserList',
@@ -41,13 +42,18 @@ export default {
       category: '',
       sortColumn: '',
       sortDirection: '',
+      LoadingModal,
     };
+  },
+  components: {
+    LoadingModal,
   },
   mounted() {
     this.fetchUsers();
   },
   methods: {
     fetchUsers() {
+      this.loading = true;
       const category = this.$route.params.category;
       axios
           .get(`http://localhost:8080/api/admin/users/${category}`)
