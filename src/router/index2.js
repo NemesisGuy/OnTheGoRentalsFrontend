@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '@/components/Main/HomePage.vue';
-import CarList from '@/components/Car/CarList.vue';
+import CarList from '@/components/Main/Car/CarList.vue';
 import CustomerList from '@/components/Main/CustomerList.vue';
 import Home from "@/components/Main/Home.vue";
 import ErrorPage from '@/components/Main/ErrorPage.vue';

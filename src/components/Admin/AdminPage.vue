@@ -17,7 +17,7 @@
 <script>
 import AdminSidebar from "./AdminSidebar.vue"
 import Cars from "@/components/Admin/Car/CarManagment.vue";
-import CarList  from "@/components/Car/CarList.vue";
+import CarList  from "@/components/Main/Car/CarList.vue";
 import CarCreate  from "/src/components/Admin/Car/CreateCar.vue"
 import CarSelect  from "/src/components/Admin/Car/SelectCar.vue";
 import CarUpdate  from "/src/components/Admin/Car/UpdateCar.vue";

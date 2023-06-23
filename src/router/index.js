@@ -5,13 +5,14 @@ import adminRoutes from './adminRoutes';
 import adminCarRoutes from './adminCarRoutes';
 import adminUserRoutes from './adminUserRoutes';
 import navRoutes from './navRoutes';
-import CarList from "@/components/Car/CarList.vue";
+import CarList from "@/components/Main/Car/CarList.vue";
 import Home from "@/components/Main/Home.vue";
 import carRoutes from './carRoutes';
 import UserProfile from "@/components/Main/UserProfile.vue";
 import Test from "@/components/Main/TestPage.vue";
 import TestPage from "@/components/Main/TestPage.vue";
 import adminRentalRoutes from "@/router/adminRentalRoutes";
+import Rental from "@/components/Main/Rental/Rental.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -22,6 +23,11 @@ const router = createRouter({
             path: '/',
             name: 'Home',
             component: Home,
+        },
+        {
+            path: '/rental/:carId',
+            name: 'Rental',
+            component: Rental,
         },
 
 

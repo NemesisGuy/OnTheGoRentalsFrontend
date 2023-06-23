@@ -81,6 +81,8 @@ export default {
     rentCar(car) {
       // Perform the rental process here
       console.log('Renting car:', car);
+      this.$router.push(`/rental/${car.id}`);
+
 
     },
   },
