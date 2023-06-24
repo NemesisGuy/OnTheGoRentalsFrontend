@@ -3,6 +3,7 @@
     <div class="modal-content">
       <h2>Confirm</h2>
       <slot></slot>
+      <p>{{message}}</p>
       <div class="modal-actions">
         <button @click="confirmAction">Confirm</button>
         <button @click="cancelAction">Cancel</button>
@@ -17,6 +18,10 @@ export default {
     show: {
       type: Boolean,
       required: true
+    },
+    message: {
+      type: String,
+      required: false
     }
   },
   methods: {

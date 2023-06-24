@@ -72,12 +72,7 @@
       </tbody>
     </table>
     <loading-modal v-if="loading" show/>
-    <success-fail-modal
-        v-if="showSuccessFailModal"
-        :success="successModal"
-        :fail="failModal"
-        @close="closeSuccessFailModal"
-    />
+
     <confirmation-modal
         :show="showConfirmationModal"
         @confirm="confirmDelete"

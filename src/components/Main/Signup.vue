@@ -35,7 +35,8 @@ export default {
   components: {
     LoadingModal,
     SuccessModal,
-    FailureModal
+    FailureModal,
+
   },
   data() {
     return {
