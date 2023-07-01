@@ -55,6 +55,7 @@ export default {
       this.showLoadingModal = true;
       axios
           .post("http://localhost:8080/api/user/register", {
+
             userName: this.userName,
             email: this.email,
             password: this.password

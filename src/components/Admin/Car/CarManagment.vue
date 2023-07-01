@@ -166,6 +166,9 @@ export default {
           })
           .catch((error) => {
             console.log(error);
+            this.loading = false;
+            this.failModal.message = "Failed to fetch cars. Please try again.";
+            this.failModal.show = true;
           })
           .finally(() => {
             this.loading = false;

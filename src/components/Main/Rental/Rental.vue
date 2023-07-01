@@ -16,12 +16,11 @@
           <h2>User Details</h2>
           <div v-if="user" class="user-details">
             <p><strong>ID:</strong> {{ user.id }}</p>
+            <p><strong>User Name:</strong> {{ user.userName }}</p>
             <p><strong>First Name:</strong> {{ user.firstName }}</p>
             <p><strong>Last Name:</strong> {{ user.lastName }}</p>
-            <p><strong>User Name:</strong> {{ user.userName }}</p>
-            <p><strong>Name:</strong> {{ user.name }}</p>
             <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>Phone:</strong> {{ user.phone }}</p>
+            <p><strong>Phone:</strong> {{ user.phoneNumber }}</p>
           </div>
         </div>
         <button v-if="selectedCar" class="rent-button" @click="showConfirmationModal = true">Confirm Rental</button>
@@ -39,6 +38,10 @@
       :show="showConfirmationModal"
   >
     <p>{{ confirmationMessage }}</p>
+    <p>Are you sure you want to confirm this rental?</p>
+    <p>User: {{this.user.userName}} {{this.user.email}}</p>
+    <p>Car: {{this.selectedCar.make}} {{this.selectedCar.model}}</p>
+    <p>Price: R {{ getPricePerDay(selectedCar.priceGroup) }} per day</p>
   </ConfirmationModal>
 </template>
 <script>
@@ -89,6 +92,22 @@ export default {
         this.failModal.message = 'Error retrieving data';
       }
     },
+    getPricePerDay(priceGroup) {
+      // Define the rental price for each PriceGroup
+      const rentalPrices = {
+        ECONOMY: 50,
+        STANDARD: 80,
+        LUXURY: 150,
+        PREMIUM: 200,
+        EXOTIC: 300,
+        SPECIAL: 250,
+        OTHER: 100,
+        NONE: 0,
+      };
+
+      // Retrieve the rental price for the given PriceGroup
+      return rentalPrices[priceGroup];
+    },
     async getSelectedCar() {
       try {
         const carId = this.$route.params.carId;
@@ -116,12 +135,21 @@ export default {
         this.showConfirmationModal = false;
         this.confirmationMessage = `Are you sure you want to confirm this rental? ${this.selectedCar.model} ${this.user.name}`;
         this.loading = true;
+
+        const rentalData = {
+          car: this.selectedCar,
+          user: this.user,
+          issuer: this.user.id, // Assuming the issuer is the same as the user ID
+          receiver: null, // Set the receiver initially to null
+          fine: 0, // Set the fine initially to 0
+          finePayed: 0, // Set the fine payed initially to 0
+          issuedDate: new Date(), // Set the issued date as the current date/time
+          returnedDate: null, // Set the returned date initially to null
+        };
+
         // Perform rental confirmation logic here
         // For example, make an API call to confirm the rental
-        // const response = await axios.post('http://localhost:8080/api/rental/confirm', {
-        //   carId: this.selectedCar.id,
-        //   userId: this.user.id,
-        // });
+        const response = await axios.post('http://localhost:8080/api/admin/rentals/create', rentalData);
 
         // Simulating API call with a delay
         await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -137,6 +165,7 @@ export default {
         this.loading = false;
       }
     },
+
     closeModal() {
       this.showConfirmationModal = false;
       this.successModal.show = false;

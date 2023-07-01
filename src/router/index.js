@@ -13,6 +13,8 @@ import Test from "@/components/Main/TestPage.vue";
 import TestPage from "@/components/Main/TestPage.vue";
 import adminRentalRoutes from "@/router/adminRentalRoutes";
 import Rental from "@/components/Main/Rental/Rental.vue";
+import ReturnRental from "@/components/Main/Rental/ReturnRental.vue";
+import CreateRental from "@/components/Admin/Rental/CreateRental.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -29,6 +31,17 @@ const router = createRouter({
             name: 'Rental',
             component: Rental,
         },
+        {
+            path: '/rental/return/:rentalId',
+            name: 'ReturnRental',
+            component: ReturnRental,
+        },
+      /*  {
+            path: '/rental/create/',
+            name: 'CreateRental',
+            component: CreateRental,
+        },*/
+
 
 
         {
@@ -48,7 +61,7 @@ const router = createRouter({
                 ...adminRoutes,
                 ...adminCarRoutes,
                 ...adminUserRoutes,
-                ...adminRentalRoutes
+                ...adminRentalRoutes,
             ],
         },
 

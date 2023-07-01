@@ -13,7 +13,7 @@
 
     <confirmation-modal :show="confirmationModalVisible" @confirm="confirmAction" @cancel="cancelAction">
       <!-- Slot content for the confirmation modal -->
-      <p>Are you sure you want to delete this item?</p>
+      <p>Are you sure you want to confirm this action?</p>
     </confirmation-modal>
 
   </div>

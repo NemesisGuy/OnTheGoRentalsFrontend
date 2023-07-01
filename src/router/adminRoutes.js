@@ -10,6 +10,8 @@ import cars from "@/components/Admin/Car/CarManagment.vue";
 import CarManagment from "@/components/Admin/Car/CarManagment.vue";
 import RentalManagement from "@/components/Admin/Rental/RentalManagement.vue";
 import TestPage from "@/components/Main/TestPage.vue";
+import ReturnRental from "@/components/Main/Rental/ReturnRental.vue";
+import CreateRental from "@/components/Admin/Rental/CreateRental.vue";
 
 const adminRoutes = [
     {
@@ -23,15 +25,10 @@ const adminRoutes = [
         components: {
             adminContent: TestPage,
         }
-    },
-
-    {
-        path: '/admin/rentals',
-        name: 'RentalManagement',
-        components: {
-            adminContent: RentalManagement,
-        },
     }
+
+
+
     ///////////////////////////////
 
 

@@ -1,7 +1,7 @@
 <template>
   <div class="content-container">
     <div class="content-header">
-      <h1><i class="fas fa-file-contract"></i>
+      <h1><i class="fas fa-file-contract" ></i>
         Rental Management
       </h1>
       <div class="search-bar">
@@ -19,12 +19,15 @@
     <table>
       <thead>
       <tr>
-        <th @click="sortRentals('rentalId')">ID</th>
+        <th @click="sortRentals('id')">ID</th>
         <th @click="sortRentals('user.userName')">User</th>
-        <th @click="sortRentals('car.carName')">Car</th>
+        <th @click="sortRentals('user.firstName')">First Name</th>
+        <th @click="sortRentals('user.lastName')">Last Name</th>
+        <th @click="sortRentals('car.make')">Make</th>
+        <th @click="sortRentals('car.model')">Car</th>
+
         <th @click="sortRentals('issuer')">Issuer</th>
-        <th @click="sortRentals('issuedDate')">Issued Date</th>
-        <th @click="sortRentals('Date')">Date</th>
+        <th @click="sortRentals('dateRented')">Date Rented</th>
         <th @click="sortRentals('dateReturned')">Date Returned</th>
         <th @click="sortRentals('receiver')">Receiver</th>
         <th @click="sortRentals('finePaid')">Fine Paid</th>
@@ -32,20 +35,23 @@
       </tr>
       </thead>
       <tbody v-if="!loading">
-      <tr v-for="rental in filteredRentals" :key="rental.rentalId">
+      <tr v-for="rental in filteredRentals" :key="rental.id">
         <td>{{ rental.rentalId }}</td>
-        <td>{{ rental.user.userName }}</td>
-        <td>{{ rental.car.carName }}</td>
+        <td>{{ rental.user ? rental.user.userName : '' }}</td>
+        <td>{{ rental.user ? rental.user.firstName : '' }}</td>
+        <td>{{ rental.user ? rental.user.lastName : '' }}</td>
+        <td>{{ rental.car ? rental.car.make : '' }}</td>
+        <td>{{ rental.car ? rental.car.model : '' }}</td>
         <td>{{ rental.issuer }}</td>
         <td>{{ rental.issuedDate }}</td>
-        <td>{{ rental.Date }}</td>
-        <td>{{ rental.dateReturned }}</td>
+
+        <td>{{ rental.returnedDate }}</td>
         <td>{{ rental.receiver }}</td>
-        <td>{{ rental.finePaid }}</td>
+        <td>{{ rental.finePayed }}</td>
         <td>
           <button class="delete-button" @click="deleteRental(rental)"><i class="fas fa-trash"></i> Delete</button>
           <button class="update-button" @click="editRental(rental)"><i class="fas fa-edit"></i> Edit</button>
-          <button class="read-button" @click="openRentalView(rental.rentalId)"><i class="fas fa-eye"></i> Read</button>
+          <button class="read-button" @click="openRentalView(rental)"><i class="fas fa-eye"></i> Read</button>
         </td>
       </tr>
       </tbody>
@@ -63,7 +69,7 @@
           <hr>
           <p>Rental ID: {{ rentalToDelete.rentalId }}</p>
           <p>User: {{ rentalToDelete.user.userName }}</p>
-          <p>Car: {{ rentalToDelete.car.carName }}</p>
+          <p>Car: {{ rentalToDelete.car.model }}</p>
           <hr>
           <p><b>Warning!!!</b> This action cannot be undone.</p>
         </div>
@@ -135,7 +141,7 @@ export default {
     },
     confirmDeleteRental() {
       if (this.rentalToDelete) {
-        const rentalId = this.rentalToDelete.rentalId;
+        const rentalId = this.rentalToDelete.id;
         this.loading = true;
         axios
             .delete(`http://localhost:8080/api/admin/rentals/delete/${rentalId}`)

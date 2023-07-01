@@ -18,6 +18,9 @@
       <li>
         <router-link to="/admin/test">Test</router-link>
       </li>
+      <li>
+        <router-link to="/rental/return/1">Rental Return</router-link>
+      </li>
     </ul>
   </div>
 </template>

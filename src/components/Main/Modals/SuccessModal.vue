@@ -3,13 +3,14 @@
     <div class="modal-content">
       <div class="alert-success">
         <div class="alert-success-header">
-          <h2><i class="fas fa-check-circle"></i> Success</h2>
+          <h1><i class="fas fa-check-circle"></i></h1>
+          <h2> Success</h2>
         </div>
         <div class="alert-success-body">
           <p>{{ message }}</p>
         </div>
         <div class="modal-actions">
-          <button @click="close">OK</button>
+          <button class="confirm-button" @click="close">OK</button>
         </div>
       </div>
     </div>

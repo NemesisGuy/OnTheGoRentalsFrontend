@@ -28,6 +28,7 @@
 .logo {
   width: 50px; /* Adjust the width to your desired size */
   height: auto; /* Maintain aspect ratio */
+
 }
 
 .nav-list {

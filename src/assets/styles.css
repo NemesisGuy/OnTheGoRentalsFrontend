@@ -488,7 +488,15 @@ button {
     border-radius: 4px;
     color: white;
 }
-
+.blue-icon {
+    color: #2196f3;
+}
+.confirm-button {
+    background-color: #4caf50;
+}
+.deny-button {
+    background-color: #e53935;
+}
 
 .delete-button {
     background-color: #e53935;

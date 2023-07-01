@@ -1,12 +1,13 @@
 <template>
   <div v-if="show" class="modal">
     <div class="modal-content">
+      <h1><i class="fas fa-question-circle blue-icon"> </i></h1>
       <h2>Confirm</h2>
       <slot></slot>
       <p>{{message}}</p>
       <div class="modal-actions">
-        <button @click="confirmAction">Confirm</button>
-        <button @click="cancelAction">Cancel</button>
+        <button class="confirm-button" @click="confirmAction"><i class="fas fa-check"></i> Confirm</button>
+        <button class="deny-button" @click="cancelAction"> <i class="fas fa-times"></i> Cancel</button>
       </div>
     </div>
   </div>
