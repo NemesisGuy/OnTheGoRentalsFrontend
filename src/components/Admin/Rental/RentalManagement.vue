@@ -1,3 +1,4 @@
+
 <template>
   <div class="content-container">
     <div class="content-header">
@@ -67,7 +68,7 @@
         <div>
           <p>Are you sure you want to delete this rental?</p>
           <hr>
-          <p>Rental ID: {{ rentalToDelete.rentalId }}</p>
+          <h3>Rental Details:</h3>
           <p>User: {{ rentalToDelete.user.userName }}</p>
           <p>Car: {{ rentalToDelete.car.model }}</p>
           <hr>
@@ -229,3 +230,4 @@ export default {
   },
 };
 </script>
+
