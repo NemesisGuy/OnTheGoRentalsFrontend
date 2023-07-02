@@ -1,8 +1,8 @@
 <template>
   <div class="content-container">
     <div class="content-header">
-      <h1><i class="fas fa-car"> </i>
-        Car Management
+      <h1><i class="fas fa-file-contract" ></i>
+        Rental Management
       </h1>
       <div class="search-bar">
         <input v-model="searchQuery" placeholder="Search..." type="text">
@@ -11,8 +11,8 @@
         </button>
       </div>
       <div>
-        <router-link to="/admin/cars/create" class="add-button car-button">
-          <i class="fas fa-car"> </i> Add New Car
+        <router-link to="/admin/rental/create" class="add-button ">
+          <i class="fas fa-contact-book"> </i> Add New Rental
         </router-link>
       </div>
 
@@ -20,53 +20,73 @@
     <table>
       <thead>
       <tr>
-        <th @click="sortCars('id')">ID</th>
-        <th @click="sortCars('make')">Make</th>
-        <th @click="sortCars('model')">Model</th>
-        <th @click="sortCars('year')">Year</th>
-        <th @click="sortCars('category')">Category</th>
-        <th @click="sortCars('priceGroup')">Price Group</th>
+        <th @click="sortRentals('id')">ID</th>
+        <th @click="sortRentals('user.userName')">User</th>
+        <th @click="sortRentals('user.firstName')">First Name</th>
+        <th @click="sortRentals('user.lastName')">Last Name</th>
+        <th @click="sortRentals('car.make')">Make</th>
+        <th @click="sortRentals('car.model')">Car</th>
+
+        <th @click="sortRentals('issuer')">Issuer</th>
+        <th @click="sortRentals('dateRented')">Date Rented</th>
+        <th @click="sortRentals('dateReturned')">Date Returned</th>
+        <th @click="sortRentals('receiver')">Receiver</th>
+        <th @click="sortRentals('finePaid')">Fine Paid</th>
         <th>Actions</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="car in filteredCars" :key="car.id">
-        <td v-if="!car.editing">{{ car.id }}</td>
+
+      <tr v-for="rental in filteredRentals" :key="rental.id">
+        <td v-if="!rental.editing">{{ rental.id }}</td>
         <td v-else>
-          <input type="text" v-model="car.id" disabled>
+          <input type="text" v-model="rental.id" disabled>
         </td>
-        <td v-if="!car.editing">{{ car.make }}</td>
+        <td v-if="!rental.editing">{{ rental.user }}</td>
         <td v-else>
-          <input type="text" v-model="car.make">
+          <input type="text" v-model="rental.user">
         </td>
-        <td v-if="!car.editing">{{ car.model }}</td>
+        <td v-if="!rental.editing">{{ rental.car }}</td>
         <td v-else>
-          <input type="text" v-model="car.model">
+          <input type="text" v-model="rental.car">
         </td>
-        <td v-if="!car.editing">{{ car.year }}</td>
+        <td v-if="!rental.editing">{{ rental.issuer }}</td>
         <td v-else>
-          <input type="text" v-model="car.year">
+          <input type="text" v-model="rental.issuer">
         </td>
-        <td v-if="!car.editing">{{ car.category }}</td>
+        <td v-if="!rental.editing">{{ rental.receiver }}</td>
         <td v-else>
-          <input type="text" v-model="car.category">
+          <input type="text" v-model="rental.receiver">
         </td>
-        <td v-if="!car.editing">{{ car.priceGroup }}</td>
+        <td v-if="!rental.editing">{{ rental.issuedDate }}</td>
         <td v-else>
-          <input type="text" v-model="car.priceGroup">
+          <input type="text" v-model="rental.issuedDate">
+        </td>
+        <td v-if="!rental.editing">{{ rental.returnedDate }}</td>
+        <td v-else>
+          <input type="text" v-model="rental.returnedDate">
+        </td>
+        <td v-if="!rental.editing">{{ rental.fine }}</td>
+        <td v-else>
+          <input type="text" v-model="rental.fine ">
         </td>
         <td>
-          <template v-if="!car.editing">
-            <button @click="deleteCar(car.id)" class="delete-button">
+          <template v-if="!rental.editing">
+            <button @click="deleterental(rental)" class="delete-button">
               <i class="fas fa-trash"></i> Delete
               </button>
-            <button @click="editCar(car)" class="update-button"><i class="fas fa-edit"></i> Edit</button>
-            <button @click="openCarView(car.id)" class="read-button"><i class="fas fa-eye"></i> Read</button>
+            <button @click="editrental(rental)"  class="update-button">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button @click="readrental(rental.id)" class="read-button">
+              <i class="fas fa-eye"></i> Read
+            </button>
           </template>
           <template v-else>
-            <button @click="saveCar(car)" class="update-button">Save</button>
-            <button @click="cancelEdit(car)" class="delete-button">Cancel</button>
+            <button @click="saverental(rental)" class="update-button">Save</button>
+            <button @click="cancelEdit(rental)" class="delete-button">Cancel</button>
           </template>
+
         </td>
       </tr>
       </tbody>
@@ -78,17 +98,17 @@
         @confirm="confirmDelete"
         @cancel="cancelDelete"
     >
-      <template v-if="carToDelete">
+      <template v-if="rentalToDelete">
         <div>
-          <p>Are you sure you want to delete this Car?</p>
+          <p>Are you sure you want to delete this rental?</p>
           <hr>
-          <p>ID: {{ carToDelete.id }}</p>
-          <p>Make: {{ carToDelete.make }}</p>
-          <p>Model: {{ carToDelete.model }}</p>
-          <p>Year: {{ carToDelete.year }}</p>
-          <p>Category: {{ carToDelete.category }}</p>
-          <p>Price Group: {{ carToDelete.priceGroup }}</p>
-          <hr>
+
+          <p>Rental ID: {{ rentalToDelete.id }}</p>
+          <p>Car ID: {{ rentalToDelete.carId }}</p>
+          <p>User ID: {{ rentalToDelete.userId }}</p>
+          <p>Issuer: {{ rentalToDelete.issuer }}</p>
+          <p>Receiver: {{ rentalToDelete.receiver }}</p>
+          <p>Issued Date: {{ rentalToDelete.issuedDate }}</p>
           <p><b>Warning!!!</b> This action cannot be undone.</p>
         </div>
       </template>

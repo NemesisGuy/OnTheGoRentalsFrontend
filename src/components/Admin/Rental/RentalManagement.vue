@@ -49,11 +49,31 @@
         <td>{{ rental.returnedDate }}</td>
         <td>{{ rental.receiver }}</td>
         <td>{{ rental.finePayed }}</td>
-        <td>
-          <button class="delete-button" @click="deleteRental(rental)"><i class="fas fa-trash"></i> Delete</button>
-          <button class="update-button" @click="editRental(rental)"><i class="fas fa-edit"></i> Edit</button>
-          <button class="read-button" @click="openRentalView(rental)"><i class="fas fa-eye"></i> Read</button>
-        </td>
+
+          <!-- other table cells -->
+          <td>
+            <button class="delete-button" @click="deleteRental(rental)">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+            <template v-if="!rental.editing">
+              <button class="update-button" @click="editRental(rental)">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+            </template>
+            <template v-else>
+              <button class="update-button" @click="saveRental(rental)">
+                <i class="fas fa-save"></i> Save
+              </button>
+              <button class="delete-button" @click="cancelEdit(rental)">
+                <i class="fas fa-times"></i> Cancel
+              </button>
+            </template>
+            <button class="read-button" @click="openRentalView(rental)">
+              <i class="fas fa-eye"></i> Read
+            </button>
+          </td>
+
+
       </tr>
       </tbody>
     </table>
@@ -230,4 +250,3 @@ export default {
   },
 };
 </script>
-
