@@ -100,55 +100,55 @@
   </div>
 </template>
 
+
 <script>
 import axios from "axios";
 import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
-import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import LoadingModal from "../../Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 
 export default {
-  name: "RentalManagement",
+  data() {
+    return {
+      cars: [], // Placeholder for the list of cars
+      loading: false,
+      sortBy: "",
+      searchQuery: "",
+      showConfirmationModal: false, // Flag to show/hide the confirmation modal
+      carToDelete: null, // Placeholder for the car ID that is being deleted
+      successModal: {
+        show: false,
+        message: ""
+      }, // Placeholder for the success modal
+      failModal: {
+        show: false,
+        message: ""
+      }, // Placeholder for the failure modal
+    };
+  },
   components: {
     ConfirmationModal,
     LoadingModal,
     SuccessModal,
     FailureModal,
   },
-  data() {
-    return {
-      rentals: [], // Placeholder for the list of rentals
-      loading: false,
-      sortBy: "",
-      searchQuery: "",
-      showConfirmationModal: false, // Flag to show/hide the confirmation modal
-      rentalToDelete: null, // Placeholder for the rental that is being deleted
-      successModal: {
-        show: false,
-        message: "",
-      }, // Placeholder for the success modal
-      failModal: {
-        show: false,
-        message: "",
-      }, // Placeholder for the failure modal
-    };
-  },
   computed: {
-    sortedRentals() {
+    sortedCars() {
       if (this.sortBy) {
-        const sorted = [...this.rentals];
+        const sorted = [...this.cars];
         sorted.sort((a, b) => (a[this.sortBy] > b[this.sortBy] ? 1 : -1));
         return sorted;
       }
-      return this.rentals;
+      return this.cars;
     },
-    filteredRentals() {
+    filteredCars() {
       const query = this.searchQuery.toLowerCase();
-      return this.sortedRentals.filter((rental) => {
-        for (const key in rental) {
+      return this.sortedCars.filter((car) => {
+        for (const key in car) {
           if (
-              typeof rental[key] === "string" &&
-              rental[key].toLowerCase().includes(query)
+              typeof car[key] === "string" &&
+              car[key].toLowerCase().includes(query)
           ) {
             return true;
           }
@@ -158,68 +158,119 @@ export default {
     },
   },
   methods: {
-    fetchRentals() {
+    fetchCars() {
       this.loading = true;
       axios
-          .get("http://localhost:8080/api/admin/rentals/all")
+          .get("http://localhost:8080/api/admin/cars/all")
           .then((response) => {
-            this.rentals = response.data;
+            this.cars = response.data;
           })
           .catch((error) => {
             console.log(error);
             this.loading = false;
-            this.failModal.message =
-                "Failed to fetch rentals. Please try again.";
+            this.failModal.message = "Failed to fetch cars. Please try again.";
             this.failModal.show = true;
           })
           .finally(() => {
             this.loading = false;
           });
     },
-    deleteRental(rental) {
-      this.showConfirmationModal = true;
-      this.rentalToDelete = rental;
-    },
-    cancelDeleteRental() {
+    closeModal() {
+      this.successModal.show = false;
+      this.failModal.show = false;
       this.showConfirmationModal = false;
-      this.rentalToDelete = null;
     },
-    confirmDeleteRental() {
-      if (this.rentalToDelete) {
+    deleteCar(carId) {
+      this.showConfirmationModal = true;
+      this.carToDelete = this.cars.find((car) => car.id === carId);
+    },
+    cancelDelete() {
+      this.showConfirmationModal = false;
+      this.carToDelete = null;
+    },
+    confirmDelete() {
+      if (this.carToDelete) {
         this.loading = true;
         axios
-            .delete(
-                `http://localhost:8080/api/admin/rentals/delete/${this.rentalToDelete.rentalId}`
-            )
+            .delete(`http://localhost:8080/api/admin/cars/delete/${this.carToDelete.id}`)
             .then((response) => {
-              this.fetchRentals();
+              this.fetchCars();
               console.log(response);
-              console.log("Rental deleted");
-              this.successModal.show = true;
-              this.successModal.message = "Rental ID: " + this.rentalToDelete.rentalId + " was deleted successfully! Please refresh the page to see the changes.";
+              console.log("Car deleted");
+              this.successModal.show = true; // Show success modal
+              this.successModal.message = "Car ID: "+this.carToDelete.id+ "was deleted successfully! Please refresh the page to see the changes."
             })
             .catch((error) => {
               console.log(error);
-              console.log("Rental not deleted");
-              this.failModal.show = true;
+              console.log("Car not deleted");
+              this.failModal.show = true; // Show failure modal
               this.failModal.message = error.response.data.message;
             })
             .finally(() => {
               this.loading = false;
-              this.showConfirmation.Modal = false;
+              this.showConfirmationModal = false;
+              this.carToDelete = null;
+
             });
       }
     },
-    closeSuccessModal() {
-      this.successModal.show = false;
+    openCarView(carId) {
+      this.$router.push(`/admin/cars/read/${carId}`);
     },
-    closeFailureModal() {
+    sortCars(sortBy) {
+      this.sortBy = sortBy;
+    },
+    resetSearch() {
+      this.searchQuery = "";
+    },
+    editCar(car) {
+      car.editing = true;
+    },
+    saveCar(car) {
+      this.pushUpdatedCar(car);
+      car.editing = false;
+      this.loading = true;
+    },
+    pushUpdatedCar(car) {
+      axios
+          .put(`http://localhost:8080/api/admin/cars/update/${car.id}`, car)
+          .then((response) => {
+            console.log(response);
+            console.log("Car updated");
+            this.loading = false;
+            // this.successModal = true; // Show success modal
+            this.successModal.show = true; // Show success modal
+            this.successModal.message = "Car ID: " + car.id + " was updated successfully"; // Show success modal
+
+
+          })
+          .catch((error) => {
+            console.log(error);
+            console.log("Car not updated");
+            this.loading = false;
+            this.failModal.show = true; // Show fail modal
+            this.failModal.message = "Car ID: " + car.id + "was not updated successfully"; // Show success modal
+
+          })
+          .finally(() => {
+            this.loading = false;
+
+
+          });
+    },
+    cancelEdit(car) {
+      car.editing = false;
+    },
+    closeSuccessFailModal() {
+
+      this.successModal.show = false;
       this.failModal.show = false;
     },
   },
-  mounted() {
-    this.fetchRentals();
+  created() {
+    this.fetchCars();
   },
+
 };
 </script>
 

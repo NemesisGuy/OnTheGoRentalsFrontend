@@ -247,3 +247,127 @@ export default {
 <style scoped>
 /* Add your component's styles here */
 </style>
+
+
+<!--<script>
+import axios from "axios";
+import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
+import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+
+export default {
+  name: "RentalManagement",
+  components: {
+    ConfirmationModal,
+    LoadingModal,
+    SuccessModal,
+    FailureModal,
+  },
+  data() {
+    return {
+      rentals: [], // Placeholder for the list of rentals
+      loading: false,
+      sortBy: "",
+      searchQuery: "",
+      showConfirmationModal: false, // Flag to show/hide the confirmation modal
+      rentalToDelete: null, // Placeholder for the rental that is being deleted
+      successModal: {
+        show: false,
+        message: "",
+      }, // Placeholder for the success modal
+      failModal: {
+        show: false,
+        message: "",
+      }, // Placeholder for the failure modal
+    };
+  },
+  computed: {
+    sortedRentals() {
+      if (this.sortBy) {
+        const sorted = [...this.rentals];
+        sorted.sort((a, b) => (a[this.sortBy] > b[this.sortBy] ? 1 : -1));
+        return sorted;
+      }
+      return this.rentals;
+    },
+    filteredRentals() {
+      const query = this.searchQuery.toLowerCase();
+      return this.sortedRentals.filter((rental) => {
+        for (const key in rental) {
+          if (
+              typeof rental[key] === "string" &&
+              rental[key].toLowerCase().includes(query)
+          ) {
+            return true;
+          }
+        }
+        return false;
+      });
+    },
+  },
+  methods: {
+    fetchRentals() {
+      this.loading = true;
+      axios
+          .get("http://localhost:8080/api/admin/rentals/all")
+          .then((response) => {
+            this.rentals = response.data;
+          })
+          .catch((error) => {
+            console.log(error);
+            this.loading = false;
+            this.failModal.message =
+                "Failed to fetch rentals. Please try again.";
+            this.failModal.show = true;
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+    },
+    deleteRental(rental) {
+      this.showConfirmationModal = true;
+      this.rentalToDelete = rental;
+    },
+    cancelDeleteRental() {
+      this.showConfirmationModal = false;
+      this.rentalToDelete = null;
+    },
+    confirmDeleteRental() {
+      if (this.rentalToDelete) {
+        this.loading = true;
+        axios
+            .delete(
+                `http://localhost:8080/api/admin/rentals/delete/${this.rentalToDelete.rentalId}`
+            )
+            .then((response) => {
+              this.fetchRentals();
+              console.log(response);
+              console.log("Rental deleted");
+              this.successModal.show = true;
+              this.successModal.message = "Rental ID: " + this.rentalToDelete.rentalId + " was deleted successfully! Please refresh the page to see the changes.";
+            })
+            .catch((error) => {
+              console.log(error);
+              console.log("Rental not deleted");
+              this.failModal.show = true;
+              this.failModal.message = error.response.data.message;
+            })
+            .finally(() => {
+              this.loading = false;
+              this.showConfirmation.Modal = false;
+            });
+      }
+    },
+    closeSuccessModal() {
+      this.successModal.show = false;
+    },
+    closeFailureModal() {
+      this.failModal.show = false;
+    },
+  },
+  mounted() {
+    this.fetchRentals();
+  },
+};
+</script>-->
