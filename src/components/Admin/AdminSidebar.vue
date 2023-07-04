@@ -1,7 +1,9 @@
 <!--Filename : AdminSidebar.vue-->
 <template>
 
-  <div class="sidebar admin-sidebar">
+    <!-- Sidebar content goes here -->
+
+  <div class="sidebar-container">
     <ul>
       <li>
         <router-link to="/admin/dashboard">Dashboard</router-link>
@@ -23,6 +25,7 @@
       </li>
     </ul>
   </div>
+
 </template>
 
 <script>

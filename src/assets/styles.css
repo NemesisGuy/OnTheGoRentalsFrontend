@@ -1,3 +1,8 @@
+:root {
+    --admin-page-width: 800px; /* Change this to the desired width of admin-page */
+    --sidebar-container-width: 200px; /* Change this to the width of sidebar-container */
+}
+
 .card-container {
     padding: 20px;
     margin: 20px;
@@ -23,10 +28,28 @@
 .app-container {
     background-color: #6610f2;
     color: floralwhite;
+    align-items: center;
+    display: flex; /* Display children in a flex layout */
+    flex-direction: column; /* Stack children vertically */
+    height: 100%; /* Set the container height to take up remaining space */
+}
+.app {
+    height: 100vh; /* Set the app height to fill the viewport */
+}
+
+.app-container {
+
+}
+
+.app-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
+    width: 100%;
+}
+
+.footer {
+    flex-shrink: 0; /* Prevent the footer from shrinking */
 }
 
 
@@ -66,13 +89,27 @@ html, body, #app {
 }
 
 /*  ---------------------------------------      Nav Styles      -------------------------------------------------- */
-nav {
+nav, .nav {
     display: flex;
     justify-content: flex-start;
     background-color: #f2105e;
     color: floralwhite;
     box-shadow: 0px 0px 5px 0px #000;
     width: 100%;
+    /*nothing can over lap this nav */
+    z-index: 2;
+
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    margin-bottom: auto;
 
 }
 
@@ -113,11 +150,21 @@ nav a:active {
     color: floralwhite;
 
 }
-
+.chart {
+    width: 800px;
+    background-color: #fff;
+    border-radius: 2px;
+    padding: 20px;
+}
+.line-chart {
+    width: 100%;
+    height: inherit;
+    background-color: #fff;
+    border-radius: 2px;
+    padding: 20px;
+}
 
 /*  ----------------------------------------     Sidebar Styles     -------------------------------------------------- */
-
-
 .sidebar {
     width: 200px;
     background-color: #6610f2;
@@ -129,29 +176,13 @@ nav a:active {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    position: fixed;
-    top: 80px;
-    bottom: 0;
+    /* stick to left of screen */
+
+
 }
-
-.admin-sidebar {
-
-    padding: 5px;
-    box-shadow: 0px 0px 5px 0px #000;
-    border-radius: 2px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    position: fixed;
-    top: 80px;
-    left: 0; /* Add this line */
-}
-
 
 
 /* Sidebar Styles */
-
 
 .sidebar ul {
     list-style-type: none;
@@ -160,7 +191,6 @@ nav a:active {
 
 .sidebar li {
     padding: 10px;
-
 }
 
 .sidebar a {
@@ -172,13 +202,12 @@ nav a:active {
 .sidebar a:hover {
     background-color: #f2105e;
     color: black;
-
-
 }
 
 .main-content {
     flex-grow: 1;
     padding: 20px;
+    width: 100%;
 }
 
 /*  ----------------------------------------     Forms Styles     -------------------------------------------------- */
@@ -491,10 +520,11 @@ button {
 .blue-icon {
     color: #2196f3;
 }
-.confirm-button {
+.confirm-button, .accept-button{
     background-color: #4caf50;
 }
-.deny-button {
+
+.deny-button, .cancel-button {
     background-color: #e53935;
 }
 

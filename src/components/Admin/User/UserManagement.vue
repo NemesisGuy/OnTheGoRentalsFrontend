@@ -22,9 +22,9 @@
     <table>
       <thead>
       <tr>
-        <th @click="sortUsers('id')">ID</th>
-        <th @click="sortUsers('userName')">Username</th>
-        <th @click="sortUsers('email')">Email</th>
+        <th @click="sortUsers('id')">ID  <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('userName')">Username  <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('email')">Email  <i class="fas fa-sort"></i></th>
         <th>Actions</th>
       </tr>
       </thead>

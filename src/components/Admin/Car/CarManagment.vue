@@ -20,12 +20,12 @@
     <table>
       <thead>
       <tr>
-        <th @click="sortCars('id')">ID</th>
-        <th @click="sortCars('make')">Make</th>
-        <th @click="sortCars('model')">Model</th>
-        <th @click="sortCars('year')">Year</th>
-        <th @click="sortCars('category')">Category</th>
-        <th @click="sortCars('priceGroup')">Price Group</th>
+        <th @click="sortCars('id')">ID  <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('make')">Make  <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('model')">Model  <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('year')">Year  <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('category')">Category  <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('priceGroup')">Price Group  <i class="fas fa-sort"></i></th>
         <th>Actions</th>
       </tr>
       </thead>

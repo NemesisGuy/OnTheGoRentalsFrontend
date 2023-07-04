@@ -1,4 +1,3 @@
-
 <template>
   <div class="content-container">
     <div class="content-header">
@@ -12,68 +11,95 @@
         </button>
       </div>
       <div>
-        <router-link class="add-button rental-button" to="/admin/rentals/create">
-          <i class="fas fa-file-contract"></i> Add New Rental
+        <router-link to="/admin/rentals/create" class="add-button ">
+          <i class="fas fa-contact-book"> </i> Add New Rental
         </router-link>
       </div>
     </div>
     <table>
       <thead>
       <tr>
-        <th @click="sortRentals('id')">ID</th>
-        <th @click="sortRentals('user.userName')">User</th>
-        <th @click="sortRentals('user.firstName')">First Name</th>
-        <th @click="sortRentals('user.lastName')">Last Name</th>
-        <th @click="sortRentals('car.make')">Make</th>
-        <th @click="sortRentals('car.model')">Car</th>
-
-        <th @click="sortRentals('issuer')">Issuer</th>
-        <th @click="sortRentals('dateRented')">Date Rented</th>
-        <th @click="sortRentals('dateReturned')">Date Returned</th>
-        <th @click="sortRentals('receiver')">Receiver</th>
-        <th @click="sortRentals('finePaid')">Fine Paid</th>
+        <th @click="sortRentals('id')">ID <i class="fas fa-sort"></i></th>
+        <th @click="sortRentals('user.userName')">User <i class="fas fa-sort"></i></th>
+        <th @click="sortRentals('user.firstName')">First Name <i class="fas fa-sort"></i></th>
+        <th @click="sortRentals('user.lastName')">Last Name <i class="fas fa-sort"></i></th>
+        <th @click="sortRentals('car.make')">Make <i class="fas fa-sort"></i></th>
+        <th @click="sortRentals('car.model')">Model <i class="fas fa-sort"></i></th>
+        <th @click="sortRentals('issuer')">Issuer <i class="fas fa-sort"></i></th>
+        <th @click="sortRentals('dateRented')">Date Rented </th>
+        <th @click="sortRentals('dateReturned')">Date Returned </th>
+        <th @click="sortRentals('receiver')">Receiver </th>
+        <th @click="sortRentals('finePaid')">Fine Paid </th>
         <th>Actions</th>
       </tr>
       </thead>
-      <tbody v-if="!loading">
-      <tr v-for="rental in filteredRentals" :key="rental.id">
-        <td>{{ rental.rentalId }}</td>
-        <td>{{ rental.user ? rental.user.userName : '' }}</td>
-        <td>{{ rental.user ? rental.user.firstName : '' }}</td>
-        <td>{{ rental.user ? rental.user.lastName : '' }}</td>
-        <td>{{ rental.car ? rental.car.make : '' }}</td>
-        <td>{{ rental.car ? rental.car.model : '' }}</td>
-        <td>{{ rental.issuer }}</td>
-        <td>{{ rental.issuedDate }}</td>
+      <tbody>
+      <tr v-for="rental in filteredRentals" :key="rental.rentalId">
+        <td v-if="!rental.editing">{{ rental.rentalId  }}</td>
+        <td v-else>
+          <input type="text" v-model="rental.rentalId " >
+        </td>
+        <td v-if="!rental.editing">{{ rental.user.userName }}</td>
+        <td v-else>
+          <input type="text" v-model="rental.user.userName">
+        </td>
+        <td v-if="!rental.editing">{{ rental.user.firstName }}</td>
+        <td v-else>
+          <input type="text" v-model="rental.user.firstName">
+        </td>
+        <td v-if="!rental.editing">{{ rental.user.lastName }}</td>
+        <td v-else>
+          <input type="text" v-model="rental.user.lastName">
+        </td>
+        <td v-if="!rental.editing">{{ rental.car.make }}</td>
+        <td v-else>
+          <input type="text" v-model="rental.car.make">
+        </td>
+        <td v-if="!rental.editing">{{ rental.car.model }}</td>
+        <td v-else>
+          <input type="text" v-model="rental.car.model">
+        </td>
+        <td v-if="!rental.editing">{{ typeof rental.issuer === 'string' ? rental.issuer.toLowerCase() : rental.issuer }}</td>
+        <td v-else>
+          <input type="text" v-model="rental.issuer">
+        </td>
 
-        <td>{{ rental.returnedDate }}</td>
-        <td>{{ rental.receiver }}</td>
-        <td>{{ rental.finePayed }}</td>
-
-          <!-- other table cells -->
-          <td>
-            <button class="delete-button" @click="deleteRental(rental)">
-              <i class="fas fa-trash"></i> Delete
+        <td v-if="!rental.editing">{{ rental.issuedDate }}</td>
+        <td v-else>
+        <input type="text" v-model="rental.issuedDate">
+      </td>
+        <td v-if="!rental.editing">{{ rental.returnedDate }}</td>
+        <td v-else>
+          <input type="text" v-model="rental.returnedDate">
+        </td>
+        <td v-if="!rental.editing">{{ rental.receiver }}</td>
+        <td v-else>
+          <input type="text" v-model="rental.receiver">
+        </td>
+        <td v-if="!rental.editing">{{ rental.fine }}</td>
+        <td v-else>
+          <input type="text" v-model="rental.fine">
+        </td>
+        <td>
+          <div v-if="!rental.editing">
+            <button @click="editRental(rental)" class="update-button">
+              <i class="fas fa-edit"></i> Edit
             </button>
-            <template v-if="!rental.editing">
-              <button class="update-button" @click="editRental(rental)">
-                <i class="fas fa-edit"></i> Edit
-              </button>
-            </template>
-            <template v-else>
-              <button class="update-button" @click="saveRental(rental)">
-                <i class="fas fa-save"></i> Save
-              </button>
-              <button class="delete-button" @click="cancelEdit(rental)">
-                <i class="fas fa-times"></i> Cancel
-              </button>
-            </template>
-            <button class="read-button" @click="openRentalView(rental)">
-              <i class="fas fa-eye"></i> Read
+            <button @click="deleteRental(rental.rentalId)" class="delete-button">
+              <i class="fas fa-trash-alt"></i> Delete
             </button>
-          </td>
 
-
+           <button @click="openRentalView(rental.rentalId)" class="read-button"><i class="fas fa-eye"></i> Read</button>
+          </div>
+          <div v-else>
+            <button @click="saveRental(rental)" class="accept-button">
+              <i class="fas fa-save"></i> Save
+            </button>
+            <button @click="cancelEdit(rental)" class="cancel-button">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </td>
       </tr>
       </tbody>
     </table>
@@ -101,6 +127,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from "axios";
 import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
@@ -119,7 +146,9 @@ export default {
   data() {
     return {
       rentals: [],
-      sortedRentals: [],
+      sortedRentalsList: [],
+
+      sortBy: null, // Your sort option
       searchQuery: "",
       loading: false,
       showConfirmationModal: false,
@@ -141,20 +170,53 @@ export default {
           .get("http://localhost:8080/api/admin/rentals/list/all")
           .then((response) => {
             this.rentals = response.data;
-            this.sortedRentals = response.data;
+            this.sortedRentalsList = [...this.rentals]; // Assign to data property instead of computed property
             this.loading = false;
           })
+
           .catch((error) => {
             this.loading = false;
             this.showFailureModal("Failed to fetch rentals. Please try again.");
           });
     },
     sortRentals(sortKey) {
-      this.sortedRentals = this.sortedRentals.sort((a, b) => {
-        if (a[sortKey] < b[sortKey]) return -1;
-        if (a[sortKey] > b[sortKey]) return 1;
-        return 0;
+      if (this.sortedRentalsList.length === 0) {
+        return;
+      }
+
+      const currentSortKey = this.sortedRentalsList[0]._sortKey;
+      let sortOrder = 'asc';
+
+      if (currentSortKey === sortKey && this.sortedRentalsList[0]._sortOrder === 'asc') {
+        sortOrder = 'desc';
+      }
+
+      this.sortedRentalsList.sort((a, b) => {
+        const valueA = this.getPropertyValue(a, sortKey);
+        const valueB = this.getPropertyValue(b, sortKey);
+
+        let comparison = 0;
+        if (valueA > valueB) {
+          comparison = 1;
+        } else if (valueA < valueB) {
+          comparison = -1;
+        }
+
+        return sortOrder === 'asc' ? comparison : -comparison;
       });
+
+      this.sortedRentalsList.forEach((rental) => {
+        rental._sortKey = sortKey;
+        rental._sortOrder = sortOrder;
+      });
+    },
+    getPropertyValue(object, key) {
+      const keys = key.split('.');
+      let value = object;
+      for (const k of keys) {
+        value = value[k];
+      }
+      return value;
     },
     deleteRental(rental) {
       this.rentalToDelete = rental;
@@ -186,6 +248,10 @@ export default {
       rental.editing = true;
     },
     saveRental(rental) {
+      rental.id = rental.rentalId;
+      console.info("Saving rental: ", rental);
+      console.info("Rentalid: ", rental.rentalId);
+      console.info("Rental.id: ", rental.id);
       rental.editing = false;
       this.loading = true;
       axios
@@ -207,7 +273,7 @@ export default {
     },
     resetSearch() {
       this.searchQuery = "";
-      this.sortedRentals = this.rentals;
+      this.sortedRentalsList = this.rentals;
     },
     showSuccessModal(message) {
       this.successModal = {
@@ -225,28 +291,64 @@ export default {
       this.successModal.show = false;
       this.failModal.show = false;
     },
-  },
-  computed: {
-    filteredRentals() {
-      if (!this.searchQuery) {
-        return this.sortedRentals;
+    searchNestedProperty(obj, query) {
+      for (const key in obj) {
+        if (
+            typeof obj[key] === 'string' &&
+            obj[key].toLowerCase().includes(query)
+        ) {
+          return true;
+        }
       }
-      return this.sortedRentals.filter((rental) => {
-        return (
-            rental.rentalId.toString().includes(this.searchQuery.toLowerCase()) ||
-            rental.user.userName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            rental.car.make.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            rental.car.model.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            rental.issuer.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            rental.issuedDate.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            rental.dateReturned.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            rental.receiver.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-      });
+      return false;
+    },
+    updateSortOption(option) {
+      this.sortBy = option;
     },
   },
+
+
+
+  computed: {
+    sortedRentalsList() {
+      if (this.sortBy) {
+        const sorted = [...this.rentals];
+        sorted.sort((a, b) => (a[this.sortBy] > b[this.sortBy] ? 1 : -1));
+        return sorted;
+      }
+      return this.rentals;
+    },
+    filteredRentals() {
+      const query = this.searchQuery.toLowerCase();
+      return this.sortedRentalsList.filter((rental) => {
+        for (const key in rental) {
+          if (
+              typeof rental[key] === 'string' &&
+              rental[key].toLowerCase().includes(query)
+          ) {
+            return true;
+          }
+          // Check nested properties
+          if (
+              typeof rental[key] === 'object' &&
+              this.searchNestedProperty(rental[key], query)
+          ) {
+            return true;
+          }
+        }
+        return false;
+      });
+    },
+
+
+
+  },
+
+
   created() {
     this.getRentals();
   },
+
 };
 </script>
+
