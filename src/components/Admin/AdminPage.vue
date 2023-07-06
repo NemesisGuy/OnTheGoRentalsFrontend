@@ -1,75 +1,147 @@
 <template>
-  <div class="admin-page">
-    <div class="sidebar-container sidebar admin-sidebar">
-      <AdminSidebar />
-    </div>
-    <div class="main-content">
-      <div class="admin-content-container">
-        <!-- Content area that gets updated based on the current route -->
-        <router-view name="adminContent"></router-view>
+  <div class="admin-area">
+    <div class="sidebar" :class="{ expanded: isExpanded }">
+      <button class="toggle-button" @click="toggleSidebar">
+
+
+        {{ isExpanded ? 'Collapse' : 'Expand' }}
+      </button>
+      <div class="sidebar-container">
+        <ul>
+          <li>
+            <router-link to="/admin/dashboard">
+              <i class="fas fa-chart-bar"></i>
+              <span class="menu-text" v-show="isExpanded">Dashboard</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/admin/cars">
+              <i class="fas fa-car"></i>
+              <span class="menu-text" v-show="isExpanded">Car Management</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/admin/users">
+              <i class="fas fa-users"></i>
+              <span class="menu-text" v-show="isExpanded">User Management</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/admin/rentals">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="menu-text" v-show="isExpanded">Rental Management</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/admin/test">
+              <i class="fas fa-cogs"></i>
+              <span class="menu-text" v-show="isExpanded">Test</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/rental/return/1">
+              <i class="fas fa-undo"></i>
+              <span class="menu-text" v-show="isExpanded">Rental Return</span>
+            </router-link>
+          </li>
+        </ul>
       </div>
+    </div>
+    <div class="admin-content-area" :class="{ expanded: isExpanded }">
+      <!-- Main content goes here -->
+      <router-view name="adminContent"></router-view>
     </div>
   </div>
 </template>
 
 <script>
-import AdminSidebar from "./AdminSidebar.vue";
-// Import other components here
-
 export default {
-  components: {
-    AdminSidebar,
-    // Other components
+  name: "AdminPage",
+  data() {
+    return {
+      isExpanded: false
+    };
   },
+  methods: {
+    toggleSidebar() {
+      this.isExpanded = !this.isExpanded;
+    }
+  }
 };
 </script>
 
 <style>
-.admin-page {
-
-  grid-template-columns: min-content 1fr;
-  grid-gap: 20px;
-  height: 100vh; /* Set the height of the admin page to fill the viewport */
-  width: 60vw; /* Set the width of the admin page to fill the viewport */ ;
-
-
-}
-
-.sidebar-container {
-  /* Add styles for the sidebar container */
-/*  thjis must stick left*/
-  position: fixed; /* Make it stick, even on scroll */
-  top: 0; /* Position it at the top of the viewport */
-  left: 0; /* Position it at the left of the viewport */
-  height: 100vh; /* Set the height of the sidebar to fill the viewport */
+.admin-area {
   display: flex;
-  flex-direction: column;
-  width: min-content; /* Set the width of the sidebar */
-  height: 100vh;padding-top: 80px;
-  /* Add any additional styles as needed */
-  z-index: 1;
-}
+  height: 100vh;
+  width: inherit;
 
-.main-content {
-  /* Add styles for the main content container */
-  margin-left: min-content; /* Add margin to the main content to avoid overlap with the sidebar */
-  /* Set the width of the main content to fill the remaining space */
-  /*width: admin-page.width - sidebar-container.width; !* *!*/
-
-/*  width: calc(admin-page.width - sidebar-container.width);*/
 
 }
 
-/* styles.css */
-.main-content {
- /* width: calc(var(--admin-page-width) - var(--sidebar-container-width));*/
-  width: 80%;
-  /* Add any additional styles as needed */
+.sidebar {
+  width: 80px;
+  background-color: #a90d42 ;
+  transition: width 0.3s;
+  box-shadow: 0px 0px 5px 0px #000;
+
+
 }
 
-.admin-content-container {
-  /* Add styles for the admin content container */
+.sidebar.expanded {
+  width: 300px;
+  box-shadow: 0px 0px 5px 0px #000;
 }
 
-/* Rest of your styles */
+.toggle-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background-color: #6610f2 ;
+
+
+}
+
+.sidebar-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-container ul li {
+  padding: 10px;
+}
+
+.admin-content-area {
+  flex-grow: 1;
+  background-color: #ffffff;
+  transition: margin-left 0.3s;
+}
+
+.content.expanded {
+  margin-left: 10px; /* Adjust this value to match sidebar width */
+}
+
+.sidebar-container ul li i {
+  margin-right: 10px;
+}
+
+.sidebar-container ul li .menu-text {
+  display: none;
+}
+
+.sidebar.expanded ul li .menu-text {
+  display: inline;
+}
+.toggle-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background-color: #6610f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 </style>

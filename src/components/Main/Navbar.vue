@@ -61,6 +61,6 @@
 }
 
 .content {
-  padding-top: 100px; /* Add padding to the top to prevent content from going under the navigation */
+  padding-top: 80px; /* Add padding to the top to prevent content from going under the navigation */
 }
 </style>
