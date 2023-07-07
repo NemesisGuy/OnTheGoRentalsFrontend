@@ -1,7 +1,8 @@
 <script setup>
 
-import RentalChart from './RentalChart.vue'
-import CarUseChart from './CarUseChart.vue'
+import RentalChart from './Charts/RentalChart.vue'
+import CarUseChart from './Charts/CarUseChart.vue'
+import PieChart from './Charts/PieChart.vue'
 </script>
 
 <template>
@@ -10,14 +11,18 @@ import CarUseChart from './CarUseChart.vue'
        <h1>Admin Dash</h1>
     </div>
 
-    <div >
+    <div class="graph-container">
       <h1>Rentals Over Time</h1>
       <RentalChart />
     </div>
 
-    <div>
+    <div class="graph-container">
       <h1>Car Usage </h1>
       <CarUseChart />
+    </div>
+    <div class="graph-container">
+      <h1>Car Price Groups </h1>
+      <PieChart />
     </div>
   </div>
 
@@ -25,5 +30,14 @@ import CarUseChart from './CarUseChart.vue'
 </template>
 
 <style scoped>
+.graph-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: inherit;
+  height: inherit;
+  margin: 2rem;
+}
 
 </style>

@@ -151,14 +151,18 @@ nav a:active {
 
 }
 .chart {
-    width: 800px;
+    flex: 1;
+    width: 100%;
+    min-width: 300px;
+    height: 100%;
+    min-height: 500px;
     background-color: #fff;
     border-radius: 2px;
-    padding: 20px;
+    margin: 20px;
 }
 .line-chart {
     width: 100%;
-    height: inherit;
+    height: 100%;
     background-color: #fff;
     border-radius: 2px;
     padding: 20px;
@@ -592,7 +596,7 @@ button {
 
 
 .loading {
-    margin-top: 1rem;
+   /* margin-top: 1rem;*/
 }
 
 /* -----------------------------------  Styling the Admin Management Pages Buttons  ------------------------------------*/
