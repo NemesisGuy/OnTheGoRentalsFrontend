@@ -36,6 +36,7 @@
   color: floralwhite;
   box-shadow: 0px 0px 5px 0px #000;
   padding: 10px;
+  margin: 0;
 
 }
 .navbar-custom {

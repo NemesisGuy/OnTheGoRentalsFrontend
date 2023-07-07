@@ -73,33 +73,45 @@ export default {
 <style>
 .admin-area {
   display: flex;
-  height: 100vh;
-  width: inherit;
-
-
+  height: auto;/* Set height to 100% */
+  min-height: 100vh;
+  width: 100%; /* Set width to 100% */
+}
+.content-container {
+  min-height: 100vh;
 }
 
 .sidebar {
   width: 80px;
-  background-color: #a90d42 ;
+  background-color: #a90d42;
   transition: width 0.3s;
   box-shadow: 0px 0px 5px 0px #000;
-
-
 }
 
 .sidebar.expanded {
   width: 300px;
-  box-shadow: 0px 0px 5px 0px #000;
 }
 
 .toggle-button {
   width: 100%;
   padding: 10px;
   border: none;
-  background-color: #6610f2 ;
+  background-color: #6610f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.sidebar-container {
+  flex: 1; /* Use flex property to allow sidebar to grow */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
 
+.admin-content-area {
+  flex: 3; /* Use flex property to allow content area to grow */
+  background-color: #ffffff;
+  transition: margin-left 0.3s;
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .sidebar-container ul {
@@ -110,16 +122,6 @@ export default {
 
 .sidebar-container ul li {
   padding: 10px;
-}
-
-.admin-content-area {
-  flex-grow: 1;
-  background-color: #ffffff;
-  transition: margin-left 0.3s;
-}
-
-.content.expanded {
-  margin-left: 10px; /* Adjust this value to match sidebar width */
 }
 
 .sidebar-container ul li i {
@@ -133,15 +135,4 @@ export default {
 .sidebar.expanded ul li .menu-text {
   display: inline;
 }
-.toggle-button {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  background-color: #6610f2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-
 </style>

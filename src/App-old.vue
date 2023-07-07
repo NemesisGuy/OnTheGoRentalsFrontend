@@ -6,9 +6,9 @@
         <!-- Your content -->
         <router-view></router-view>
       </div>
-      <!--      <footer>
-              <Footer></Footer>
-            </footer>-->
+<!--      <footer>
+        <Footer></Footer>
+      </footer>-->
     </div>
   </div>
 </template>

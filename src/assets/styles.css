@@ -21,7 +21,7 @@
     align-items: center;
     background-color: #6610f2;
     color: floralwhite;
-    height: 100vh;
+    height: inherit;
     padding: 20px;
 }
 
