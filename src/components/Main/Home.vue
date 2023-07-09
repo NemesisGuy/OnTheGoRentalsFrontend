@@ -1,11 +1,13 @@
 <template>
   <div class="home">
     <div class="jumbotron">
-      <h1 class="display-4"><i class="fas fa-car"></i> Welcome to On The Go Rentals!</h1>
-      <p class="lead">We offer affordable car rental services to meet your needs.</p>
-      <hr class="my-4">
-      <p>Explore our wide range of cars and book your rental today.</p>
-      <router-link :to="{ name: 'CarList', params: { category: 'all' } }" class="custom-button">
+      <!-- Jumbotron content -->
+        <h1 class="display-4"><i class="fas fa-car"></i> Welcome to On The Go Rentals!</h1>
+        <p class="lead">We offer affordable car rental services to meet your needs.</p>
+        <hr class="my-4">
+        <p>Explore our wide range of cars and book your rental today.</p>
+      <!-- Link to view all cars -->
+      <router-link :to="{ name: 'CarList', params: { category: 'all', available: true } }" class="custom-button">
         <i class="fas fa-search"></i> View details
       </router-link>
     </div>
@@ -18,7 +20,8 @@
               <h3 class="card-title"><i class="fas fa-car-side"></i> Economy Cars</h3>
               <p class="card-text">Affordable cars for your everyday needs.</p>
               <div class="justify-content-between align-items-center">
-                <router-link :to="{ name: 'CarList', params: { category: 'economy' } }" class="custom-button">
+                <!-- Link to view available economy cars -->
+                <router-link :to="{ name: 'CarList', params: { category: 'economy', available: true } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
                 <p class="card-text mt-2">Starting at $25/day</p>
@@ -32,7 +35,8 @@
               <h3 class="card-title"><i class="fas fa-gem"></i> Luxury Cars</h3>
               <p class="card-text">Experience the thrill of driving in style.</p>
               <div class="justify-content-between align-items-center">
-                <router-link :to="{ name: 'CarList', params: { category: 'luxury' } }" class="custom-button">
+                <!-- Link to view available luxury cars -->
+                <router-link :to="{ name: 'CarList', params: { category: 'luxury', available: true } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
                 <p class="card-text mt-2">Starting at $100/day</p>
@@ -46,7 +50,8 @@
               <h3 class="card-title"><i class="fas fa-tags"></i> Special Offers</h3>
               <p class="card-text">Check out our latest deals and discounts.</p>
               <div class="justify-content-between align-items-center">
-                <router-link :to="{ name: 'CarList', params: { category: 'special' } }" class="custom-button">
+                <!-- Link to view available special cars -->
+                <router-link :to="{ name: 'CarList', params: { category: 'special', available: true } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
                 <p class="card-text mt-2">Limited time only</p>
@@ -58,6 +63,11 @@
     </div>
   </div>
 </template>
+
+
+
+
+
 
 <script>
 export default {

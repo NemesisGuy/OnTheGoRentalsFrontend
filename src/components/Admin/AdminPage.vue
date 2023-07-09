@@ -109,9 +109,13 @@ export default {
 
 .admin-content-area {
   flex: 3; /* Use flex property to allow content area to grow */
-  background-color: #ffffff;
+
   transition: margin-left 0.3s;
   overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: auto; /* Enable vertical scrolling */
+
+
+
 }
 
 .sidebar-container ul {

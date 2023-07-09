@@ -43,9 +43,8 @@ const router = createRouter({
         },*/
 
 
-
         {
-            path: '/cars/list/:category',
+            path: '/cars/list/:category/:available',
             name: 'CarList',
             component: CarList,
         },

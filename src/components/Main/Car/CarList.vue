@@ -58,8 +58,16 @@ export default {
     fetchCars() {
       this.loading = true;
       const category = this.$route.params.category;
+      const available = this.$route.params.available === 'true'; // Convert the string to boolean
+
+      let endpoint = `http://localhost:8080/api/cars/list/${category}`;
+
+      if (available) {
+        endpoint = `http://localhost:8080/api/cars/list/available/${category}`;
+      }
+
       axios
-          .get(`http://localhost:8080/api/cars/list/${category}`)
+          .get(endpoint)
           .then((response) => {
             this.cars = response.data;
             this.category = category;
@@ -69,6 +77,7 @@ export default {
             console.log(error);
             this.loading = false;
           });
+
     },
     sortCars(column) {
       if (this.sortColumn === column) {

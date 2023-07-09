@@ -28,22 +28,30 @@
     </div>
   </div>
   <SuccessModal v-if="successModal.show" @close="closeModal" :show="successModal.show" :message="successModal.message"></SuccessModal>
-  <FailureModal v-if="failModal.show" @close="closeModal" :show="failModal.show" :message="failModal.message"></FailureModal>
+  <FailureModal
+      key="failModal"
+      v-if="failModal.show"
+      @close="closeModal"
+      @cancel="closeModal"
+      :show="failModal.show"
+      :message="failModal.message || errorMessage"
+  ></FailureModal>
+
   <LoadingModal v-if="loading" show />
   <ConfirmationModal
       v-if="showConfirmationModal"
       @confirm="confirmRental"
       @cancel="closeModal"
-
       :show="showConfirmationModal"
   >
     <p>{{ confirmationMessage }}</p>
     <p>Are you sure you want to confirm this rental?</p>
-    <p>User: {{this.user.userName}} {{this.user.email}}</p>
-    <p>Car: {{this.selectedCar.make}} {{this.selectedCar.model}}</p>
+    <p>User: {{ user.userName }} {{ user.email }}</p>
+    <p>Car: {{ selectedCar.make }} {{ selectedCar.model }}</p>
     <p>Price: R {{ getPricePerDay(selectedCar.priceGroup) }} per day</p>
   </ConfirmationModal>
 </template>
+
 <script>
 import axios from 'axios';
 import ConfirmationModal from '@/components/Main/Modals/ConfirmationModal.vue';
@@ -63,15 +71,15 @@ export default {
     return {
       selectedCar: null,
       user: null,
-      showConfirmationModal: false, // Flag to show/hide the confirmation modal
-      confirmationMessage: '', // Message to show in the confirmation modal
+      showConfirmationModal: false,
+      confirmationMessage: '',
       successModal: {
         show: false,
         message: '',
-      }, // Placeholder for the success modal
+      },
       failModal: {
         show: false,
-        message: '', // Placeholder for the failure modal
+        message: '',
       },
       loading: false,
     };
@@ -93,7 +101,6 @@ export default {
       }
     },
     getPricePerDay(priceGroup) {
-      // Define the rental price for each PriceGroup
       const rentalPrices = {
         ECONOMY: 50,
         STANDARD: 80,
@@ -104,8 +111,6 @@ export default {
         OTHER: 100,
         NONE: 0,
       };
-
-      // Retrieve the rental price for the given PriceGroup
       return rentalPrices[priceGroup];
     },
     async getSelectedCar() {
@@ -121,49 +126,49 @@ export default {
     },
     async getUserDetails() {
       try {
-        // const userId = this.$store.state.auth.user.id; // Assuming user ID is stored in Vuex state
-        // hardcoded userId for now until we get the user id from the store
-        const userId = 1;
+        const userId = 1; // Replace with the actual user ID from Vuex or other source
         const response = await axios.get(`http://localhost:8080/api/admin/users/read/${userId}`);
         this.user = response.data;
       } catch (error) {
         console.error('Error retrieving user:', error);
       }
     },
-    async confirmRental() {
-      try {
-        this.showConfirmationModal = false;
-        this.confirmationMessage = `Are you sure you want to confirm this rental? ${this.selectedCar.model} ${this.user.name}`;
-        this.loading = true;
+    confirmRental() {
+      this.showConfirmationModal = false;
+      this.confirmationMessage = `Are you sure you want to confirm this rental? ${this.selectedCar.model} ${this.user.name}`;
+      this.loading = true;
 
-        const rentalData = {
-          car: this.selectedCar,
-          user: this.user,
-          issuer: this.user.id, // Assuming the issuer is the same as the user ID
-          receiver: null, // Set the receiver initially to null
-          fine: 0, // Set the fine initially to 0
-          finePayed: 0, // Set the fine payed initially to 0
-          issuedDate: new Date(), // Set the issued date as the current date/time
-          returnedDate: null, // Set the returned date initially to null
-        };
+      const rentalData = {
+        car: this.selectedCar,
+        user: this.user,
+        issuer: this.user.id,
+        receiver: null,
+        fine: 0,
+        finePayed: 0,
+        issuedDate: new Date(),
+        returnedDate: null,
+      };
 
-        // Perform rental confirmation logic here
-        // For example, make an API call to confirm the rental
-        const response = await axios.post('http://localhost:8080/api/admin/rentals/create', rentalData);
-
-        // Simulating API call with a delay
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        // Show success message
-        this.successModal.show = true;
-        this.successModal.message = 'Rental confirmed successfully!';
-        this.loading = false;
-      } catch (error) {
-        console.error('Error confirming rental:', error);
-        this.failModal.show = true;
-        this.failModal.message = 'Failed to confirm rental';
-        this.loading = false;
-      }
+      axios.post('http://localhost:8080/api/admin/rentals/create', rentalData)
+          .then(response => {
+            if (response.status === 200) {
+              console.log(response);
+              this.loading = false;
+              this.successModal.show = true;
+              this.successModal.message = 'Rental confirmed successfully!';
+            } else {
+              console.log(response);
+              this.loading = false;
+              this.failModal.show = true;
+              this.failModal.message = 'Failed to confirm rental';
+            }
+          })
+          .catch(error => {
+            console.log(error);
+            this.loading = false;
+            this.failModal.show = true;
+            this.failModal.message = error.response.data || 'An error occurred while confirming the rental.';
+          });
     },
 
     closeModal() {

@@ -253,7 +253,6 @@ export default {
                         .post('http://localhost:8080/api/admin/rentals/create', rental)
                         .then(response => {
                           console.log('Rental created successfully');
-
                           this.loadingModal.show = false;
                           //lets put each item on a new line
                           this.successModal.message = "Rental created successfully: " + "\n" +
@@ -264,6 +263,7 @@ export default {
                               + "Fine: " + response.data.fine + "." + "\n" +
                               + "Issued Date: " + response.data.issuedDate + "." + "\n" +
                               + "Returned Date: " + response.data.returnedDate + "." + "\n";
+                          this.successModal.show = true;
 
                           // Reset the form after creating the rental
                           this.resetForm();
@@ -271,14 +271,15 @@ export default {
                         .catch(error => {
                           console.log(error);
                           if (error.response && error.response.status === 400) {
-                            this.errorMessage = 'Invalid data. Please check the entered values.';
+                            this.errorMessage = error.response.data;
                             console.log(error.response.data);
                             console.log(error.response.status);
                             this.failModal.message = "Invalid data. Please check the entered values.";
+                            this.failModal.message = error.response.data;
                             this.failModal.show = true;
                           } else {
                             this.errorMessage = 'An error occurred while creating the rental.';
-                            this.failModal.message = "An error occurred while creating the rental.";
+                            this.failModal.message = error.response.data;
                             this.failModal.show = true;
                           }
                           this.loadingModal.show = false;
@@ -295,7 +296,7 @@ export default {
                 .catch(error => {
                   console.log(error);
                   this.errorMessage = 'Error fetching car details.';
-                  this.failModal.message = "Error fetching car details.";
+                  this.failModal.message = error.response.data;
                   this.failModal.show = true;
                   this.loadingModal.show = false;
                 });
@@ -303,7 +304,7 @@ export default {
           .catch(error => {
             console.log(error);
             this.errorMessage = 'Error fetching user details.';
-            this.failModal.message = "Error fetching user details.";
+            this.failModal.message = error.response.data;
             this.failModal.show = true;
             this.loadingModal.show = false;
           });
