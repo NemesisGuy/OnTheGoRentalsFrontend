@@ -115,7 +115,7 @@
           <p>Are you sure you want to delete this rental?</p>
           <hr>
           <h3>Rental Details:</h3>
-          <p>User: {{ rentalToDelete.user.userName }}</p>
+          <p>User: {{ rentalToDelete.user.username }}</p>
           <p>Car: {{ rentalToDelete.car.model }}</p>
           <hr>
           <p><b>Warning!!!</b> This action cannot be undone.</p>
@@ -134,6 +134,11 @@ import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import process from "process";
+import baseURL from "@/api.js";
+const backendUrl = process.env.VUE_APP_BACKEND_URL;
+
+
 
 export default {
   name: "RentalManagement",
@@ -161,13 +166,15 @@ export default {
         show: false,
         message: "",
       },
+     /* backendUrl: process.env.VUE_APP_BACKEND_URL,*/
     };
   },
   methods: {
+
     getRentals() {
       this.loading = true;
       axios
-          .get("http://localhost:8080/api/admin/rentals/list/all")
+          .get(`http://localhost:8080/api/admin/rentals/list/all`)
           .then((response) => {
             this.rentals = response.data;
             this.sortedRentalsList = [...this.rentals]; // Assign to data property instead of computed property

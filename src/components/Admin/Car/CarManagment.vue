@@ -5,15 +5,17 @@
         Car Management
       </h1>
       <div class="search-bar">
-        <input v-model="searchQuery" placeholder="Search..." type="text">
-        <button @click="resetSearch">
-          <i class="fas fa-search"> </i> Reset
-        </button>
-      </div>
-      <div>
-        <router-link to="/admin/cars/create" class="add-button car-button">
-          <i class="fas fa-car"> </i> Add New Car
-        </router-link>
+
+          <div class="search-input">
+            <input v-model="searchQuery" placeholder="Search..." type="text" />
+            <button @click="resetSearch">
+              <i class="fas fa-search"> </i> Reset
+            </button>
+          </div>
+          <router-link to="/admin/cars/create" class="add-button car-button">
+            <i class="fas fa-car"> </i> Add New Car
+          </router-link>
+
       </div>
 
     </div>
@@ -276,5 +278,32 @@ export default {
 
 
 <style scoped>
-/* Add your component's styles here */
+.content-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.search-input {
+  display: flex;
+  align-items: center;
+}
+
+.search-input input {
+  margin-right: 10px;
+}
+
+.search-input button {
+  margin-left: 10px;
+}
+
+.add-button {
+  margin-left: 10px;
+}
 </style>

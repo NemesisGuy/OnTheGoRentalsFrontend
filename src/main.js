@@ -20,8 +20,21 @@ import './assets/styles.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@fortawesome/fontawesome-free/js/all.js';
 import { Line } from 'vue-chartjs';
+/*import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';*/
+
+
+
+
+
 
 createApp(App)
-    .component('LineChart', Line)
+    .component('LineChart', Line )
+/*   .component('BootstrapVue', BootstrapVue)
+    .component('IconsPlugin', IconsPlugin)*/
+/*    .use(BootstrapVue)*/
+
     .use(router)
+
+
     .mount('#app');
+/*require('dotenv').config();*/

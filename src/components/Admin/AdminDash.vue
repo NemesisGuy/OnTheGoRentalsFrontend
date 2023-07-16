@@ -3,6 +3,8 @@
 import RentalChart from './Charts/RentalChart.vue'
 import CarUseChart from './Charts/CarUseChart.vue'
 import PieChart from './Charts/PieChart.vue'
+import RentalDurations from "@/components/Admin/Charts/RentalDurations.vue";
+
 </script>
 
 <template>
@@ -24,6 +26,12 @@ import PieChart from './Charts/PieChart.vue'
       <h1>Car Price Groups </h1>
       <PieChart />
     </div>
+    <div class="graph-container">
+      <h1>Rental Durations </h1>
+      <RentalDurations />
+    </div>
+
+
   </div>
 
 
@@ -38,6 +46,9 @@ import PieChart from './Charts/PieChart.vue'
   width: inherit;
   height: inherit;
   margin: 2rem;
+
 }
+
+
 
 </style>
