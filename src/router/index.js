@@ -15,6 +15,10 @@ import adminRentalRoutes from "@/router/adminRentalRoutes";
 import Rental from "@/components/Main/Rental/Rental.vue";
 import ReturnRental from "@/components/Main/Rental/ReturnRental.vue";
 import CreateRental from "@/components/Admin/Rental/CreateRental.vue";
+import HelpCenter from "@/components/Main/HelpCenter.vue";
+import Faq from "@/components/Main/Faq.vue";
+import adminFaqRoutes from "@/router/adminFaqRoutes";
+import adminHelpCenterRoutes from "@/router/adminHelpCenterRoutes";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -54,6 +58,16 @@ const router = createRouter({
             component: UserProfile,
         },
         {
+            path: '/help-center',
+            name: 'HelpCenter',
+            component: HelpCenter,
+        },
+        {
+            path: '/faq',
+            name: 'Faq',
+            component: Faq,
+        },
+        {
             path: '/admin',
             component: AdminPage,
             children: [
@@ -61,6 +75,8 @@ const router = createRouter({
                 ...adminCarRoutes,
                 ...adminUserRoutes,
                 ...adminRentalRoutes,
+                ...adminFaqRoutes,
+                ...adminHelpCenterRoutes,
             ],
         },
 
