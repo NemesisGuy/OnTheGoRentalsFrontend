@@ -33,6 +33,18 @@
             </router-link>
           </li>
           <li>
+            <router-link to="/admin/faq">
+              <i class="fas fa-question-circle"></i>
+              <span class="menu-text" v-show="isExpanded">FAQ Management</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/admin/help-center">
+              <i class="fas fa-life-ring"></i>
+              <span class="menu-text" v-show="isExpanded">Help Center</span>
+            </router-link>
+          </li>
+          <li>
             <router-link to="/admin/test">
               <i class="fas fa-cogs"></i>
               <span class="menu-text" v-show="isExpanded">Test</span>

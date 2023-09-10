@@ -19,6 +19,9 @@
           <li class="nav-item">
             <router-link to="/admin" class="nav-link">Admin Dashboard</router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/help-center" class="nav-link">Help Center</router-link>
+          </li>
         </ul>
       </div>
     </div>
