@@ -668,6 +668,37 @@ button {
 .rental-button {
     /*add rental icon*/
 }
+/*this is to put the admin top section in one line */
+.search-bar-container {
+    display: flex;
+    align-items: center;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    display: flex;
+    align-items: center;
+}
+
+.search-input input {
+    margin-right: 10px;
+}
+
+.search-input button {
+    margin-left: 10px;
+}
+
+.add-button {
+    margin-left: 10px;
+}
+/**/
+
+
+
 
 
 /* -----------------------------------  Styling the Modals  ------------------------------------*/

@@ -1,25 +1,23 @@
 <template>
   <div class="content-container">
     <div class="content-header">
-      <h1><i class="fas fa-file-contract" ></i>
-        Rental Management
+      <h1>
+        <i class="fas fa-file-contract"></i> Rental Management
       </h1>
-
-<!--      -->
       <div class="search-bar-container">
         <div class="search-bar">
-
           <div class="search-input">
             <input v-model="searchQuery" placeholder="Search..." type="text" />
             <button @click="resetSearch" class="reset-search-button">
-              <i class="fas fa-search"> </i> Reset
+              <i class="fas fa-search"></i> Reset
             </button>
           </div>
-          <router-link to="/admin/rentals/create" class="add-button ">
-            <i class="fas fa-contact-book"> </i> Add New Rental
+          <router-link to="/admin/rentals/create" class="add-button car-button">
+            <i class="fas fa-contact-book"></i> Add New Rental
           </router-link>
         </div>
-    </div></div>
+      </div>
+    </div>
 
     <table>
       <thead>
@@ -369,3 +367,6 @@ export default {
 };
 </script>
 
+<style >
+
+</style>

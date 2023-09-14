@@ -6,12 +6,14 @@
       </h1>
       <div class="search-bar-container">
         <div class="search-bar">
-          <input v-model="searchQuery" placeholder="Search..." type="text">
-          <button @click="resetSearch" class="reset-search-button">
-            <i class="fas fa-search"> </i> Reset
-          </button>
-        </div>
-        <div>
+          <div class="search-input">
+            <input v-model="searchQuery" placeholder="Search..." type="text" />
+            <button @click="resetSearch" class="reset-search-button">
+              <i class="fas fa-search"></i> Reset
+            </button>
+          </div>
+
+
           <router-link class="add-button user-button" to="/admin/users/create">
             <i class="fas fa-user"></i> Add New User
           </router-link>
