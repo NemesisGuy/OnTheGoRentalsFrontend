@@ -34,7 +34,7 @@
       <button @click="goToLogin"><i class="fas fa-sign-in-alt"></i> Login</button>
     </form>
   </div>
- 
+
 </template>
 
 <script>

@@ -16,17 +16,19 @@
             <i class="fas fa-user"></i> Add New User
           </router-link>
         </div>
-
       </div>
     </div>
     <table>
       <thead>
-      <tr>
-        <th @click="sortUsers('id')">ID <i class="fas fa-sort"></i></th>
-        <th @click="sortUsers('userName')">Username <i class="fas fa-sort"></i></th>
-        <th @click="sortUsers('email')">Email <i class="fas fa-sort"></i></th>
-        <th class="actions-column">Actions</th>
-      </tr>
+        <tr>
+          <th @click="sortUsers('id')">ID <i class="fas fa-sort"></i></th>
+          <th @click="sortUsers('userName')">Username <i class="fas fa-sort"></i></th>
+          <th @click="sortUsers('firstName')">First Name <i class="fas fa-sort"></i></th>
+          <th @click="sortUsers('lastName')">Last Name <i class="fas fa-sort"></i></th>
+          <th @click="sortUsers('phoneNumber')">Phone Number <i class="fas fa-sort"></i></th>
+          <th @click="sortUsers('email')">Email <i class="fas fa-sort"></i></th>
+          <th class="actions-column">Actions</th>
+        </tr>
       </thead>
       <tbody v-if="!loading">
       <tr v-for="user in sortedUsers" :key="user.id">
@@ -34,14 +36,39 @@
         <td v-else>
           <input v-model="user.id" disabled type="text">
         </td>
+
+
+        <!-- Username -->
         <td v-if="!user.editing">{{ user.userName }}</td>
         <td v-else>
           <input v-model="user.userName" type="text">
         </td>
+
+
+
+        <!-- First Name -->
+        <td v-if="!user.editing">{{ user.firstName }}</td>
+        <td v-else>
+          <input v-model="user.firstName" type="text">
+        </td>
+
+        <!-- Last Name -->
+        <td v-if="!user.editing">{{ user.lastName }}</td>
+        <td v-else>
+          <input v-model="user.lastName" type="text">
+        </td>
+
+        <!-- Phone Number -->
+        <td v-if="!user.editing">{{ user.phoneNumber }}</td>
+        <td v-else>
+          <input v-model="user.phoneNumber" type="text">
+        </td>
+        <!-- Email -->
         <td v-if="!user.editing">{{ user.email }}</td>
         <td v-else>
           <input v-model="user.email" type="text">
         </td>
+        <!-- Actions -->
         <td>
           <template v-if="!user.editing">
             <button class="delete-button" @click="deleteUser(user)">
@@ -226,7 +253,10 @@ export default {
       return this.sortedUsers.filter((user) => {
         return (
             user.id.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            user.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            user.userName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            user.firstName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            user.lastName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            user.phoneNumber.toLowerCase().includes(this.searchQuery.toLowerCase())||
             user.email.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
