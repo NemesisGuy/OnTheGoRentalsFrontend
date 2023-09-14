@@ -4,12 +4,8 @@
       <h1><i class="fas fa-car"> </i>
         Car Management
       </h1>
-
-
-
       <div class="search-bar-container">
         <div class="search-bar">
-
             <div class="search-input">
               <input v-model="searchQuery" placeholder="Search..." type="text" />
               <button @click="resetSearch" class="reset-search-button">

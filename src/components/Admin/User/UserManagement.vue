@@ -1,8 +1,8 @@
 <template>
   <div class="content-container">
     <div class="content-header">
-      <h1>
-        <i class="fas fa-users"></i> User Management
+      <h1><i class="fas fa-users"></i>
+        User Management
       </h1>
       <div class="search-bar-container">
         <div class="search-bar">
@@ -12,8 +12,6 @@
               <i class="fas fa-search"></i> Reset
             </button>
           </div>
-
-
           <router-link class="add-button user-button" to="/admin/users/create">
             <i class="fas fa-user"></i> Add New User
           </router-link>

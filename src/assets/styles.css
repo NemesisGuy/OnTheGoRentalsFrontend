@@ -695,9 +695,12 @@ button {
 .add-button {
     margin-left: 10px;
 }
-/**/
+/*align admin form heading */
 
-
+.content-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
 
 
