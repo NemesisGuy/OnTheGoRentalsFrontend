@@ -7,12 +7,24 @@
         <input type="text" id="userName" name="userName" placeholder="Enter your username" v-model="userName" required>
       </div>
       <div class="form-group">
-        <label for="password"><i class="fas fa-lock"></i> Password:</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" v-model="password" required>
+        <label for="first-name"><i class="fas fa-user"></i> First Name:</label>
+        <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" v-model="firstName" required>
+      </div>
+      <div class="form-group">
+        <label for="last-name"><i class="fas fa-user"></i> Last Name:</label>
+        <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" v-model="lastName" required>
+      </div>
+      <div class="form-group">
+        <label for="phone-number"><i class="fas fa-phone"></i> Phone Number:</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Enter your phone number" v-model="phoneNumber" required>
       </div>
       <div class="form-group">
         <label for="email"><i class="fas fa-envelope"></i> Email:</label>
         <input type="email" id="email" name="email" placeholder="Enter your email" v-model="email" required>
+      </div>
+      <div class="form-group">
+        <label for="password"><i class="fas fa-lock"></i> Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" v-model="password" required>
       </div>
       <div class="form-group">
         <label for="confirm-password"><i class="fas fa-lock"></i> Confirm Password:</label>
@@ -22,7 +34,7 @@
       <button @click="goToLogin"><i class="fas fa-sign-in-alt"></i> Login</button>
     </form>
   </div>
-  <!-- Your other content -->
+ 
 </template>
 
 <script>
@@ -41,6 +53,9 @@ export default {
   data() {
     return {
       userName: "",
+      firstName: "",
+      lastName: "",
+      phoneNumber: "",
       email: "",
       password: "",
       showLoadingModal: false,
@@ -55,8 +70,10 @@ export default {
       this.showLoadingModal = true;
       axios
           .post("http://localhost:8080/api/user/register", {
-
             userName: this.userName,
+            firstName: this.firstName,
+            lastName: this.lastName,
+            phoneNumber: this.phoneNumber,
             email: this.email,
             password: this.password
           })
