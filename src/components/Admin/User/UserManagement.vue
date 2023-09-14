@@ -4,43 +4,43 @@
       <h1>
         <i class="fas fa-users"></i> User Management
       </h1>
-      <div class="search-bar">
-        <input v-model="searchQuery" placeholder="Search..." type="text">
-        <button @click="resetSearch">
-          <i class="fas fa-search"> </i> Reset
-        </button>
+      <div class="search-bar-container">
+        <div class="search-bar">
+          <input v-model="searchQuery" placeholder="Search..." type="text">
+          <button @click="resetSearch" class="reset-search-button">
+            <i class="fas fa-search"> </i> Reset
+          </button>
+        </div>
+        <div>
+          <router-link class="add-button user-button" to="/admin/users/create">
+            <i class="fas fa-user"></i> Add New User
+          </router-link>
+        </div>
+
       </div>
-
-      <div>
-        <router-link class="add-button user-button" to="/admin/users/create">
-          <i class="fas fa-user"></i> Add New User
-        </router-link>
-      </div>
-
-
     </div>
     <table>
       <thead>
       <tr>
-        <th @click="sortUsers('id')">ID  <i class="fas fa-sort"></i></th>
-        <th @click="sortUsers('userName')">Username  <i class="fas fa-sort"></i></th>
-        <th @click="sortUsers('email')">Email  <i class="fas fa-sort"></i></th>
-        <th>Actions</th>
+        <th @click="sortUsers('id')">ID <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('userName')">Username <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('email')">Email <i class="fas fa-sort"></i></th>
+        <th class="actions-column">Actions</th>
       </tr>
       </thead>
       <tbody v-if="!loading">
       <tr v-for="user in sortedUsers" :key="user.id">
         <td v-if="!user.editing">{{ user.id }}</td>
         <td v-else>
-          <input type="text" v-model="user.id" disabled>
+          <input v-model="user.id" disabled type="text">
         </td>
         <td v-if="!user.editing">{{ user.userName }}</td>
         <td v-else>
-          <input type="text" v-model="user.userName">
+          <input v-model="user.userName" type="text">
         </td>
         <td v-if="!user.editing">{{ user.email }}</td>
         <td v-else>
-          <input type="text" v-model="user.email">
+          <input v-model="user.email" type="text">
         </td>
         <td>
           <template v-if="!user.editing">
@@ -71,8 +71,8 @@
     <loading-modal v-if="loading" show></loading-modal>
     <confirmation-modal
         :show="showConfirmationModal"
-        @confirm="confirmDeleteUser"
         @cancel="cancelDeleteUser"
+        @confirm="confirmDeleteUser"
     >
       <template v-if="userToDeleteId">
         <div>
@@ -86,8 +86,10 @@
         </div>
       </template>
     </confirmation-modal>
-    <SuccessModal v-if="successModal.show" @close="closeModal" @cancel="closeModal" :show="successModal.show" :message="successModal.message"></SuccessModal>
-    <FailureModal v-if="failModal.show" @close="closeModal" @cancel="closeModal" :show="failModal.show" :message="failModal.message"></FailureModal>
+    <SuccessModal v-if="successModal.show" :message="successModal.message" :show="successModal.show" @cancel="closeModal"
+                  @close="closeModal"></SuccessModal>
+    <FailureModal v-if="failModal.show" :message="failModal.message" :show="failModal.show" @cancel="closeModal"
+                  @close="closeModal"></FailureModal>
   </div>
 </template>
 

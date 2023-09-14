@@ -24,7 +24,7 @@
                 <router-link :to="{ name: 'CarList', params: { category: 'economy', available: true } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
-                <p class="card-text mt-2">Starting at $25/day</p>
+                <p class="card-text mt-2">Starting at {{ currencySymbol }}550.00/day</p>
               </div>
             </div>
           </div>
@@ -39,7 +39,7 @@
                 <router-link :to="{ name: 'CarList', params: { category: 'luxury', available: true } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
-                <p class="card-text mt-2">Starting at $100/day</p>
+                <p class="card-text mt-2">Starting at {{ currencySymbol }}800.00/day</p>
               </div>
             </div>
           </div>
@@ -54,7 +54,8 @@
                 <router-link :to="{ name: 'CarList', params: { category: 'special', available: true } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
-                <p class="card-text mt-2">Limited time only</p>
+                <p class="card-text mt-2">Limited time only {{ currencySymbol }}450.00/day </p>
+
               </div>
             </div>
           </div>
@@ -72,6 +73,11 @@
 <script>
 export default {
   name: 'Home',
+  data() {
+    return {
+      currencySymbol: 'R' // Set your desired currency symbol here
+    };
+  }
 };
 </script>
 

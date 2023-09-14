@@ -4,18 +4,23 @@
       <h1><i class="fas fa-file-contract" ></i>
         Rental Management
       </h1>
-      <div class="search-bar">
-        <input v-model="searchQuery" placeholder="Search..." type="text">
-        <button @click="resetSearch">
-          <i class="fas fa-search"> </i> Reset
-        </button>
-      </div>
-      <div>
-        <router-link to="/admin/rentals/create" class="add-button ">
-          <i class="fas fa-contact-book"> </i> Add New Rental
-        </router-link>
-      </div>
-    </div>
+
+<!--      -->
+      <div class="search-bar-container">
+        <div class="search-bar">
+
+          <div class="search-input">
+            <input v-model="searchQuery" placeholder="Search..." type="text" />
+            <button @click="resetSearch" class="reset-search-button">
+              <i class="fas fa-search"> </i> Reset
+            </button>
+          </div>
+          <router-link to="/admin/rentals/create" class="add-button ">
+            <i class="fas fa-contact-book"> </i> Add New Rental
+          </router-link>
+        </div>
+    </div></div>
+
     <table>
       <thead>
       <tr>
@@ -30,7 +35,7 @@
         <th @click="sortRentals('dateReturned')">Date Returned </th>
         <th @click="sortRentals('receiver')">Receiver </th>
         <th @click="sortRentals('finePaid')">Fine Paid </th>
-        <th>Actions</th>
+        <th class="actions-column">Actions</th>
       </tr>
       </thead>
       <tbody>
@@ -256,6 +261,11 @@ export default {
     },
     saveRental(rental) {
       rental.id = rental.rentalId;
+      rental.issuedDate = rental.issuedDate;
+      rental.returnedDate = rental.returnedDate;
+      rental.receiver = rental.receiver;
+      rental.fine = Math.floor(rental.fine); // Remove decimal from fine
+
       console.info("Saving rental: ", rental);
       console.info("Rentalid: ", rental.rentalId);
       console.info("Rental.id: ", rental.id);

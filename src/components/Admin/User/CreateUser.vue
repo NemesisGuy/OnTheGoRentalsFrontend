@@ -54,6 +54,7 @@ export default {
   },
   methods: {
     addUser() {
+      console.log("Adding user:", this.user);
       // Send the user data to the backend API or perform any other necessary actions
       axios
           .post("http://localhost:8080/api/admin/users/create", this.user)
