@@ -18,6 +18,9 @@
         <router-link to="/admin/rentals">Rental Management</router-link>
       </li>
       <li>
+        <router-link to="/admin/settings">Settings</router-link>
+      </li>
+      <li>
         <router-link to="/admin/test">Test</router-link>
       </li>
       <li>

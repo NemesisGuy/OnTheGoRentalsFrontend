@@ -24,7 +24,7 @@
                 <router-link :to="{ name: 'CarList', params: { category: 'economy', available: true } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
-                <p class="card-text mt-2">Starting at {{ currencySymbol }}550.00/day</p>
+                <p class="card-text mt-2">Starting at  {{ currencyData.currencySymbol }}550.00/day</p>
               </div>
             </div>
           </div>
@@ -39,7 +39,7 @@
                 <router-link :to="{ name: 'CarList', params: { category: 'luxury', available: true } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
-                <p class="card-text mt-2">Starting at {{ currencySymbol }}800.00/day</p>
+                <p class="card-text mt-2">Starting at  {{ currencyData.currencySymbol }}800.00/day</p>
               </div>
             </div>
           </div>
@@ -48,13 +48,13 @@
           <div class="card mb-4 shadow-sm">
             <div class="card-body box-shadow">
               <h3 class="card-title"><i class="fas fa-tags"></i> Special Offers</h3>
-              <p class="card-text">Check out our latest deals and discounts.</p>
+              <p class="card-text">Current deals and discounts.</p>
               <div class="justify-content-between align-items-center">
                 <!-- Link to view available special cars -->
                 <router-link :to="{ name: 'CarList', params: { category: 'special', available: true } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
-                <p class="card-text mt-2">Limited time only {{ currencySymbol }}450.00/day </p>
+                <p class="card-text mt-2">Starting at {{ currencyData.currencySymbol }}450.00/day </p>
 
               </div>
             </div>
@@ -70,14 +70,11 @@
 
 
 
+
 <script>
-export default {
+  export default {
   name: 'Home',
-  data() {
-    return {
-      currencySymbol: 'R' // Set your desired currency symbol here
-    };
-  }
+  props: ['currencyData'], // Add this if you're passing currencyData as a prop
 };
 </script>
 

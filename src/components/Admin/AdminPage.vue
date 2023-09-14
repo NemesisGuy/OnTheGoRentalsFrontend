@@ -45,8 +45,14 @@
             </router-link>
           </li>
           <li>
+            <router-link to="/admin/settings">
+              <i class="fas fa-gear"></i>
+              <span class="menu-text" v-show="isExpanded">Settings</span>
+            </router-link>
+          </li>
+          <li>
             <router-link to="/admin/test">
-              <i class="fas fa-cogs"></i>
+              <i class="fas fa-flask"></i>
               <span class="menu-text" v-show="isExpanded">Test</span>
             </router-link>
           </li>
