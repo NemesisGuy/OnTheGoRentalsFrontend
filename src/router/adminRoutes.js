@@ -12,6 +12,7 @@ import RentalManagement from "@/components/Admin/Rental/RentalManagement.vue";
 import TestPage from "@/components/Main/TestPage.vue";
 import ReturnRental from "@/components/Main/Rental/ReturnRental.vue";
 import CreateRental from "@/components/Admin/Rental/CreateRental.vue";
+// import Feedback from '/@components/Main/Feedback.vue';
 
 const adminRoutes = [
     {

@@ -19,6 +19,8 @@ import HelpCenter from "@/components/Main/HelpCenter.vue";
 import Faq from "@/components/Main/Faq.vue";
 import adminFaqRoutes from "@/router/adminFaqRoutes";
 import adminHelpCenterRoutes from "@/router/adminHelpCenterRoutes";
+import Feedback from '@/components/Main/Feedback.vue';
+
 
 const router = createRouter({
     history: createWebHistory(),
@@ -66,6 +68,11 @@ const router = createRouter({
             path: '/faq',
             name: 'Faq',
             component: Faq,
+        },
+        {
+            path: '/feedback',
+            name: 'Feedback',
+            component: Feedback,
         },
         {
             path: '/admin',
