@@ -573,35 +573,83 @@ button {
     color: white;
     background-color: #2196f3;
 }
-.search-button {
-     background-color: #4caf50;
-     color: white;
-     border: none;
-     padding: 8px 16px;
-     border-radius: 4px;
-     cursor: pointer;
-     transition: background-color 0.3s;
- }
 
 .search-button:hover {
     background-color: #45a049;
 }
+.search-input {
+    min-width: 420px
+}
+.search-input {
+    display: flex;
+    align-items: center;
+}
 
+.search-input input {
+    margin-right: 10px;
+}
+
+.search-input button {
+    margin-left: 10px;
+}
 .search-input {
     padding: 8px;
-    border: 1px solid #ccc;
+    /*border: 1px solid #ccc;*/
     border-radius: 4px;
     margin-right: 8px;
+}
+.search-bar-container button {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    color: white;
+    background-color: #2196f3;
+}
+
+.search-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.reset-search-button {
+    width: 120px;
+
 }
 
 
 .loading {
    /* margin-top: 1rem;*/
 }
+.add-button:hover {
+    background-color: #6610f2;
+}
 
+.add-button {
+    min-width: 100px;
+}
+
+.delete-button {
+    min-width: 100px;
+}
+
+.update-button {
+    min-width: 100px;
+}
+
+.read-button {
+    min-width: 100px;
+}
+
+.actions-column {
+    min-width: 370px;
+    align-items: center;
+}
 /* -----------------------------------  Styling the Admin Management Pages Buttons  ------------------------------------*/
 .add-button {
-    margin-bottom: 1rem;
+    /*margin-bottom: 1rem;*/
     display: inline-block;
     padding: 0.5rem 1rem;
     background-color: #4caf50;
@@ -620,6 +668,40 @@ button {
 .rental-button {
     /*add rental icon*/
 }
+/*this is to put the admin top section in one line */
+.search-bar-container {
+    display: flex;
+    align-items: center;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    display: flex;
+    align-items: center;
+}
+
+.search-input input {
+    margin-right: 10px;
+}
+
+.search-input button {
+    margin-left: 10px;
+}
+
+.add-button {
+    margin-left: 10px;
+}
+/*align admin form heading */
+
+.content-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
 
 
 /* -----------------------------------  Styling the Modals  ------------------------------------*/

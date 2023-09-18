@@ -4,18 +4,18 @@
       <h1><i class="fas fa-car"> </i>
         Car Management
       </h1>
-      <div class="search-bar">
-
-          <div class="search-input">
-            <input v-model="searchQuery" placeholder="Search..." type="text" />
-            <button @click="resetSearch">
-              <i class="fas fa-search"> </i> Reset
-            </button>
-          </div>
-          <router-link to="/admin/cars/create" class="add-button car-button">
-            <i class="fas fa-car"> </i> Add New Car
-          </router-link>
-
+      <div class="search-bar-container">
+        <div class="search-bar">
+            <div class="search-input">
+              <input v-model="searchQuery" placeholder="Search..." type="text" />
+              <button @click="resetSearch" class="reset-search-button">
+                <i class="fas fa-search"> </i> Reset
+              </button>
+            </div>
+            <router-link to="/admin/cars/create" class="add-button car-button">
+              <i class="fas fa-car"> </i> Add New Car
+            </router-link>
+        </div>
       </div>
 
     </div>
@@ -28,7 +28,7 @@
         <th @click="sortCars('year')">Year  <i class="fas fa-sort"></i></th>
         <th @click="sortCars('category')">Category  <i class="fas fa-sort"></i></th>
         <th @click="sortCars('priceGroup')">Price Group  <i class="fas fa-sort"></i></th>
-        <th>Actions</th>
+        <th class="actions-column">Actions</th>
       </tr>
       </thead>
       <tbody>

@@ -217,6 +217,9 @@ export default {
       this.loadingModal.show = true;
       // Reset error message
       this.errorMessage = '';
+      // Convert the fine to an integer with no decimal
+      const fine = Math.floor(this.fine); // Remove decimal from fine
+
 
       // Create a new rental object
       const rental = {
@@ -224,7 +227,7 @@ export default {
         car: {},
         issuer: this.selectedIssuer,
         receiver: this.selectedReceiver,
-        fine: this.fine,
+        fine: fine,
         issuedDate: this.selectedIssuedDate,
         returnedDate: this.selectedReturnedDate,
       };
@@ -254,7 +257,7 @@ export default {
                         .then(response => {
                           console.log('Rental created successfully');
                           this.loadingModal.show = false;
-                          //lets put each item on a new line
+
                           this.successModal.message = "Rental created successfully: " + "\n" +
                               "User: " + response.data.user.firstName + " " + response.data.user.lastName + "." + "\n" +
                               "Car: " + response.data.car.make + " " + response.data.car.model + "." + "\n" +

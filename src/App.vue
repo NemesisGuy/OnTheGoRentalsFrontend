@@ -4,7 +4,7 @@
     <div class="app-container">
       <div class="app-content">
         <!-- Your content -->
-        <router-view></router-view>
+        <router-view :currencyData="currencyData"></router-view>
       </div>
 
     </div>
@@ -14,6 +14,8 @@
 <script>
 import Navbar from './components/Main/Navbar.vue';
 import Footer from "@/components/Main/Footer.vue";
+import { currencySymbol, setCurrencySymbol } from './store';
+import axios from "axios";
 
 export default {
   name: 'App',
@@ -22,7 +24,14 @@ export default {
     Footer,
   },
   data() {
-    return {};
+    return {
+      currencyData: currencySymbol,
+    };
+  },
+  async created() {
+    const response = await axios.get('http://localhost:8080/api/admin/settings/read');
+    console.log(response.data);
+    this.currencyData = response.data;
   },
 };
 </script>
