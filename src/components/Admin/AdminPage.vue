@@ -44,6 +44,12 @@
               <span class="menu-text" v-show="isExpanded">Help Center</span>
             </router-link>
           </li>
+            <li>
+            <router-link to="/admin/booking">
+              <i class="fas fa-life-ring"></i>
+              <span class="menu-text" v-show="isExpanded">Booking</span>
+            </router-link>
+          </li>
           <li>
             <router-link to="/admin/settings">
               <i class="fas fa-gear"></i>
