@@ -22,6 +22,9 @@
           <li class="nav-item">
             <router-link to="/help-center" class="nav-link">Help Center</router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/Booking" class="nav-link">Booking</router-link>
+          </li>
         </ul>
       </div>
     </div>
