@@ -1,5 +1,5 @@
 <template>
-  <div class="create-rental">
+  <div class="create-rental form">
     <LoadingModal :show="loadingModal.show" v-if="loadingModal.show"></LoadingModal>
 
     <form ref="rentalForm" @submit.prevent="createRental">
@@ -340,5 +340,11 @@ export default {
 
 
 <style>
+.create-rental {
+  margin: 50px auto;
+  width: 50%;
+  max-width: max-content;
+
+}
 
 </style>

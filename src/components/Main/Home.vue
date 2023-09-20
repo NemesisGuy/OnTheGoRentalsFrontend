@@ -19,12 +19,12 @@
             <div class="card-body box-shadow">
               <h3 class="card-title"><i class="fas fa-car-side"></i> Economy Cars</h3>
               <p class="card-text">Affordable cars for your everyday needs.</p>
+              <p class="card-text mt-2">Starting at  {{ currencyData.currencySymbol }}550.00/day</p>
               <div class="justify-content-between align-items-center">
                 <!-- Link to view available economy cars -->
                 <router-link :to="{ name: 'CarList', params: { category: 'economy', available: true } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
-                <p class="card-text mt-2">Starting at  {{ currencyData.currencySymbol }}550.00/day</p>
               </div>
             </div>
           </div>
@@ -34,12 +34,12 @@
             <div class="card-body box-shadow">
               <h3 class="card-title"><i class="fas fa-gem"></i> Luxury Cars</h3>
               <p class="card-text">Experience the thrill of driving in style.</p>
+              <p class="card-text mt-2">Starting at  {{ currencyData.currencySymbol }}800.00/day</p>
               <div class="justify-content-between align-items-center">
                 <!-- Link to view available luxury cars -->
                 <router-link :to="{ name: 'CarList', params: { category: 'luxury', available: true } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
-                <p class="card-text mt-2">Starting at  {{ currencyData.currencySymbol }}800.00/day</p>
               </div>
             </div>
           </div>
@@ -48,14 +48,13 @@
           <div class="card mb-4 shadow-sm">
             <div class="card-body box-shadow">
               <h3 class="card-title"><i class="fas fa-tags"></i> Special Offers</h3>
-              <p class="card-text">Current deals and discounts.</p>
+              <p class="card-text">View our current deals and discounts.</p>
+              <p class="card-text mt-2">Starting at {{ currencyData.currencySymbol }}450.00/day </p>
               <div class="justify-content-between align-items-center">
                 <!-- Link to view available special cars -->
                 <router-link :to="{ name: 'CarList', params: { category: 'special', available: true } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
-                <p class="card-text mt-2">Starting at {{ currencyData.currencySymbol }}450.00/day </p>
-
               </div>
             </div>
           </div>
