@@ -8,22 +8,22 @@
   <!--add autocomplete to username and password-->
 
         <div class="form-group">
-          <label for="username"><i class="fas fa-user"></i> Username</label>
+          <label for="username"><i class="fas fa-user"></i> Username:</label>
           <input type="text" placeholder="Enter username" v-model="username" id="username">
         </div>
 
         <div class="form-group">
-          <label for="email"><i class="fas fa-envelope"></i> Email</label>
+          <label for="email"><i class="fas fa-envelope"></i> Email:</label>
           <input type="email" placeholder="Enter email" v-model="email" id="email">
         </div>
 
         <div class="form-group">
-          <label for="password"><i class="fas fa-lock"></i> Password</label>
+          <label for="password"><i class="fas fa-lock"></i> Password:</label>
           <input type="password" placeholder="Enter password" v-model="password" id="password" autocomplete="current-password">
         </div>
 
-        <button type="submit"><i class="fas fa-sign-in-alt"></i> Login</button>
-        <button @click="goToSignup"><i class="fas fa-user-plus"></i> Signup</button>
+        <button class="add-button" type="submit"><i class="fas fa-sign-in-alt"></i> Login:</button>
+        <button class="read-button" @click="goToSignup"><i class="fas fa-user-plus"></i> Signup</button>
       </form>
     </div>
   </div>

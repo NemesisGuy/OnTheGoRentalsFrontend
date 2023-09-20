@@ -31,8 +31,8 @@
           <label for="confirm-password"><i class="fas fa-lock"></i> Confirm Password:</label>
           <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
         </div>
-        <button type="submit"><i class="fas fa-user-plus"></i> Signup</button>
-        <button @click="goToLogin"><i class="fas fa-sign-in-alt"></i> Login</button>
+        <button class="add-button" type="submit"><i class="fas fa-user-plus"></i> Signup</button>
+        <button class="read-button" @click="goToLogin"><i class="fas fa-sign-in-alt"></i> Login</button>
       </form>
     </div>
   </div>
