@@ -1,5 +1,5 @@
 <template>
-  <LoadingModal :show="loadingModal.show" v-if="loadingModal.show"></LoadingModal>
+  <loading-modal v-if="loadingModal" show/>
   <div class ="card-container">
     <div class="form-container" @submit.prevent="register">
       <form>
@@ -37,34 +37,10 @@
       </form>
     </div>
   </div>
+
   <div class="modal-body">
-
-<!--    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>-->
-
-    <!-- Add the LoadingModal component -->
-
-
-    <!-- Add the SuccessModal component -->
-    <SuccessModal
-        key="successModal"
-        v-if="successModal.show"
-        @close="closeModal"
-        @cancel="closeModal"
-        @confirm="closeModal"
-        @ok="closeModal"
-        :show="successModal.show"
-        :message="successModal.message"
-    ></SuccessModal>
-
-    <!-- Add the FailureModal component -->
-    <FailureModal
-        key="failModal"
-        v-if="failModal.show"
-        @close="closeModal"
-        @cancel="closeModal"
-        :show="failModal.show"
-        :message="failModal.message"
-    ></FailureModal>
+    <success-modal :show="successModal.show" @close="closeModal" :message="successModal.message" />
+    <failure-modal :show="failureModal.show" @close="closeModal" :message="failureModal.message" />
   </div>
 
 </template>
@@ -72,11 +48,11 @@
 <script>
 
 import axios from "axios";
-
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
-import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
+
 
 
 
@@ -84,10 +60,10 @@ export default {
   computed: {
   },
   components: {
-    ConfirmationModal,
+    LoadingModal,
     SuccessModal,
     FailureModal,
-    LoadingModal,
+    ConfirmationModal,
   },
   data() {
     return {
@@ -97,29 +73,19 @@ export default {
       phoneNumber: "",
       email: "",
       password: "",
-      showLoadingModal: false,
-      showSuccessModal: false,
-      showFailureModal: false,
       successMessage: "",
       failureMessage: "",
       errorMessage: '',
-      showConfirmationModal: false,
-      loadingModal: {
-        show: false,
-      },
-      successModal: {
-        show: false,
-        message: ""
-      },
-      failModal: {
-        show: false,
-        message: ""
-      }
+      loadingModal: false,
+      successModal: {show:false, message: ""},
+      failureModal: {show:false, message: ""},
+      confirmationModal: {show:false, message: ""},
+
     };
   },
   methods: {
     register() {
-      this.showLoadingModal = true;
+      this.loadingModal= true;
       axios
           .post("http://localhost:8080/api/user/register", {
             userName: this.userName,
@@ -132,26 +98,31 @@ export default {
           .then(response => {
             // Handle success
             console.log(response);
-            this.showLoadingModal = false;
-            this.showSuccessModal = true;
-            //this.successMessage = "Registration successful";
+            this.loadingModal = false;
             this.successModal.message = "Registration successful";
+            this.successModal.message = "Registration successful";
+            this.successModal.show = true;
           })
           .catch(error => {
             // Handle error
+            this.loadingModal= false;
+            console.log("An error occurred: registration failed");
+
             console.log(error);
-            this.showLoadingModal = false;
-            this.showFailureModal = true;
-            this.failureMessage = "Registration failed";
+            this.successModal.show = false;
+            this.failureModal.show = true;
+            this.failureModal.message = "Registration failed";
           });
     },
     goToLogin() {
       this.$router.push("/login");
     },
     closeModal() {
-      this.successModal.show = false;
-      this.failModal.show = false;
+  /*    this.successModal.show = false;
+      this.failModal.show = false;*/
       this.showConfirmationModal = false;
+      this.successModal.show = false;
+      this.failureModal.show = false;
     },
   }
 };
