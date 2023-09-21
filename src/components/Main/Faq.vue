@@ -49,12 +49,7 @@ export default {
 </script>
 
 <style scoped>
-.card-container {
-  display: flex;
-  justify-content: center;
-  background-color: #f2105e; /* Background color (Purple) */
-  padding: 30px;
-}
+
 
 .faq {
   width: 650px;

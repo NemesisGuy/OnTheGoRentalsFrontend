@@ -28,6 +28,7 @@
         <th @click="sortCars('year')">Year  <i class="fas fa-sort"></i></th>
         <th @click="sortCars('category')">Category  <i class="fas fa-sort"></i></th>
         <th @click="sortCars('priceGroup')">Price Group  <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('available')">Available  <i class="fas fa-sort"></i></th>
         <th class="actions-column">Actions</th>
       </tr>
       </thead>
@@ -56,6 +57,12 @@
         <td v-if="!car.editing">{{ car.priceGroup }}</td>
         <td v-else>
           <input type="text" v-model="car.priceGroup">
+        </td>
+        <td v-if="!car.editing">
+          <input type="checkbox" v-model="car.available" :disabled="car.editing">
+        </td>
+        <td v-else>
+          <input type="checkbox" v-model="car.available">
         </td>
         <td>
           <template v-if="!car.editing">
@@ -90,6 +97,8 @@
           <p>Year: {{ carToDelete.year }}</p>
           <p>Category: {{ carToDelete.category }}</p>
           <p>Price Group: {{ carToDelete.priceGroup }}</p>
+          <p>License Plate: {{ carToDelete.licensePlate }}</p>
+          <p>Available: {{ carToDelete.available }}</p>
           <hr>
           <p><b>Warning!!!</b> This action cannot be undone.</p>
         </div>
@@ -166,6 +175,7 @@ export default {
           .get("http://localhost:8080/api/admin/cars/all")
           .then((response) => {
             this.cars = response.data;
+            console.log(response);
           })
           .catch((error) => {
             console.log(error);
@@ -306,4 +316,14 @@ export default {
 .add-button {
   margin-left: 10px;
 }
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkbox-container input[type="checkbox"] {
+  margin-right: 10px;
+}
+
 </style>

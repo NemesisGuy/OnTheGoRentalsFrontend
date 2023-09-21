@@ -4,15 +4,37 @@
 }
 
 .card-container {
-    padding: 20px;
+    /*padding: 20px;*/
     margin: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 5px 0px #000;
-    text-align: center;
+    /*border-radius: 5px;*/
+    /*box-shadow: 0px 0px 5px 0px #000;*/
+    /*text-align: center;*/
     display: flex;
     flex-direction: column;
     align-items: center;
+    color: black;
 
+}
+
+card-container {
+    display: flex;
+    justify-content: center;
+    background-color: #f2105e; /* Background color (Purple) */
+    padding: 20px;
+}
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    background-color: #f2105e; /* Background color (Purple) */
+    padding: 20px;
+}
+
+.form-container {
+    width: 650px;
+    background-color: #fff; /* FAQ container background color (White) */
+    padding: 30px;
+    border-radius: 10px;
 }
 
 .content-container {
@@ -33,6 +55,7 @@
     flex-direction: column; /* Stack children vertically */
     height: 100%; /* Set the container height to take up remaining space */
 }
+
 .app {
     height: 100vh; /* Set the app height to fill the viewport */
 }
@@ -150,6 +173,7 @@ nav a:active {
     color: floralwhite;
 
 }
+
 .chart {
     flex: 1;
     width: 100%;
@@ -160,6 +184,7 @@ nav a:active {
     border-radius: 2px;
     margin: 20px;
 }
+
 .line-chart {
     width: 100%;
     height: 100%;
@@ -219,16 +244,23 @@ nav a:active {
 /*  ----------------------------------------     Forms Styles     -------------------------------------------------- */
 
 .form-container {
-    max-width: 400px;
+    max-width: 650px;
     margin: 0 auto;
 }
 
+.form-container {
+    width: 650px;
+    background-color: #fff; /* FAQ container background color (White) */
+    padding: 30px;
+    border-radius: 10px;
+}
+
 form {
-    background-color: #6610f2;
-    padding: 20px;
-    margin: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 5px 0px #000;
+    /*background-color: #6610f2;*/
+    /*padding: 20px;*/
+    /* margin: 20px;*/
+    /*border-radius: 5px;*/
+    /*box-shadow: 0px 0px 5px 0px #000;*/
 
 }
 
@@ -248,7 +280,12 @@ label {
 
 input[type="text"],
 input[type="password"],
-input[type="email"] {
+input[type="email"],
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+[type="number"]:focus,
+[type="tel"] {
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
@@ -258,9 +295,10 @@ input[type="email"] {
 
 input[type="text"]:focus,
 input[type="password"]:focus,
-input[type="email"]:focus {
-
-    box-shadow: #f2105e 0px 0px 5px 0px;
+input[type="email"]:focus, [type="number"]:focus,
+[type="tel"] {
+    box-shadow: black 0px 0px 5px 0px;
+    /*box-shadow: #f2105e 0px 0px 5px 0px;*/
 }
 
 .add-car-form {
@@ -288,7 +326,7 @@ select {
 
 button[type="submit"] {
     padding: 10px 20px;
-    background-color: #6610f2;
+    /*background-color: #6610f2;*/
     color: white;
     border: none;
     border-radius: 4px;
@@ -322,7 +360,7 @@ select {
 
 button[type="submit"] {
     padding: 10px 20px;
-    background-color: #6610f2;
+   /* background-color: #6610f2;*/
     color: white;
     border: none;
     border-radius: 4px;
@@ -339,7 +377,7 @@ button[type="submit"] {
 
 
 button[type="submit"] {
-    background-color: #f2105e;
+   /* background-color: #f2105e;*/
     color: floralwhite;
 
     padding: 10px 20px;
@@ -523,10 +561,12 @@ button {
     border-radius: 4px;
     color: white;
 }
+
 .blue-icon {
     color: #2196f3;
 }
-.confirm-button, .accept-button{
+
+.confirm-button, .accept-button {
     background-color: #4caf50;
 }
 
@@ -555,6 +595,7 @@ button {
     width: 300px;
     margin-right: 1rem;
 }
+
 .add-user-button {
 
     margin-bottom: 1rem;
@@ -567,6 +608,7 @@ button {
     box-shadow: 0px 0px 5px 0px #000;
 
 }
+
 .search-bar button {
     padding: 0.5rem 1rem;
     border-radius: 4px;
@@ -577,9 +619,11 @@ button {
 .search-button:hover {
     background-color: #45a049;
 }
+
 .search-input {
     min-width: 420px
 }
+
 .search-input {
     display: flex;
     align-items: center;
@@ -592,12 +636,14 @@ button {
 .search-input button {
     margin-left: 10px;
 }
+
 .search-input {
     padding: 8px;
     /*border: 1px solid #ccc;*/
     border-radius: 4px;
     margin-right: 8px;
 }
+
 .search-bar-container button {
     padding: 0.5rem 1rem;
     border-radius: 4px;
@@ -614,6 +660,7 @@ button {
     cursor: pointer;
     transition: background-color 0.3s;
 }
+
 .reset-search-button {
     width: 120px;
 
@@ -621,8 +668,9 @@ button {
 
 
 .loading {
-   /* margin-top: 1rem;*/
+    /* margin-top: 1rem;*/
 }
+
 .add-button:hover {
     background-color: #6610f2;
 }
@@ -647,6 +695,7 @@ button {
     min-width: 370px;
     align-items: center;
 }
+
 /* -----------------------------------  Styling the Admin Management Pages Buttons  ------------------------------------*/
 .add-button {
     /*margin-bottom: 1rem;*/
@@ -659,15 +708,19 @@ button {
     box-shadow: 0px 0px 5px 0px #000;
 
 }
+
 .car-button {
     /*add car icon*/
 }
+
 .user-button {
     /*add user icon*/
 }
+
 .rental-button {
     /*add rental icon*/
 }
+
 /*this is to put the admin top section in one line */
 .search-bar-container {
     display: flex;
@@ -695,13 +748,13 @@ button {
 .add-button {
     margin-left: 10px;
 }
+
 /*align admin form heading */
 
 .content-header {
     text-align: center;
     margin-bottom: 20px;
 }
-
 
 
 /* -----------------------------------  Styling the Modals  ------------------------------------*/
@@ -769,8 +822,6 @@ button {
 }
 
 
-
-
 .create-rental {
     margin-top: 20px;
 }
@@ -793,9 +844,6 @@ input[type="text"],
 select {
     width: 100%; /* Updated: Set width to 100% */
 }
-
-
-
 
 
 .error-message {
