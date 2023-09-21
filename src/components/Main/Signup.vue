@@ -1,4 +1,5 @@
 <template>
+  <LoadingModal :show="loadingModal.show" v-if="loadingModal.show"></LoadingModal>
   <div class ="card-container">
     <div class="form-container" @submit.prevent="register">
       <form>
@@ -31,26 +32,62 @@
           <label for="confirm-password"><i class="fas fa-lock"></i> Confirm Password:</label>
           <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
         </div>
-        <button class="add-button" type="submit"><i class="fas fa-user-plus"></i> Signup</button>
+        <button class="add-button"   type="submit" ><i class="fas fa-user-plus"></i> Signup</button>
         <button class="read-button" @click="goToLogin"><i class="fas fa-sign-in-alt"></i> Login</button>
       </form>
     </div>
+  </div>
+  <div class="modal-body">
+
+<!--    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>-->
+
+    <!-- Add the LoadingModal component -->
+
+
+    <!-- Add the SuccessModal component -->
+    <SuccessModal
+        key="successModal"
+        v-if="successModal.show"
+        @close="closeModal"
+        @cancel="closeModal"
+        @confirm="closeModal"
+        @ok="closeModal"
+        :show="successModal.show"
+        :message="successModal.message"
+    ></SuccessModal>
+
+    <!-- Add the FailureModal component -->
+    <FailureModal
+        key="failModal"
+        v-if="failModal.show"
+        @close="closeModal"
+        @cancel="closeModal"
+        :show="failModal.show"
+        :message="failModal.message"
+    ></FailureModal>
   </div>
 
 </template>
 
 <script>
-import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
-import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
-import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+
 import axios from "axios";
 
+import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
+import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
+
+
+
 export default {
+  computed: {
+  },
   components: {
-    LoadingModal,
+    ConfirmationModal,
     SuccessModal,
     FailureModal,
-
+    LoadingModal,
   },
   data() {
     return {
@@ -64,7 +101,20 @@ export default {
       showSuccessModal: false,
       showFailureModal: false,
       successMessage: "",
-      failureMessage: ""
+      failureMessage: "",
+      errorMessage: '',
+      showConfirmationModal: false,
+      loadingModal: {
+        show: false,
+      },
+      successModal: {
+        show: false,
+        message: ""
+      },
+      failModal: {
+        show: false,
+        message: ""
+      }
     };
   },
   methods: {
@@ -84,8 +134,8 @@ export default {
             console.log(response);
             this.showLoadingModal = false;
             this.showSuccessModal = true;
-            this.successMessage = "Registration successful";
-
+            //this.successMessage = "Registration successful";
+            this.successModal.message = "Registration successful";
           })
           .catch(error => {
             // Handle error
@@ -98,48 +148,17 @@ export default {
     goToLogin() {
       this.$router.push("/login");
     },
-    performAction() {
-      // Show loading modal while waiting for the server response
-      this.showLoadingModal = true;
-
-      // Simulate a server request with a delay
-      setTimeout(() => {
-        // Simulate a successful action
-        this.showLoadingModal = false;
-        this.showSuccessModal = true;
-        this.successMessage = "Action successful";
-      }, 2000);
+    closeModal() {
+      this.successModal.show = false;
+      this.failModal.show = false;
+      this.showConfirmationModal = false;
     },
-    confirmSuccessModal() {
-      this.showSuccessModal = false;
-      // Perform any additional actions or navigate to another page
-      // For example, you can redirect to the login page after a successful registration
-      this.$router.push('/nav/user/login');
-    },
-
-    performFailureAction() {
-// Show loading modal while waiting for the server response
-      this.showLoadingModal = true;
-      // Simulate a server request with a delay
-      setTimeout(() => {
-        // Simulate a failed action
-        this.showLoadingModal = false;
-        this.showFailureModal = true;
-        this.failureMessage = 'Action failed';
-      }, 2000);
-    },
-    confirmFailureModal() {
-      this.showFailureModal = false;
-      // Perform any additional actions or handle the failure case
-    }
   }
 };
 </script>
 
 <style scoped>
 /* Add your component-specific styles here */
-
-
 </style>
 
 
