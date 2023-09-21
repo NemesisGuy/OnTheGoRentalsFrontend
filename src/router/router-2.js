@@ -3,6 +3,7 @@ import HomePage from '@/components/Main/HomePage.vue';
 import CustomerList from '@/components/Main/CustomerList.vue';
 import Home from "@/components/Main/Home.vue";
 import ErrorPage from '@/components/Main/ErrorPage.vue';
+// import Feedback from '/@components/Main/Feedback.vue';
 import Signup from "@/components/Main/Signup.vue";
 import Login from "@/components/Main/Login.vue";
 import AdminPage from "@/components/Admin/AdminPage.vue";
@@ -39,6 +40,11 @@ const router2 = createRouter({
             name: 'Login',
             component: Login,
         },
+        // {
+        //     path: '/feedback',
+        //     name: 'Feedback',
+        //     component: Feedback,
+        // },
         {
             path: '/error',
             component: ErrorPage,

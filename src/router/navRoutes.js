@@ -2,6 +2,7 @@ import Home from "@/components/Main/Home.vue";
 import CarList from "@/components/Main/Car/CarList.vue";
 import Login from "@/components/Main/Login.vue";
 import Signup from "@/components/Main/Signup.vue";
+// import Feedback from "@/components/Main/Feedback.vue";
 
 const navRoutes = [
 
@@ -23,6 +24,10 @@ const navRoutes = [
         path: '/nav/user/profile/',
         redirect: '/'
     },
+    // {
+    //     path: '/nav/feedback',
+    //     redirect: '/'
+    // },
 ];
 
 export default navRoutes;
