@@ -53,9 +53,6 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 
-
-
-
 export default {
   computed: {
   },
@@ -97,9 +94,9 @@ export default {
           })
           .then(response => {
             // Handle success
+            console.log("Registration successful");
             console.log(response);
             this.loadingModal = false;
-            this.successModal.message = "Registration successful";
             this.successModal.message = "Registration successful";
             this.successModal.show = true;
           })
@@ -107,7 +104,6 @@ export default {
             // Handle error
             this.loadingModal= false;
             console.log("An error occurred: registration failed");
-
             console.log(error);
             this.successModal.show = false;
             this.failureModal.show = true;
@@ -118,8 +114,6 @@ export default {
       this.$router.push("/login");
     },
     closeModal() {
-  /*    this.successModal.show = false;
-      this.failModal.show = false;*/
       this.showConfirmationModal = false;
       this.successModal.show = false;
       this.failureModal.show = false;

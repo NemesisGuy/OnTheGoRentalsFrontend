@@ -27,18 +27,35 @@
       </form>
     </div>
   </div>
+  <div class="modal-body">
+    <success-modal :show="successModal.show" @close="closeModal" :message="successModal.message" />
+    <failure-modal :show="failureModal.show" @close="closeModal" :message="failureModal.message" />
+  </div>
 </template>
 
 <script>
 import axios from 'axios';
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
+import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 
 export default {
+  computed: {
+  },
+  components: {
+    LoadingModal,
+    SuccessModal,
+    FailureModal,
+    ConfirmationModal,
+  },
   name: "Login",
   methods: {
     goToSignup() {
       this.$router.push('/signup');
     },
     login() {
+      this.loadingModal= true;
       // Make the API call to /user/login
       axios.post('/api/user/login', {
         username: this.username,
@@ -47,19 +64,38 @@ export default {
       })
           .then(response => {
             // Handle the response
+            console.log("Login successful");
             console.log(response.data);
+            console.log(response);
+            this.loadingModal = false;
+            this.successModal.message = "Login successful";
+            this.successModal.show = true;
           })
           .catch(error => {
             // Handle the error
             console.error(error);
+            this.loadingModal= false;
+            console.log("An error occurred: Login failed");
+            console.log(error);
+            this.successModal.show = false;
+            this.failureModal.show = true;
+            this.failureModal.message = "Login failed";
           });
-    }
+    }, closeModal() {
+      this.showConfirmationModal = false;
+      this.successModal.show = false;
+      this.failureModal.show = false;
+    },
   },
   data() {
     return {
       username: '',
       email: '',
-      password: ''
+      password: '',
+      loadingModal: false,
+      successModal: {show:false, message: ""},
+      failureModal: {show:false, message: ""},
+      confirmationModal: {show:false, message: ""},
     }
   },
   mounted() {
