@@ -1,6 +1,6 @@
 <template>
   <div class="card-container card-container-admin">
-    <div class="form-container">
+    <div class="form-container-admin">
       <div class="content-header">
         <h1><i class="fas fa-gear"></i> Settings</h1>
       </div>
@@ -16,7 +16,7 @@
           <input id="currencySymbol" v-model="currencySymbol" required type="text"/>
         </div>
         <div class="button-container">
-          <button class="add-button button" type="submit"><i class="fas fa-check"></i> Save</button>
+          <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
         </div>
       </form>
     </div>

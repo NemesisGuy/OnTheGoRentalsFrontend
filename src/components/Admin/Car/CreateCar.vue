@@ -1,6 +1,6 @@
 <template>
   <div class="card-container card-container-admin">
-    <div class="form-container">
+    <div class="form-container-admin">
 
       <form @submit.prevent="addCar">
         <h2 class="form-header">Add Car</h2>

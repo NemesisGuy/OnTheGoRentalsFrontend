@@ -1,6 +1,6 @@
 <template>
   <div class="card-container card-container-admin">
-    <div class="form-container">
+    <div class="form-container-admin">
       <form @submit.prevent="addUser">
         <h2 class="form-header">Add User</h2>
         <div class="form-group">

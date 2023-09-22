@@ -1,6 +1,6 @@
 <template xmlns="http://www.w3.org/1999/html">
   <div class="card-container card-container-admin">
-    <div class="form-container">
+    <div class="form-container-admin">
       <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"></LoadingModal>
 
       <form ref="rentalForm" @submit.prevent="createRental">
