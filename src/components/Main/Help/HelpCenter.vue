@@ -9,7 +9,7 @@
           <option value="General">General</option>
           <option value="Accounts">Accounts</option>
         </select>
-        <button class="faq-button" @click="openFAQPage">FAQ</button>
+        <button class="faq-button button" @click="openFAQPage">FAQ</button>
       </div>
       <hr>
       <div v-if="filteredHelpCenters && filteredHelpCenters.length > 0">

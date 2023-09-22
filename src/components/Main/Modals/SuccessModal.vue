@@ -10,7 +10,7 @@
           <p>{{ message }}</p>
         </div>
         <div class="modal-actions">
-          <button class="confirm-button" @click="close">OK</button>
+          <button class="confirm-button button" @click="close">OK</button>
         </div>
       </div>
     </div>

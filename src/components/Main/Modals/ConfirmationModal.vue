@@ -6,8 +6,8 @@
       <slot></slot>
       <p>{{message}}</p>
       <div class="modal-actions">
-        <button class="confirm-button" @click="confirmAction"><i class="fas fa-check"></i> Confirm</button>
-        <button class="deny-button" @click="cancelAction"> <i class="fas fa-times"></i> Cancel</button>
+        <button class="confirm-button button" @click="confirmAction"><i class="fas fa-check"></i> Confirm</button>
+        <button class="deny-button button" @click="cancelAction"> <i class="fas fa-times"></i> Cancel</button>
       </div>
     </div>
   </div>

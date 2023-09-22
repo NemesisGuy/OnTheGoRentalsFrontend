@@ -10,7 +10,7 @@
           <p>{{ message }}</p>
         </div>
         <div class="modal-actions">
-          <button class="deny-button" @click="close"><i class="fas fa-exclamation-circle"></i> OK</button>
+          <button class="deny-button button" @click="close"><i class="fas fa-exclamation-circle"></i> OK</button>
         </div>
       </div>
     </div>

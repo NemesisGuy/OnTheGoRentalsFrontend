@@ -20,8 +20,9 @@
 
           <!-- Add more profile information as needed -->
           <hr>
-          <button @click="editProfile" class="update-button">Edit Profile</button>
-
+          <div class="button-container">
+            <button @click="editProfile" class="update-button button"><i class="fa fa-pencil"></i> Edit Profile</button>
+          </div>
         </div>
       </div>
     </div>

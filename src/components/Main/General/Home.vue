@@ -52,7 +52,7 @@
               <p class="card-text mt-2">Starting at {{ currencyData.currencySymbol }}450.00/day </p>
               <div class="justify-content-between align-items-center">
                 <!-- Link to view available special cars -->
-                <router-link :to="{ name: 'CarList', params: { category: 'special', available: true } }" class="custom-button">
+                <router-link :to="{ name: 'CarList', params: { category: 'special', available: true } }" class="custom-button button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
               </div>

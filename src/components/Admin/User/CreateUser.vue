@@ -1,38 +1,42 @@
 <template>
-  <div class="add-user-form form">
-    <form @submit.prevent="addUser">
-      <h2 class="form-header">Add User</h2>
-      <div class="form-group">
-        <label for="userName">Username:</label>
-        <input type="text" id="userName" v-model="user.userName" required placeholder="Enter username">
-      </div>
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" id="email" v-model="user.email" required placeholder="Enter email">
-      </div>
-      <div class="form-group">
-        <label for="firstName">First Name:</label>
-        <input type="text" id="firstName" v-model="user.firstName" required placeholder="Enter first name">
-      </div>
-      <div class="form-group">
-        <label for="lastName">Last Name:</label>
-        <input type="text" id="lastName" v-model="user.lastName" required placeholder="Enter last name">
-      </div>
-      <div class="form-group">
-        <label for="phoneNumber">Phone Number:</label>
-        <input type="tel" id="phoneNumber" v-model="user.phoneNumber" required placeholder="Enter phone number">
-      </div>
-      <div class="form-group">
-        <label for="role">Role:</label>
-        <select id="role" v-model="user.role" required>
-          <option value="Guest">Guest</option>
-          <option value="User" selected>User</option>
-          <option value="Privileged">Privileged</option>
-          <option value="Admin">Admin</option>
-        </select>
-      </div>
-      <button type="submit">Add User</button>
-    </form>
+  <div class="card-container card-container-admin">
+    <div class="form-container">
+      <form @submit.prevent="addUser">
+        <h2 class="form-header">Add User</h2>
+        <div class="form-group">
+          <label for="userName">Username:</label>
+          <input id="userName" v-model="user.userName" placeholder="Enter username" required type="text">
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input id="email" v-model="user.email" placeholder="Enter email" required type="email">
+        </div>
+        <div class="form-group">
+          <label for="firstName">First Name:</label>
+          <input id="firstName" v-model="user.firstName" placeholder="Enter first name" required type="text">
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name:</label>
+          <input id="lastName" v-model="user.lastName" placeholder="Enter last name" required type="text">
+        </div>
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number:</label>
+          <input id="phoneNumber" v-model="user.phoneNumber" placeholder="Enter phone number" required type="tel">
+        </div>
+        <div class="form-group">
+          <label for="role">Role:</label>
+          <select id="role" v-model="user.role" required>
+            <option value="Guest">Guest</option>
+            <option selected value="User">User</option>
+            <option value="Privileged">Privileged</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        <div class="button-container">
+          <button class="confirm-button button" type="submit">Add User</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 

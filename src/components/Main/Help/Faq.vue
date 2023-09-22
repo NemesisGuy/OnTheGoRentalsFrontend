@@ -2,9 +2,8 @@
   <div class="card-container">
     <div class="faq">
       <h1>Frequently Asked Questions</h1>
-      <router-link to="/help-center" class="back-button">Back to Help Center</router-link>
       <hr>
-      <div class="faq-list" v-if="faqList">
+      <div v-if="faqList" class="faq-list">
         <ul>
           <li v-for="faq in faqList" :key="faq.id" class="faq-item">
             <h3>{{ faq.question }}</h3>
@@ -15,6 +14,9 @@
       </div>
       <div v-else>
         <p>Loading FAQs...</p>
+      </div>
+      <div class="button-container">
+        <router-link class="deny-button button" to="/help-center">Back to Help Center</router-link>
       </div>
     </div>
   </div>

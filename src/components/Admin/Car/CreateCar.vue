@@ -1,58 +1,61 @@
 <template>
-  <div class="add-car-form form">
+  <div class="card-container card-container-admin">
+    <div class="form-container">
 
-    <form @submit.prevent="addCar">
-      <h2 class="form-header">Add Car</h2>
-      <div class="form-group">
-        <label for="make">Make:</label>
-        <input type="text" id="make" v-model="car.make" required>
-      </div>
-      <div class="form-group">
-        <label for="model">Model:</label>
-        <input type="text" id="model" v-model="car.model" required>
-      </div>
-      <div class="form-group">
-        <label for="year">Year:</label>
-        <input type="number" id="year" v-model="car.year" required>
-      </div>
-      <div class="form-group">
-        <label for="category">Category:</label>
-        <input type="text" id="category" v-model="car.category" required>
-      </div>
-      <div class="form-group">
-        <label for="priceGroup">Price Group:</label>
+      <form @submit.prevent="addCar">
+        <h2 class="form-header">Add Car</h2>
+        <div class="form-group">
+          <label for="make">Make:</label>
+          <input id="make" v-model="car.make" required type="text">
+        </div>
+        <div class="form-group">
+          <label for="model">Model:</label>
+          <input id="model" v-model="car.model" required type="text">
+        </div>
+        <div class="form-group">
+          <label for="year">Year:</label>
+          <input id="year" v-model="car.year" required type="number">
+        </div>
+        <div class="form-group">
+          <label for="category">Category:</label>
+          <input id="category" v-model="car.category" required type="text">
+        </div>
+        <div class="form-group">
+          <label for="priceGroup">Price Group:</label>
 
-        <select id="priceGroup" v-model="car.priceGroup" required>
-          <option value="ECONOMY">Economy</option>
-          <option value="STANDARD">Standard</option>
-          <option value="LUXURY">Luxury</option>
-          <option value="PREMIUM">Premium</option>
-          <option value="EXOTIC">Exotic</option>
-          <option value="SPECIAL">Special</option>
-          <option value="OTHER">Other</option>
-          <option value="NONE">None</option>
-        </select>
+          <select id="priceGroup" v-model="car.priceGroup" required>
+            <option value="ECONOMY">Economy</option>
+            <option value="STANDARD">Standard</option>
+            <option value="LUXURY">Luxury</option>
+            <option value="PREMIUM">Premium</option>
+            <option value="EXOTIC">Exotic</option>
+            <option value="SPECIAL">Special</option>
+            <option value="OTHER">Other</option>
+            <option value="NONE">None</option>
+          </select>
 
-      </div>
-      <div class="form-group">
-        <label for="licensePlate">License Plate:</label>
-        <input type="text" id="licensePlate" v-model="car.licensePlate" required>
-      </div>
-      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-      <button type="submit">Add Car</button>
-    </form>
+        </div>
+        <div class="form-group">
+          <label for="licensePlate">License Plate:</label>
+          <input id="licensePlate" v-model="car.licensePlate" required type="text">
+        </div>
+        <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+        <div class="button-container">
+          <button class="confirm-button button" type="submit">Add Car</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import { PriceGroup } from "@/enums/PriceGroup";
+import {PriceGroup} from "@/enums/PriceGroup";
 
 export default {
   data() {
     return {
       car: {
-
 
 
         make: 'Mercedes',
@@ -61,7 +64,7 @@ export default {
         category: 'Sedan',
         priceGroup: PriceGroup.LUXURY,
         licensePlate: '000000'
-      },errorMessage: '' // Added error message data property
+      }, errorMessage: '' // Added error message data property
     };
   },
   methods: {
@@ -95,11 +98,11 @@ export default {
 
       // Reset the form after adding the car
       this.resetForm();
-      },
+    },
     resetForm() {
       // Reset the form fields
       this.car = {
-        id:'',
+        id: '',
         make: '',
         model: '',
         year: 0,
@@ -117,4 +120,5 @@ export default {
   color: red;
   margin-top: 5px;
 }
+
 </style>

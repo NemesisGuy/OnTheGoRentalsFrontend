@@ -10,11 +10,11 @@
         <h2 style="color: black;">User Information</h2><!--please remove the inline styles thats a big ISSUE -->
         <div class="form-group">
           <label for="userName">Username:</label>
-          <input type="text" id="userName" v-model="user.userName" required class="custom-input">
+          <input id="userName" v-model="user.userName" class="custom-input" required type="text">
         </div>
         <div class="form-group">
           <label for="email">Email:</label>
-          <input type="email" id="email" v-model="user.email" required class="custom-input">
+          <input id="email" v-model="user.email" class="custom-input" required type="email">
         </div>
       </div>
       <!-- Booking Dates -->
@@ -22,31 +22,32 @@
         <h2 style="color: black;">Booking Dates</h2><!--please remove the inline styles thats a big ISSUE -->
         <div class="form-group">
           <label for="startDate">Start Date:</label>
-          <input type="date" id="startDate" v-model="booking.startDate" required class="custom-input">
+          <input id="startDate" v-model="booking.startDate" class="custom-input" required type="date">
         </div>
         <div class="form-group">
           <label for="endDate">End Date:</label>
-          <input type="date" id="endDate" v-model="booking.endDate" required class="custom-input">
+          <input id="endDate" v-model="booking.endDate" class="custom-input" required type="date">
         </div>
       </div>
       <!-- Car Selection -->
-<div class="car-details">
-  <h2 style="color: black;">Select a Car</h2><!--please remove the inline styles thats a big ISSUE -->
-  <select v-model="selectedCar" @change="calculatePrice" class="custom-dropdown">
-    <option value="">Select a Car</option>
-    <option value="AUDI A3">AUDI A3</option>
-    <option value="BMW">BMW</option>
-    <option value="RANGE ROVER">RANGE ROVER</option>
-    <option v-for="car in cars" :key="car.id" :value="car.make + ' ' + car.model">
-      {{ car.make }} {{ car.model }}
-    </option>
-  </select>
-  <p v-if="selectedCar" style="color: black;">
-    Price per Day: R {{ getPricePerDay(selectedCar.priceGroup) }}
-  </p>
-</div><!-- Car Selection -->
-
-      <button class="add-button" @click="openBookingPage">Booking</button>
+      <div class="car-details">
+        <h2 style="color: black;">Select a Car</h2><!--please remove the inline styles thats a big ISSUE -->
+        <select v-model="selectedCar" class="custom-dropdown" @change="calculatePrice">
+          <option value="">Select a Car</option>
+          <option value="AUDI A3">AUDI A3</option>
+          <option value="BMW">BMW</option>
+          <option value="RANGE ROVER">RANGE ROVER</option>
+          <option v-for="car in cars" :key="car.id" :value="car.make + ' ' + car.model">
+            {{ car.make }} {{ car.model }}
+          </option>
+        </select>
+        <p v-if="selectedCar" style="color: black;">
+          Price per Day: R {{ getPricePerDay(selectedCar.priceGroup) }}
+        </p>
+      </div><!-- Car Selection -->
+      <div class="button-container">
+        <button class="add-button button" @click="openBookingPage"><i class="fas fa-check"></i> Confirm</button>
+      </div>
     </div>
   </div>
 </template>
@@ -86,14 +87,14 @@ export default {
   methods: {
     fetchBookings() {
       axios
-        .get('http://localhost:8080/api/booking/get-all')
-        .then((response) => {
-          this.Bookings = response.data;
-          this.originalBookings = response.data;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+          .get('http://localhost:8080/api/booking/get-all')
+          .then((response) => {
+            this.Bookings = response.data;
+            this.originalBookings = response.data;
+          })
+          .catch((error) => {
+            console.error(error);
+          });
     },
     openBookingPage() {
       this.$router.push('/booking');
@@ -126,10 +127,8 @@ export default {
   background-color: #fff;
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-
-
 
 
 .custom-dropdown,

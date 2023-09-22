@@ -21,9 +21,10 @@
           <label for="password"><i class="fas fa-lock"></i> Password:</label>
           <input type="password" placeholder="Enter password" v-model="password" id="password" autocomplete="current-password">
         </div>
-
-        <button class="add-button" type="submit"><i class="fas fa-sign-in-alt"></i> Login:</button>
-        <button class="read-button" @click="goToSignup"><i class="fas fa-user-plus"></i> Signup</button>
+        <div class="button-container">
+          <button class="add-button button" type="submit"><i class="fas fa-sign-in-alt"></i> Login:</button>
+          <button class="read-button button" @click="goToSignup"><i class="fas fa-user-plus"></i> Signup</button>
+        </div>
       </form>
     </div>
   </div>
