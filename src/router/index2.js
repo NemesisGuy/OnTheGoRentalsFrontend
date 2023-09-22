@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomePage from '@/components/Main/HomePage.vue';
+import HomePage from '@/components/Main/General/HomePage.vue';
 import CarList from '@/components/Main/Car/CarList.vue';
-import CustomerList from '@/components/Main/CustomerList.vue';
-import Home from "@/components/Main/Home.vue";
-import ErrorPage from '@/components/Main/ErrorPage.vue';
-import Signup from "@/components/Main/Signup.vue";
-import Login from "@/components/Main/Login.vue";
+import CustomerList from '@/components/Main/User/CustomerList.vue';
+import Home from "@/components/Main/General/Home.vue";
+import ErrorPage from '@/components/Main/General/ErrorPage.vue';
+import Signup from "@/components/Main/User/Signup.vue";
+import Login from "@/components/Main/User/Login.vue";
 import AdminPage from "@/components/Admin/AdminPage.vue";
 import CreateCar from "@/components/Admin/Car/CreateCar.vue";
 import DeleteCar from "@/components/Admin/Car/DeleteCar.vue";

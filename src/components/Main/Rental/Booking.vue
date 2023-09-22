@@ -1,11 +1,13 @@
 <template>
   <div class="card-container">
     <div class="booking">
-      <h1>Booking</h1>
+      <div class="form-header">
+        <h1>Booking</h1>
+      </div>
       <hr>
       <!-- User Information -->
       <div class="user-details">
-        <h2 style="color: black;">User Information</h2>
+        <h2 style="color: black;">User Information</h2><!--please remove the inline styles thats a big ISSUE -->
         <div class="form-group">
           <label for="userName">Username:</label>
           <input type="text" id="userName" v-model="user.userName" required class="custom-input">
@@ -17,7 +19,7 @@
       </div>
       <!-- Booking Dates -->
       <div class="date-details">
-        <h2 style="color: black;">Booking Dates</h2>
+        <h2 style="color: black;">Booking Dates</h2><!--please remove the inline styles thats a big ISSUE -->
         <div class="form-group">
           <label for="startDate">Start Date:</label>
           <input type="date" id="startDate" v-model="booking.startDate" required class="custom-input">
@@ -29,7 +31,7 @@
       </div>
       <!-- Car Selection -->
 <div class="car-details">
-  <h2 style="color: black;">Select a Car</h2>
+  <h2 style="color: black;">Select a Car</h2><!--please remove the inline styles thats a big ISSUE -->
   <select v-model="selectedCar" @change="calculatePrice" class="custom-dropdown">
     <option value="">Select a Car</option>
     <option value="AUDI A3">AUDI A3</option>
@@ -44,7 +46,7 @@
   </p>
 </div><!-- Car Selection -->
 
-      <button class="booking-button" @click="openBookingPage">Booking</button>
+      <button class="add-button" @click="openBookingPage">Booking</button>
     </div>
   </div>
 </template>
@@ -116,12 +118,7 @@ export default {
 
 
 <style scoped>
-.card-container {
-  display: flex;
-  justify-content: center;
-  background-color: #f2105e;
-  padding: 30px;
-}
+
 
 .booking {
   width: 650px;
@@ -132,16 +129,8 @@ export default {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-.booking h1 {
-  margin-bottom: 20px;
-  text-align: center;
-  color: #555;
-}
 
-.filter-container {
-  display: flex;
-  align-items: center;
-}
+
 
 .custom-dropdown,
 .custom-input {
@@ -165,45 +154,11 @@ export default {
   color: #fff;
 }
 
-.booking-button {
-  font-size: 16px;
-  padding: 12px 25px;
-  margin-left: 25px;
-  border-radius: 9px;
-  background-color: #f2105e;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
-
-.booking-button:focus {
-  outline: none;
-}
-
-.booking-button:hover {
-  background-color: #ff005a;
-}
-
-.booking hr {
-  border: none;
-  border-top: 2px solid #f2105e;
-  margin: 20px 0;
-}
 
 .car-details, .user-details, .date-details {
   margin-bottom: 20px;
 }
 
-label {
-  font-weight: bold;
-  color: black; 
-}
-
-input[type="date"] {
-  padding: 12px 16px;
-  border: 1px solid #000000;
-  border-radius: 10px;
-}
 
 .booking p, .booking h3 {
   text-align: start;

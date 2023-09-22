@@ -79,7 +79,7 @@
 
 <style>
 .jumbotron {
-  background-image: url('../../assets/paralax-stars.jpg');
+  background-image: url('../../../assets/Images/Background/paralax-stars.jpg');
   background-size: cover;
   height: 500px;
   display: flex;

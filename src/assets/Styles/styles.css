@@ -2,13 +2,15 @@
     --admin-page-width: 800px; /* Change this to the desired width of admin-page */
     --sidebar-container-width: 200px; /* Change this to the width of sidebar-container */
 }
+#app {
+    /*max-width: 1280px;*/
+    margin: 0 auto;
+    padding: 2rem;
+    font-weight: normal;
+}
 
 .card-container {
-    /*padding: 20px;*/
     margin: 20px;
-    /*border-radius: 5px;*/
-    /*box-shadow: 0px 0px 5px 0px #000;*/
-    /*text-align: center;*/
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -102,9 +104,11 @@ html, body, #app {
 }
 
 .button-container {
+    margin-top: 5px;
+    padding-top: 5px;
     color: floralwhite;
-    padding: 20px;
-    margin: 20px;
+    align: center;
+
 }
 
 .box-shadow {
@@ -194,24 +198,6 @@ nav a:active {
 }
 
 /*  ----------------------------------------     Sidebar Styles     -------------------------------------------------- */
-/*
-.sidebar {
-    width: 200px;
-    background-color: #6610f2;
-    color: floralwhite;
-    padding: 20px;
-    box-shadow: 0px 0px 5px 0px #000;
-    border-radius: 2px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    !* stick to left of screen *!
-
-
-}
-*/
-
 
 /* Sidebar Styles */
 
@@ -256,11 +242,7 @@ nav a:active {
 }
 
 form {
-    /*background-color: #6610f2;*/
-    /*padding: 20px;*/
-    /* margin: 20px;*/
-    /*border-radius: 5px;*/
-    /*box-shadow: 0px 0px 5px 0px #000;*/
+
 
 }
 
@@ -272,7 +254,10 @@ form {
 .form-group {
     margin-bottom: 15px;
 }
-
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
 label {
     display: block;
     font-weight: bold;
@@ -324,14 +309,14 @@ select {
     border-radius: 4px;
 }
 
-button[type="submit"] {
-    padding: 10px 20px;
-    /*background-color: #6610f2;*/
+/*button[type="submit"] {
+!*    padding: 10px 20px;*!
+    !*background-color: #6610f2;*!
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-}
+}*/
 
 
 .add-user-form {
@@ -358,14 +343,16 @@ select {
     border-radius: 4px;
 }
 
+/*
 button[type="submit"] {
     padding: 10px 20px;
-   /* background-color: #6610f2;*/
+   !* background-color: #6610f2;*!
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
+*/
 
 .btn-small {
     padding: 5px;
@@ -376,17 +363,17 @@ button[type="submit"] {
 }
 
 
-button[type="submit"] {
-   /* background-color: #f2105e;*/
+/*button[type="submit"] {
+   !* background-color: #f2105e;*!
     color: floralwhite;
 
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-}
+}*/
 
-button {
+/*.button {
     background-color: #f2105e;
     color: floralwhite;
     padding: 10px 20px;
@@ -395,16 +382,17 @@ button {
     border-radius: 4px;
     box-shadow: black 0px 0px 5px 0px;
     cursor: pointer;
-}
+    height: 40px;
+}*/
 
-button:hover {
+.button:hover {
     background-color: #6610f2;
     /*   box-shadow: inset #f2105e 0px 0px 10px 0px;  */
     box-shadow: black 0px 0px 5px 0px;
 
 }
 
-button:active {
+.button:active {
     background-color: #10f2f2;
     box-shadow: black 0px 0px 5px 0px;
 
@@ -419,6 +407,7 @@ button:active {
     text-decoration: none;
     box-shadow: black 0px 0px 5px 0px;
     color: floralwhite;
+    height: 40px;
 
 }
 
@@ -427,6 +416,7 @@ button:active {
     color: floralwhite;
     box-shadow: black 0px 0px 10px 0px;
     text-decoration: none;
+    height: 40px;
 }
 
 .custom-button:active {
@@ -434,6 +424,7 @@ button:active {
     color: floralwhite;
     box-shadow: black 0px 0px 10px 0px;
     text-decoration: none;
+    height: 40px;
 }
 
 /*  ----------------------------------------     Tables Styles      -------------------------------------------------- */
@@ -532,6 +523,7 @@ span {
     color: white;
     text-decoration: none;
     border-radius: 4px;
+    height: 40px;
 }
 
 table {
@@ -560,30 +552,37 @@ button {
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
     color: white;
+    height: 40px;
 }
 
 .blue-icon {
     color: #2196f3;
+
 }
 
 .confirm-button, .accept-button {
     background-color: #4caf50;
+    height: 40px;
 }
 
 .deny-button, .cancel-button {
     background-color: #e53935;
+    height: 40px;
 }
 
 .delete-button {
     background-color: #e53935;
+    height: 40px;
 }
 
 .update-button {
     background-color: #ff9800;
+    height: 40px;
 }
 
 .read-button {
     background-color: #2196f3;
+    height: 40px;
 }
 
 .search-bar {
@@ -606,6 +605,7 @@ button {
     text-decoration: none;
     border-radius: 4px;
     box-shadow: 0px 0px 5px 0px #000;
+    height: 40px;
 
 }
 
@@ -614,6 +614,7 @@ button {
     border-radius: 4px;
     color: white;
     background-color: #2196f3;
+    height: 40px;
 }
 
 .search-button:hover {
@@ -635,6 +636,7 @@ button {
 
 .search-input button {
     margin-left: 10px;
+    height: 40px;
 }
 
 .search-input {
@@ -649,6 +651,7 @@ button {
     border-radius: 4px;
     color: white;
     background-color: #2196f3;
+    height: 40px;
 }
 
 .search-button {
@@ -659,10 +662,12 @@ button {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
+    height: 40px;
 }
 
 .reset-search-button {
-    width: 120px;
+    min-width: 120px;
+    height: 40px;
 
 }
 
@@ -677,18 +682,22 @@ button {
 
 .add-button {
     min-width: 100px;
+    height: 40px;
 }
 
 .delete-button {
     min-width: 100px;
+    height: 40px;
 }
 
 .update-button {
     min-width: 100px;
+    height: 40px;
 }
 
 .read-button {
     min-width: 100px;
+    height: 40px;
 }
 
 .actions-column {
@@ -698,9 +707,7 @@ button {
 
 /* -----------------------------------  Styling the Admin Management Pages Buttons  ------------------------------------*/
 .add-button {
-    /*margin-bottom: 1rem;*/
-    display: inline-block;
-    padding: 0.5rem 1rem;
+
     background-color: #4caf50;
     color: white;
     text-decoration: none;
@@ -709,17 +716,9 @@ button {
 
 }
 
-.car-button {
-    /*add car icon*/
-}
 
-.user-button {
-    /*add user icon*/
-}
 
-.rental-button {
-    /*add rental icon*/
-}
+
 
 /*this is to put the admin top section in one line */
 .search-bar-container {
@@ -787,7 +786,7 @@ button {
     margin-top: 1rem;
 }
 
-button {
+.button {
     padding: 0.5rem 1rem;
     border-radius: 4px;
     margin-left: 0.5rem;

@@ -4,6 +4,7 @@
     <div class="form-container" @submit.prevent="register">
       <form>
         <h2 class="form-header"> <i class="fas fa-user-plus"></i> Signup</h2>
+
         <div class="form-group">
           <label for="username"><i class="fas fa-user"></i> Username:</label>
           <input type="text" id="userName" name="userName" placeholder="Enter your username" v-model="userName" required>
@@ -32,8 +33,11 @@
           <label for="confirm-password"><i class="fas fa-lock"></i> Confirm Password:</label>
           <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
         </div>
+       <div class="button-container">
         <button class="add-button"   type="submit" ><i class="fas fa-user-plus"></i> Signup</button>
         <button class="read-button" @click="goToLogin"><i class="fas fa-sign-in-alt"></i> Login</button>
+
+       </div>
       </form>
     </div>
   </div>

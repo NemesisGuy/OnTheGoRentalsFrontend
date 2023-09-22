@@ -12,8 +12,8 @@
                 <i class="fas fa-search"> </i> Reset
               </button>
             </div>
-            <router-link to="/admin/cars/create" class="add-button car-button">
-              <i class="fas fa-car"> </i> Add New Car
+            <router-link to="/admin/cars/create" class="add-button button">
+              <i class="fas fa-car"> </i> Add Car
             </router-link>
         </div>
       </div>

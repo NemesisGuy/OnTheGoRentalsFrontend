@@ -12,8 +12,8 @@
               <i class="fas fa-search"></i> Reset
             </button>
           </div>
-          <router-link to="/admin/rentals/create" class="add-button car-button">
-            <i class="fas fa-contact-book"></i> Add New Rental
+          <router-link to="/admin/rentals/create" class="add-button button">
+            <i class="fas fa-contact-book"></i> Add Rental
           </router-link>
         </div>
       </div>

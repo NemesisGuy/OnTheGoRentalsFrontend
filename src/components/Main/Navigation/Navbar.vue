@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-sm navbar-custom">
     <div class="container-fluid">
       <router-link to="/" class="navbar-brand">
-        <img alt="Logo" class="logo" src="../../assets/OntheGoRentals-Logo-Round-Clear.PNG">
+        <img alt="Logo" class="logo" src="../../../assets/Images/Logo/OntheGoRentals-Logo-Round-Clear.PNG">
       </router-link>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
               aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -17,13 +17,29 @@
             <router-link to="/nav/user/signup" class="nav-link">Signup</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/admin" class="nav-link">Admin Dashboard</router-link>
-          </li>
-          <li class="nav-item">
             <router-link to="/help-center" class="nav-link">Help Center</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/Booking" class="nav-link">Booking</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/admin" class="nav-link">Admin Dashboard</router-link>
+          </li>
+
+          <!--under development-->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+              Under Development
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <!--User Profile-->
+              <router-link to="/user/profile/1" class="dropdown-item">User Profile</router-link>
+              <router-link to="/page1" class="dropdown-item">Page 1</router-link>
+              <router-link to="/page2" class="dropdown-item">Page 2</router-link>
+              <router-link to="/page3" class="dropdown-item">Page 3</router-link>
+
+            </div>
           </li>
         </ul>
       </div>
@@ -77,3 +93,5 @@
   padding-top: 80px; /* Add padding to the top to prevent content from going under the navigation */
 }
 </style>
+<script setup>
+</script>

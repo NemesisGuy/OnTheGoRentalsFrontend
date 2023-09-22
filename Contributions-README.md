@@ -1,4 +1,3 @@
-
 # OnTheGoRentals Frontend
 
 **Car Rental System**

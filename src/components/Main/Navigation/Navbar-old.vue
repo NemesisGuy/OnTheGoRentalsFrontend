@@ -5,7 +5,7 @@
         <ul class="nav-list">
           <li>
             <router-link to="/">
-              <img alt="Logo" class="logo" src="../../assets/OntheGoRentals-Logo-Round-Clear.PNG">
+              <img alt="Logo" class="logo" src="../../../assets/Images/Logo/OntheGoRentals-Logo-Round-Clear.PNG">
             </router-link>
           </li>
           <li>

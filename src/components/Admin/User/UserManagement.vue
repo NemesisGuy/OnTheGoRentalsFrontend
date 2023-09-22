@@ -12,8 +12,8 @@
               <i class="fas fa-search"></i> Reset
             </button>
           </div>
-          <router-link class="add-button user-button" to="/admin/users/create">
-            <i class="fas fa-user"></i> Add New User
+          <router-link class="add-button button" to="/admin/users/create">
+            <i class="fas fa-user"></i> Add User
           </router-link>
         </div>
       </div>
