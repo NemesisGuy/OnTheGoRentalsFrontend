@@ -41,7 +41,7 @@
         </div>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
         <div class="button-container">
-          <button class="confirm-button button" type="submit">Add Car</button>
+          <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
         </div>
       </form>
     </div>

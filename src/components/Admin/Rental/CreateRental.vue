@@ -60,7 +60,7 @@
 
         <div class="form-group">
           <div class="button-container">
-            <button class="confirm-button button" type="submit">Create Rental</button>
+            <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
           </div>
         </div>
       </form>

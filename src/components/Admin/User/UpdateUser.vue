@@ -20,25 +20,25 @@
         <tr v-for="user in sortedUsers" :key="user.id">
           <td>{{ user.id }}</td>
           <td>
-            <input v-model="user.userName" :disabled="!user.editMode" />
+            <input v-model="user.userName" :disabled="!user.editMode"/>
           </td>
           <td>
-            <input v-model="user.email" :disabled="!user.editMode" />
+            <input v-model="user.email" :disabled="!user.editMode"/>
           </td>
           <td>
-            <input v-model="user.firstName" :disabled="!user.editMode" />
+            <input v-model="user.firstName" :disabled="!user.editMode"/>
           </td>
           <td>
-            <input v-model="user.lastName" :disabled="!user.editMode" />
+            <input v-model="user.lastName" :disabled="!user.editMode"/>
           </td>
           <td>
-            <input v-model="user.phoneNumber" :disabled="!user.editMode" />
+            <input v-model="user.phoneNumber" :disabled="!user.editMode"/>
           </td>
           <td>
             <select v-model="user.role" :disabled="!user.editMode" required>
 
               <option value="Guest">Guest</option>
-              <option value="User" selected>User</option>
+              <option selected value="User">User</option>
               <option value="Privileged">Privileged</option>
               <option value="Admin">Admin</option>
 
@@ -46,12 +46,12 @@
 
           </td>
           <td>
-            <button @click="toggleEditMode(user)" class="btn-small">
+            <button class="btn-small" @click="toggleEditMode(user)">
               {{ user.editMode ? 'Save' : 'Edit' }}
             </button>
           </td>
           <td>
-            <button @click="deleteUser(user.id)" class="btn-small">Delete</button>
+            <button class="btn-small" @click="deleteUser(user.id)">Delete</button>
           </td>
         </tr>
         </tbody>

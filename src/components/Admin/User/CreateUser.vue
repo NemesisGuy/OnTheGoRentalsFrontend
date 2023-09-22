@@ -33,7 +33,7 @@
           </select>
         </div>
         <div class="button-container">
-          <button class="confirm-button button" type="submit">Add User</button>
+          <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
         </div>
       </form>
     </div>

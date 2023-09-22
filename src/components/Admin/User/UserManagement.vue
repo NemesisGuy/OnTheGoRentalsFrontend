@@ -7,8 +7,8 @@
       <div class="search-bar-container">
         <div class="search-bar">
           <div class="search-input">
-            <input v-model="searchQuery" placeholder="Search..." type="text" />
-            <button @click="resetSearch" class="read-button button">
+            <input v-model="searchQuery" placeholder="Search..." type="text"/>
+            <button class="read-button button" @click="resetSearch">
               <i class="fas fa-search"></i> Reset
             </button>
           </div>
@@ -20,15 +20,15 @@
     </div>
     <table>
       <thead>
-        <tr>
-          <th @click="sortUsers('id')">ID <i class="fas fa-sort"></i></th>
-          <th @click="sortUsers('userName')">Username <i class="fas fa-sort"></i></th>
-          <th @click="sortUsers('firstName')">First Name <i class="fas fa-sort"></i></th>
-          <th @click="sortUsers('lastName')">Last Name <i class="fas fa-sort"></i></th>
-          <th @click="sortUsers('phoneNumber')">Phone Number <i class="fas fa-sort"></i></th>
-          <th @click="sortUsers('email')">Email <i class="fas fa-sort"></i></th>
-          <th class="actions-column">Actions</th>
-        </tr>
+      <tr>
+        <th @click="sortUsers('id')">ID <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('userName')">Username <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('firstName')">First Name <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('lastName')">Last Name <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('phoneNumber')">Phone Number <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('email')">Email <i class="fas fa-sort"></i></th>
+        <th class="actions-column">Actions</th>
+      </tr>
       </thead>
       <tbody v-if="!loading">
       <tr v-for="user in sortedUsers" :key="user.id">
@@ -43,7 +43,6 @@
         <td v-else>
           <input v-model="user.userName" type="text">
         </td>
-
 
 
         <!-- First Name -->
@@ -113,7 +112,8 @@
         </div>
       </template>
     </confirmation-modal>
-    <SuccessModal v-if="successModal.show" :message="successModal.message" :show="successModal.show" @cancel="closeModal"
+    <SuccessModal v-if="successModal.show" :message="successModal.message" :show="successModal.show"
+                  @cancel="closeModal"
                   @close="closeModal"></SuccessModal>
     <FailureModal v-if="failModal.show" :message="failModal.message" :show="failModal.show" @cancel="closeModal"
                   @close="closeModal"></FailureModal>
@@ -256,7 +256,7 @@ export default {
             user.userName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
             user.firstName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
             user.lastName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            user.phoneNumber.toLowerCase().includes(this.searchQuery.toLowerCase())||
+            user.phoneNumber.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
             user.email.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
