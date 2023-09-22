@@ -25,7 +25,7 @@
         <td>{{ car.priceGroup }}</td>
         <td>{{ car.licensePlate }}</td>
         <td>
-          <button class="rent-button" @click="rentCar(car)"><i class="fas fa-handshake"></i> Rent</button>
+          <button class="add-button" @click="rentCar(car)"><i class="fas fa-handshake"></i> Rent</button>
         </td>
       </tr>
       </tbody>

@@ -8,7 +8,7 @@
         <div class="search-bar">
           <div class="search-input">
             <input v-model="searchQuery" placeholder="Search..." type="text" />
-            <button @click="resetSearch" class="reset-search-button">
+            <button @click="resetSearch" class="read-button  button">
               <i class="fas fa-search"></i> Reset
             </button>
           </div>
@@ -84,20 +84,20 @@
         </td>
         <td>
           <div v-if="!rental.editing">
-            <button @click="editRental(rental)" class="update-button">
+            <button @click="editRental(rental)" class="update-button button">
               <i class="fas fa-edit"></i> Edit
             </button>
-            <button @click="deleteRental(rental.rentalId)" class="delete-button">
+            <button @click="deleteRental(rental.rentalId)" class="delete-button button">
               <i class="fas fa-trash-alt"></i> Delete
             </button>
 
-           <button @click="openRentalView(rental.rentalId)" class="read-button"><i class="fas fa-eye"></i> Read</button>
+           <button @click="openRentalView(rental.rentalId)" class="read-button button" ><i class="fas fa-eye"></i> Read</button>
           </div>
           <div v-else>
-            <button @click="saveRental(rental)" class="accept-button">
+            <button @click="saveRental(rental)" class="accept-button button">
               <i class="fas fa-save"></i> Save
             </button>
-            <button @click="cancelEdit(rental)" class="cancel-button">
+            <button @click="cancelEdit(rental)" class="cancel-button button">
               <i class="fas fa-times"></i> Cancel
             </button>
           </div>

@@ -1,11 +1,13 @@
 <template>
   <div class="content-container">
     <h1>Test Modals</h1>
-    <button @click="showLoadingModal">Show Loading Modal</button>
-    <button @click="showSuccessModal">Show Success Modal</button>
-    <button @click="showFailureModal">Show Failure Modal</button>
-
-    <button @click="showConfirmationModal">Show Confirmation Modal</button>
+    <button @click="showLoadingModal" class="read-button button">Show Loading Modal</button>
+    <br>
+    <button @click="showSuccessModal " class="accept-button button">Show Success Modal</button>
+    <br>
+    <button @click="showFailureModal" class="deny-button button">Show Failure Modal</button>
+    <br>
+    <button @click="showConfirmationModal" class="update-button button">Show Confirmation Modal</button>
 
     <loading-modal :show="loadingModalVisible" @close="hideLoadingModal" />
     <success-modal :show="successModalVisible" @close="hideSuccessModal" message="It Worked, Nice!" />

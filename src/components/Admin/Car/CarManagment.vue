@@ -8,7 +8,7 @@
         <div class="search-bar">
             <div class="search-input">
               <input v-model="searchQuery" placeholder="Search..." type="text" />
-              <button @click="resetSearch" class="reset-search-button">
+              <button @click="resetSearch" class="read-button button">
                 <i class="fas fa-search"> </i> Reset
               </button>
             </div>
@@ -66,15 +66,15 @@
         </td>
         <td>
           <template v-if="!car.editing">
-            <button @click="deleteCar(car.id)" class="delete-button">
+            <button @click="deleteCar(car.id)" class="delete-button button">
               <i class="fas fa-trash"></i> Delete
               </button>
-            <button @click="editCar(car)" class="update-button"><i class="fas fa-edit"></i> Edit</button>
-            <button @click="openCarView(car.id)" class="read-button"><i class="fas fa-eye"></i> Read</button>
+            <button @click="editCar(car)" class="update-button button"><i class="fas fa-edit"></i> Edit</button>
+            <button @click="openCarView(car.id)" class="read-button button"><i class="fas fa-eye"></i> Read</button>
           </template>
           <template v-else>
-            <button @click="saveCar(car)" class="update-button">Save</button>
-            <button @click="cancelEdit(car)" class="delete-button">Cancel</button>
+            <button @click="saveCar(car)" class="update-button button">Save</button>
+            <button @click="cancelEdit(car)" class="delete-button button">Cancel</button>
           </template>
         </td>
       </tr>
@@ -250,7 +250,6 @@ export default {
             console.log(response);
             console.log("Car updated");
             this.loading = false;
-            // this.successModal = true; // Show success modal
             this.successModal.show = true; // Show success modal
             this.successModal.message = "Car ID: " + car.id + " was updated successfully"; // Show success modal
 
@@ -307,19 +306,6 @@ export default {
 
 .search-input input {
   margin-right: 10px;
-}
-
-.search-input button {
-  margin-left: 10px;
-}
-
-.add-button {
-  margin-left: 10px;
-}
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .checkbox-container input[type="checkbox"] {

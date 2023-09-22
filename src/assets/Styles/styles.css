@@ -286,10 +286,10 @@ input[type="email"]:focus, [type="number"]:focus,
     /*box-shadow: #f2105e 0px 0px 5px 0px;*/
 }
 
-.add-car-form {
+/*.add-car-form {
     max-width: 400px;
     margin: auto;
-}
+}*/
 
 .form-group {
     margin-bottom: 20px;
@@ -319,10 +319,10 @@ select {
 }*/
 
 
-.add-user-form {
+/*.add-user-form {
     max-width: 400px;
     margin: auto;
-}
+}*/
 
 .form-group {
     margin-bottom: 20px;
@@ -400,7 +400,7 @@ button[type="submit"] {
 
 .custom-button {
     background-color: #f2105e;
-    padding: 10px 20px;
+
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -515,7 +515,7 @@ span {
 
 /* -----------------------------------  Styling the Admin Users Management Page  ------------------------------------*/
 
-.add-user-link {
+/*.add-user-link {
     margin-bottom: 1rem;
     display: inline-block;
     padding: 0.5rem 1rem;
@@ -524,7 +524,7 @@ span {
     text-decoration: none;
     border-radius: 4px;
     height: 40px;
-}
+}*/
 
 table {
     width: 100%;
@@ -548,11 +548,11 @@ td {
 }
 
 button {
-    margin-right: 0.5rem;
+
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
     color: white;
-    height: 40px;
+    height: 40px;text-decoration: none;
 }
 
 .blue-icon {
@@ -560,9 +560,10 @@ button {
 
 }
 
-.confirm-button, .accept-button {
+.confirm-button, .accept-button ,.add-button{
     background-color: #4caf50;
     height: 40px;
+
 }
 
 .deny-button, .cancel-button {
@@ -595,7 +596,7 @@ button {
     margin-right: 1rem;
 }
 
-.add-user-button {
+/*.add-user-button {
 
     margin-bottom: 1rem;
     display: inline-block;
@@ -607,15 +608,9 @@ button {
     box-shadow: 0px 0px 5px 0px #000;
     height: 40px;
 
-}
+}*/
 
-.search-bar button {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    color: white;
-    background-color: #2196f3;
-    height: 40px;
-}
+
 
 .search-button:hover {
     background-color: #45a049;
@@ -634,7 +629,7 @@ button {
     margin-right: 10px;
 }
 
-.search-input button {
+.search-input-button {
     margin-left: 10px;
     height: 40px;
 }
@@ -646,7 +641,7 @@ button {
     margin-right: 8px;
 }
 
-.search-bar-container button {
+.search-bar-container-button {
     padding: 0.5rem 1rem;
     border-radius: 4px;
     color: white;
@@ -706,15 +701,6 @@ button {
 }
 
 /* -----------------------------------  Styling the Admin Management Pages Buttons  ------------------------------------*/
-.add-button {
-
-    background-color: #4caf50;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    box-shadow: 0px 0px 5px 0px #000;
-
-}
 
 
 
@@ -740,9 +726,9 @@ button {
     margin-right: 10px;
 }
 
-.search-input button {
+/*.search-input button {
     margin-left: 10px;
-}
+}*/
 
 .add-button {
     margin-left: 10px;
@@ -790,6 +776,10 @@ button {
     padding: 0.5rem 1rem;
     border-radius: 4px;
     margin-left: 0.5rem;
+    box-shadow: 0px 0px 5px 0px #000;
+    height: 40px;text-decoration: none;
+    color: floralwhite;
+    border: none;
 }
 
 .loading-modal {

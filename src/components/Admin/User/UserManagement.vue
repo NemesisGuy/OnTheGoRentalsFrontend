@@ -8,7 +8,7 @@
         <div class="search-bar">
           <div class="search-input">
             <input v-model="searchQuery" placeholder="Search..." type="text" />
-            <button @click="resetSearch" class="reset-search-button">
+            <button @click="resetSearch" class="read-button button">
               <i class="fas fa-search"></i> Reset
             </button>
           </div>
@@ -71,21 +71,21 @@
         <!-- Actions -->
         <td>
           <template v-if="!user.editing">
-            <button class="delete-button" @click="deleteUser(user)">
+            <button class="delete-button button" @click="deleteUser(user)">
               <i class="fas fa-trash"></i> Delete
             </button>
-            <button class="update-button" @click="editUser(user)">
+            <button class="update-button button" @click="editUser(user)">
               <i class="fas fa-edit"></i> Edit
             </button>
-            <button class="read-button" @click="openUserView(user.id)">
+            <button class="read-button button" @click="openUserView(user.id)">
               <i class="fas fa-eye"></i> Read
             </button>
           </template>
           <template v-else>
-            <button class="update-button" @click="saveUser(user)">
+            <button class="update-button button" @click="saveUser(user)">
               <i class="fas fa-save"></i> Save
             </button>
-            <button class="delete-button" @click="cancelEdit(user)">
+            <button class="delete-button button" @click="cancelEdit(user)">
               <i class="fas fa-times"></i> Cancel
             </button>
           </template>

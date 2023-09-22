@@ -113,7 +113,7 @@ export default {
 }
 
 .sidebar.expanded {
-  width: 300px;
+  width: 250px;
 }
 
 .toggle-button {

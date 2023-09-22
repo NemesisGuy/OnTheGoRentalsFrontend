@@ -15,7 +15,7 @@
         <input v-model="currencySymbol" id="currencySymbol" type="text" required />
       </div>
 
-      <button type="submit">Save</button>
+      <button type="submit" class="add-button button">Save</button>
     </form>
   </div>
 </template>
