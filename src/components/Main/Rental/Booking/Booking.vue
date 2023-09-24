@@ -1,6 +1,6 @@
 <template>
   <div class="card-container">
-    <div class="booking">
+    <div class="booking"><!--this should be a from ???-->
       <div class="form-header">
         <h1>Booking</h1>
       </div>
