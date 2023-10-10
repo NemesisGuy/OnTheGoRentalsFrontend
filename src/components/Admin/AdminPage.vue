@@ -8,18 +8,36 @@
       </button>
       <div class="sidebar-container">
         <ul>
+            <li>
+                <router-link to="/admin/aboutUs">
+                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                    <span class="menu-text" v-show="isExpanded">About Management</span>
+                </router-link>
+            </li>
           <li>
             <router-link to="/admin/dashboard">
               <i class="fas fa-chart-bar"></i>
               <span class="menu-text" v-show="isExpanded">Dashboard</span>
             </router-link>
           </li>
+            <li>
+                <router-link to="/admin/damageReport">
+                    <i class="fa fa-book" aria-hidden="true"></i>
+                    <span class="menu-text" v-show="isExpanded">Damage Report Management</span>
+                </router-link>
+            </li>
           <li>
             <router-link to="/admin/cars">
               <i class="fas fa-car"></i>
               <span class="menu-text" v-show="isExpanded">Car Management</span>
             </router-link>
           </li>
+            <li>
+                <router-link to="/admin/contactUs">
+                    <i class="fas fa-envelope"></i>
+                    <span class="menu-text" v-show="isExpanded"> Contact Us Management </span>
+                </router-link>
+            </li>
           <li>
             <router-link to="/admin/users">
               <i class="fas fa-users"></i>
