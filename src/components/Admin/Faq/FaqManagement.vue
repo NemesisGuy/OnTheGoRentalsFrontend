@@ -3,7 +3,7 @@
     <div class="content-header">
       <h1><i class="fas fa-question-circle"></i> FAQ Management</h1>
       <div>
-        <router-link to="/admin/faq/create" class="add-button faq-button">
+        <router-link to="/admin/faq/create" class="add-button button">
           <i class="fas fa-question-circle"></i> Add New FAQ
         </router-link>
       </div>
@@ -33,20 +33,18 @@
         </td>
         <td>
           <template v-if="!faq.editing">
-            <button @click="deleteFaq(faq.id)" class="delete-button">
-              <i class="fas fa-trash"></i> Delete
-            </button>
+            <button @click="deleteFaq(faq.id)" class="delete-button button"><i class="fas fa-trash"></i> Delete</button>
           </template>
           <div v-if="faq.idToDelete === faq.id" class="delete-confirmation">
             <h1>Delete FAQ</h1>
             <p>Are you sure you want to delete this FAQ?</p>
-            <button @click="confirmDelete(faq.id)">Delete</button>
-            <button @click="cancelDelete(faq.id)">Cancel</button>
+            <button class="update-button button" @click="confirmDelete(faq.id)">Delete</button>
+            <button class="deny-button button" @click="cancelDelete(faq.id)">Cancel</button>
           </div>
 <!--          <button @click="editFaq(faq)" class="update-button">-->
 <!--            <i class="fas fa-edit"></i> Edit-->
 <!--          </button>-->
-          <button @click="openFaqView(faq.id)" class="read-button">
+          <button @click="openFaqView(faq.id)" class="read-button button">
             <i class="fas fa-eye"></i> Read
           </button>
         </td>

@@ -7,28 +7,28 @@
       <div class="search-bar-container">
         <div class="search-bar">
           <div class="search-input">
-            <input v-model="searchQuery" placeholder="Search..." type="text" />
-            <button @click="resetSearch" class="reset-search-button">
+            <input v-model="searchQuery" placeholder="Search..." type="text"/>
+            <button class="read-button button" @click="resetSearch">
               <i class="fas fa-search"></i> Reset
             </button>
           </div>
-          <router-link class="add-button user-button" to="/admin/users/create">
-            <i class="fas fa-user"></i> Add New User
+          <router-link class="add-button button" to="/admin/users/create">
+            <i class="fas fa-user"></i> Add User
           </router-link>
         </div>
       </div>
     </div>
     <table>
       <thead>
-        <tr>
-          <th @click="sortUsers('id')">ID <i class="fas fa-sort"></i></th>
-          <th @click="sortUsers('userName')">Username <i class="fas fa-sort"></i></th>
-          <th @click="sortUsers('firstName')">First Name <i class="fas fa-sort"></i></th>
-          <th @click="sortUsers('lastName')">Last Name <i class="fas fa-sort"></i></th>
-          <th @click="sortUsers('phoneNumber')">Phone Number <i class="fas fa-sort"></i></th>
-          <th @click="sortUsers('email')">Email <i class="fas fa-sort"></i></th>
-          <th class="actions-column">Actions</th>
-        </tr>
+      <tr>
+        <th @click="sortUsers('id')">ID <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('userName')">Username <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('firstName')">First Name <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('lastName')">Last Name <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('phoneNumber')">Phone Number <i class="fas fa-sort"></i></th>
+        <th @click="sortUsers('email')">Email <i class="fas fa-sort"></i></th>
+        <th class="actions-column">Actions</th>
+      </tr>
       </thead>
       <tbody v-if="!loading">
       <tr v-for="user in sortedUsers" :key="user.id">
@@ -43,7 +43,6 @@
         <td v-else>
           <input v-model="user.userName" type="text">
         </td>
-
 
 
         <!-- First Name -->
@@ -71,21 +70,21 @@
         <!-- Actions -->
         <td>
           <template v-if="!user.editing">
-            <button class="delete-button" @click="deleteUser(user)">
+            <button class="delete-button button" @click="deleteUser(user)">
               <i class="fas fa-trash"></i> Delete
             </button>
-            <button class="update-button" @click="editUser(user)">
+            <button class="update-button button" @click="editUser(user)">
               <i class="fas fa-edit"></i> Edit
             </button>
-            <button class="read-button" @click="openUserView(user.id)">
+            <button class="read-button button" @click="openUserView(user.id)">
               <i class="fas fa-eye"></i> Read
             </button>
           </template>
           <template v-else>
-            <button class="update-button" @click="saveUser(user)">
+            <button class="update-button button" @click="saveUser(user)">
               <i class="fas fa-save"></i> Save
             </button>
-            <button class="delete-button" @click="cancelEdit(user)">
+            <button class="delete-button button" @click="cancelEdit(user)">
               <i class="fas fa-times"></i> Cancel
             </button>
           </template>
@@ -113,7 +112,8 @@
         </div>
       </template>
     </confirmation-modal>
-    <SuccessModal v-if="successModal.show" :message="successModal.message" :show="successModal.show" @cancel="closeModal"
+    <SuccessModal v-if="successModal.show" :message="successModal.message" :show="successModal.show"
+                  @cancel="closeModal"
                   @close="closeModal"></SuccessModal>
     <FailureModal v-if="failModal.show" :message="failModal.message" :show="failModal.show" @cancel="closeModal"
                   @close="closeModal"></FailureModal>
@@ -256,7 +256,7 @@ export default {
             user.userName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
             user.firstName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
             user.lastName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            user.phoneNumber.toLowerCase().includes(this.searchQuery.toLowerCase())||
+            user.phoneNumber.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
             user.email.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });

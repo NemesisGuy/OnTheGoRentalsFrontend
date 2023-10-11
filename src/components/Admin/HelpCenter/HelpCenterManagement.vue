@@ -3,7 +3,7 @@
     <div class="content-header">
       <h1><i class="fas fa-question-circle"></i> Help Center Management</h1>
       <div>
-        <router-link to="/admin/help-center/create" class="add-button faq-button">
+        <router-link to="/admin/help-center/create" class="add-button button">
           <i class="fas fa-question-circle"></i> Add New Article
         </router-link>
       </div>
@@ -48,19 +48,19 @@
         </td>
         <td>
           <template v-if="!article.editing">
-            <button @click="deleteArticle(article.id)" class="delete-button">
+            <button @click="deleteArticle(article.id)" class="delete-button button">
               <i class="fas fa-trash"></i> Delete
             </button>
-            <div v-if="article.idToDelete === article.id" class="delete-confirmation">
+            <div v-if="article.idToDelete === article.id" class="delete-button button">
               <h1>Delete Article</h1>
               <p>Are you sure you want to delete this Article?</p>
-              <button @click="confirmDelete(article.id)">Delete</button>
-              <button @click="cancelDelete(article.id)">Cancel</button>
+              <button class="deny-button button" @click="confirmDelete(article.id)">Delete</button>
+              <button class="deny-button button" @click="cancelDelete(article.id)">Cancel</button>
             </div>
 <!--            <button @click="editArticle(article)" class="update-button">-->
 <!--              <i class="fas fa-edit"></i> Edit-->
 <!--            </button>-->
-            <button @click="openArticleView(article.id)" class="read-button">
+            <button @click="openArticleView(article.id)" class="read-button button">
               <i class="fas fa-eye"></i> Read
             </button>
           </template>

@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import Navbar from './components/Main/Navbar.vue';
-import Footer from "@/components/Main/Footer.vue";
+import Navbar from './components/Main/Navigation/Navbar.vue';
+import Footer from "@/components/Main/General/Footer.vue";
 
 export default {
   name: 'App',

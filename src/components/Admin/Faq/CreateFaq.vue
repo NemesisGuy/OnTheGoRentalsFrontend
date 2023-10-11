@@ -4,17 +4,18 @@
       <h2 class="form-header">Add FAQ</h2>
       <div class="form-group">
         <label for="question">Question:</label>
-        <input type="text" id="question" v-model="faq.question" required>
+        <input id="question" v-model="faq.question" required type="text">
       </div>
       <div class="form-group">
         <label for="answer">Answer:</label>
-        <input type="text" id="answer" v-model="faq.answer" required>
+        <input id="answer" v-model="faq.answer" required type="text">
       </div>
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-      <button @click="goBack" class="back-button">
-        <i class="fas fa-arrow-left"></i> Back
-      </button>
-      <button type="submit">Add FAQ</button>
+      <div class="button-container">
+        <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
+        <button class="deny-button button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
+      </div>
+
     </form>
   </div>
 </template>

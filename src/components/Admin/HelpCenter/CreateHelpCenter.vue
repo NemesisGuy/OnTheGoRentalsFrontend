@@ -15,10 +15,10 @@
         <textarea id="content" v-model="helpCenter.content" required></textarea>
       </div>
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-      <button @click="goBack" class="back-button">
-        <i class="fas fa-arrow-left"></i> Back
-      </button>
-      <button type="submit">Add Help Center Entry</button>
+      <div class="button-container">
+        <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
+        <button @click="goBack" class="deny-button button"><i class="fas fa-arrow-left"></i> Back </button>
+      </div>
     </form>
   </div>
 </template>
