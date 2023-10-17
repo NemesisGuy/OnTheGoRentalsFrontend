@@ -3,14 +3,8 @@
     <div class="form-container-admin">
       <form @submit.prevent="addUser">
         <h2 class="form-header">Add User</h2>
-        <div class="form-group">
-          <label for="userName">Username:</label>
-          <input id="userName" v-model="user.userName" placeholder="Enter username" required type="text">
-        </div>
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input id="email" v-model="user.email" placeholder="Enter email" required type="email">
-        </div>
+
+
         <div class="form-group">
           <label for="firstName">First Name:</label>
           <input id="firstName" v-model="user.firstName" placeholder="Enter first name" required type="text">
@@ -20,16 +14,19 @@
           <input id="lastName" v-model="user.lastName" placeholder="Enter last name" required type="text">
         </div>
         <div class="form-group">
-          <label for="phoneNumber">Phone Number:</label>
-          <input id="phoneNumber" v-model="user.phoneNumber" placeholder="Enter phone number" required type="tel">
+          <label for="email">Email:</label>
+          <input id="email" v-model="user.email" placeholder="Enter email" required type="email">
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input id="password" v-model="user.password" placeholder="Enter password" required type="password">
         </div>
         <div class="form-group">
           <label for="role">Role:</label>
-          <select id="role" v-model="user.role" required>
-            <option value="Guest">Guest</option>
-            <option selected value="User">User</option>
-            <option value="Privileged">Privileged</option>
-            <option value="Admin">Admin</option>
+          <select id="role" v-model="user.roles[0].roleName" required>
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
+            <option value="SUPERADMIN">Super Admin</option>
           </select>
         </div>
         <div class="button-container">
@@ -42,17 +39,19 @@
 
 <script>
 import axios from "axios";
-
+/*String firstName ;
+String lastName ;
+String email;
+String password ;*/
 export default {
   data() {
     return {
       user: {
-        userName: "",
-        email: "",
         firstName: "",
         lastName: "",
-        phoneNumber: "",
-        role: "User",
+        email: "",
+        password: "",
+        roles: [{ roleName: "USER" }], // Updated to match the backend structure
       },
     };
   },
@@ -80,12 +79,12 @@ export default {
     resetForm() {
       // Reset the form fields
       this.user = {
-        userName: "",
-        email: "",
         firstName: "",
         lastName: "",
-        phoneNumber: "",
-        role: "User",
+        email: "",
+        password: "",
+        roles: ["USER"],
+
       };
     },
   },
