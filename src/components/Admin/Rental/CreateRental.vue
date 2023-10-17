@@ -11,7 +11,7 @@
           <label for="user">User:</label>
           <select id="user" v-model="selectedUser" name="userId">
             <option v-for="user in users" :key="user.id" :value="user.id">
-              User ID: {{ user.id }} UserName: {{ user.userName }}
+              User ID: {{ user.id }}, User: {{ user.firstName }} {{ user.lastName }}
             </option>
           </select>
         </div>
@@ -20,7 +20,7 @@
           <label for="issuer">Issuer:</label>
           <select id="issuer" v-model="selectedIssuer" name="issuer">
             <option v-for="user in users" :key="user.id" :value="user.id">
-              User ID: {{ user.id }} UserName: {{ user.userName }}
+              User ID: {{ user.id }}, User: {{ user.firstName }} {{ user.lastName }}
             </option>
           </select>
         </div>
@@ -29,7 +29,7 @@
           <label for="receiver">Receiver:</label>
           <select id="receiver" v-model="selectedReceiver" name="receiver">
             <option v-for="user in users" :key="user.id" :value="user.id">
-              User ID: {{ user.id }} UserName: {{ user.userName }}
+              User ID: {{ user.id }}, User: {{ user.firstName }} {{ user.lastName }}
             </option>
           </select>
         </div>
@@ -133,7 +133,12 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
-
+// Define your headers
+const headers = {
+  'Content-Type': 'application/json',
+//  'Authorization': 'Bearer YOUR_ACCESS_TOKEN', // If you have an authorization header
+  // Add any other headers you need here
+};
 
 export default {
   computed: {
@@ -225,11 +230,19 @@ export default {
       // Convert the fine to an integer with no decimal
       const fine = Math.floor(this.fine); // Remove decimal from fine
 
-
       // Create a new rental object
       const rental = {
-        user: {},
-        car: {},
+        user: {
+          id: null,
+          firstName: null,
+          lastName: null,
+          email: null,
+          enabled: null,
+          roles: null
+        },
+        car: {
+          id: this.selectedCar
+        },
         issuer: this.selectedIssuer,
         receiver: this.selectedReceiver,
         fine: fine,
@@ -241,7 +254,16 @@ export default {
       axios
           .get(`http://localhost:8080/api/admin/users/read/${this.selectedUser}`)
           .then(response => {
-            rental.user = response.data;
+            const userData = response.data;
+            rental.user.id = userData.id;
+            rental.user.firstName = userData.firstName;
+            rental.user.lastName = userData.lastName;
+            rental.user.email = userData.email;
+            rental.user.enabled = userData.enabled;
+            rental.user.roles = userData.roles; // Include user roles
+            console.log("User Details filtered from response: ");
+            console.log(rental.user);
+
             // Fetch car details
             axios
                 .get(`http://localhost:8080/api/admin/cars/read/${this.selectedCar}`)
@@ -257,8 +279,9 @@ export default {
                     this.showConfirmationModal = false;
 
                     // Make the POST request to create the rental
+                  /*  console.log(rental.userObject);*/
                     axios
-                        .post('http://localhost:8080/api/admin/rentals/create', rental)
+                        .post('http://localhost:8080/api/admin/rentals/create', rental,  { headers })
                         .then(response => {
                           console.log('Rental created successfully');
                           this.loadingModal.show = false;
