@@ -1,36 +1,32 @@
 <template>
-  <div class="card-container">
+  <div class="card-container ">
+    <div class="form-container">
     <div class="car-profile">
-      <h1>Car Profile</h1>
+      <h1><i class="fas fa-car"></i> Car Profile: </h1>
       <div class="profile-details" v-if="car">
         <div>
-          <label>Make:</label>
-          <span>{{ car.make }}</span>
-        </div>
-        <div>
-          <label>Model:</label>
-          <span>{{ car.model }}</span>
-        </div>
-        <div>
-          <label>Year:</label>
-          <span>{{ car.year }}</span>
-        </div>
-        <div>
-          <label>Category:</label>
-          <span>{{ car.category }}</span>
-        </div>
-        <div>
-          <label>Price Group:</label>
-          <span>{{ car.priceGroup }}</span>
-        </div>
-        <div>
-          <label>License Plate:</label>
-          <span>{{ car.licensePlate }}</span>
-        </div>
+          <p><label>Make:</label><span>{{ car.make }}</span></p>
+
+          <p><label>Model:</label><span>{{ car.model }}</span></p>
+
+          <p><label>Year:</label><span>{{ car.year }}</span></p>
+
+
+          <p><label>Category:</label><span>{{ car.category }}</span></p>
+
+          <p><label>Price Group:</label><span>{{ car.priceGroup }}</span></p>
+
+
+         <p><label>License Plate: </label>{{ car.licensePlate }}</p>
+          <p> <label>Available: </label>{{ car.available }}</p>
+
+
+          </div>
       </div>
       <div v-else>
         <p>Loading car profile...</p>
       </div>
+    </div>
     </div>
   </div>
 </template>

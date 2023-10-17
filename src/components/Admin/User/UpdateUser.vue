@@ -1,167 +1,115 @@
 <template>
-  <div class="content-container">
-    <div class="card-container">
-      <h1>List of {{ category }} Users</h1>
-      <table>
-        <thead>
-        <tr>
-          <th @click="sortUsers('id')">ID</th>
-          <th @click="sortUsers('userName')">Username</th>
-          <th @click="sortUsers('email')">Email</th>
-          <th @click="sortUsers('firstName')">First Name</th>
-          <th @click="sortUsers('lastName')">Last Name</th>
-          <th @click="sortUsers('phoneNumber')">Phone Number</th>
-          <th @click="sortUsers('role')">Role</th>
-          <th>Edit</th>
-          <th>Delete</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="user in sortedUsers" :key="user.id">
-          <td>{{ user.id }}</td>
-          <td>
-            <input v-model="user.userName" :disabled="!user.editMode"/>
-          </td>
-          <td>
-            <input v-model="user.email" :disabled="!user.editMode"/>
-          </td>
-          <td>
-            <input v-model="user.firstName" :disabled="!user.editMode"/>
-          </td>
-          <td>
-            <input v-model="user.lastName" :disabled="!user.editMode"/>
-          </td>
-          <td>
-            <input v-model="user.phoneNumber" :disabled="!user.editMode"/>
-          </td>
-          <td>
-            <select v-model="user.role" :disabled="!user.editMode" required>
+  <div class="card-container card-container-admin">
+    <div class="form-container-admin">
+      <form @submit.prevent="updateUser">
+        <h2 class="form-header">Update User</h2>
+        <h3 class="form-subheader">User ID: {{user.id }}</h3>
 
-              <option value="Guest">Guest</option>
-              <option selected value="User">User</option>
-              <option value="Privileged">Privileged</option>
-              <option value="Admin">Admin</option>
+        <div class="form-group">
+          <label for="firstName">First Name:</label>
+          <input id="firstName" v-model="user.firstName" placeholder="Enter first name" required type="text">
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name:</label>
+          <input id="lastName" v-model="user.lastName" placeholder="Enter last name" required type="text">
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input id="email" v-model="user.email" placeholder="Enter email" required type="email">
+        </div>
+<!--password-->
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input id="password" v-model="user.password" placeholder="Enter password" required type="password">
+        </div>
 
-            </select>
-
-          </td>
-          <td>
-            <button class="btn-small" @click="toggleEditMode(user)">
-              {{ user.editMode ? 'Save' : 'Edit' }}
-            </button>
-          </td>
-          <td>
-            <button class="btn-small" @click="deleteUser(user.id)">Delete</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+        <div class="form-group">
+          <label for="role">Role:</label>
+          <select id="role" v-model="user.roles[0].roleName" required>
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
+            <option value="SUPERADMIN">Super Admin</option>
+          </select>
+        </div>
+        <div class="button-container">
+          <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Update</button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  name: 'UserUpdate',
+
+
   data() {
     return {
-      users: [],
-      category: '',
-      sortColumn: '',
-      sortDirection: '',
+      user: {
+        id: this.$route.params.id, // Get the ID from the route params
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        roles: [{ roleName: "USER" }], // Updated to match the backend structure
+      },
+      loading: false, // Add this line to define the loading state
     };
   },
   mounted() {
-    this.fetchUsers();
+    this.fetchUserProfile();
   },
   methods: {
-    fetchUsers() {
-      const category = 'all';
+    updateUser() {
+      console.log("Updating user:", this.user);
+      // Send the user data to the backend API or perform any other necessary actions
       axios
-          .get(`http://localhost:8080/api/admin/users/${category}`)
+          .put(`http://localhost:8080/api/admin/users/update/${this.user.id}`, this.user)
           .then((response) => {
-            this.users = response.data.map((user) => ({
-              ...user,
-              editMode: false,
-            }));
-            this.category = category;
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-    },
-    sortUsers(column) {
-      if (this.sortColumn === column) {
-        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-      } else {
-        this.sortColumn = column;
-        this.sortDirection = 'asc';
-      }
-    },
-    deleteUser(userId) {
-      axios
-          .delete(`http://localhost:8080/api/admin/users/delete/${userId}`)
-          .then((response) => {
-            this.fetchUsers();
+            // Handle success
             console.log(response);
-            console.log('User deleted');
           })
           .catch((error) => {
+            // Handle error
             console.log(error);
-            console.log('User not deleted');
           });
+      //Log  the user after updating their profile
+      console.log("Updated user:", this.user);
+
+      // Reset the form after updating the user
+      this.resetForm();
     },
-    toggleEditMode(user) {
-      if (user.editMode) {
-        this.updateUser(user);
-      }
-      user.editMode = !user.editMode;
-    },
-    updateUser(user) {
+    fetchUserProfile() {
+      this.loading = true;
+      // Assuming you have the user ID or any other identifier to fetch the user's profile
+      const userId = this.$route.params.id; // Get the user ID from the route parameter
+
       axios
-          .put(`http://localhost:8080/api/admin/users/update/${user.id}`, user)
+          .get(`http://localhost:8080/api/admin/users/read/${userId}`)
           .then((response) => {
-            console.log(response);
-            console.log('User updated');
+            this.user = response.data;
           })
           .catch((error) => {
             console.log(error);
-            console.log('User not updated');
           });
     },
-  },
-  computed: {
-    sortedUsers() {
-      let sortedUsers = [...this.users];
-
-      if (this.sortColumn) {
-        sortedUsers.sort((a, b) => {
-          let valueA = a[this.sortColumn];
-          let valueB = b[this.sortColumn];
-
-          if (typeof valueA === 'string') {
-            valueA = valueA.toLowerCase();
-            valueB = valueB.toLowerCase();
-          }
-
-          if (valueA < valueB) {
-            return this.sortDirection === 'asc' ? -1 : 1;
-          }
-          if (valueA > valueB) {
-            return this.sortDirection === 'asc' ? 1 : -1;
-          }
-          return 0;
-        });
-      }
-
-      return sortedUsers;
+    resetForm() {
+      // Reset the form fields
+      this.user = {
+        id: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        roles: ["USER"],
+      };
     },
   },
 };
 </script>
 
 <style scoped>
-/* Add custom styles for the component */
+
 </style>

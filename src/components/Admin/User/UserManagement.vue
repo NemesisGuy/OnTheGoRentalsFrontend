@@ -22,11 +22,12 @@
       <thead>
       <tr>
         <th @click="sortUsers('id')">ID <i class="fas fa-sort"></i></th>
-        <th @click="sortUsers('userName')">Username <i class="fas fa-sort"></i></th>
         <th @click="sortUsers('firstName')">First Name <i class="fas fa-sort"></i></th>
         <th @click="sortUsers('lastName')">Last Name <i class="fas fa-sort"></i></th>
-        <th @click="sortUsers('phoneNumber')">Phone Number <i class="fas fa-sort"></i></th>
         <th @click="sortUsers('email')">Email <i class="fas fa-sort"></i></th>
+        <!-- roles array-->
+        <th @click="sortUsers('roles')">Roles <i class="fas fa-sort"></i></th>
+
         <th class="actions-column">Actions</th>
       </tr>
       </thead>
@@ -35,13 +36,6 @@
         <td v-if="!user.editing">{{ user.id }}</td>
         <td v-else>
           <input v-model="user.id" disabled type="text">
-        </td>
-
-
-        <!-- Username -->
-        <td v-if="!user.editing">{{ user.userName }}</td>
-        <td v-else>
-          <input v-model="user.userName" type="text">
         </td>
 
 
@@ -57,23 +51,33 @@
           <input v-model="user.lastName" type="text">
         </td>
 
-        <!-- Phone Number -->
-        <td v-if="!user.editing">{{ user.phoneNumber }}</td>
-        <td v-else>
-          <input v-model="user.phoneNumber" type="text">
-        </td>
+
         <!-- Email -->
         <td v-if="!user.editing">{{ user.email }}</td>
         <td v-else>
           <input v-model="user.email" type="text">
         </td>
+        <td v-if="!user.editing">
+        <span v-for="(role, index) in user.roles" :key="index">
+          {{ role.roleName }}
+         <span v-if="index < user.roles.length - 1">, </span>
+        </span>
+        </td>
+        <td v-else>
+          <select v-model="user.roles" multiple required>
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
+            <option value="SUPERADMIN">Super Admin</option>
+          </select>
+        </td>
+
         <!-- Actions -->
         <td>
           <template v-if="!user.editing">
             <button class="delete-button button" @click="deleteUser(user)">
               <i class="fas fa-trash"></i> Delete
             </button>
-            <button class="update-button button" @click="editUser(user)">
+            <button class="update-button button" @click="editUser(user)" disabled>
               <i class="fas fa-edit"></i> Edit
             </button>
             <button class="read-button button" @click="openUserView(user.id)">
@@ -202,11 +206,20 @@ export default {
       this.showConfirmationModal = false;
     },
     editUser(user) {
-      user.editing = true;
+      /*user.editing = true;*/
+    //  this.$router.push(`/admin/users/update/${user.id}`);
+      this.$router.push({ name: 'updateUser', params: { id: user.id } });
     },
     saveUser(user) {
       user.editing = false;
       this.loading = true;
+
+      // Convert the roles property to an array of objects
+     // user.roles = user.roles.map(roleName => ({roleName}));
+      // Convert the roles property to an array of role names
+      user.roles = user.roles.map(role => role.roleName);
+      // roles: [{ roleName: "USER" }], // Updated to match the backend structure
+
       axios
           .put(`http://localhost:8080/api/admin/users/update/${user.id}`, user)
           .then(() => {

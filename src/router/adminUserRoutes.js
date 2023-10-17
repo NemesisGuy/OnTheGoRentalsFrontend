@@ -20,7 +20,8 @@ const adminUserRoutes = [
         },
     },
     {
-        path: 'users/update',
+        path: 'users/update/:id',
+        name: 'updateUser',
         components: {
             adminContent: UpdateUser,
         },

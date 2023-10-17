@@ -58,7 +58,7 @@ export default {
     login() {
       this.loadingModal= true;
       // Make the API call to /user/login
-      axios.post('/api/user/login', {
+      axios.post('/api/user/authenticate', {
         username: this.username,
         email: this.email,
         password: this.password
