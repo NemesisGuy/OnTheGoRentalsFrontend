@@ -1,36 +1,39 @@
 <template>
-  <div class="user-profile">
-    <h1>User Profile</h1>
-    <div v-if="user" class="profile-details">
-      <div>
-        <label>Username:</label>
-        <span>{{ user.userName }}</span>
+
+    <div class="card-container">
+      <div class="form-container">
+<!--        <h1>User Profile</h1>-->
+        <div v-if="user" class="profile-details">
+          <div class="form-header">
+            <h2><i class="fas fa-user"></i> {{ user.firstName}} {{ user.lastName }}'s Profile</h2>
+          </div>
+          <hr>
+          <div class="profile-image">
+            <img v-if="user.profileImageUrl" :src="user.profileImageUrl" alt="Profile Image" class="avatar">
+            <img v-else src="@/assets/Images/Defaults/default-user-avatar.png" alt="Placeholder Image" class="avatar">
+          </div>
+
+          <p><strong><i class="fas fa-user"></i> Username:</strong> {{ user.firstName}} {{ user.lastName }}</p>
+
+          <p><strong><i class="fas fa-user"></i> First Name:</strong> {{ user.firstName }}</p>
+          <p><strong><i class="fas fa-user"></i> Last Name:</strong> {{ user.lastName }}</p>
+<!--
+          <p><strong><i class="fas fa-phone"></i> Phone Number:</strong> {{ user.phoneNumber }}</p>
+-->
+          <p><strong><i class="fas fa-envelope"></i> Email:</strong> {{ user.email }}</p>
+
+          <div>
+            <p><strong><i class="fa-solid fa-dice"></i> Role:</strong><span>{{ user.roles }}</span> </p>
+
+          </div>
+        </div>
+        <div v-else>
+          <loading-modal v-if="loading" />
+          Loading user profile...
+        </div>
       </div>
-      <div>
-        <label>Email:</label>
-        <span>{{ user.email }}</span>
-      </div>
-      <div>
-        <label>First Name:</label>
-        <span>{{ user.firstName }}</span>
-      </div>
-      <div>
-        <label>Last Name:</label>
-        <span>{{ user.lastName }}</span>
-      </div>
-      <div>
-        <label>Phone Number:</label>
-        <span>{{ user.phoneNumber }}</span>
-      </div>
-      <div>
-        <label>Role:</label>
-        <span>{{ user.role }}</span>
-      </div>
-    </div>
-    <div v-else>
-      <loading-modal v-if="loading" />
-      Loading user profile...
-    </div>
+
+
   </div>
 </template>
 
@@ -75,5 +78,15 @@ export default {
 </script>
 
 <style scoped>
-
+.avatar {
+  width: 100px; /* Set the desired width */
+  height: 100px; /* Set the desired height */
+  object-fit: cover; /* Maintain aspect ratio */
+}
+.profile-image {
+  text-align: center;
+}
+.profile-info {
+  margin-top: 20px;
+}
 </style>

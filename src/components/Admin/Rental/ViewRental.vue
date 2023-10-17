@@ -1,88 +1,91 @@
 <template>
   <div class="card-container">
-    <div class="rental-profile">
-      <h1>Rental Profile</h1>
-      <hr>
-      <div class="profile-details" v-if="rental && user && car">
-        <div class="section">
-          <h3>Rental Details:</h3>
+    <div class="form-container">
+        <div class="rental-profile">
+          <h1>Rental Profile</h1>
           <hr>
-          <div class="detail-row">
-            <div>
-              <label>Rental ID:</label>
-              <span>{{ rental.rentalId }}</span>
+          <div class="profile-details" v-if="rental && user && car">
+            <div class="section">
+              <h3>Rental Details:</h3>
+              <hr>
+              <div class="detail-row">
+                <div>
+                  <label>Rental ID:</label>
+                  <span>{{ rental.rentalId }}</span>
+                </div>
+                <div>
+                  <label>Rental Date:</label>
+                  <span>{{ rental.issuedDate }}</span>
+                </div>
+                <div>
+                  <label>Return Date:</label>
+                  <span>{{ rental.returnedDate }}</span>
+                </div>
+                <div>
+                  <label>Fine:</label>
+                  <span>{{ rental.fine }}</span>
+                </div>
+              </div>
             </div>
-            <div>
-              <label>Rental Date:</label>
-              <span>{{ rental.issuedDate }}</span>
+            <div class="section">
+              <h3>Customer Details:</h3>
+              <hr>
+              <div class="detail-row">
+                <div>
+                  <label>Customer Name:</label>
+                  <span>{{ user.userName }}</span>
+                </div>
+                <div>
+                  <label>Customer First Name:</label>
+                  <span>{{ user.firstName }}</span>
+                </div>
+                <div>
+                  <label>Customer Last Name:</label>
+                  <span>{{ user.lastName }}</span>
+                </div>
+                <div>
+                  <label>Customer Email:</label>
+                  <span>{{ user.email }}</span>
+                </div>
+                <div>
+                  <label>Customer Phone Number:</label>
+                  <span>{{ user.phoneNumber }}</span>
+                </div>
+              </div>
             </div>
-            <div>
-              <label>Return Date:</label>
-              <span>{{ rental.returnedDate }}</span>
-            </div>
-            <div>
-              <label>Fine:</label>
-              <span>{{ rental.fine }}</span>
+            <div class="section">
+              <h3>Car Details:</h3>
+              <hr>
+              <div class="detail-row">
+                <div>
+                  <label>Car Make:</label>
+                  <span>{{ car.make }}</span>
+                </div>
+                <div>
+                  <label>Car Model:</label>
+                  <span>{{ car.model }}</span>
+                </div>
+                <div>
+                  <label>Car Year:</label>
+                  <span>{{ car.year }}</span>
+                </div>
+                <div>
+                  <label>Price Group:</label>
+                  <span>{{ car.priceGroup }}</span>
+                </div>
+                <div>
+                  <label>License Plate:</label>
+                  <span>{{ car.licensePlate }}</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="section">
-          <h3>Customer Details:</h3>
-          <hr>
-          <div class="detail-row">
-            <div>
-              <label>Customer Name:</label>
-              <span>{{ user.userName }}</span>
-            </div>
-            <div>
-              <label>Customer First Name:</label>
-              <span>{{ user.firstName }}</span>
-            </div>
-            <div>
-              <label>Customer Last Name:</label>
-              <span>{{ user.lastName }}</span>
-            </div>
-            <div>
-              <label>Customer Email:</label>
-              <span>{{ user.email }}</span>
-            </div>
-            <div>
-              <label>Customer Phone Number:</label>
-              <span>{{ user.phoneNumber }}</span>
-            </div>
+          <div v-else>
+            <p>Loading rental profile...</p>
           </div>
-        </div>
-        <div class="section">
-          <h3>Car Details:</h3>
-          <hr>
-          <div class="detail-row">
-            <div>
-              <label>Car Make:</label>
-              <span>{{ car.make }}</span>
-            </div>
-            <div>
-              <label>Car Model:</label>
-              <span>{{ car.model }}</span>
-            </div>
-            <div>
-              <label>Car Year:</label>
-              <span>{{ car.year }}</span>
-            </div>
-            <div>
-              <label>Price Group:</label>
-              <span>{{ car.priceGroup }}</span>
-            </div>
-            <div>
-              <label>License Plate:</label>
-              <span>{{ car.licensePlate }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div v-else>
-        <p>Loading rental profile...</p>
       </div>
     </div>
+
   </div>
 </template>
 

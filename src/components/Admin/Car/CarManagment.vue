@@ -1,5 +1,6 @@
 <template>
   <div class="content-container">
+
     <div class="content-header">
       <h1><i class="fas fa-car"> </i>
         Car Management
