@@ -22,7 +22,7 @@
       <thead>
       <tr>
         <th @click="sortRentals('id')">ID <i class="fas fa-sort"></i></th>
-        <th @click="sortRentals('user.userName')">User <i class="fas fa-sort"></i></th>
+<!--        <th @click="sortRentals('user.userName')">User <i class="fas fa-sort"></i></th>-->
         <th @click="sortRentals('user.firstName')">First Name <i class="fas fa-sort"></i></th>
         <th @click="sortRentals('user.lastName')">Last Name <i class="fas fa-sort"></i></th>
         <th @click="sortRentals('car.make')">Make <i class="fas fa-sort"></i></th>
@@ -41,10 +41,10 @@
         <td v-else>
           <input type="text" v-model="rental.rentalId " >
         </td>
-        <td v-if="!rental.editing">{{ rental.user.userName }}</td>
+<!--        <td v-if="!rental.editing">{{ rental.user.userName }}</td>
         <td v-else>
           <input type="text" v-model="rental.user.userName">
-        </td>
+        </td>-->
         <td v-if="!rental.editing">{{ rental.user.firstName }}</td>
         <td v-else>
           <input type="text" v-model="rental.user.firstName">

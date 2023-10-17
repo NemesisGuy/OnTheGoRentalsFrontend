@@ -89,7 +89,15 @@ export default {
       axios
           .get(`http://localhost:8080/api/admin/users/read/${userId}`)
           .then((response) => {
-            this.user = response.data;
+           // this.user = response.data;
+            const userData = response.data;//get all data
+            this.user.id = userData.id;//filter data per field
+            this.user.firstName = userData.firstName;
+            this.user.lastName = userData.lastName;
+            this.user.email = userData.email;
+            this.user.password = userData.password;
+            this.user.roles = userData.roles; // Include user roles
+
           })
           .catch((error) => {
             console.log(error);
