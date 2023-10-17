@@ -6,7 +6,7 @@ import Signup from "@/components/Main/User/Signup.vue";
 const navRoutes = [
 
     {
-        path: '/nav/user/login/',
+        path: '/nav/user/login',
         name: 'Login',
         component: Login,
     },
@@ -15,7 +15,7 @@ const navRoutes = [
         redirect: '/'
     },
     {
-        path: '/nav/user/signup/',
+        path: '/nav/user/signup',
         name: 'Signup',
         component: Signup,
     },

@@ -53,12 +53,12 @@ export default {
   name: "Login",
   methods: {
     goToSignup() {
-      this.$router.push('/signup');
+      this.$router.push({name: 'Signup'});
     },
     login() {
       this.loadingModal= true;
       // Make the API call to /user/login
-      axios.post('/api/user/login', {
+      axios.post('/api/user/authenticate', {
         username: this.username,
         email: this.email,
         password: this.password

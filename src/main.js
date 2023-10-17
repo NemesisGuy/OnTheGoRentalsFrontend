@@ -12,6 +12,15 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import '@fortawesome/fontawesome-free/js/all.js';
 import { Line } from 'vue-chartjs';
 
+
+import store from "@/store/store";
+
+
+const token = localStorage.getItem('token');
+if (token) {
+    store.commit('setToken', token);
+}
+
 createApp(App)
     .component('LineChart', Line )
     .use(router)
