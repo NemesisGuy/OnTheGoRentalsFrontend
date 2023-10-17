@@ -230,32 +230,7 @@ export default {
       // Convert the fine to an integer with no decimal
       const fine = Math.floor(this.fine); // Remove decimal from fine
 
-
       // Create a new rental object
-     /* const rental = {
-        user: {},
-        car: {},
-        issuer: this.selectedIssuer,
-        receiver: this.selectedReceiver,
-        fine: fine,
-        issuedDate: this.selectedIssuedDate,
-        returnedDate: this.selectedReturnedDate,
-      };*/
-      // Create a new rental object
-     /* const rental = {
-        user: {
-          id: this.selectedUser,
-          roles: [{ roleName: 'USER' }] // Adjusted the structure to match the backend's expectation
-        },
-        car: {
-          id: this.selectedCar
-        },
-        issuer: this.selectedIssuer,
-        receiver: this.selectedReceiver,
-        fine: fine,
-        issuedDate: this.selectedIssuedDate,
-        returnedDate: this.selectedReturnedDate,
-      };*/
       const rental = {
         user: {
           id: null,
