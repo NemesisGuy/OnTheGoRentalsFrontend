@@ -45,26 +45,61 @@
         </div>
       </form>
     </div>
+    <!-- Add the SuccessModal component -->
+    <SuccessModal
+        v-if="successModal.show"
+        key="successModal"
+        :message="successModal.message"
+        :show="successModal.show"
+        @cancel="closeModal"
+        @close="closeModal"
+        @confirm="closeModal"
+        @ok="closeModal"
+    ></SuccessModal>
+    <!-- Add the FailureModal component -->
+    <FailureModal
+        v-if="failModal.show"
+        key="failModal"
+        :message="failModal.message"
+        :show="failModal.show"
+        @cancel="closeModal"
+        @close="closeModal"
+    ></FailureModal>
   </div>
+
 </template>
 
 <script>
 import axios from "axios";
 import {PriceGroup} from "@/enums/PriceGroup";
+import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
+import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 
 export default {
+  components: {FailureModal, SuccessModal},
   data() {
     return {
       car: {
-
-
         make: 'Mercedes',
         model: 'SLK 200 Kompressor',
         year: 1900,
         category: 'Sedan',
         priceGroup: PriceGroup.LUXURY,
         licensePlate: '000000'
-      }, errorMessage: '' // Added error message data property
+      },
+      errorMessage: '' ,// Added error message data property
+      successModal: {
+        show: false,
+        message: ""
+      },
+      failModal: {
+        show: false,
+        message: ""
+      },
+      loadingModal: {
+        show: false,
+      },
+
     };
   },
   methods: {
@@ -77,6 +112,9 @@ export default {
             console.log('Car added successfully');
             console.log(response.data);
             console.log(response);
+            this.successModal.message = 'Car added successfully';
+            this.successModal.show = true;
+
           })
           .catch(error => {
             // Handle error
@@ -87,9 +125,13 @@ export default {
               console.log(error.response.data); // The response data contains details about the validation errors or data issues
               console.log(error.response.status);
               console.log(error.response);
+              this.failModal.message = 'Invalid data. Please check the entered values.';
+              this.failModal.show = true;
             } else {
               // Display a generic error message
               this.errorMessage = 'An error occurred while adding the car.';
+              this.failModal.message = 'An error occurred while adding the car.';
+              this.failModal.show = true;
             }
           });
 
@@ -99,6 +141,12 @@ export default {
       // Reset the form after adding the car
       this.resetForm();
     },
+    closeModal() {
+      this.successModal.show = false;
+      this.failModal.show = false;
+      this.showConfirmationModal = false;
+    },
+
     resetForm() {
       // Reset the form fields
       this.car = {
