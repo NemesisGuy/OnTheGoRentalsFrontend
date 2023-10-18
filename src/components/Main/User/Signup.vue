@@ -55,6 +55,7 @@ import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
+import store from "@/store/store";
 
 export default {
   computed: {
@@ -102,6 +103,15 @@ export default {
             this.loadingModal = false;
             this.successModal.message = "Registration successful";
             this.successModal.show = true;
+            const token = response.data.accessToken; // Assuming response.data contains the token
+            // Save the token to the store
+            store.commit('setToken', token);
+            console.log("Response token:  " + token); // Output the value of the token
+            console.log("Current stored token:  " +store.state.token); // Output the value of the token
+            // Assuming you have received and stored the token in response.data.accessToken
+            localStorage.setItem('token', response.data.accessToken);
+
+            this.$router.push( {name : "Home"} );
           })
           .catch(error => {
             // Handle error
@@ -114,7 +124,7 @@ export default {
           });
     },
     goToLogin() {
-      this.$router.push("/login");
+      this.$router.push({name: 'Login'});
     },
     closeModal() {
       this.showConfirmationModal = false;

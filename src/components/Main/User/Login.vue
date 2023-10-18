@@ -53,7 +53,7 @@ export default {
   name: "Login",
   methods: {
     goToSignup() {
-      this.$router.push('/signup');
+      this.$router.push({name: 'Signup'});
     },
     login() {
       this.loadingModal= true;
