@@ -1,7 +1,7 @@
 <template>
   <div class="card-container card-container-admin">
     <div class="form-container-admin">
-
+      <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"></LoadingModal>
       <form @submit.prevent="addCar">
         <h2 class="form-header">Add Car</h2>
         <div class="form-group">
@@ -74,9 +74,10 @@ import axios from "axios";
 import {PriceGroup} from "@/enums/PriceGroup";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 
 export default {
-  components: {FailureModal, SuccessModal},
+  components: {LoadingModal, FailureModal, SuccessModal},
   data() {
     return {
       car: {
@@ -104,6 +105,8 @@ export default {
   },
   methods: {
     addCar() {
+      this.loadingModal.show = true;
+
       this.errorMessage = ''; // Reset the error message
 
       axios.post('http://localhost:8080/api/admin/cars/create', this.car)
@@ -112,6 +115,7 @@ export default {
             console.log('Car added successfully');
             console.log(response.data);
             console.log(response);
+            this.loadingModal.show = false;
             this.successModal.message = 'Car added successfully';
             this.successModal.show = true;
 
