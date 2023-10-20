@@ -33,7 +33,24 @@
 
 <script>
 import axios from 'axios';
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
   name: 'ViewCar',
   data() {
@@ -48,9 +65,13 @@ export default {
     fetchCarProfile() {
       // Assuming you have the car ID or any other identifier to fetch the car's profile
       const carId = this.$route.params.id// Get the category from the route parameter
-
+      const token = localStorage.getItem('token');
       axios
-          .get(`http://localhost:8080/api/admin/cars/read/${carId}`)
+          .get(`/api/admin/cars/read/${carId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             this.car = response.data;
           })

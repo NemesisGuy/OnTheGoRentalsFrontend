@@ -66,7 +66,24 @@ import axios from "axios";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
   components: {LoadingModal, FailureModal, SuccessModal},
 
@@ -105,8 +122,13 @@ export default {
       this.loading = true;
       console.log("Updating user:", this.user);
       // Send the user data to the backend API or perform any other necessary actions
+      const token = localStorage.getItem('token');
       axios
-          .put(`http://localhost:8080/api/admin/users/update/${this.user.id}`, this.user)
+          .put(`/api/admin/users/update/${this.user.id}`, this.user, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             // Handle success
             console.log(response);
@@ -132,9 +154,13 @@ export default {
 
       // Assuming you have the user ID or any other identifier to fetch the user's profile
       const userId = this.$route.params.id; // Get the user ID from the route parameter
-
+      const token = localStorage.getItem('token');
       axios
-          .get(`http://localhost:8080/api/admin/users/read/${userId}`)
+          .get(`/api/admin/users/read/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
            // this.user = response.data;
             const userData = response.data;//get all data

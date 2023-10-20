@@ -93,7 +93,24 @@
 
 <script>
 import axios from 'axios';
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
   name: 'ViewRental',
   data() {
@@ -105,13 +122,19 @@ export default {
   },
   mounted() {
     this.fetchRentalProfile();
+    
   },
   methods: {
     fetchRentalProfile() {
       const rentalId = this.$route.params.id;
-
+      const token = localStorage.getItem('token');
       axios
-          .get(`http://localhost:8080/api/admin/rentals/read/${rentalId}`)
+          .get(`/api/admin/rentals/read/${rentalId}`
+              , {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              })
           .then((response) => {
             this.rental = response.data;
             this.fetchUserProfile();
@@ -123,9 +146,13 @@ export default {
     },
     fetchUserProfile() {
       const userId = this.rental.user.id;
-
+      const token = localStorage.getItem('token');
       axios
-          .get(`http://localhost:8080/api/admin/users/read/${userId}`)
+          .get(`/api/admin/users/read/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             this.user = response.data;
           })
@@ -135,9 +162,13 @@ export default {
     },
     fetchCarProfile() {
       const carId = this.rental.car.id;
-
+      const token = localStorage.getItem('token');
       axios
-          .get(`http://localhost:8080/api/admin/cars/read/${carId}`)
+          .get(`/api/admin/cars/read/${carId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             this.car = response.data;
           })

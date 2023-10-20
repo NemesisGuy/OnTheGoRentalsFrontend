@@ -139,7 +139,24 @@ import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import process from "process";
 import baseURL from "@/api.js";
 /*const backendUrl = process.env.VUE_APP_BACKEND_URL;*/
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 
 
 export default {
@@ -185,8 +202,13 @@ export default {
 
     getRentals() {
       this.loading = true;
+      const token = localStorage.getItem('token');
       axios
-          .get(`http://localhost:8080/api/admin/rentals/list/all`)
+          .get(`/api/admin/rentals/list/all`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             this.rentals = response.data;
             this.sortedRentalsList = [...this.rentals]; // Assign to data property instead of computed property
@@ -245,8 +267,14 @@ export default {
       if (this.rentalToDelete) {
         const rentalId = this.rentalToDelete.id;
         this.loading = true;
+        const token = localStorage.getItem('token');
         axios
-            .delete(`http://localhost:8080/api/admin/rentals/delete/${rentalId}`)
+            .delete(`/api/admin/rentals/delete/${rentalId}`
+                , {
+                  headers: {
+                    Authorization: `Bearer ${token}`
+                  }
+                })
             .then(() => {
               this.showSuccessModal("Rental deleted successfully.");
               this.getRentals();
@@ -284,8 +312,13 @@ export default {
       console.info("Saving rental: ", tempRental);
 
       // Send the temporary rental object to the backend
+      this.loading = true;
       axios
-          .put(`http://localhost:8080/api/admin/rentals/update/${tempRental.rentalId}`, tempRental)
+          .put(`/api/admin/rentals/update/${tempRental.rentalId}`, tempRental, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then(() => {
             this.showSuccessModal("Rental updated successfully.");
             this.getRentals();
@@ -298,8 +331,15 @@ export default {
     cancelEdit(rental) {
       rental.editing = false;
     },
+    
     openRentalView(rentalId) {
-      this.$router.push(`/admin/rentals/read/${rentalId}`);
+      const token = localStorage.getItem('token');
+      this.$router.push(`/admin/rentals/read/${rentalId}`
+          , {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
     },
     resetSearch() {
       this.searchQuery = "";

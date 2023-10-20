@@ -66,6 +66,25 @@ import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 String lastName ;
 String email;
 String password ;*/
+
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
+
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
   components: {LoadingModal, FailureModal, SuccessModal},
   data() {
@@ -98,8 +117,13 @@ export default {
 
       console.log("Adding user:", this.user);
       // Send the user data to the backend API or perform any other necessary actions
+      const token = localStorage.getItem('token');
       axios
-          .post("http://localhost:8080/api/admin/users/create", this.user)
+          .post("/api/admin/users/create", this.user, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             // Handle success
             console.log(response);

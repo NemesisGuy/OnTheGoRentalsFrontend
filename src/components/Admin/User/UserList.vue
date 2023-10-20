@@ -33,7 +33,24 @@
 <script>
 import axios from 'axios';
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
   name: 'UserList',
   data() {
@@ -56,7 +73,7 @@ export default {
       this.loading = true;
       const category = this.$route.params.category;
       axios
-          .get(`http://localhost:8080/api/admin/users/${category}`)
+          .get(`/api/admin/users/${category}`)
           .then((response) => {
             this.users = response.data;
             this.category = category;

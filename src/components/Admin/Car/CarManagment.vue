@@ -119,7 +119,24 @@ import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "../../Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
   data() {
     return {
@@ -172,8 +189,13 @@ export default {
   methods: {
     fetchCars() {
       this.loading = true;
+      const token = localStorage.getItem("token");
       axios
-          .get("http://localhost:8080/api/admin/cars/all")
+          .get("/api/admin/cars/all", {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             this.cars = response.data;
             console.log(response);
@@ -204,8 +226,13 @@ export default {
     confirmDelete() {
       if (this.carToDelete) {
         this.loading = true;
+        const token = localStorage.getItem("token");
         axios
-            .delete(`http://localhost:8080/api/admin/cars/delete/${this.carToDelete.id}`)
+            .delete(`/api/admin/cars/delete/${this.carToDelete.id}`, {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            })
             .then((response) => {
               this.fetchCars();
               console.log(response);
@@ -228,7 +255,12 @@ export default {
       }
     },
     openCarView(carId) {
-      this.$router.push(`/admin/cars/read/${carId}`);
+      const token = localStorage.getItem("token");
+      this.$router.push(`/admin/cars/read/${carId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
     },
     sortCars(sortBy) {
       this.sortBy = sortBy;
@@ -245,8 +277,13 @@ export default {
       this.loading = true;
     },
     pushUpdatedCar(car) {
+      const token = localStorage.getItem("token");
       axios
-          .put(`http://localhost:8080/api/admin/cars/update/${car.id}`, car)
+          .put(`/api/admin/cars/update/${car.id}`, car, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             console.log(response);
             console.log("Car updated");

@@ -134,12 +134,24 @@ import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 // Define your headers
-const headers = {
-  'Content-Type': 'application/json',
-//  'Authorization': 'Bearer YOUR_ACCESS_TOKEN', // If you have an authorization header
-  // Add any other headers you need here
-};
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
   computed: {
     confirmationModal() {
@@ -188,8 +200,14 @@ export default {
   methods: {
     fetchUsersList() {
       this.loadingModal.show = true;
+      const token = localStorage.getItem('token');
       axios
-          .get('http://localhost:8080/api/admin/users/list/all')
+          .get('/api/admin/users/list/all'
+              , {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              })
           .then(response => {
             this.users = response.data;
             this.loadingModal.show = false;
@@ -208,8 +226,13 @@ export default {
 
     fetchCarsList() {
       this.loadingModal.show = true;
+      const token = localStorage.getItem('token');
       axios
-          .get('http://localhost:8080/api/admin/cars/all')
+          .get('/api/admin/cars/all', {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then(response => {
             this.cars = response.data;
             this.loadingModal.show = false;
@@ -251,8 +274,13 @@ export default {
       };
 
       // Fetch user details
+      const token = localStorage.getItem('token');
       axios
-          .get(`http://localhost:8080/api/admin/users/read/${this.selectedUser}`)
+          .get(`/api/admin/users/read/${this.selectedUser}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then(response => {
             const userData = response.data;
             rental.user.id = userData.id;
@@ -266,7 +294,11 @@ export default {
 
             // Fetch car details
             axios
-                .get(`http://localhost:8080/api/admin/cars/read/${this.selectedCar}`)
+                .get(`/api/admin/cars/read/${this.selectedCar}`, {
+                  headers: {
+                    Authorization: `Bearer ${token}`
+                  }
+                })
                 .then(response => {
                   rental.car = response.data;
 
@@ -281,7 +313,11 @@ export default {
                     // Make the POST request to create the rental
                   /*  console.log(rental.userObject);*/
                     axios
-                        .post('http://localhost:8080/api/admin/rentals/create', rental,  { headers })
+                        .post('/api/admin/rentals/create', rental, {
+                          headers: {
+                            Authorization: `Bearer ${token}`
+                          }
+                        })
                         .then(response => {
                           console.log('Rental created successfully');
                           this.loadingModal.show = false;
