@@ -29,7 +29,7 @@ const router2 = createRouter({
             name: 'CustomerList',
             component: CustomerList,
         },
-        {
+     /*   {
             path: '/signup',
             name: 'Signup',
             component: Signup,
@@ -38,7 +38,7 @@ const router2 = createRouter({
             path: '/login',
             name: 'Login',
             component: Login,
-        },
+        },*/
         {
             path: '/error',
             component: ErrorPage,
