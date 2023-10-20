@@ -5,10 +5,7 @@
       <form>
         <h2 class="form-header"> <i class="fas fa-user-plus"></i> Signup</h2>
 
-        <div class="form-group">
-          <label for="username"><i class="fas fa-user"></i> Username:</label>
-          <input type="text" id="userName" name="userName" placeholder="Enter your username" v-model="userName" required>
-        </div>
+
         <div class="form-group">
           <label for="first-name"><i class="fas fa-user"></i> First Name:</label>
           <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" v-model="firstName" required>
@@ -17,10 +14,7 @@
           <label for="last-name"><i class="fas fa-user"></i> Last Name:</label>
           <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" v-model="lastName" required>
         </div>
-        <div class="form-group">
-          <label for="phone-number"><i class="fas fa-phone"></i> Phone Number:</label>
-          <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Enter your phone number" v-model="phoneNumber" required>
-        </div>
+
         <div class="form-group">
           <label for="email"><i class="fas fa-envelope"></i> Email:</label>
           <input type="email" id="email" name="email" placeholder="Enter your email" v-model="email" required>
@@ -55,6 +49,7 @@ import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
+import store from "@/store/store";
 
 export default {
   computed: {
@@ -88,10 +83,9 @@ export default {
       this.loadingModal= true;
       axios
           .post("http://localhost:8080/api/user/register", {
-            userName: this.userName,
+
             firstName: this.firstName,
             lastName: this.lastName,
-            phoneNumber: this.phoneNumber,
             email: this.email,
             password: this.password
           })
@@ -100,8 +94,18 @@ export default {
             console.log("Registration successful");
             console.log(response);
             this.loadingModal = false;
+
+            const token = response.data.accessToken; // Assuming response.data contains the token
+            // Save the token to the store
+            store.commit('setToken', token);
+            console.log("Response token:  " + token); // Output the value of the token
+            console.log("Current stored token:  " +store.state.token); // Output the value of the token
+            // Assuming you have received and stored the token in response.data.accessToken
+            localStorage.setItem('token', response.data.accessToken);
             this.successModal.message = "Registration successful";
             this.successModal.show = true;
+
+        //    this.$router.push( {name : "Home"} );
           })
           .catch(error => {
             // Handle error
@@ -114,7 +118,7 @@ export default {
           });
     },
     goToLogin() {
-      this.$router.push("/login");
+      this.$router.push({name: 'Login'});
     },
     closeModal() {
       this.showConfirmationModal = false;

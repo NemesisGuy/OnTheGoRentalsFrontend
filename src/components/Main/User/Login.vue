@@ -1,16 +1,16 @@
 <template>
   <div class="card-container">
     <div class="form-container">
-      <form @submit="login">
+      <form  @submit.prevent="login">
         <div class="form-header">
           <h1><i class="fas fa-sign-in-alt"></i> Login</h1>
         </div>
   <!--add autocomplete to username and password-->
 
-        <div class="form-group">
+<!--        <div class="form-group">
           <label for="username"><i class="fas fa-user"></i> Username:</label>
           <input type="text" placeholder="Enter username" v-model="username" id="username">
-        </div>
+        </div>-->
 
         <div class="form-group">
           <label for="email"><i class="fas fa-envelope"></i> Email:</label>
@@ -40,6 +40,7 @@ import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
+import store from "@/store/store";
 
 export default {
   computed: {
@@ -52,30 +53,37 @@ export default {
   },
   name: "Login",
   methods: {
-    goToSignup() {
-      this.$router.push('/signup');
-    },
+
     login() {
-      this.loadingModal= true;
-      // Make the API call to /user/login
-      axios.post('/api/user/authenticate', {
-        username: this.username,
+      this.loadingModal = true;
+
+      axios.post('http://localhost:8080/api/user/authenticate', {
         email: this.email,
         password: this.password
       })
           .then(response => {
-            // Handle the response
-            console.log("Login successful");
+            // Log the response data
             console.log(response.data);
-            console.log(response);
-            this.loadingModal = false;
+
+            // Assuming response.data contains the token
+            const token = response.data;
+            console.log("Token: " + token);
+            // Store the token in localStorage
+            localStorage.setItem('token', token);
+            // Set the Authorization header
+          //  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            // Set the user in the store
+          //  store.commit('setUser', response.data.user);
             this.successModal.message = "Login successful";
             this.successModal.show = true;
+
+            // Rest of your code
+            // ...
           })
           .catch(error => {
             // Handle the error
             console.error(error);
-            this.loadingModal= false;
+            this.loadingModal = false;
             console.log("An error occurred: Login failed");
             console.log(error);
             this.successModal.show = false;
@@ -87,10 +95,13 @@ export default {
       this.successModal.show = false;
       this.failureModal.show = false;
     },
+    goToSignup() {
+      this.$router.push({name: 'Signup'});
+    },
   },
   data() {
     return {
-      username: '',
+
       email: '',
       password: '',
       loadingModal: false,
@@ -99,9 +110,7 @@ export default {
       confirmationModal: {show:false, message: ""},
     }
   },
-  mounted() {
-    console.log('Login mounted');
-  }
+
 };
 </script>
 

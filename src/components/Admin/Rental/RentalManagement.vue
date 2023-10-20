@@ -87,9 +87,9 @@
             <button @click="editRental(rental)" class="update-button button">
               <i class="fas fa-edit"></i> Edit
             </button>
-            <button @click="deleteRental(rental.rentalId)" class="delete-button button">
+<!--            <button @click="deleteRental(rental.rentalId)" class="delete-button button">
               <i class="fas fa-trash-alt"></i> Delete
-            </button>
+            </button>-->
 
            <button @click="openRentalView(rental.rentalId)" class="read-button button" ><i class="fas fa-eye"></i> Read</button>
           </div>
@@ -117,7 +117,7 @@
           <p>Are you sure you want to delete this rental?</p>
           <hr>
           <h3>Rental Details:</h3>
-          <p>User: {{ rentalToDelete.user.username }}</p>
+<!--          <p>User: {{ rentalToDelete.user.firstName }} {{ rentalToDelete.user.lastName }}</p>-->
           <p>Car: {{ rentalToDelete.car.model }}</p>
           <hr>
           <p><b>Warning!!!</b> This action cannot be undone.</p>
@@ -138,7 +138,7 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import process from "process";
 import baseURL from "@/api.js";
-const backendUrl = process.env.VUE_APP_BACKEND_URL;
+/*const backendUrl = process.env.VUE_APP_BACKEND_URL;*/
 
 
 
@@ -154,6 +154,16 @@ export default {
     return {
       rentals: [],
       sortedRentalsList: [],
+     /* user: {
+        id:"", // Get the ID from the route params
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        roles: [{ roleName: "USER" }], // Updated to match the backend structure
+      },*/
+
+
 
       sortBy: null, // Your sort option
       searchQuery: "",
@@ -255,21 +265,27 @@ export default {
     },
     editRental(rental) {
       rental.editing = true;
+      rental.id = rental.rentalId; // Add this line to set rental.id to rental.rentalId
+      console.log("Editing rental button sent this id: ", rental.id );
     },
     saveRental(rental) {
-      rental.id = rental.rentalId;
-      rental.issuedDate = rental.issuedDate;
-      rental.returnedDate = rental.returnedDate;
-      rental.receiver = rental.receiver;
-      rental.fine = Math.floor(rental.fine); // Remove decimal from fine
+      // Create a temporary rental object without authorities
+      const tempRental = {
+        rentalId: rental.id, // Add the rentalId
+        userId: rental.user.id, // Add the userId
+        carId: rental.car.id, // Add the carId
+        issuedDate: rental.issuedDate,
+        returnedDate: rental.returnedDate,
+        receiver: rental.receiver,
+        fine: Math.floor(rental.fine),
+        // Add other properties as needed
+      };
+      console.log("tempid sent this id: ", tempRental.rentalId);
+      console.info("Saving rental: ", tempRental);
 
-      console.info("Saving rental: ", rental);
-      console.info("Rentalid: ", rental.rentalId);
-      console.info("Rental.id: ", rental.id);
-      rental.editing = false;
-      this.loading = true;
+      // Send the temporary rental object to the backend
       axios
-          .put(`http://localhost:8080/api/admin/rentals/update/${rental.rentalId}`, rental)
+          .put(`http://localhost:8080/api/admin/rentals/update/${tempRental.rentalId}`, tempRental)
           .then(() => {
             this.showSuccessModal("Rental updated successfully.");
             this.getRentals();

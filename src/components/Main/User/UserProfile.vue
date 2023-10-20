@@ -40,7 +40,7 @@ export default {
   },
 
   mounted() {
-    // Retrieve user profile information from your backend API
+ /*   // Retrieve user profile information from your backend API
     // You can make an HTTP request to fetch the user data
     // Example using Axios:
     const userId = this.$route.params.id;
@@ -51,7 +51,30 @@ export default {
         .catch(error => {
           console.error(error);
         });
-  },
+  },*/
+
+    /*getUserProfile() */{
+    this.loading = true;
+    axios
+        .get("http://localhost:8080/api/user/profile", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        .then(response => {
+          // Handle success
+          console.log("User profile received");
+          console.log(response);
+          this.loading = false;
+          this.userProfile = response.data;
+        })
+        .catch(error => {
+          // Handle error
+          this.loading = false;
+          console.log("An error occurred while fetching user profile");
+          console.log(error);
+        });
+  }},
   methods: {
     editProfile() {
       // Redirect the user to the edit profile page

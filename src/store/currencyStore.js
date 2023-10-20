@@ -1,4 +1,4 @@
-// store.js
+// currencyStore.js
 
 import { ref } from 'vue';
 

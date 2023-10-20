@@ -160,16 +160,24 @@ export default {
   methods: {
     getUsers() {
       this.loading = true;
-      axios
-          .get("http://localhost:8080/api/admin/users/list/all")
+      const token = localStorage.getItem('token');
+      console.log("token", localStorage.getItem('token'))
+      axios.get('http://localhost:8080/api/admin/users/list/all', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+
           .then((response) => {
             this.users = response.data;
             this.sortedUsers = response.data;
             this.loading = false;
+            console.log("token", localStorage.getItem('token'))
           })
           .catch((error) => {
             this.loading = false;
             this.showFailureModal("Failed to fetch users. Please try again.");
+            console.log("token", localStorage.getItem('token'))
           });
     },
     sortUsers(sortKey) {
@@ -234,8 +242,20 @@ export default {
     cancelEdit(user) {
       user.editing = false;
     },
+
+   /* axios
+    .get("http://localhost:8080/api/user/profile", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })*/
+
     openUserView(userId) {
-      this.$router.push(`/admin/users/read/${userId}`);
+      this.$router.push(`/admin/users/read/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
     },
     resetSearch() {
       this.searchQuery = "";
