@@ -9,7 +9,12 @@ export function fetchRentalsData() {
 
     rentalsDataPromise = new Promise(async (resolve, reject) => {
         try {
-            const response = await fetch('http://localhost:8080/api/admin/rentals/list/all');
+            const token = localStorage.getItem('token');// Retrieve the token
+            const response = await fetch('http://localhost:8080/api/admin/rentals/list/all', {
+                headers: {
+                    Authorization: `Bearer ${token}` // Add the token to the headers
+                }
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch rentals data');
             }
