@@ -1,26 +1,7 @@
 // rentalsApi.js
 
-import axios from "axios";
-
 let rentalsDataPromise = null;
-// Add this line to set a default base URL for your API
-axios.defaults.baseURL = 'http://localhost:8080';
 
-// Add an interceptor for every request
-axios.interceptors.request.use(
-    config => {
-        const token = localStorage.getItem('token');
-
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
-        }
-
-        return config;
-    },
-    error => {
-        return Promise.reject(error);
-    }
-);
 export function fetchRentalsData() {
     if (rentalsDataPromise) {
         return rentalsDataPromise;
@@ -28,12 +9,7 @@ export function fetchRentalsData() {
 
     rentalsDataPromise = new Promise(async (resolve, reject) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch('/api/admin/rentals/list/all', {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            const response = await fetch('http://localhost:8080/api/admin/rentals/list/all');
             if (!response.ok) {
                 throw new Error('Failed to fetch rentals data');
             }
