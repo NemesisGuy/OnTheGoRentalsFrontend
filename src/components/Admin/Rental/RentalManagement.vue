@@ -268,7 +268,6 @@ export default {
       if (this.rentalToDelete) {
       //  const rentalId = this.rentalToDelete.rentalId;  //was this
         const rentalId = this.rentalToDelete;  //should be this LMAO
-
         console.log("Deleting rental with id: ", rentalId);
         this.loading = true;
         const token = localStorage.getItem('token');
