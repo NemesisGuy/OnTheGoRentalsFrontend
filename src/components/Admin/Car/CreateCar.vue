@@ -195,5 +195,4 @@ export default {
   color: red;
   margin-top: 5px;
 }
-
 </style>
