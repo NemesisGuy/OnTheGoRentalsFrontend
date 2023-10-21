@@ -87,9 +87,9 @@
             <button @click="editRental(rental)" class="update-button button">
               <i class="fas fa-edit"></i> Edit
             </button>
-<!--            <button @click="deleteRental(rental.rentalId)" class="delete-button button">
+           <button @click="deleteRental(rental.rentalId)" class="delete-button button">
               <i class="fas fa-trash-alt"></i> Delete
-            </button>-->
+            </button>
 
            <button @click="openRentalView(rental.rentalId)" class="read-button button" ><i class="fas fa-eye"></i> Read</button>
           </div>
@@ -117,8 +117,8 @@
           <p>Are you sure you want to delete this rental?</p>
           <hr>
           <h3>Rental Details:</h3>
-<!--          <p>User: {{ rentalToDelete.user.firstName }} {{ rentalToDelete.user.lastName }}</p>-->
-          <p>Car: {{ rentalToDelete.car.model }}</p>
+         <p> {{ rentalToDelete }} <!--{{ rentalToDelete.user.lastName }}--></p>
+<!--          <p>Car: {{ rentalToDelete.car.model }}</p>-->
           <hr>
           <p><b>Warning!!!</b> This action cannot be undone.</p>
         </div>
@@ -171,14 +171,14 @@ export default {
     return {
       rentals: [],
       sortedRentalsList: [],
-     /* user: {
+     user: {
         id:"", // Get the ID from the route params
         firstName: "",
         lastName: "",
         email: "",
         password: "",
         roles: [{ roleName: "USER" }], // Updated to match the backend structure
-      },*/
+      },
 
 
 
@@ -260,21 +260,22 @@ export default {
       return value;
     },
     deleteRental(rental) {
+      console.log("Deleting rental: ", rental);
       this.rentalToDelete = rental;
       this.showConfirmationModal = true;
     },
     confirmDeleteRental() {
       if (this.rentalToDelete) {
-        const rentalId = this.rentalToDelete.id;
+        const rentalId = this.rentalToDelete.rentalId;
+        console.log("Deleting rental with id: ", rentalId);
         this.loading = true;
         const token = localStorage.getItem('token');
         axios
-            .delete(`/api/admin/rentals/delete/${rentalId}`
-                , {
-                  headers: {
-                    Authorization: `Bearer ${token}`
-                  }
-                })
+            .delete(`/api/admin/rentals/delete/${rentalId}`, {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            })
             .then(() => {
               this.showSuccessModal("Rental deleted successfully.");
               this.getRentals();
@@ -284,7 +285,6 @@ export default {
               this.showFailureModal("Failed to delete rental. Please try again.");
             });
       }
-      this.rentalToDelete = null;
       this.showConfirmationModal = false;
     },
     cancelDeleteRental() {
