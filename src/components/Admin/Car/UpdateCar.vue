@@ -65,7 +65,24 @@
 
 <script>
 import axios from 'axios';
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
   name: 'EditCar',
   data() {
@@ -82,8 +99,13 @@ export default {
   methods: {
     fetchCars() {
       const category = 'all';
+      const token = localStorage.getItem('token');
       axios
-          .get(`http://localhost:8080/api/cars/${category}`)
+          .get(`/api/cars/${category}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             this.cars = response.data.map((car) => ({
               ...car,
@@ -104,8 +126,13 @@ export default {
       }
     },
     deleteCar(carId) {
+      const token = localStorage.getItem('token');
       axios
-          .delete(`http://localhost:8080/api/admin/cars/delete/${carId}`)
+          .delete(`/api/admin/cars/delete/${carId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             this.fetchCars();
             console.log(response);
@@ -123,8 +150,13 @@ export default {
       car.editMode = !car.editMode;
     },
     updateCar(car) {
+      const token = localStorage.getItem('token');
       axios
-          .put(`http://localhost:8080/api/admin/cars/update/${car.id}`, car)
+          .put(`/api/admin/cars/update/${car.id}`, car, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             console.log(response);
             console.log('Car updated');

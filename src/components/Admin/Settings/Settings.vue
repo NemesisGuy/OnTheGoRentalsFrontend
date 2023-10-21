@@ -26,7 +26,24 @@
 <script setup>
 import {onMounted, ref} from 'vue';
 import axios from 'axios';
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 const id = ref('');
 const currencyName = ref('');
 const currencySymbol = ref('');
@@ -39,13 +56,23 @@ const submitForm = async () => {
   };
 
   // Send a request to update the currency
-  await axios.put('http://localhost:8080/api/admin/settings/update', data);
+  const token = localStorage.getItem('token');
+  await axios.put('/api/admin/settings/update', data, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 };
 
 
 onMounted(async () => {
   // Fetch current settings data
-  const response = await axios.get('http://localhost:8080/api/admin/settings/read');
+  const token = localStorage.getItem('token');
+  const response = await axios.get('/api/admin/settings/read', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
   //id.value = response.data.id;
   id.value = response.data.id;
   currencyName.value = response.data.currencyName;

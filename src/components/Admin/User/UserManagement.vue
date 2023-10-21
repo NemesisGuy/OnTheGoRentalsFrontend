@@ -130,7 +130,24 @@ import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
   name: "UsersManagement",
   components: {
@@ -162,7 +179,7 @@ export default {
       this.loading = true;
       const token = localStorage.getItem('token');
       console.log("token", localStorage.getItem('token'))
-      axios.get('http://localhost:8080/api/admin/users/list/all', {
+      axios.get('/api/admin/users/list/all', {
         headers: {
           Authorization: `Bearer ${token}`
         }
