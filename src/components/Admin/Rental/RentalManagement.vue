@@ -302,9 +302,11 @@ export default {
         rentalId: rental.id, // Add the rentalId
         userId: rental.user.id, // Add the userId
         carId: rental.car.id, // Add the carId
+        receiver: rental.receiver,
+        issuer: rental.issuer,
         issuedDate: rental.issuedDate,
         returnedDate: rental.returnedDate,
-        receiver: rental.receiver,
+
         fine: Math.floor(rental.fine),
         // Add other properties as needed
       };
@@ -313,6 +315,7 @@ export default {
 
       // Send the temporary rental object to the backend
       this.loading = true;
+      const token = localStorage.getItem('token');
       axios
           .put(`/api/admin/rentals/update/${tempRental.rentalId}`, tempRental, {
             headers: {
