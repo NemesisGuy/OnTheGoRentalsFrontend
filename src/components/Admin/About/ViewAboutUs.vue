@@ -1,4 +1,5 @@
 <template>
+    <div class="card-container">
     <div class="aboutUs-details">
         <h1>AboutUs Details</h1>
         <div v-if="about" class="aboutUs-details">
@@ -25,6 +26,7 @@
 
         </div>
     </div>
+    </div>
 </template>
 <script>
 import axios from 'axios';
@@ -42,9 +44,14 @@ export default {
     methods:{
         fetchAboutUsDetails(){
             const aboutId = this.$route.params.id;
+            const token = localStorage.getItem('token');
 
             axios
-                .get(`http://localhost:8080/api/admin/aboutUs/read/${aboutId}`)
+                .get(`http://localhost:8080/api/admin/aboutUs/read/${aboutId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
                 .then((response) => {
                     this.about = response.data;
                 })

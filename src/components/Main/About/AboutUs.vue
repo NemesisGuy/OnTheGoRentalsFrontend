@@ -73,11 +73,11 @@ export default {
     margin-bottom:20px;
 }
 
+
 .about p {
     font-size: 1.2em;
     color: #555;
 }
 </style>
-
 
 

@@ -185,17 +185,25 @@ export default {
 
     getRentals() {
       this.loading = true;
+        const token = localStorage.getItem('token');
+        console.log("token", localStorage.getItem('token'))
       axios
-          .get(`http://localhost:8080/api/admin/rentals/list/all`)
+          .get(`http://localhost:8080/api/admin/rentals/list/all`, {
+              headers: {
+                  Authorization: `Bearer ${token}`
+              }
+          })
           .then((response) => {
             this.rentals = response.data;
             this.sortedRentalsList = [...this.rentals]; // Assign to data property instead of computed property
             this.loading = false;
+              console.log("token", localStorage.getItem('token'))
           })
 
           .catch((error) => {
             this.loading = false;
             this.showFailureModal("Failed to fetch rentals. Please try again.");
+              console.log("token", localStorage.getItem('token'))
           });
     },
     sortRentals(sortKey) {
@@ -245,8 +253,14 @@ export default {
       if (this.rentalToDelete) {
         const rentalId = this.rentalToDelete.id;
         this.loading = true;
+          const token = localStorage.getItem('token');
+          console.log("token", localStorage.getItem('token'))
         axios
-            .delete(`http://localhost:8080/api/admin/rentals/delete/${rentalId}`)
+            .delete(`http://localhost:8080/api/admin/rentals/delete/${rentalId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             .then(() => {
               this.showSuccessModal("Rental deleted successfully.");
               this.getRentals();
@@ -254,6 +268,7 @@ export default {
             .catch((error) => {
               this.loading = false;
               this.showFailureModal("Failed to delete rental. Please try again.");
+                console.log("token", localStorage.getItem('token'))
             });
       }
       this.rentalToDelete = null;
@@ -282,10 +297,16 @@ export default {
       };
       console.log("tempid sent this id: ", tempRental.rentalId);
       console.info("Saving rental: ", tempRental);
+        const token = localStorage.getItem('token');
+        console.log("token", localStorage.getItem('token'))
 
       // Send the temporary rental object to the backend
       axios
-          .put(`http://localhost:8080/api/admin/rentals/update/${tempRental.rentalId}`, tempRental)
+          .put(`http://localhost:8080/api/admin/rentals/update/${tempRental.rentalId}`, tempRental, {
+              headers: {
+                  Authorization: `Bearer ${token}`
+              }
+          })
           .then(() => {
             this.showSuccessModal("Rental updated successfully.");
             this.getRentals();
@@ -293,13 +314,18 @@ export default {
           .catch((error) => {
             this.loading = false;
             this.showFailureModal("Failed to update rental. Please try again.");
+              console.log("token", localStorage.getItem('token'))
           });
     },
     cancelEdit(rental) {
       rental.editing = false;
     },
     openRentalView(rentalId) {
-      this.$router.push(`/admin/rentals/read/${rentalId}`);
+      this.$router.push(`/admin/rentals/read/${rentalId}`, {
+          headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+      });
     },
     resetSearch() {
       this.searchQuery = "";

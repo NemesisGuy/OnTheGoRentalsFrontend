@@ -1,4 +1,5 @@
 <template>
+    <div class="card-container">
     <div class="contact-profile">
         <h1>Query Details</h1>
         <div v-if="contact" class="profile-details">
@@ -33,6 +34,7 @@
             </div>
 
     </div>
+    </div>
 </template>
 <script>
 import axios from 'axios';
@@ -53,9 +55,14 @@ export default {
         fetchContact(){
             this.loading = true;
             const contactId = this.$route.params.id;
+            const token = localStorage.getItem('token');
 
             axios
-                .get(`http://localhost:8080/api/admin/contactUs/read/${contactId}`)
+                .get(`http://localhost:8080/api/admin/contactUs/read/${contactId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
                 .then((response) => {
                     this.contact = response.data;
                 })

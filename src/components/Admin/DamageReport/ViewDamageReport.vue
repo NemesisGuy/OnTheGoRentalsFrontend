@@ -29,9 +29,10 @@
                             <span>{{ damageReport.repairCost }}</span>
                         </div>
                     </div>
-                    <div class="detail-row">
+                    <div class="section">
                         <h3>Rental Details:</h3>
                         <hr>
+                        <div class="detail-row">
                         <div v-if="damageReport.rental">
                             <div>
                                 <label>Rental ID:</label>
@@ -50,6 +51,18 @@
                     <span>{{ damageReport.rental.issuer }}</span>
                 </div>
                             <div>
+                                <label>First Name:</label>
+                                <span>{{ damageReport.rental.user.firstName }}</span>
+                            </div>
+                            <div>
+                                <label>Last Name:</label>
+                                <span>{{ damageReport.rental.user.lastName }}</span>
+                            </div>
+                            <div>
+                                <label>Email:</label>
+                                <span>{{ damageReport.rental.user.userName }}</span>
+                            </div>
+                            <div>
                                 <label>Rental Date:</label>
                                 <span>{{ damageReport.rental.issuedDate }}</span>
                             </div>
@@ -61,7 +74,6 @@
                             <label>Fine:</label>
                             <span>{{ damageReport.rental.fine }}</span>
                         </div>
-                            //Testing
                             <div>
                                 <label>Car Make:</label>
                                 <span>{{ damageReport.rental.car.make }}</span>
@@ -78,6 +90,7 @@
                                 <label>Car Category:</label>
                                 <span>{{ damageReport.rental.car.category }}</span>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -148,7 +161,14 @@ export default {
             console.log('Fetching damage report...');
 
             try {
-                const response = await axios.get(`http://localhost:8080/api/admin/damageReport/read/${damageReportId}`);
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`http://localhost:8080/api/admin/damageReport/read/${damageReportId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+
                 this.damageReport = response.data;
                 console.log('Damage Report:', this.damageReport);
 
@@ -166,7 +186,14 @@ export default {
                 console.log('Fetching rental profile...');
 
                 try {
-                    const response = await axios.get(`http://localhost:8080/api/admin/rentals/read/${rentalId}`);
+                    const token = localStorage.getItem('token');
+                    const response = await axios.get(`http://localhost:8080/api/admin/rentals/read/${rentalId}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+
+
                     this.rental = response.data;
                     console.log('Rental Profile:', this.rental);
                 } catch (error) {

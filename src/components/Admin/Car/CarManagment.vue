@@ -172,8 +172,14 @@ export default {
   methods: {
     fetchCars() {
       this.loading = true;
+        const token = localStorage.getItem('token');
+        console.log("token", localStorage.getItem('token'))
       axios
-          .get("http://localhost:8080/api/admin/cars/all")
+          .get('http://localhost:8080/api/admin/cars/all', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
           .then((response) => {
             this.cars = response.data;
             console.log(response);
@@ -186,6 +192,7 @@ export default {
           })
           .finally(() => {
             this.loading = false;
+              console.log("token", localStorage.getItem('token'))
           });
     },
     closeModal() {
@@ -204,8 +211,14 @@ export default {
     confirmDelete() {
       if (this.carToDelete) {
         this.loading = true;
+          const token = localStorage.getItem('token');
+          console.log("token", localStorage.getItem('token'))
         axios
-            .delete(`http://localhost:8080/api/admin/cars/delete/${this.carToDelete.id}`)
+            .delete(`http://localhost:8080/api/admin/cars/delete/${this.carToDelete.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             .then((response) => {
               this.fetchCars();
               console.log(response);
@@ -245,8 +258,14 @@ export default {
       this.loading = true;
     },
     pushUpdatedCar(car) {
+        const token = localStorage.getItem('token');
+        console.log("token", localStorage.getItem('token'))
       axios
-          .put(`http://localhost:8080/api/admin/cars/update/${car.id}`, car)
+          .put(`http://localhost:8080/api/admin/cars/update/${car.id}`, car, {
+              headers: {
+                  Authorization: `Bearer ${token}`
+              }
+          })
           .then((response) => {
             console.log(response);
             console.log("Car updated");

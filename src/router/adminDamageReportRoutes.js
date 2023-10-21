@@ -3,6 +3,7 @@ import DamageReportManagement from "@/components/Admin/DamageReport/DamageReport
 import CreateDamageReport from "@/components/Admin/DamageReport/CreateDamageReport.vue";
 import ViewDamageReport from "@/components/Admin/DamageReport/ViewDamageReport.vue";
 import DeleteDamageReport from "@/components/Admin/DamageReport/DeleteDamageReport.vue";
+import UpdateDamageReport from "@/components/Admin/DamageReport/UpdateDamageReport.vue";
 
 const adminDamageReportRoutes = [
     {
@@ -25,6 +26,13 @@ const adminDamageReportRoutes = [
         name: 'ViewDamageReport',
         components: {
             adminContent: ViewDamageReport,
+        },
+    },
+    {
+        path: 'damageReport/update/:id',
+        name: 'UpdateDamageReport',
+        components: {
+            adminContent: UpdateDamageReport,
         },
     },
     {

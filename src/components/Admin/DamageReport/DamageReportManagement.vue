@@ -162,8 +162,14 @@ export default {
     methods: {
         fetchDamageReport() {
             this.loading = true;
+            const token = localStorage.getItem('token');
+            console.log("token", localStorage.getItem('token'))
             axios
-                .get(`http://localhost:8080/api/admin/damageReport/all`)
+                .get(`http://localhost:8080/api/admin/damageReport/all`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then((response) => {
                     this.damageReport = response.data;
                     this.sortedDamageReports = response.data;
@@ -173,6 +179,7 @@ export default {
                 .catch((error) => {
                     this.loading = false;
                     this.showFailureModal("Failed to fetch reports. Please try again.");
+                    console.log("token", localStorage.getItem('token'))
                 });
         },
         sortDamageReports(sortKey) {
@@ -222,8 +229,14 @@ export default {
             if (this.damageReportToDelete) {
                 const damageReportId = this.damageReportToDelete.id;
                 this.loading = true;
+                const token = localStorage.getItem('token');
+                console.log("token", localStorage.getItem('token'))
                 axios
-                    .delete(`http://localhost:8080/api/admin/damageReport/delete/${damageReportId}`)
+                    .delete(`http://localhost:8080/api/admin/damageReport/delete/${damageReportId}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    })
                     .then(() => {
                         this.showSuccessModal("Damage report deleted successfully.");
                         this.fetchDamageReport();
@@ -244,7 +257,7 @@ export default {
             damageReport.editing = true;
         },
         saveDamageReport(damageReport) {
-            damageReport.id = damageReport.damageReportId;
+            //damageReport.id = damageReport.damageReportId;
             damageReport.description = damageReport.description;
             damageReport.dateAndTime = damageReport.dateAndTime;
             damageReport.location = damageReport.location;
@@ -255,8 +268,14 @@ export default {
             console.info("DamageReport.id: ", damageReport.id);
             damageReport.editing = false;
             this.loading = true;
+            const token = localStorage.getItem('token');
+            console.log("token", localStorage.getItem('token'))
             axios
-                .put(`http://localhost:8080/api/admin/damageReport/update/${damageReport.damageReportId}`, damageReport)
+                .put(`http://localhost:8080/api/admin/damageReport/update/${damageReport.id}`, damageReport, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then(() => {
                     this.showSuccessModal("Report updated successfully.");
                     this.fetchDamageReport();

@@ -108,8 +108,15 @@ export default {
       this.loadingModal.show = true;
 
       this.errorMessage = ''; // Reset the error message
+        const token = localStorage.getItem('token');
+        console.log("token", localStorage.getItem('token'))
 
-      axios.post('http://localhost:8080/api/admin/cars/create', this.car)
+      axios.post('http://localhost:8080/api/admin/cars/create', this.car, {
+          headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+          },
+      })
           .then(response => {
             // Handle success
             console.log('Car added successfully');

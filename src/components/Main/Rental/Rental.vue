@@ -121,27 +121,42 @@ export default {
     async getSelectedCar() {
       try {
         const carId = this.$route.params.carId;
-        const response = await axios.get(`http://localhost:8080/api/admin/cars/read/${carId}`);
+          const token = localStorage.getItem('token');
+          console.log("token", localStorage.getItem('token'))
+        const response = await axios.get(`http://localhost:8080/api/admin/cars/read/${carId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
         this.selectedCar = response.data;
       } catch (error) {
         console.error('Error retrieving car:', error);
         this.failModal.show = true;
         this.failModal.message = 'Error retrieving car';
+          console.log("token", localStorage.getItem('token'))
       }
     },
     async getUserDetails() {
       try {
         const userId = 1; // Replace with the actual user ID from Vuex or other source
-        const response = await axios.get(`http://localhost:8080/api/admin/users/read/${userId}`);
+          const token = localStorage.getItem('token');
+          console.log("token", localStorage.getItem('token'))
+        const response = await axios.get(`http://localhost:8080/api/admin/users/read/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
         this.user = response.data;
       } catch (error) {
         console.error('Error retrieving user:', error);
+          console.log("token", localStorage.getItem('token'))
       }
     },
     confirmRental() {
       this.showConfirmationModal = false;
       this.confirmationMessage = `Are you sure you want to confirm this rental? ${this.selectedCar.model} ${this.user.name}`;
       this.loading = true;
+        console.log("token", localStorage.getItem('token'))
 
       const rentalData = {
         car: this.selectedCar,
@@ -154,7 +169,11 @@ export default {
         returnedDate: null,
       };
 
-      axios.post('http://localhost:8080/api/admin/rentals/create', rentalData)
+      axios.post('http://localhost:8080/api/admin/rentals/create', rentalData, {
+          headers: {
+              Authorization: `Bearer ${token}`
+          }
+      })
           .then(response => {
             if (response.status === 200) {
               console.log(response);

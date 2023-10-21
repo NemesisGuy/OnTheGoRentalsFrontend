@@ -35,7 +35,7 @@
             <li>
                 <router-link to="/admin/contactUs">
                     <i class="fas fa-envelope"></i>
-                    <span class="menu-text" v-show="isExpanded"> Contact Us Management </span>
+                    <span class="menu-text" v-show="isExpanded"> Contact Us Management</span>
                 </router-link>
             </li>
           <li>

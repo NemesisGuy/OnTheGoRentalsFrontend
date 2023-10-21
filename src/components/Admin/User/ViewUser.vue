@@ -60,9 +60,15 @@ export default {
       this.loading = true;
       // Assuming you have the user ID or any other identifier to fetch the user's profile
       const userId = this.$route.params.id; // Get the user ID from the route parameter
+        const token = localStorage.getItem('token');
 
       axios
-          .get(`http://localhost:8080/api/admin/users/read/${userId}`)
+          .get(`http://localhost:8080/api/admin/users/read/${userId}`, {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+              },
+          })
+
           .then((response) => {
             this.user = response.data;
           })

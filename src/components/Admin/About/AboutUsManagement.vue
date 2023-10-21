@@ -135,16 +135,24 @@ export default{
     methods: {
         getAbout() {
             this.loading = true;
+            const token = localStorage.getItem('token');
+            console.log("token", localStorage.getItem('token'))
             axios
-                .get("http://localhost:8080/api/admin/aboutUs/all")
+                .get('http://localhost:8080/api/admin/aboutUs/all', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then((response) => {
                     this.users = response.data;
                     this.sortedAbout = response.data;
                     this.loading = false;
+                    console.log("token", localStorage.getItem('token'))
                 })
                 .catch((error) => {
                     this.loading = false;
                     this.showFailureModal("Failed to fetch the details. Please try again.");
+                    console.log("token", localStorage.getItem('token'))
                 });
         },
         sortAboutUs(sortKey) {
@@ -162,8 +170,14 @@ export default{
             if (this.aboutToBeDeletedId) {
                 const aboutId = this.aboutToBeDeletedId.id;
                 this.loading = true;
+                const token = localStorage.getItem('token');
+                console.log("token", localStorage.getItem('token'))
                 axios
-                    .delete(`http://localhost:8080/api/admin/aboutUs/delete/${this.aboutToBeDeletedId.id}`)
+                    .delete(`http://localhost:8080/api/admin/aboutUs/delete/${this.aboutToBeDeletedId.id}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    })
                     .then(() => {
                         this.showSuccessModal("About details deleted successfully.");
                         this.getAbout();
@@ -186,8 +200,14 @@ export default{
         saveAbout(about) {
             about.editing = false;
             this.loading = true;
+            const token = localStorage.getItem('token');
+            console.log("token", localStorage.getItem('token'))
             axios
-                .put(`http://localhost:8080/api/admin/aboutUs/update/${about.id}`, about)
+                .put(`http://localhost:8080/api/admin/aboutUs/update/${about.id}`, about, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then(() => {
                     this.showSuccessModal("About details updated successfully.");
                     this.getAbout();
@@ -195,13 +215,18 @@ export default{
                 .catch((error) => {
                     this.loading = false;
                     this.showFailureModal("Failed to update details. Please try again.");
+                    console.log("token", localStorage.getItem('token'))
                 });
         },
         cancelEdit(about) {
             about.editing = false;
         },
         openAboutView(aboutId) {
-            this.$router.push(`/admin/aboutUs/read/${aboutId}`);
+            this.$router.push(`/admin/aboutUs/read/${aboutId}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
         },
         showSuccessModal(message) {
             this.successModal = {

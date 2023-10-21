@@ -157,16 +157,24 @@ export default {
     methods: {
         getContact(){
             this.loading = true;
+            const token = localStorage.getItem('token');
+            console.log("token", localStorage.getItem('token'))
             axios
-                .get("http://localhost:8080/api/admin/contactUs/all")
+                .get('http://localhost:8080/api/admin/contactUs/all', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then((response) => {
                     this.contact = response.data;
                     this.sortedContact = response.data;
                     this.loading = false;
+                    console.log("token", localStorage.getItem('token'))
                 })
                 .catch((error) => {
                     this.loading = false;
                     this.showFailureModal("Failed to fetch queries. Please try again.");
+                    console.log("token", localStorage.getItem('token'))
                 });
         },
         sortContact(sortKey) {
@@ -184,8 +192,14 @@ export default {
             if (this.contactToDeleteId) {
                 const contactId = this.contactToDeleteId.id;
                 this.loading = true;
+                const token = localStorage.getItem('token');
+                console.log("token", localStorage.getItem('token'))
                 axios
-                    .delete(`http://localhost:8080/api/admin/contactUs/delete/${this.contactToDeleteId.id}`)
+                    .delete(`http://localhost:8080/api/admin/contactUs/delete/${this.contactToDeleteId.id}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    })
                     .then(() => {
                         this.showSuccessModal("Query deleted successfully.");
                         this.getContact();
@@ -208,8 +222,14 @@ export default {
         saveContact(contact) {
             contact.editing = false;
             this.loading = true;
+            const token = localStorage.getItem('token');
+            console.log("token", localStorage.getItem('token'))
             axios
-                .put(`http://localhost:8080/api/admin/contactUs/update/${contact.id}`, contact)
+                .put(`http://localhost:8080/api/admin/contactUs/update/${contact.id}`, contact, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then(() => {
                     this.showSuccessModal("Query updated successfully.");
                     this.getContact();
@@ -217,13 +237,18 @@ export default {
                 .catch((error) => {
                     this.loading = false;
                     this.showFailureModal("Failed to update query. Please try again.");
+                    console.log("token", localStorage.getItem('token'))
                 });
         },
         cancelEdit(contact) {
             contact.editing = false;
         },
         openContactView(contactId) {
-            this.$router.push(`/admin/contactUs/read/${contactId}`);
+            this.$router.push(`/admin/contactUs/read/${contactId}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
         },
         resetSearch() {
             this.searchQuery = "";

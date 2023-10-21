@@ -68,7 +68,7 @@ export default {
             axios
                 .get(`http://localhost:8080/api/admin/contactUs/all`)
                 .then((response) => {
-                    this.about = response.data;
+                    this.contact = response.data;
                 })
                 .catch((error) => {
                     console.log(error);

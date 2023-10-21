@@ -34,12 +34,14 @@ const router = createRouter({
             component: Home,
         },
         {
+
             path: '/aboutUs/:id',
             name: 'AboutUs',
             component: AboutUs
         },
 
         {
+
             path: '/contactUs',
             name: 'ContactUs',
             component: ContactUs
@@ -103,6 +105,7 @@ const router = createRouter({
                 ...adminAboutUsRoutes,
                 ...adminContactUsRoutes,
                 ...adminDamageReportRoutes
+
             ],
         },
 

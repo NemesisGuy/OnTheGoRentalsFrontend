@@ -51,7 +51,14 @@ export default {
     methods:{
         addAbout(){
             this.errorMessage = '';
-            axios.post("http://localhost:8080/api/admin/aboutUs/create", this.about)
+            const token = localStorage.getItem('token');
+            console.log("token", localStorage.getItem('token'))
+            axios.post("http://localhost:8080/api/admin/aboutUs/create", this.about, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            })
                 .then(response => {
                     console.log('About details have been added successfully');
                     console.log(response.data);

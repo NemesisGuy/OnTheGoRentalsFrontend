@@ -109,13 +109,19 @@ export default {
   methods: {
     fetchRentalProfile() {
       const rentalId = this.$route.params.id;
+        const token = localStorage.getItem('token');
 
       axios
-          .get(`http://localhost:8080/api/admin/rentals/read/${rentalId}`)
+          .get(`http://localhost:8080/api/admin/rentals/read/${rentalId}`, {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+              },
+          })
           .then((response) => {
             this.rental = response.data;
             this.fetchUserProfile();
             this.fetchCarProfile();
+            console.log("token", localStorage.getItem('token'))
           })
           .catch((error) => {
             console.log(error);
@@ -123,9 +129,14 @@ export default {
     },
     fetchUserProfile() {
       const userId = this.rental.user.id;
+        const token = localStorage.getItem('token');
 
       axios
-          .get(`http://localhost:8080/api/admin/users/read/${userId}`)
+          .get(`http://localhost:8080/api/admin/users/read/${userId}`, {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+              },
+          })
           .then((response) => {
             this.user = response.data;
           })
@@ -136,8 +147,14 @@ export default {
     fetchCarProfile() {
       const carId = this.rental.car.id;
 
+        const token = localStorage.getItem('token');
+
       axios
-          .get(`http://localhost:8080/api/admin/cars/read/${carId}`)
+          .get(`http://localhost:8080/api/admin/cars/read/${carId}`, {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+              },
+          })
           .then((response) => {
             this.car = response.data;
           })

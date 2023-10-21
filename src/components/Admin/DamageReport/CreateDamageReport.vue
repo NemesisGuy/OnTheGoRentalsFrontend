@@ -1,6 +1,6 @@
 <template>
     <div class="card-container card-container-admin">
-    <div class="add-report-form form">
+    <div class="form-container-admin">
         <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"></LoadingModal>
 
         <form ref="reportForm" @submit.prevent="createReport">
@@ -229,7 +229,13 @@ export default {
         async fetchRentalOptions() {
             this.loadingModal.show = true;
             try {
-                const response = await axios.get('http://localhost:8080/api/admin/rentals/list/all');
+                const token = localStorage.getItem('token');
+                console.log("token", localStorage.getItem('token'))
+                const response = await axios.get('http://localhost:8080/api/admin/rentals/list/all', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 this.rentals = response.data;
             } catch (error) {
                 console.error(error);
@@ -245,7 +251,13 @@ export default {
             this.errorMessage = '';
 
             try {
-                const rentalResponse = await axios.get(`http://localhost:8080/api/admin/rentals/read/${this.selectedRental}`);
+                const token = localStorage.getItem('token');
+                const rentalResponse = await axios.get(`http://localhost:8080/api/admin/rentals/read/${this.selectedRental}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
 
                 const formattedDate = new Date(this.selectedDateAndTime).toISOString();
 
@@ -259,7 +271,14 @@ export default {
                 console.log('Report:', report);  // Check if the report is formed correctly
 
 
-                await axios.post('http://localhost:8080/api/admin/damageReport/create', report);
+                await axios.post('http://localhost:8080/api/admin/damageReport/create', report, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+
                 console.log('Damage report added successfully');
             } catch (error) {
                 console.error(error);

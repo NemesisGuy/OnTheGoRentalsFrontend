@@ -18,7 +18,7 @@ const adminContactUsRoutes =[
         },
     },
     {
-        path: 'contactUs/update/:id',
+        path: 'contactUs/update',
         components: {
             adminContent: UpdateContactUs
         },

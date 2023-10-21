@@ -54,9 +54,16 @@ export default {
     methods: {
         addQuery(){
             console.log("Adding query:", this.contact)
+            const token = localStorage.getItem('token');
+            console.log("token", localStorage.getItem('token'))
 
             axios
-                .post("http://localhost:8080/api/admin/contactUs/create", this.contact)
+                .post("http://localhost:8080/api/admin/contactUs/create", this.contact, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                })
                 .then((response) => {
                     console.log(response);
                 })
