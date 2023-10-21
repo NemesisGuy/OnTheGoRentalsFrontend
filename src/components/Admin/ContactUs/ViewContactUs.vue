@@ -1,5 +1,6 @@
 <template>
     <div class="card-container">
+        <div class="form-container">
     <div class="contact-profile">
         <h1>Query Details</h1>
         <div v-if="contact" class="profile-details">
@@ -33,6 +34,7 @@
                 Loading query...
             </div>
 
+    </div>
     </div>
     </div>
 </template>
@@ -79,4 +81,5 @@ export default {
 <style>
 
 </style>
+
 

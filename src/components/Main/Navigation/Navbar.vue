@@ -12,7 +12,7 @@
         <ul class="navbar-nav">
             <li class="nav-item">
 
-                <router-link :to="{ name: 'AboutUs', params: { id: 2 } }" class="nav-link">About </router-link>
+                <router-link :to="{ name: 'AboutUs', params: { id: 2 } }"  class="nav-link">About </router-link>
             </li>
           <li class="nav-item">
             <router-link to="/nav/user/login" class="nav-link">Login</router-link>
@@ -24,7 +24,7 @@
             <router-link to="/help-center" class="nav-link">Help Center</router-link>
           </li>
             <li class="nav-item">
-                <router-link to="/contactUs" class="nav-link">Contact Us </router-link>
+                <router-link to="/contactUs" class="nav-link">Contact Us</router-link>
             </li>
           <li class="nav-item">
             <router-link to="/Booking" class="nav-link">Booking</router-link>

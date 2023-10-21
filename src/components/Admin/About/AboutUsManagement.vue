@@ -249,6 +249,5 @@ export default{
         this.getAbout();
     },
 };
-
 </script>
 

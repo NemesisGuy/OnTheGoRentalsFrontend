@@ -38,5 +38,4 @@ const adminAboutUsRoutes =[
 },
 },
 ];
-
 export default adminAboutUsRoutes;

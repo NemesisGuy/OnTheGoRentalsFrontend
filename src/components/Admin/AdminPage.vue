@@ -11,7 +11,7 @@
             <li>
                 <router-link to="/admin/aboutUs">
                     <i class="fa fa-info-circle" aria-hidden="true"></i>
-                    <span class="menu-text" v-show="isExpanded">About Management</span>
+                    <span class="menu-text" v-show="isExpanded">About Management </span>
                 </router-link>
             </li>
           <li>
@@ -23,7 +23,7 @@
             <li>
                 <router-link to="/admin/damageReport">
                     <i class="fa fa-book" aria-hidden="true"></i>
-                    <span class="menu-text" v-show="isExpanded">Damage Report Management</span>
+                    <span class="menu-text" v-show="isExpanded">Damage Report Management </span>
                 </router-link>
             </li>
           <li>
@@ -35,7 +35,7 @@
             <li>
                 <router-link to="/admin/contactUs">
                     <i class="fas fa-envelope"></i>
-                    <span class="menu-text" v-show="isExpanded"> Contact Us Management</span>
+                    <span class="menu-text" v-show="isExpanded"> Contact Us Management </span>
                 </router-link>
             </li>
           <li>

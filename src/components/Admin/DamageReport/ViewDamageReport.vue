@@ -1,5 +1,6 @@
 <template>
     <div class="card-container">
+        <div class="form-container">
         <div class="report-profile">
             <h1>Damage Report Profile</h1>
             <hr>
@@ -38,14 +39,6 @@
                                 <label>Rental ID:</label>
                                 <span>{{ damageReport.rental.rentalId }}</span>
                             </div>
-                            <!--<div>
-                            <label>User:</label>
-                            <span>{{ rental.user }}</span>
-                        </div>
-                        <div>
-                        <label>Car:</label>
-                        <span>{{ rental.car}}</span>
-                    </div>-->
                     <div>
                     <label>Issuer:</label>
                     <span>{{ damageReport.rental.issuer }}</span>
@@ -74,6 +67,12 @@
                             <label>Fine:</label>
                             <span>{{ damageReport.rental.fine }}</span>
                         </div>
+                        </div>
+                            <div v-if="damageReport.rental.car">
+                            <div class="section">
+                                <h3>Car Details:</h3>
+                                <hr>
+                                <div class="detail-row">
                             <div>
                                 <label>Car Make:</label>
                                 <span>{{ damageReport.rental.car.make }}</span>
@@ -93,12 +92,15 @@
                         </div>
                         </div>
                     </div>
+                    </div>
                 </div>
+            </div>
             </div>
             <div v-else>
                 <p>Loading report profile...</p>
             </div>
         </div>
+    </div>
     </div>
 </template>
 
@@ -112,7 +114,7 @@ export default {
             damageReport: null,
             rental: null,
             //user: null,
-            //car: null,
+            car: null,
         };
     },
     mounted() {
@@ -121,40 +123,6 @@ export default {
     },
     methods: {
 
-        /**fetchReportProfile(){
-            const damageReportId = this.$route.params.id;
-            console.log('Fetching damage report...');
-
-            axios
-                .get(`http://localhost:8080/api/admin/damageReport/read/${damageReportId}`)
-                .then((response) => {
-                    console.log('Damage Report:', this.damageReport);
-                    this.damageReport = response.data;
-                    this.fetchRentalProfile();
-                    //this.fetchCarProfile();
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
-        fetchRentalProfile() {
-            if (this.damageReport && this.damageReport.rental) {
-
-                const rentalId = this.damageReport.rental.id;
-                console.log('Fetching rental profile...');
-
-                axios
-                    .get(`http://localhost:8080/api/admin/rentals/read/${rentalId}`)
-                    .then((response) => {
-                        this.rental = response.data;
-                        console.log('Rental Profile:', this.rental);
-                    })
-                    .catch((error) => {
-                        console.log('Error fetching rental profile:', error);
-                    });
-            }
-        },
-    },*/
         async fetchReportProfile() {
             const damageReportId = this.$route.params.id;
 

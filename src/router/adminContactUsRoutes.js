@@ -38,5 +38,4 @@ const adminContactUsRoutes =[
     },
 
 ];
-
 export default adminContactUsRoutes;

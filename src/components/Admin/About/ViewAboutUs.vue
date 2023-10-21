@@ -1,5 +1,6 @@
 <template>
     <div class="card-container">
+        <div class="form-container">
     <div class="aboutUs-details">
         <h1>AboutUs Details</h1>
         <div v-if="about" class="aboutUs-details">
@@ -25,6 +26,7 @@
             </div>
 
         </div>
+    </div>
     </div>
     </div>
 </template>
@@ -66,5 +68,4 @@ export default {
 };
 </script>
 <style>
-
 </style>
