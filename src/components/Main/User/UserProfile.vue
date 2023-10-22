@@ -114,11 +114,11 @@
             <img v-else src="@/assets/Images/Defaults/default-user-avatar.png" alt="Placeholder Image" class="avatar">
           </div>
           <hr>
-          <p><strong><i class="fas fa-user"></i> Username:</strong> {{ user.userName }}</p>
+<!--          <p><strong><i class="fas fa-user"></i> Username:</strong> {{ user.userName }}</p>-->
           <p><strong><i class="fas fa-envelope"></i> Email:</strong> {{ user.email }}</p>
           <p><strong><i class="fas fa-user"></i> First Name:</strong> {{ user.firstName }}</p>
           <p><strong><i class="fas fa-user"></i> Last Name:</strong> {{ user.lastName }}</p>
-          <p><strong><i class="fas fa-phone"></i> Phone Number:</strong> {{ user.phoneNumber }}</p>
+<!--          <p><strong><i class="fas fa-phone"></i> Phone Number:</strong> {{ user.phoneNumber }}</p>-->
 
           <!-- Add more profile information as needed -->
           <hr>

@@ -131,7 +131,8 @@ export default {
     },
     async getUserDetails() {
       try {
-        const userId = 1; // Replace with the actual user ID from Vuex or other source
+        const userId = 1; // Replace with the actual user ID from Vuex or other source//find user details JWT token
+
         const response = await axios.get(`http://localhost:8080/api/admin/users/read/${userId}`);
         this.user = response.data;
       } catch (error) {
