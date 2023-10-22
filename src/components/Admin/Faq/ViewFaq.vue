@@ -1,19 +1,28 @@
 <template>
   <div class="card-container">
-    <div class="faq-profile">
-      <h1>FAQ Profile</h1>
-      <div class="profile-details" v-if="faq">
-        <div>
-          <label>Question:</label>
-          <span>{{ faq.question }}</span>
+    <div class="form-container">
+      <div class="rental-profile">
+        <h1>FAQ Profile</h1>
+        <hr>
+        <div class="profile-details" v-if="faq">
+          <div class="section">
+            <h3>FAQ Details:</h3>
+            <hr>
+            <div class="detail-row">
+              <div>
+                <label>Question:</label>
+                <span>{{ faq.question }}</span>
+              </div>
+              <div>
+                <label>Answer:</label>
+                <span>{{ faq.answer }}</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <label>Answer:</label>
-          <span>{{ faq.answer }}</span>
+        <div v-else>
+          <p>Loading FAQ profile...</p>
         </div>
-      </div>
-      <div v-else>
-        <p>Loading FAQ profile...</p>
       </div>
     </div>
     <button @click="goBack" class="back-button">
@@ -38,7 +47,6 @@ export default {
   methods: {
     fetchFAQProfile() {
       const faqId = this.$route.params.id;
-
       axios
           .get(`http://localhost:8080/api/admin/faq/read/${faqId}`)
           .then((response) => {
@@ -63,11 +71,11 @@ export default {
   padding: 50px;
 }
 
-.faq-profile {
+.rental-profile {
   margin-top: 20px;
 }
 
-.faq-profile h1 {
+.rental-profile h1 {
   margin-bottom: 10px;
 }
 
@@ -85,6 +93,8 @@ span {
 
 .back-button {
   margin-top: 20px;
+  color: black;
 }
 </style>
+
 

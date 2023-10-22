@@ -62,12 +62,13 @@
               <span class="menu-text" v-show="isExpanded">Help Center</span>
             </router-link>
           </li>
-            <li>
-            <router-link to="/admin/booking">
-              <i class="fas fa-life-ring"></i>
-              <span class="menu-text" v-show="isExpanded">Booking</span>
-            </router-link>
-          </li>
+          <li>
+            <router-link to="/admin/bookings">
+  <i class="fas fa-calendar"></i>
+  <span class="menu-text" v-show="isExpanded">Booking Management</span>
+</router-link>
+
+  </li>
           <li>
             <router-link to="/admin/settings">
               <i class="fas fa-gear"></i>
@@ -145,16 +146,16 @@ export default {
 }
 
 .sidebar-container {
-  flex: 1; /* Use flex property to allow sidebar to grow */
-  overflow-y: auto; /* Enable vertical scrolling */
+  flex: 1; 
+  overflow-y: auto; 
 }
 
 .admin-content-area {
-  flex: 3; /* Use flex property to allow content area to grow */
+  flex: 3; 
 
   transition: margin-left 0.3s;
-  overflow-y: auto; /* Enable vertical scrolling */
-  overflow-x: auto; /* Enable vertical scrolling */
+  overflow-y: auto; 
+  overflow-x: auto; 
 
 
 

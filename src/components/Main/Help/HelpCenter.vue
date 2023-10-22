@@ -5,9 +5,7 @@
       <div class="filter-container">
         <select v-model="selectedCategory" class="filter-dropdown">
           <option value="All">Show All</option>
-          <option value="Booking">Booking</option>
-          <option value="General">General</option>
-          <option value="Accounts">Accounts</option>
+          <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
         </select>
         <button class="faq-button button" @click="openFAQPage">FAQ</button>
       </div>
@@ -35,7 +33,8 @@ export default {
     return {
       helpCenters: null,
       originalHelpCenters: null,
-      selectedCategory: 'All'
+      selectedCategory: 'All',
+      categories: []
     };
   },
   computed: {
@@ -57,6 +56,7 @@ export default {
           .then((response) => {
             this.helpCenters = response.data;
             this.originalHelpCenters = response.data;
+            this.categories = [...new Set(response.data.map(entry => entry.category))];
           })
           .catch((error) => {
             console.error(error);

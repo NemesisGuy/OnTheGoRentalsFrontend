@@ -1,177 +1,248 @@
-<template>
-  <div class="card-container">
-    <div class="booking"><!--this should be a from ???-->
-      <div class="form-header">
-        <h1>Booking</h1>
-      </div>
-      <hr>
-      <!-- User Information -->
-      <div class="user-details">
-        <h2 style="color: black;">User Information</h2><!--please remove the inline styles thats a big ISSUE -->
-        <div class="form-group">
-          <label for="userName">Username:</label>
-          <input id="userName" v-model="user.userName" class="custom-input" required type="text">
+<template xmlns="http://www.w3.org/1999/html">
+  <div class="card-container card-container-admin">
+    <div class="form-container-admin">
+      <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"></LoadingModal>
+
+      <form ref="bookingForm" @submit.prevent="createBooking">
+        <div class="form-header">
+          <h2>Create Booking</h2>
         </div>
+        
         <div class="form-group">
-          <label for="email">Email:</label>
-          <input id="email" v-model="user.email" class="custom-input" required type="email">
+          <label for="user">User:</label>
+          <select id="user" v-model="selectedUser" name="userId">
+            <option v-for="user in users" :key="user.id" :value="user.id">
+              User ID: {{ user.id }} Email: {{ user.email }}
+            </option>
+          </select>
         </div>
-      </div>
-      <!-- Booking Dates -->
-      <div class="date-details">
-        <h2 style="color: black;">Booking Dates</h2><!--please remove the inline styles thats a big ISSUE -->
+
         <div class="form-group">
-          <label for="startDate">Start Date:</label>
-          <input id="startDate" v-model="booking.startDate" class="custom-input" required type="date">
+          <label for="issuedDate">Issued Date:</label>
+          <input id="issuedDate" v-model="selectedIssuedDate" name="issuedDate" type="datetime-local">
         </div>
+
         <div class="form-group">
-          <label for="endDate">End Date:</label>
-          <input id="endDate" v-model="booking.endDate" class="custom-input" required type="date">
+  <label for="returnedDate">Returned Date:</label>
+  <input id="returnedDate" v-model="selectedReturnedDate" name="returnedDate" type="datetime-local">
+</div>
+
+
+        <div class="form-group">
+          <label for="car">Car:</label>
+          <select id="car" v-model="selectedCar" name="carId">
+            <option v-for="car in cars" :key="car.id" :value="car.id">
+              Car ID: {{ car.id }} Make: {{ car.make }} Model: {{ car.model }}
+            </option>
+          </select>
         </div>
-      </div>
-      <!-- Car Selection -->
-      <div class="car-details">
-        <h2 style="color: black;">Select a Car</h2><!--please remove the inline styles thats a big ISSUE -->
-        <select v-model="selectedCar" class="custom-dropdown" @change="calculatePrice">
-          <option value="">Select a Car</option>
-          <option value="AUDI A3">AUDI A3</option>
-          <option value="BMW">BMW</option>
-          <option value="RANGE ROVER">RANGE ROVER</option>
-          <option v-for="car in cars" :key="car.id" :value="car.make + ' ' + car.model">
-            {{ car.make }} {{ car.model }}
-          </option>
-        </select>
-        <p v-if="selectedCar" style="color: black;">
-          Price per Day: R {{ getPricePerDay(selectedCar.priceGroup) }}
-        </p>
-      </div><!-- Car Selection -->
-      <div class="button-container">
-        <button class="add-button button" @click="openBookingPage"><i class="fas fa-check"></i> Confirm</button>
-      </div>
+
+        <div class="form-group">
+          <div class="button-container">
+            <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
+          </div>
+        </div>
+      </form>
     </div>
+  </div>
+
+  <div class="modal-body">
+    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+    <!-- Add the LoadingModal component -->
+
+    <!-- Add the ConfirmationModal component -->
+    <confirmation-modal
+      key="confirmationModal"
+      :show="showConfirmationModal"
+      @cancel="cancel"
+      @confirm="confirm"
+    >
+      <template v-if="showConfirmationModal">
+        <div>
+          <h3>Confirmation</h3>
+          <p>Are you sure you want to create this Booking?</p>
+          <hr>
+          <p>User ID: {{ selectedUser }}</p>
+          <p>Issued Date: {{ selectedIssuedDate }}</p>
+          <p>Returned Date: {{ selectedReturnedDate }}</p>
+          <p>Car ID: {{ selectedCar }}</p>
+          <hr>
+          <p><b>Warning!!!</b> This action cannot be undone.</p>
+        </div>
+      </template>
+    </confirmation-modal>
+
+    <!-- Add the SuccessModal component -->
+    <SuccessModal
+      v-if="successModal.show"
+      key="successModal"
+      :message="successModal.message"
+      :show="successModal.show"
+      @cancel="closeModal"
+      @close="closeModal"
+      @confirm="closeModal"
+      @ok="closeModal"
+    ></SuccessModal>
+
+    <!-- Add the FailureModal component -->
+    <FailureModal
+      v-if="failModal.show"
+      key="failModal"
+      :message="failModal.message"
+      :show="failModal.show"
+      @cancel="closeModal"
+      @close="closeModal"
+    ></FailureModal>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
+import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
+import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 
 export default {
-  name: 'Booking',
+  computed: {
+    confirmationModal() {
+      return ConfirmationModal;
+    }
+  },
   data() {
     return {
-      Bookings: null,
-      originalBookings: null,
-      selectedCategory: 'All',
-      user: {
-        userName: '',
-        email: ''
+      users: [],
+      cars: [],
+      selectedUser: "",
+      selectedCar: "",
+      selectedIssuedDate: "",
+      selectedReturnedDate: "",
+      confirm: null,
+      cancel: null,
+      loadingModal: {
+        show: false,
       },
-      booking: {
-        startDate: '',
-        endDate: ''
-      }
+      errorMessage: "",
+      showConfirmationModal: false,
+      successModal: {
+        show: false,
+        message: "",
+      },
+      failModal: {
+        show: false,
+        message: "",
+      },
     };
   },
-  computed: {
-    filteredBookings() {
-      if (this.selectedCategory === 'All') {
-        return this.Bookings;
-      } else {
-        return this.Bookings.filter(entry => entry.category === this.selectedCategory);
-      }
-    }
+  components: {
+    ConfirmationModal,
+    SuccessModal,
+    FailureModal,
+    LoadingModal,
   },
   mounted() {
-    this.fetchBookings();
+    this.fetchUsersList();
+    this.fetchCarsList();
   },
   methods: {
-    fetchBookings() {
+    fetchUsersList() {
+      this.loadingModal.show = true;
       axios
-          .get('http://localhost:8080/api/booking/get-all')
+        .get("http://localhost:8080/api/admin/users/list/all")
+        .then((response) => {
+          this.users = response.data;
+          this.loadingModal.show = false;
+        })
+        .catch((error) => {
+          console.log(error);
+          this.failModal.message = "Failed to fetch users list";
+          this.failModal.show = true;
+          this.loadingModal.show = false;
+        })
+        .finally(() => {
+          this.loadingModal.show = false;
+        });
+    },
+
+    fetchCarsList() {
+      this.loadingModal.show = true;
+      axios
+        .get("http://localhost:8080/api/admin/cars/all")
+        .then((response) => {
+          this.cars = response.data;
+          this.loadingModal.show = false;
+        })
+        .catch((error) => {
+  console.log(error);
+  this.failModal.message = "Failed to fetch cars list";
+  this.failModal.show = true;
+  this.loadingModal.show = false;
+})
+
+        .finally(() => {
+          this.loadingModal.show = false;
+        });
+    },
+
+    createBooking() {
+      this.loadingModal.show = true;
+      this.errorMessage = "";
+
+      const booking = {
+        user: {
+          id: this.selectedUser,
+        },
+        car: {
+          id: this.selectedCar,
+        },
+        issuedDate: this.selectedIssuedDate,
+        returnedDate: this.selectedReturnedDate,
+      };
+
+      this.showConfirmationModal = true;
+
+      this.confirm = () => {
+        this.loadingModal.show = true;
+        this.showConfirmationModal = false;
+
+        axios
+          .post("http://localhost:8080/api/admin/bookings/create", booking)
           .then((response) => {
-            this.Bookings = response.data;
-            this.originalBookings = response.data;
+            if (response && response.data) {
+              console.log("Booking created successfully");
+              this.successModal.message =
+                "Booking created successfully:\n" +
+                `User: ${response.data.user.email}.\n` +
+                `Car: ${response.data.car.make} ${response.data.car.model}.\n` +
+                `Issued Date: ${response.data.issuedDate}.\n` +
+                `Returned Date: ${response.data.returnedDate}.\n`;
+              this.successModal.show = true;
+            } else {
+              console.error("Response or response.data is undefined");
+            }
           })
           .catch((error) => {
-            console.error(error);
+            console.log(error);
+            this.errorMessage = error.response.data;
+            this.failModal.show = true;
+          })
+          .finally(() => {
+            this.loadingModal.show = false;
           });
-    },
-    openBookingPage() {
-      this.$router.push('/booking');
-    },
-    bookCar() {
-      // Make the API call to book the car
-      const bookingData = {
-        userName: this.user.userName,
-        email: this.user.email,
-        startDate: this.booking.startDate,
-        endDate: this.booking.endDate,
       };
-      // Add your booking logic here
-    }
-  }
+
+      this.cancel = () => {
+        this.loadingModal.show = false;
+        this.showConfirmationModal = false;
+      };
+    },
+
+    closeModal() {
+      this.successModal.show = false;
+      this.failModal.show = false;
+      this.showConfirmationModal = false;
+    },
+  },
 };
 </script>
-
-<style scoped>
-/* Your existing CSS styles for the rest of the component */
-</style>
-
-
-<style scoped>
-
-
-.booking {
-  width: 650px;
-  height: 100%;
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-
-.custom-dropdown,
-.custom-input {
-  font-size: 18px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  width: 100%;
-}
-
-.filter-dropdown:focus {
-  outline: none;
-}
-
-.filter-dropdown option {
-  background-color: #fff;
-  color: #333;
-}
-
-.filter-dropdown option:hover {
-  background-color: #f2105e;
-  color: #fff;
-}
-
-
-.car-details, .user-details, .date-details {
-  margin-bottom: 20px;
-}
-
-
-.booking p, .booking h3 {
-  text-align: start;
-  margin: 0;
-}
-
-.booking h3 {
-  font-size: 1.5em;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.booking p {
-  font-size: 1.2em;
-  color: #555;
-}
-</style>
