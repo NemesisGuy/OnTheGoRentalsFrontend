@@ -196,6 +196,21 @@ import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 
+axios.interceptors.request.use(
+    config => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
+
 export default {
     components: { FailureModal, SuccessModal, LoadingModal, ConfirmationModal },
     data() {
@@ -260,9 +275,20 @@ export default {
 
 
                 const formattedDate = new Date(this.selectedDateAndTime).toISOString();
+                const tempRental = {
+                    rentalId: rentalResponse.data.id, // Add the rentalId
+                    userId: rentalResponse.data.user.id, // Add the userId
+                    carId: rentalResponse.data.car.id, // Add the carId
+                    receiver: rentalResponse.data.receiver,
+                    issuer: rentalResponse.data.issuer,
+                    issuedDate: rentalResponse.data.issuedDate,
+                    returnedDate: rentalResponse.data.returnedDate,
 
+                    //fine: Math.floor(rentalResponse.fine),
+                    // Add other properties as needed
+                };
                 const report = {
-                    rental: rentalResponse.data,
+                    rental: tempRental,
                     dateAndTime: formattedDate,
                     location: this.location,
                     description: this.description,
