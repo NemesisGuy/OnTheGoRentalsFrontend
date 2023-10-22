@@ -45,6 +45,12 @@
             </router-link>
           </li>
           <li>
+          <router-link to="/admin/drivers">
+            <i class="fas fa-life-ring"></i>
+            <span class="menu-text" v-show="isExpanded">Driver Management</span>
+          </router-link>
+          </li>
+          <li>
             <router-link to="/admin/rentals">
               <i class="fas fa-shopping-cart"></i>
               <span class="menu-text" v-show="isExpanded">Rental Management</span>

@@ -3,6 +3,34 @@
 
   <!-- Sidebar content goes here -->
 
+  <div class="sidebar-container">
+    <ul>
+      <li>
+        <router-link to="/admin/dashboard">Dashboard</router-link>
+      </li>
+      <li>
+        <router-link to="/admin/cars">Car Management</router-link>
+      </li>
+      <li>
+        <router-link to="/admin/users">User Management</router-link>
+      </li>
+      <li>
+        <router-link to="/admin/drivers">Driver Management</router-link>
+      </li>
+      <li>
+        <router-link to="/admin/rentals">Rental Management</router-link>
+      </li>
+      <li>
+        <router-link to="/admin/settings">Settings</router-link>
+      </li>
+      <li>
+        <router-link to="/admin/test">Test</router-link>
+      </li>
+      <li>
+        <router-link to="/rental/return/">Rental Return</router-link>
+      </li>
+    </ul>
+  </div>
 <div class="sidebar-container">
   <ul>
     <li>
