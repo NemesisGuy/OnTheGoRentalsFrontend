@@ -123,7 +123,7 @@ export default {
         const carId = this.$route.params.carId;
           const token = localStorage.getItem('token');
           console.log("token", localStorage.getItem('token'))
-        const response = await axios.get(`http://localhost:8080/api/admin/cars/read/${carId}`, {
+        const response = await axios.get(`http://localhost:8080/api/cars/read/${carId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -138,10 +138,10 @@ export default {
     },
     async getUserDetails() {
       try {
-        const userId = 1; // Replace with the actual user ID from Vuex or other source
+        //const userId = 1; // Replace with the actual user ID from Vuex or other source
           const token = localStorage.getItem('token');
           console.log("token", localStorage.getItem('token'))
-        const response = await axios.get(`http://localhost:8080/api/admin/users/read/${userId}`, {
+        const response = await axios.get("http://localhost:8080/api/user/profile/profile", {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -168,10 +168,13 @@ export default {
         issuedDate: new Date(),
         returnedDate: null,
       };
+        const token = localStorage.getItem('token');
+        console.log("token", localStorage.getItem('token'))
 
-      axios.post('http://localhost:8080/api/admin/rentals/create', rentalData, {
+      axios.post('http://localhost:8080/api/rentals/create', rentalData, {
           headers: {
-              Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
           }
       })
           .then(response => {
@@ -223,3 +226,4 @@ export default {
   color: black;
 }
 </style>
+
