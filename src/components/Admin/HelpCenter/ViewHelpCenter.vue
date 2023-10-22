@@ -1,6 +1,6 @@
 <template>
   <div class="card-container">
-    <div class="help-center-profile">
+    <div class="form-container">
       <h1>Help Center Entry</h1>
       <div class="profile-details" v-if="helpCenter">
         <div>
