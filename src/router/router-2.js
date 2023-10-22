@@ -11,6 +11,7 @@ import adminRoutes from './adminRoutes';
 import adminCarRoutes from './adminCarRoutes';
 import adminUserRoutes from './adminUserRoutes';
 
+
 const router2 = createRouter({
     history: createWebHistory(),
     routes: [
@@ -43,6 +44,7 @@ const router2 = createRouter({
             path: '/error',
             component: ErrorPage,
         },
+
         {
             path: "/admin",
             component: AdminPage,
@@ -50,6 +52,7 @@ const router2 = createRouter({
                 ...adminRoutes,
                 ...adminCarRoutes,
                 ...adminUserRoutes,
+                ...adminBookingRoutes,
             ],
         },
         {
