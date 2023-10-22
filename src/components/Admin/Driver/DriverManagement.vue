@@ -54,6 +54,7 @@
           <input v-model="driver.licenseCode" type="text">
         </td>
 
+
         <!-- Actions -->
         <td>
           <template v-if="!driver.editing">

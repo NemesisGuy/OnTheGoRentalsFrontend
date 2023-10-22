@@ -23,6 +23,7 @@
 </template>
 
 
+
 <script>
 import axios from 'axios';
 import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';

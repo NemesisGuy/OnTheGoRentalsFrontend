@@ -10,6 +10,7 @@
       </ul>
     </div>
 
+
     <div class="card driver-details-card">
       <h2>Driver Profile</h2>
       <div v-if="selectedDriver">

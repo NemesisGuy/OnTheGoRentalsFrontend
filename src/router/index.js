@@ -157,9 +157,11 @@ const router = createRouter({
         ...adminHelpCenterRoutes,
         ...adminAboutUsRoutes,
         ...adminContactUsRoutes,
-        ...adminDamageReportRoutes
+        ...adminDamageReportRoutes,
+          ...adminDriverRoutes
       ],
     },
+
 
     {
       path: '/error',

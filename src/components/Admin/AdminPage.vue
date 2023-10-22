@@ -74,6 +74,7 @@
   <span class="menu-text" v-show="isExpanded">Booking Management</span>
 </router-link>
 
+
   </li>
           <li>
             <router-link to="/admin/settings">
