@@ -104,6 +104,8 @@ export default {
             localStorage.setItem('token', response.data.accessToken);
             this.successModal.message = "Registration successful";
             this.successModal.show = true;
+        //     localStorage.setItem('token', null);//this will log the users out
+            //implement as button to nav or profile from to loge the user out
 
            this.$router.push( {name : "Home"} );//redirects to home page
           })
