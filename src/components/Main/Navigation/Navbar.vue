@@ -10,6 +10,10 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
+            <li class="nav-item">
+
+                <router-link :to="{ name: 'AboutUs', params: { id: 2 } }"  class="nav-link">About </router-link>
+            </li>
           <li class="nav-item">
             <router-link to="/nav/user/login" class="nav-link">Login</router-link>
           </li>
@@ -19,6 +23,7 @@
           <li class="nav-item">
             <router-link to="/help-center" class="nav-link">Help Center</router-link>
           </li>
+
           <li class="nav-item">
             <router-link to="/Booking" class="nav-link">Booking</router-link>
           </li>
@@ -41,6 +46,9 @@
 
             </div>
           </li>
+            <li class="nav-item">
+                <router-link to="/contactUs" class="nav-link">Contact Us</router-link>
+            </li>
         </ul>
       </div>
     </div>
@@ -93,5 +101,5 @@
   padding-top: 80px; /* Add padding to the top to prevent content from going under the navigation */
 }
 </style>
-<script setup>
+<script >
 </script>

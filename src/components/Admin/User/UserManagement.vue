@@ -184,7 +184,6 @@ export default {
           Authorization: `Bearer ${token}`
         }
       })
-
           .then((response) => {
             this.users = response.data;
             this.sortedUsers = response.data;
@@ -212,8 +211,14 @@ export default {
       if (this.userToDeleteId) {
         const userId = this.userToDeleteId.id;
         this.loading = true;
+          const token = localStorage.getItem('token');
+          console.log("token", localStorage.getItem('token'))
         axios
-            .delete(`http://localhost:8080/api/admin/users/delete/${this.userToDeleteId.id}`)
+            .delete(`http://localhost:8080/api/admin/users/delete/${this.userToDeleteId.id}`,{
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             .then(() => {
               this.showSuccessModal("User deleted successfully.");
               this.getUsers();
@@ -238,6 +243,8 @@ export default {
     saveUser(user) {
       user.editing = false;
       this.loading = true;
+        const token = localStorage.getItem('token');
+        console.log("token", localStorage.getItem('token'))
 
       // Convert the roles property to an array of objects
      // user.roles = user.roles.map(roleName => ({roleName}));
@@ -246,7 +253,12 @@ export default {
       // roles: [{ roleName: "USER" }], // Updated to match the backend structure
 
       axios
-          .put(`http://localhost:8080/api/admin/users/update/${user.id}`, user)
+          .put(`http://localhost:8080/api/admin/users/update/${user.id}`, user,{
+              headers: {
+                  Authorization: `Bearer ${token}`
+              }
+          })
+
           .then(() => {
             this.showSuccessModal("User updated successfully.");
             this.getUsers();
@@ -254,6 +266,7 @@ export default {
           .catch((error) => {
             this.loading = false;
             this.showFailureModal("Failed to update user. Please try again.");
+              console.log("token", localStorage.getItem('token'))
           });
     },
     cancelEdit(user) {
