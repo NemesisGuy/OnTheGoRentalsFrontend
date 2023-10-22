@@ -49,6 +49,13 @@
             <li class="nav-item">
                 <router-link to="/contactUs" class="nav-link">Contact Us</router-link>
             </li>
+
+          <li class="nav-item">
+            <router-link to="/nav/user/feedback" class="nav-link">Feedback</router-link>
+          </li>
+
+
+
         </ul>
       </div>
     </div>
@@ -102,4 +109,10 @@
 }
 </style>
 <script >
+import {defineComponent} from "vue";
+import Feedback from "@/components/Admin/Feedback/feedback.vue";
+
+export default defineComponent({
+  components: {Feedback}
+})
 </script>

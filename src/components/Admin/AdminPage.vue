@@ -69,6 +69,7 @@
 </router-link>
 
   </li>
+
           <li>
             <router-link to="/admin/settings">
               <i class="fas fa-gear"></i>
