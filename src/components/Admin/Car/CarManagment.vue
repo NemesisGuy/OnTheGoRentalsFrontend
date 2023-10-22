@@ -1,5 +1,6 @@
 <template>
   <div class="content-container">
+
     <div class="content-header">
       <h1><i class="fas fa-car"> </i>
         Car Management
@@ -8,12 +9,12 @@
         <div class="search-bar">
             <div class="search-input">
               <input v-model="searchQuery" placeholder="Search..." type="text" />
-              <button @click="resetSearch" class="reset-search-button">
+              <button @click="resetSearch" class="read-button button">
                 <i class="fas fa-search"> </i> Reset
               </button>
             </div>
-            <router-link to="/admin/cars/create" class="add-button car-button">
-              <i class="fas fa-car"> </i> Add New Car
+            <router-link to="/admin/cars/create" class="add-button button">
+              <i class="fas fa-car"> </i> Add Car
             </router-link>
         </div>
       </div>
@@ -28,6 +29,7 @@
         <th @click="sortCars('year')">Year  <i class="fas fa-sort"></i></th>
         <th @click="sortCars('category')">Category  <i class="fas fa-sort"></i></th>
         <th @click="sortCars('priceGroup')">Price Group  <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('available')">Available  <i class="fas fa-sort"></i></th>
         <th class="actions-column">Actions</th>
       </tr>
       </thead>
@@ -57,17 +59,23 @@
         <td v-else>
           <input type="text" v-model="car.priceGroup">
         </td>
+        <td v-if="!car.editing">
+          <input type="checkbox" v-model="car.available" :disabled="car.editing">
+        </td>
+        <td v-else>
+          <input type="checkbox" v-model="car.available">
+        </td>
         <td>
           <template v-if="!car.editing">
-            <button @click="deleteCar(car.id)" class="delete-button">
+            <button @click="deleteCar(car.id)" class="delete-button button">
               <i class="fas fa-trash"></i> Delete
               </button>
-            <button @click="editCar(car)" class="update-button"><i class="fas fa-edit"></i> Edit</button>
-            <button @click="openCarView(car.id)" class="read-button"><i class="fas fa-eye"></i> Read</button>
+            <button @click="editCar(car)" class="update-button button"><i class="fas fa-edit"></i> Edit</button>
+            <button @click="openCarView(car.id)" class="read-button button"><i class="fas fa-eye"></i> Read</button>
           </template>
           <template v-else>
-            <button @click="saveCar(car)" class="update-button">Save</button>
-            <button @click="cancelEdit(car)" class="delete-button">Cancel</button>
+            <button @click="saveCar(car)" class="update-button button">Save</button>
+            <button @click="cancelEdit(car)" class="delete-button button">Cancel</button>
           </template>
         </td>
       </tr>
@@ -90,6 +98,8 @@
           <p>Year: {{ carToDelete.year }}</p>
           <p>Category: {{ carToDelete.category }}</p>
           <p>Price Group: {{ carToDelete.priceGroup }}</p>
+          <p>License Plate: {{ carToDelete.licensePlate }}</p>
+          <p>Available: {{ carToDelete.available }}</p>
           <hr>
           <p><b>Warning!!!</b> This action cannot be undone.</p>
         </div>
@@ -109,7 +119,24 @@ import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "../../Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
   data() {
     return {
@@ -162,10 +189,16 @@ export default {
   methods: {
     fetchCars() {
       this.loading = true;
+      const token = localStorage.getItem("token");
       axios
-          .get("http://localhost:8080/api/admin/cars/all")
+          .get("/api/admin/cars/all", {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             this.cars = response.data;
+            console.log(response);
           })
           .catch((error) => {
             console.log(error);
@@ -193,8 +226,13 @@ export default {
     confirmDelete() {
       if (this.carToDelete) {
         this.loading = true;
+        const token = localStorage.getItem("token");
         axios
-            .delete(`http://localhost:8080/api/admin/cars/delete/${this.carToDelete.id}`)
+            .delete(`/api/admin/cars/delete/${this.carToDelete.id}`, {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            })
             .then((response) => {
               this.fetchCars();
               console.log(response);
@@ -217,7 +255,12 @@ export default {
       }
     },
     openCarView(carId) {
-      this.$router.push(`/admin/cars/read/${carId}`);
+      const token = localStorage.getItem("token");
+      this.$router.push(`/admin/cars/read/${carId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
     },
     sortCars(sortBy) {
       this.sortBy = sortBy;
@@ -234,13 +277,17 @@ export default {
       this.loading = true;
     },
     pushUpdatedCar(car) {
+      const token = localStorage.getItem("token");
       axios
-          .put(`http://localhost:8080/api/admin/cars/update/${car.id}`, car)
+          .put(`/api/admin/cars/update/${car.id}`, car, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             console.log(response);
             console.log("Car updated");
             this.loading = false;
-            // this.successModal = true; // Show success modal
             this.successModal.show = true; // Show success modal
             this.successModal.message = "Car ID: " + car.id + " was updated successfully"; // Show success modal
 
@@ -299,11 +346,8 @@ export default {
   margin-right: 10px;
 }
 
-.search-input button {
-  margin-left: 10px;
+.checkbox-container input[type="checkbox"] {
+  margin-right: 10px;
 }
 
-.add-button {
-  margin-left: 10px;
-}
 </style>

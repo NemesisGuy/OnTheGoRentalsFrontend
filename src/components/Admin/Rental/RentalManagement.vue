@@ -8,12 +8,12 @@
         <div class="search-bar">
           <div class="search-input">
             <input v-model="searchQuery" placeholder="Search..." type="text" />
-            <button @click="resetSearch" class="reset-search-button">
+            <button @click="resetSearch" class="read-button  button">
               <i class="fas fa-search"></i> Reset
             </button>
           </div>
-          <router-link to="/admin/rentals/create" class="add-button car-button">
-            <i class="fas fa-contact-book"></i> Add New Rental
+          <router-link to="/admin/rentals/create" class="add-button button">
+            <i class="fas fa-contact-book"></i> Add Rental
           </router-link>
         </div>
       </div>
@@ -22,7 +22,7 @@
       <thead>
       <tr>
         <th @click="sortRentals('id')">ID <i class="fas fa-sort"></i></th>
-        <th @click="sortRentals('user.userName')">User <i class="fas fa-sort"></i></th>
+<!--        <th @click="sortRentals('user.userName')">User <i class="fas fa-sort"></i></th>-->
         <th @click="sortRentals('user.firstName')">First Name <i class="fas fa-sort"></i></th>
         <th @click="sortRentals('user.lastName')">Last Name <i class="fas fa-sort"></i></th>
         <th @click="sortRentals('car.make')">Make <i class="fas fa-sort"></i></th>
@@ -41,10 +41,10 @@
         <td v-else>
           <input type="text" v-model="rental.rentalId " >
         </td>
-        <td v-if="!rental.editing">{{ rental.user.userName }}</td>
+<!--        <td v-if="!rental.editing">{{ rental.user.userName }}</td>
         <td v-else>
           <input type="text" v-model="rental.user.userName">
-        </td>
+        </td>-->
         <td v-if="!rental.editing">{{ rental.user.firstName }}</td>
         <td v-else>
           <input type="text" v-model="rental.user.firstName">
@@ -84,20 +84,20 @@
         </td>
         <td>
           <div v-if="!rental.editing">
-            <button @click="editRental(rental)" class="update-button">
+            <button @click="editRental(rental)" class="update-button button">
               <i class="fas fa-edit"></i> Edit
             </button>
-            <button @click="deleteRental(rental.rentalId)" class="delete-button">
+           <button @click="deleteRental(rental.rentalId)" class="delete-button button">
               <i class="fas fa-trash-alt"></i> Delete
             </button>
 
-           <button @click="openRentalView(rental.rentalId)" class="read-button"><i class="fas fa-eye"></i> Read</button>
+           <button @click="openRentalView(rental.rentalId)" class="read-button button" ><i class="fas fa-eye"></i> Read</button>
           </div>
           <div v-else>
-            <button @click="saveRental(rental)" class="accept-button">
+            <button @click="saveRental(rental)" class="accept-button button">
               <i class="fas fa-save"></i> Save
             </button>
-            <button @click="cancelEdit(rental)" class="cancel-button">
+            <button @click="cancelEdit(rental)" class="cancel-button button">
               <i class="fas fa-times"></i> Cancel
             </button>
           </div>
@@ -117,8 +117,8 @@
           <p>Are you sure you want to delete this rental?</p>
           <hr>
           <h3>Rental Details:</h3>
-          <p>User: {{ rentalToDelete.user.username }}</p>
-          <p>Car: {{ rentalToDelete.car.model }}</p>
+         <p> {{ rentalToDelete }} <!--{{ rentalToDelete.user.lastName }}--></p>
+<!--          <p>Car: {{ rentalToDelete.car.model }}</p>-->
           <hr>
           <p><b>Warning!!!</b> This action cannot be undone.</p>
         </div>
@@ -138,8 +138,25 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import process from "process";
 import baseURL from "@/api.js";
-const backendUrl = process.env.VUE_APP_BACKEND_URL;
+/*const backendUrl = process.env.VUE_APP_BACKEND_URL;*/
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 
 
 export default {
@@ -154,6 +171,16 @@ export default {
     return {
       rentals: [],
       sortedRentalsList: [],
+     user: {
+        id:"", // Get the ID from the route params
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        roles: [{ roleName: "USER" }], // Updated to match the backend structure
+      },
+
+
 
       sortBy: null, // Your sort option
       searchQuery: "",
@@ -175,8 +202,13 @@ export default {
 
     getRentals() {
       this.loading = true;
+      const token = localStorage.getItem('token');
       axios
-          .get(`http://localhost:8080/api/admin/rentals/list/all`)
+          .get(`/api/admin/rentals/list/all`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             this.rentals = response.data;
             this.sortedRentalsList = [...this.rentals]; // Assign to data property instead of computed property
@@ -228,15 +260,23 @@ export default {
       return value;
     },
     deleteRental(rental) {
+      console.log("Deleting rental: ", rental);
       this.rentalToDelete = rental;
       this.showConfirmationModal = true;
     },
     confirmDeleteRental() {
       if (this.rentalToDelete) {
-        const rentalId = this.rentalToDelete.id;
+      //  const rentalId = this.rentalToDelete.rentalId;  //was this
+        const rentalId = this.rentalToDelete;  //should be this LMAO
+        console.log("Deleting rental with id: ", rentalId);
         this.loading = true;
+        const token = localStorage.getItem('token');
         axios
-            .delete(`http://localhost:8080/api/admin/rentals/delete/${rentalId}`)
+            .delete(`/api/admin/rentals/delete/${rentalId}`, {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            })
             .then(() => {
               this.showSuccessModal("Rental deleted successfully.");
               this.getRentals();
@@ -246,7 +286,6 @@ export default {
               this.showFailureModal("Failed to delete rental. Please try again.");
             });
       }
-      this.rentalToDelete = null;
       this.showConfirmationModal = false;
     },
     cancelDeleteRental() {
@@ -255,21 +294,35 @@ export default {
     },
     editRental(rental) {
       rental.editing = true;
+      rental.id = rental.rentalId; // Add this line to set rental.id to rental.rentalId
+      console.log("Editing rental button sent this id: ", rental.id );
     },
     saveRental(rental) {
-      rental.id = rental.rentalId;
-      rental.issuedDate = rental.issuedDate;
-      rental.returnedDate = rental.returnedDate;
-      rental.receiver = rental.receiver;
-      rental.fine = Math.floor(rental.fine); // Remove decimal from fine
+      // Create a temporary rental object without authorities
+      const tempRental = {
+        rentalId: rental.id, // Add the rentalId
+        userId: rental.user.id, // Add the userId
+        carId: rental.car.id, // Add the carId
+        receiver: rental.receiver,
+        issuer: rental.issuer,
+        issuedDate: rental.issuedDate,
+        returnedDate: rental.returnedDate,
 
-      console.info("Saving rental: ", rental);
-      console.info("Rentalid: ", rental.rentalId);
-      console.info("Rental.id: ", rental.id);
-      rental.editing = false;
+        fine: Math.floor(rental.fine),
+        // Add other properties as needed
+      };
+      console.log("tempid sent this id: ", tempRental.rentalId);
+      console.info("Saving rental: ", tempRental);
+
+      // Send the temporary rental object to the backend
       this.loading = true;
+      const token = localStorage.getItem('token');
       axios
-          .put(`http://localhost:8080/api/admin/rentals/update/${rental.rentalId}`, rental)
+          .put(`/api/admin/rentals/update/${tempRental.rentalId}`, tempRental, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then(() => {
             this.showSuccessModal("Rental updated successfully.");
             this.getRentals();
@@ -282,8 +335,15 @@ export default {
     cancelEdit(rental) {
       rental.editing = false;
     },
+    
     openRentalView(rentalId) {
-      this.$router.push(`/admin/rentals/read/${rentalId}`);
+      const token = localStorage.getItem('token');
+      this.$router.push(`/admin/rentals/read/${rentalId}`
+          , {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
     },
     resetSearch() {
       this.searchQuery = "";

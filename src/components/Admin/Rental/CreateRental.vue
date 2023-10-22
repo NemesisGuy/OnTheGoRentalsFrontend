@@ -1,67 +1,72 @@
-<template>
-  <div class="create-rental">
-    <LoadingModal :show="loadingModal.show" v-if="loadingModal.show"></LoadingModal>
+<template xmlns="http://www.w3.org/1999/html">
+  <div class="card-container card-container-admin">
+    <div class="form-container-admin">
+      <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"></LoadingModal>
 
-    <form ref="rentalForm" @submit.prevent="createRental">
-      <div class="form-header">
-        <h2>Create Rental</h2>
-      </div>
-      <div class="form-group">
-        <label for="user">User:</label>
-        <select v-model="selectedUser" id="user" name="userId">
-          <option v-for="user in users" :key="user.id" :value="user.id">
-            User ID: {{ user.id }} UserName: {{ user.userName }}
-          </option>
-        </select>
-      </div>
+      <form ref="rentalForm" @submit.prevent="createRental">
+        <div class="form-header">
+          <h2>Create Rental</h2>
+        </div>
+        <div class="form-group">
+          <label for="user">User:</label>
+          <select id="user" v-model="selectedUser" name="userId">
+            <option v-for="user in users" :key="user.id" :value="user.id">
+              User ID: {{ user.id }}, User: {{ user.firstName }} {{ user.lastName }}
+            </option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="issuer">Issuer:</label>
-        <select v-model="selectedIssuer" id="issuer" name="issuer">
-          <option v-for="user in users" :key="user.id" :value="user.id">
-            User ID: {{ user.id }} UserName: {{ user.userName }}
-          </option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="issuer">Issuer:</label>
+          <select id="issuer" v-model="selectedIssuer" name="issuer">
+            <option v-for="user in users" :key="user.id" :value="user.id">
+              User ID: {{ user.id }}, User: {{ user.firstName }} {{ user.lastName }}
+            </option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="receiver">Receiver:</label>
-        <select v-model="selectedReceiver" id="receiver" name="receiver">
-          <option v-for="user in users" :key="user.id" :value="user.id">
-            User ID: {{ user.id }} UserName: {{ user.userName }}
-          </option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="receiver">Receiver:</label>
+          <select id="receiver" v-model="selectedReceiver" name="receiver">
+            <option v-for="user in users" :key="user.id" :value="user.id">
+              User ID: {{ user.id }}, User: {{ user.firstName }} {{ user.lastName }}
+            </option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="car">Car:</label>
-        <select v-model="selectedCar" id="car" name="carId">
-          <option v-for="car in cars" :key="car.id" :value="car.id">
-            Car ID: {{ car.id }} Make: {{ car.make }} Model: {{ car.model }}
-          </option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="car">Car:</label>
+          <select id="car" v-model="selectedCar" name="carId">
+            <option v-for="car in cars" :key="car.id" :value="car.id">
+              Car ID: {{ car.id }} Make: {{ car.make }} Model: {{ car.model }}
+            </option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="fine">Fine:</label>
-        <input v-model="fine" type="text" id="fine" name="fine">
-      </div>
+        <div class="form-group">
+          <label for="fine">Fine:</label>
+          <input id="fine" v-model="fine" name="fine" type="text">
+        </div>
 
-      <div class="form-group">
-        <label for="issuedDate">Issued Date:</label>
-        <input v-model="selectedIssuedDate" type="datetime-local" id="issuedDate" name="issuedDate">
-      </div>
+        <div class="form-group">
+          <label for="issuedDate">Issued Date:</label>
+          <input id="issuedDate" v-model="selectedIssuedDate" name="issuedDate" type="datetime-local">
+        </div>
 
-      <div class="form-group">
-        <label for="returnedDate">Returned Date:</label>
-        <input v-model="selectedReturnedDate" type="datetime-local" id="returnedDate" name="returnedDate">
-      </div>
+        <div class="form-group">
+          <label for="returnedDate">Returned Date:</label>
+          <input id="returnedDate" v-model="selectedReturnedDate" name="returnedDate" type="datetime-local">
+        </div>
 
-      <div class="form-group">
-        <button type="submit">Create Rental</button>
-      </div>
-    </form>
+        <div class="form-group">
+          <div class="button-container">
+            <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
+
   <div class="modal-body">
 
     <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
@@ -73,8 +78,8 @@
     <confirmation-modal
         key="confirmationModal"
         :show="showConfirmationModal"
-        @confirm="confirm"
         @cancel="cancel"
+        @confirm="confirm"
     >
       <template v-if="showConfirmationModal">
         <div>
@@ -98,24 +103,24 @@
 
     <!-- Add the SuccessModal component -->
     <SuccessModal
-        key="successModal"
         v-if="successModal.show"
-        @close="closeModal"
+        key="successModal"
+        :message="successModal.message"
+        :show="successModal.show"
         @cancel="closeModal"
+        @close="closeModal"
         @confirm="closeModal"
         @ok="closeModal"
-        :show="successModal.show"
-        :message="successModal.message"
     ></SuccessModal>
 
     <!-- Add the FailureModal component -->
     <FailureModal
-        key="failModal"
         v-if="failModal.show"
-        @close="closeModal"
-        @cancel="closeModal"
-        :show="failModal.show"
+        key="failModal"
         :message="failModal.message"
+        :show="failModal.show"
+        @cancel="closeModal"
+        @close="closeModal"
     ></FailureModal>
   </div>
 
@@ -128,8 +133,25 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
+// Define your headers
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
 
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
   computed: {
     confirmationModal() {
@@ -178,8 +200,14 @@ export default {
   methods: {
     fetchUsersList() {
       this.loadingModal.show = true;
+      const token = localStorage.getItem('token');
       axios
-          .get('http://localhost:8080/api/admin/users/list/all')
+          .get('/api/admin/users/list/all'
+              , {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              })
           .then(response => {
             this.users = response.data;
             this.loadingModal.show = false;
@@ -191,15 +219,20 @@ export default {
             this.loadingModal.show = false;
           })
           .finally(() => {
-        this.loadingModal.show = false;
-      });
+            this.loadingModal.show = false;
+          });
 
     },
 
     fetchCarsList() {
       this.loadingModal.show = true;
+      const token = localStorage.getItem('token');
       axios
-          .get('http://localhost:8080/api/admin/cars/all')
+          .get('/api/admin/cars/all', {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then(response => {
             this.cars = response.data;
             this.loadingModal.show = false;
@@ -220,11 +253,19 @@ export default {
       // Convert the fine to an integer with no decimal
       const fine = Math.floor(this.fine); // Remove decimal from fine
 
-
       // Create a new rental object
       const rental = {
-        user: {},
-        car: {},
+        user: {
+          id: null,
+          firstName: null,
+          lastName: null,
+          email: null,
+          enabled: null,
+          roles: null
+        },
+        car: {
+          id: this.selectedCar
+        },
         issuer: this.selectedIssuer,
         receiver: this.selectedReceiver,
         fine: fine,
@@ -233,13 +274,31 @@ export default {
       };
 
       // Fetch user details
+      const token = localStorage.getItem('token');
       axios
-          .get(`http://localhost:8080/api/admin/users/read/${this.selectedUser}`)
+          .get(`/api/admin/users/read/${this.selectedUser}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then(response => {
-            rental.user = response.data;
+            const userData = response.data;
+            rental.user.id = userData.id;
+            rental.user.firstName = userData.firstName;
+            rental.user.lastName = userData.lastName;
+            rental.user.email = userData.email;
+            rental.user.enabled = userData.enabled;
+            rental.user.roles = userData.roles; // Include user roles
+            console.log("User Details filtered from response: ");
+            console.log(rental.user);
+
             // Fetch car details
             axios
-                .get(`http://localhost:8080/api/admin/cars/read/${this.selectedCar}`)
+                .get(`/api/admin/cars/read/${this.selectedCar}`, {
+                  headers: {
+                    Authorization: `Bearer ${token}`
+                  }
+                })
                 .then(response => {
                   rental.car = response.data;
 
@@ -252,8 +311,13 @@ export default {
                     this.showConfirmationModal = false;
 
                     // Make the POST request to create the rental
+                  /*  console.log(rental.userObject);*/
                     axios
-                        .post('http://localhost:8080/api/admin/rentals/create', rental)
+                        .post('/api/admin/rentals/create', rental, {
+                          headers: {
+                            Authorization: `Bearer ${token}`
+                          }
+                        })
                         .then(response => {
                           console.log('Rental created successfully');
                           this.loadingModal.show = false;
@@ -261,11 +325,11 @@ export default {
                           this.successModal.message = "Rental created successfully: " + "\n" +
                               "User: " + response.data.user.firstName + " " + response.data.user.lastName + "." + "\n" +
                               "Car: " + response.data.car.make + " " + response.data.car.model + "." + "\n" +
-                              + "Issuer: " + response.data.issuer + "." + "\n" +
-                              + "Receiver: " + response.data.receiver + "." + "\n" +
-                              + "Fine: " + response.data.fine + "." + "\n" +
-                              + "Issued Date: " + response.data.issuedDate + "." + "\n" +
-                              + "Returned Date: " + response.data.returnedDate + "." + "\n";
+                              +"Issuer: " + response.data.issuer + "." + "\n" +
+                              +"Receiver: " + response.data.receiver + "." + "\n" +
+                              +"Fine: " + response.data.fine + "." + "\n" +
+                              +"Issued Date: " + response.data.issuedDate + "." + "\n" +
+                              +"Returned Date: " + response.data.returnedDate + "." + "\n";
                           this.successModal.show = true;
 
                           // Reset the form after creating the rental
@@ -338,7 +402,12 @@ export default {
 </script>
 
 
-
 <style>
+.create-rental {
+  margin: 50px auto;
+  width: 50%;
+  max-width: max-content;
+
+}
 
 </style>

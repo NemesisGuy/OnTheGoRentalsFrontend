@@ -1,167 +1,207 @@
 <template>
-  <div class="content-container">
-    <div class="card-container">
-      <h1>List of {{ category }} Users</h1>
-      <table>
-        <thead>
-        <tr>
-          <th @click="sortUsers('id')">ID</th>
-          <th @click="sortUsers('userName')">Username</th>
-          <th @click="sortUsers('email')">Email</th>
-          <th @click="sortUsers('firstName')">First Name</th>
-          <th @click="sortUsers('lastName')">Last Name</th>
-          <th @click="sortUsers('phoneNumber')">Phone Number</th>
-          <th @click="sortUsers('role')">Role</th>
-          <th>Edit</th>
-          <th>Delete</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="user in sortedUsers" :key="user.id">
-          <td>{{ user.id }}</td>
-          <td>
-            <input v-model="user.userName" :disabled="!user.editMode" />
-          </td>
-          <td>
-            <input v-model="user.email" :disabled="!user.editMode" />
-          </td>
-          <td>
-            <input v-model="user.firstName" :disabled="!user.editMode" />
-          </td>
-          <td>
-            <input v-model="user.lastName" :disabled="!user.editMode" />
-          </td>
-          <td>
-            <input v-model="user.phoneNumber" :disabled="!user.editMode" />
-          </td>
-          <td>
-            <select v-model="user.role" :disabled="!user.editMode" required>
+  <div class="card-container card-container-admin">
+    <div class="form-container-admin">
+      <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"></LoadingModal>
+      <form @submit.prevent="updateUser">
+        <h2 class="form-header">Update User</h2>
+        <h3 class="form-subheader">User ID: {{user.id }}</h3>
 
-              <option value="Guest">Guest</option>
-              <option value="User" selected>User</option>
-              <option value="Privileged">Privileged</option>
-              <option value="Admin">Admin</option>
+        <div class="form-group">
+          <label for="firstName">First Name:</label>
+          <input id="firstName" v-model="user.firstName" placeholder="Enter first name" required type="text">
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name:</label>
+          <input id="lastName" v-model="user.lastName" placeholder="Enter last name" required type="text">
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input id="email" v-model="user.email" placeholder="Enter email" required type="email">
+        </div>
+<!--password-->
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input id="password" v-model="user.password" placeholder="Enter password" required type="password">
+        </div>
 
-            </select>
-
-          </td>
-          <td>
-            <button @click="toggleEditMode(user)" class="btn-small">
-              {{ user.editMode ? 'Save' : 'Edit' }}
-            </button>
-          </td>
-          <td>
-            <button @click="deleteUser(user.id)" class="btn-small">Delete</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+        <div class="form-group">
+          <label for="role">Role:</label>
+          <select id="role" v-model="user.roles[0].roleName" required>
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
+            <option value="SUPERADMIN">Super Admin</option>
+          </select>
+        </div>
+        <div class="button-container">
+          <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Update</button>
+        </div>
+      </form>
     </div>
+    <!-- Add the SuccessModal component -->
+    <SuccessModal
+        v-if="successModal.show"
+        key="successModal"
+        :message="successModal.message"
+        :show="successModal.show"
+        @cancel="closeModal"
+        @close="closeModal"
+        @confirm="closeModal"
+        @ok="closeModal"
+    ></SuccessModal>
+
+    <!-- Add the FailureModal component -->
+    <FailureModal
+        v-if="failModal.show"
+        key="failModal"
+        :message="failModal.message"
+        :show="failModal.show"
+        @cancel="closeModal"
+        @close="closeModal"
+    ></FailureModal>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
+import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
+import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
-  name: 'UserUpdate',
+  components: {LoadingModal, FailureModal, SuccessModal},
+
+
   data() {
     return {
-      users: [],
-      category: '',
-      sortColumn: '',
-      sortDirection: '',
+      user: {
+        id: this.$route.params.id, // Get the ID from the route params
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        roles: [{ roleName: "USER" }], // Updated to match the backend structure
+      },
+      loading: false, // Add this line to define the loading state
+      loadingModal: {
+        show: false,
+      },
+      errorMessage: '',
+      showConfirmationModal: false,
+      successModal: {
+        show: false,
+        message: ""
+      },
+      failModal: {
+        show: false,
+        message: ""
+      }
     };
   },
   mounted() {
-    this.fetchUsers();
+    this.fetchUserProfile();
   },
   methods: {
-    fetchUsers() {
-      const category = 'all';
+    updateUser() {
+      this.loading = true;
+      console.log("Updating user:", this.user);
+      // Send the user data to the backend API or perform any other necessary actions
+      const token = localStorage.getItem('token');
       axios
-          .get(`http://localhost:8080/api/admin/users/${category}`)
-          .then((response) => {
-            this.users = response.data.map((user) => ({
-              ...user,
-              editMode: false,
-            }));
-            this.category = category;
+          .put(`/api/admin/users/update/${this.user.id}`, this.user, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           })
-          .catch((error) => {
-            console.log(error);
-          });
-    },
-    sortUsers(column) {
-      if (this.sortColumn === column) {
-        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-      } else {
-        this.sortColumn = column;
-        this.sortDirection = 'asc';
-      }
-    },
-    deleteUser(userId) {
-      axios
-          .delete(`http://localhost:8080/api/admin/users/delete/${userId}`)
           .then((response) => {
-            this.fetchUsers();
+            // Handle success
             console.log(response);
-            console.log('User deleted');
+            this.loading = false;
+            this.successModal.message = "User updated successfully";
+            this.successModal.show = true;
           })
           .catch((error) => {
+            // Handle error
             console.log(error);
-            console.log('User not deleted');
+            this.loading = false;
+            this.failModal.message = "Failed to update user. Please try again.";
+            this.failModal.show = true;
           });
+      //Log  the user after updating their profile
+      console.log("Updated user:", this.user);
+
+      // Reset the form after updating the user
+      this.resetForm();
     },
-    toggleEditMode(user) {
-      if (user.editMode) {
-        this.updateUser(user);
-      }
-      user.editMode = !user.editMode;
-    },
-    updateUser(user) {
+    fetchUserProfile() {
+      this.loading = true;
+
+      // Assuming you have the user ID or any other identifier to fetch the user's profile
+      const userId = this.$route.params.id; // Get the user ID from the route parameter
+      const token = localStorage.getItem('token');
       axios
-          .put(`http://localhost:8080/api/admin/users/update/${user.id}`, user)
+          .get(`/api/admin/users/read/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
-            console.log(response);
-            console.log('User updated');
+           // this.user = response.data;
+            const userData = response.data;//get all data
+            this.user.id = userData.id;//filter data per field
+            this.user.firstName = userData.firstName;
+            this.user.lastName = userData.lastName;
+            this.user.email = userData.email;
+            this.user.password = userData.password;
+            this.user.roles = userData.roles; // Include user roles
+            this.loading = false;
+
+
           })
           .catch((error) => {
             console.log(error);
-            console.log('User not updated');
+            this.loading = false;
+            this.failModal.message = "Failed to fetch user. Please try again.";
+            this.failModal.show = true;
           });
     },
-  },
-  computed: {
-    sortedUsers() {
-      let sortedUsers = [...this.users];
+    closeModal() {
+      this.successModal.show = false;
+      this.failModal.show = false;
+      this.showConfirmationModal = false;
+    },
 
-      if (this.sortColumn) {
-        sortedUsers.sort((a, b) => {
-          let valueA = a[this.sortColumn];
-          let valueB = b[this.sortColumn];
-
-          if (typeof valueA === 'string') {
-            valueA = valueA.toLowerCase();
-            valueB = valueB.toLowerCase();
-          }
-
-          if (valueA < valueB) {
-            return this.sortDirection === 'asc' ? -1 : 1;
-          }
-          if (valueA > valueB) {
-            return this.sortDirection === 'asc' ? 1 : -1;
-          }
-          return 0;
-        });
-      }
-
-      return sortedUsers;
+    resetForm() {
+      // Reset the form fields
+      this.user = {
+        id: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        roles: ["USER"],
+      };
     },
   },
 };
 </script>
 
 <style scoped>
-/* Add custom styles for the component */
+
 </style>

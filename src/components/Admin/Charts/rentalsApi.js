@@ -1,7 +1,6 @@
 // rentalsApi.js
 
 let rentalsDataPromise = null;
-
 export function fetchRentalsData() {
     if (rentalsDataPromise) {
         return rentalsDataPromise;
@@ -9,7 +8,12 @@ export function fetchRentalsData() {
 
     rentalsDataPromise = new Promise(async (resolve, reject) => {
         try {
-            const response = await fetch('http://localhost:8080/api/admin/rentals/list/all');
+            const token = localStorage.getItem('token');// Retrieve the token
+            const response = await fetch('http://localhost:8080/api/admin/rentals/list/all', {
+                headers: {
+                    Authorization: `Bearer ${token}` // Add the token to the headers
+                }
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch rentals data');
             }
@@ -37,4 +41,4 @@ export async function createRental(rentalData) {
     // Implementation for creating a new rental
 }
 
-// Other rental-related functions...
+

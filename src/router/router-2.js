@@ -1,15 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomePage from '@/components/Main/HomePage.vue';
-import CustomerList from '@/components/Main/CustomerList.vue';
-import Home from "@/components/Main/Home.vue";
-import ErrorPage from '@/components/Main/ErrorPage.vue';
-import Signup from "@/components/Main/Signup.vue";
-import Login from "@/components/Main/Login.vue";
+import HomePage from '@/components/Main/General/HomePage.vue';
+import CustomerList from '@/components/Main/User/CustomerList.vue';
+import Home from "@/components/Main/General/Home.vue";
+import ErrorPage from '@/components/Main/General/ErrorPage.vue';
+import Signup from "@/components/Main/User/Signup.vue";
+import Login from "@/components/Main/User/Login.vue";
 import AdminPage from "@/components/Admin/AdminPage.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import adminRoutes from './adminRoutes';
 import adminCarRoutes from './adminCarRoutes';
 import adminUserRoutes from './adminUserRoutes';
+
 
 const router2 = createRouter({
     history: createWebHistory(),
@@ -29,7 +30,7 @@ const router2 = createRouter({
             name: 'CustomerList',
             component: CustomerList,
         },
-        {
+     /*   {
             path: '/signup',
             name: 'Signup',
             component: Signup,
@@ -38,11 +39,12 @@ const router2 = createRouter({
             path: '/login',
             name: 'Login',
             component: Login,
-        },
+        },*/
         {
             path: '/error',
             component: ErrorPage,
         },
+
         {
             path: "/admin",
             component: AdminPage,
@@ -50,6 +52,7 @@ const router2 = createRouter({
                 ...adminRoutes,
                 ...adminCarRoutes,
                 ...adminUserRoutes,
+                ...adminBookingRoutes,
             ],
         },
         {

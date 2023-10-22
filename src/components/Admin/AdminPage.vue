@@ -8,23 +8,47 @@
       </button>
       <div class="sidebar-container">
         <ul>
+            <li>
+                <router-link to="/admin/aboutUs">
+                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                    <span class="menu-text" v-show="isExpanded">About Management </span>
+                </router-link>
+            </li>
           <li>
             <router-link to="/admin/dashboard">
               <i class="fas fa-chart-bar"></i>
               <span class="menu-text" v-show="isExpanded">Dashboard</span>
             </router-link>
           </li>
+            <li>
+                <router-link to="/admin/damageReport">
+                    <i class="fa fa-book" aria-hidden="true"></i>
+                    <span class="menu-text" v-show="isExpanded">Damage Report Management </span>
+                </router-link>
+            </li>
           <li>
             <router-link to="/admin/cars">
               <i class="fas fa-car"></i>
               <span class="menu-text" v-show="isExpanded">Car Management</span>
             </router-link>
           </li>
+            <li>
+                <router-link to="/admin/contactUs">
+                    <i class="fas fa-envelope"></i>
+                    <span class="menu-text" v-show="isExpanded"> Contact Us Management </span>
+                </router-link>
+            </li>
           <li>
             <router-link to="/admin/users">
               <i class="fas fa-users"></i>
               <span class="menu-text" v-show="isExpanded">User Management</span>
             </router-link>
+          </li>
+          <li>
+          <router-link to="/admin/drivers">
+            <i class="fas fa-life-ring"></i>
+            <span class="menu-text" v-show="isExpanded">Driver Management</span>
+          </router-link>
           </li>
           <li>
             <router-link to="/admin/rentals">
@@ -44,6 +68,13 @@
               <span class="menu-text" v-show="isExpanded">Help Center</span>
             </router-link>
           </li>
+          <li>
+            <router-link to="/admin/bookings">
+  <i class="fas fa-calendar"></i>
+  <span class="menu-text" v-show="isExpanded">Booking Management</span>
+</router-link>
+
+  </li>
           <li>
             <router-link to="/admin/settings">
               <i class="fas fa-gear"></i>
@@ -107,7 +138,7 @@ export default {
 }
 
 .sidebar.expanded {
-  width: 300px;
+  width: 250px;
 }
 
 .toggle-button {
@@ -121,16 +152,16 @@ export default {
 }
 
 .sidebar-container {
-  flex: 1; /* Use flex property to allow sidebar to grow */
-  overflow-y: auto; /* Enable vertical scrolling */
+  flex: 1; 
+  overflow-y: auto; 
 }
 
 .admin-content-area {
-  flex: 3; /* Use flex property to allow content area to grow */
+  flex: 3; 
 
   transition: margin-left 0.3s;
-  overflow-y: auto; /* Enable vertical scrolling */
-  overflow-x: auto; /* Enable vertical scrolling */
+  overflow-y: auto; 
+  overflow-x: auto; 
 
 
 

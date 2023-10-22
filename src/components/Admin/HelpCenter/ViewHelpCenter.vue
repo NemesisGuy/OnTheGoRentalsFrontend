@@ -68,12 +68,7 @@ export default {
 </script>
 
 <style scoped>
-.card-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 50px;
-}
+
 
 .help-center-profile {
   margin-top: 20px;

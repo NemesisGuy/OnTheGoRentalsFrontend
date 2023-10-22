@@ -12,10 +12,11 @@
 </template>
 
 <script>
-import Navbar from './components/Main/Navbar.vue';
-import Footer from "@/components/Main/Footer.vue";
-import { currencySymbol, setCurrencySymbol } from './store';
+import Navbar from './components/Main/Navigation/Navbar.vue';
+import Footer from "@/components/Main/General/Footer.vue";
+/*import { currencySymbol, setCurrencySymbol } from './store/currencyStore';*/
 import axios from "axios";
+import {currencySymbol} from "@/store/store";
 
 export default {
   name: 'App',
@@ -29,7 +30,7 @@ export default {
     };
   },
   async created() {
-    const response = await axios.get('http://localhost:8080/api/admin/settings/read');
+    const response = await axios.get('http://localhost:8080/api/settings/read');
     console.log(response.data);
     this.currencyData = response.data;
   },

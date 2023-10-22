@@ -1,43 +1,56 @@
 <template>
-  <div class="card-container">
+  <div class="card-container ">
+    <div class="form-container">
     <div class="car-profile">
-      <h1>Car Profile</h1>
+      <h1><i class="fas fa-car"></i> Car Profile: </h1>
       <div class="profile-details" v-if="car">
         <div>
-          <label>Make:</label>
-          <span>{{ car.make }}</span>
-        </div>
-        <div>
-          <label>Model:</label>
-          <span>{{ car.model }}</span>
-        </div>
-        <div>
-          <label>Year:</label>
-          <span>{{ car.year }}</span>
-        </div>
-        <div>
-          <label>Category:</label>
-          <span>{{ car.category }}</span>
-        </div>
-        <div>
-          <label>Price Group:</label>
-          <span>{{ car.priceGroup }}</span>
-        </div>
-        <div>
-          <label>License Plate:</label>
-          <span>{{ car.licensePlate }}</span>
-        </div>
+          <p><label>Make:</label><span>{{ car.make }}</span></p>
+
+          <p><label>Model:</label><span>{{ car.model }}</span></p>
+
+          <p><label>Year:</label><span>{{ car.year }}</span></p>
+
+
+          <p><label>Category:</label><span>{{ car.category }}</span></p>
+
+          <p><label>Price Group:</label><span>{{ car.priceGroup }}</span></p>
+
+
+         <p><label>License Plate: </label>{{ car.licensePlate }}</p>
+          <p> <label>Available: </label>{{ car.available }}</p>
+
+
+          </div>
       </div>
       <div v-else>
         <p>Loading car profile...</p>
       </div>
+    </div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+// Add this line to set a default base URL for your API
+axios.defaults.baseURL = 'http://localhost:8080';
 
+// Add an interceptor for every request
+axios.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
 export default {
   name: 'ViewCar',
   data() {
@@ -52,9 +65,13 @@ export default {
     fetchCarProfile() {
       // Assuming you have the car ID or any other identifier to fetch the car's profile
       const carId = this.$route.params.id// Get the category from the route parameter
-
+      const token = localStorage.getItem('token');
       axios
-          .get(`http://localhost:8080/api/admin/cars/read/${carId}`)
+          .get(`/api/admin/cars/read/${carId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
           .then((response) => {
             this.car = response.data;
           })

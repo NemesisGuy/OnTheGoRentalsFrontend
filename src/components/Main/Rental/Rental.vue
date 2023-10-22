@@ -23,26 +23,31 @@
             <p><strong>Phone:</strong> {{ user.phoneNumber }}</p>
           </div>
         </div>
-        <button v-if="selectedCar" class="rent-button" @click="showConfirmationModal = true">Confirm Rental</button>
+        <div class="button-container">
+          <button class="read-button button" @click="goToCarList"><i class="fas fa-arrow-left"></i> Back</button>
+          <button v-if="selectedCar" class="accept-button button" @click="showConfirmationModal = true">Confirm Rental
+          </button>
+        </div>
       </div>
     </div>
   </div>
-  <SuccessModal v-if="successModal.show" @close="closeModal" :show="successModal.show" :message="successModal.message"></SuccessModal>
+  <SuccessModal v-if="successModal.show" :message="successModal.message" :show="successModal.show"
+                @close="closeModal"></SuccessModal>
   <FailureModal
-      key="failModal"
       v-if="failModal.show"
-      @close="closeModal"
-      @cancel="closeModal"
-      :show="failModal.show"
+      key="failModal"
       :message="failModal.message || errorMessage"
+      :show="failModal.show"
+      @cancel="closeModal"
+      @close="closeModal"
   ></FailureModal>
 
-  <LoadingModal v-if="loading" show />
+  <LoadingModal v-if="loading" show/>
   <ConfirmationModal
       v-if="showConfirmationModal"
-      @confirm="confirmRental"
-      @cancel="closeModal"
       :show="showConfirmationModal"
+      @cancel="closeModal"
+      @confirm="confirmRental"
   >
     <p>{{ confirmationMessage }}</p>
     <p>Are you sure you want to confirm this rental?</p>
@@ -126,7 +131,8 @@ export default {
     },
     async getUserDetails() {
       try {
-        const userId = 1; // Replace with the actual user ID from Vuex or other source
+        const userId = 1; // Replace with the actual user ID from Vuex or other source//find user details JWT token
+
         const response = await axios.get(`http://localhost:8080/api/admin/users/read/${userId}`);
         this.user = response.data;
       } catch (error) {
