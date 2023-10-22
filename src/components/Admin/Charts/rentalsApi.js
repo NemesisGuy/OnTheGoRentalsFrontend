@@ -1,7 +1,6 @@
 // rentalsApi.js
 
 let rentalsDataPromise = null;
-
 export function fetchRentalsData() {
     if (rentalsDataPromise) {
         return rentalsDataPromise;
