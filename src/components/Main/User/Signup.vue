@@ -99,13 +99,13 @@ export default {
             // Save the token to the store
             store.commit('setToken', token);
             console.log("Response token:  " + token); // Output the value of the token
-            console.log("Current stored token:  " +store.state.token); // Output the value of the token
+            // console.log("Current stored token:  " +store.state.token); // Output the value of the token
             // Assuming you have received and stored the token in response.data.accessToken
             localStorage.setItem('token', response.data.accessToken);
             this.successModal.message = "Registration successful";
             this.successModal.show = true;
 
-        //    this.$router.push( {name : "Home"} );
+           this.$router.push( {name : "Home"} );//redirects to home page
           })
           .catch(error => {
             // Handle error
@@ -118,7 +118,7 @@ export default {
           });
     },
     goToLogin() {
-      this.$router.push({name: 'Login'});
+      this.$router.push({name: 'Login'});//redrects to login page
     },
     closeModal() {
       this.showConfirmationModal = false;

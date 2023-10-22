@@ -121,42 +121,28 @@ export default {
     async getSelectedCar() {
       try {
         const carId = this.$route.params.carId;
-          const token = localStorage.getItem('token');
-          console.log("token", localStorage.getItem('token'))
-        const response = await axios.get(`http://localhost:8080/api/cars/read/${carId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
+        const response = await axios.get(`http://localhost:8080/api/admin/cars/read/${carId}`);
         this.selectedCar = response.data;
       } catch (error) {
         console.error('Error retrieving car:', error);
         this.failModal.show = true;
         this.failModal.message = 'Error retrieving car';
-          console.log("token", localStorage.getItem('token'))
       }
     },
     async getUserDetails() {
       try {
-        //const userId = 1; // Replace with the actual user ID from Vuex or other source
-          const token = localStorage.getItem('token');
-          console.log("token", localStorage.getItem('token'))
-        const response = await axios.get("http://localhost:8080/api/user/profile/profile", {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
+        const userId = 1; // Replace with the actual user ID from Vuex or other source//find user details JWT token
+
+        const response = await axios.get(`http://localhost:8080/api/admin/users/read/${userId}`);
         this.user = response.data;
       } catch (error) {
         console.error('Error retrieving user:', error);
-          console.log("token", localStorage.getItem('token'))
       }
     },
     confirmRental() {
       this.showConfirmationModal = false;
       this.confirmationMessage = `Are you sure you want to confirm this rental? ${this.selectedCar.model} ${this.user.name}`;
       this.loading = true;
-        console.log("token", localStorage.getItem('token'))
 
       const rentalData = {
         car: this.selectedCar,
@@ -168,15 +154,8 @@ export default {
         issuedDate: new Date(),
         returnedDate: null,
       };
-        const token = localStorage.getItem('token');
-        console.log("token", localStorage.getItem('token'))
 
-      axios.post('http://localhost:8080/api/rentals/create', rentalData, {
-          headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-          }
-      })
+      axios.post('http://localhost:8080/api/admin/rentals/create', rentalData)
           .then(response => {
             if (response.status === 200) {
               console.log(response);
@@ -226,4 +205,3 @@ export default {
   color: black;
 }
 </style>
-

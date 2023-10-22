@@ -39,7 +39,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <!--User Profile-->
-              <router-link to="/user/profile/1" class="dropdown-item">User Profile</router-link>
+              <router-link to="/user/profile/profile" class="dropdown-item">User Profile</router-link>
               <router-link to="/page1" class="dropdown-item">Page 1</router-link>
               <router-link to="/page2" class="dropdown-item">Page 2</router-link>
               <router-link to="/page3" class="dropdown-item">Page 3</router-link>
