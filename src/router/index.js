@@ -22,6 +22,7 @@ import adminAboutUsRoutes from "@/router/adminAboutUsRoutes";
 import ContactUs from "@/components/Main/About/ContactUs.vue";
 import adminContactUsRoutes from "@/router/adminContactUsRoutes";
 import adminDamageReportRoutes from "@/router/adminDamageReportRoutes";
+import EditProfile from "@/components/Main/User/EditProfile.vue";
 
 
 
@@ -71,6 +72,11 @@ const router = createRouter({
       path: '/user/profile/profile',
       name: 'UserProfile',
       component: UserProfile,
+    },
+    {
+      path: '/edit-profile',
+      name: 'EditProfile',
+      component: EditProfile,
     },
     {
       path: '/help-center',

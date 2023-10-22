@@ -76,6 +76,7 @@ export default {
           //  store.commit('setUser', response.data.user);
             this.successModal.message = "Login successful";
             this.successModal.show = true;
+            this.$router.push( {name : "Home"} );
 
             // Rest of your code
             // ...
