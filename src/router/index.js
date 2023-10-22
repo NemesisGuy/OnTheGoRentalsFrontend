@@ -16,7 +16,12 @@ import Faq from "@/components/Main/Help/Faq.vue";
 import adminFaqRoutes from "@/router/adminFaqRoutes";
 import adminHelpCenterRoutes from "@/router/adminHelpCenterRoutes";
 import Booking from "@/components/Main/Rental/Booking/Booking.vue";
-import adminBookingRoutes from './adminBookingRoutes'; 
+import adminBookingRoutes from './adminBookingRoutes';
+import AboutUs from "@/components/Main/About/AboutUs.vue";
+import adminAboutUsRoutes from "@/router/adminAboutUsRoutes";
+import ContactUs from "@/components/Main/About/ContactUs.vue";
+import adminContactUsRoutes from "@/router/adminContactUsRoutes";
+import adminDamageReportRoutes from "@/router/adminDamageReportRoutes";
 
 
 
@@ -29,6 +34,16 @@ const router = createRouter({
       path: '/',
       name: 'Home',
       component: Home,
+    },
+    {
+      path: '/aboutUs/:id',
+      name: 'AboutUs',
+      component: AboutUs
+    },
+    {
+      path: '/contactUs',
+      name: 'ContactUs',
+      component: ContactUs
     },
     {
       path: '/rental/:carId',
@@ -84,6 +99,9 @@ const router = createRouter({
         ...adminBookingRoutes, 
         ...adminFaqRoutes,
         ...adminHelpCenterRoutes,
+        ...adminAboutUsRoutes,
+        ...adminContactUsRoutes,
+        ...adminDamageReportRoutes
       ],
     },
 

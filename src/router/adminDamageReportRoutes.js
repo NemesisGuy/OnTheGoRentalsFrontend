@@ -44,3 +44,4 @@ const adminDamageReportRoutes = [
     },
 ];
 export default adminDamageReportRoutes;
+
