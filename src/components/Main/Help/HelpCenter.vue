@@ -7,7 +7,7 @@
           <option value="All">Show All</option>
           <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
         </select>
-        <button class="faq-button button" @click="openFAQPage">FAQ</button>
+<!--        <button class="faq-button button" @click="openFAQPage">FAQ</button>-->
       </div>
       <hr>
       <div v-if="filteredHelpCenters && filteredHelpCenters.length > 0">
@@ -62,9 +62,9 @@ export default {
             console.error(error);
           });
     },
-    openFAQPage() {
-      this.$router.push('/faq');
-    }
+    // openFAQPage() {
+    //   this.$router.push('/faq');
+    // }
   }
 };
 </script>

@@ -183,6 +183,7 @@ export default {
   methods: {
     editProfile() {
       this.$router.push("/edit-profile");
+      // this.$router.push( {name : "/edit-profile"} );
     },
   },
 };

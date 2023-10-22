@@ -20,9 +20,6 @@
           <li class="nav-item">
             <router-link to="/nav/user/signup" class="nav-link">Signup</router-link>
           </li>
-          <li class="nav-item">
-            <router-link to="/help-center" class="nav-link">Help Center</router-link>
-          </li>
 
           <li class="nav-item">
             <router-link to="/Booking" class="nav-link">Booking</router-link>
@@ -32,33 +29,55 @@
           </li>
 
           <!--under development-->
+<!--          <li class="nav-item dropdown">-->
+<!--            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"-->
+<!--               aria-haspopup="true" aria-expanded="false">-->
+<!--              Under Development-->
+<!--            </a>-->
+<!--            <div class="dropdown-menu" aria-labelledby="navbarDropdown">-->
+<!--              &lt;!&ndash;User Profile&ndash;&gt;-->
+<!--              <router-link to="/user/profile/profile" class="dropdown-item">User Profile</router-link>-->
+<!--              <router-link to="/page1" class="dropdown-item">Page 1</router-link>-->
+<!--              <router-link to="/page2" class="dropdown-item">Page 2</router-link>-->
+<!--              <router-link to="/page3" class="dropdown-item">Page 3</router-link>-->
+<!--            </div>-->
+<!--          </li>-->
+          <!-- help center faq dropdown -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false">
-              Under Development
+              Info
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <!--User Profile-->
-              <router-link to="/user/profile/profile" class="dropdown-item">User Profile</router-link>
-              <router-link to="/page1" class="dropdown-item">Page 1</router-link>
-              <router-link to="/page2" class="dropdown-item">Page 2</router-link>
-              <router-link to="/page3" class="dropdown-item">Page 3</router-link>
-
+              <router-link to="/help-center" class="dropdown-item">Help Center</router-link>
+              <router-link to="/faq" class="dropdown-item">Faq</router-link>
             </div>
           </li>
-            <li class="nav-item">
-                <router-link to="/contactUs" class="nav-link">Contact Us</router-link>
+          <li class="nav-item">
+            <router-link to="/contactUs" class="nav-link">Contact Us</router-link>
+          </li>
+          <li>
+            <router-link to="/user/profile/profile" class="nav-link">
+              <i class="fas fa-user"></i> User Profile
+            </router-link>
+          </li>
+          <div>
+            <li>
+              <router-link to="/signout" class="nav-link">Sign Out</router-link>
             </li>
+          </div>
         </ul>
       </div>
     </div>
+
   </nav>
 </template>
 
+
 <style>
 .logo {
-  width: 50px; /* Adjust the width to your desired size */
-  height: auto; /* Maintain aspect ratio */
+  width: 50px;
+  height: auto;
 }
 
 .navbar-custom {
@@ -96,7 +115,6 @@
 .nav-list li {
   margin-right: 10px; /* Adjust the spacing between navigation items */
 }
-
 .content {
   padding-top: 80px; /* Add padding to the top to prevent content from going under the navigation */
 }
