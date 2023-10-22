@@ -42,4 +42,4 @@ export async function createRental(rentalData) {
     // Implementation for creating a new rental
 }
 
-// Other rental-related functions...
+
