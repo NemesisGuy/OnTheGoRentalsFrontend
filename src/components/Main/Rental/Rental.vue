@@ -16,11 +16,11 @@
           <h2>User Details</h2>
           <div v-if="user" class="user-details">
             <p><strong>ID:</strong> {{ user.id }}</p>
-            <p><strong>User Name:</strong> {{ user.userName }}</p>
+<!--            <p><strong>User Name:</strong> {{ user.userName }}</p>-->
             <p><strong>First Name:</strong> {{ user.firstName }}</p>
             <p><strong>Last Name:</strong> {{ user.lastName }}</p>
             <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>Phone:</strong> {{ user.phoneNumber }}</p>
+<!--            <p><strong>Phone:</strong> {{ user.phoneNumber }}</p>-->
           </div>
         </div>
         <div class="button-container">
@@ -75,7 +75,13 @@ export default {
   data() {
     return {
       selectedCar: null,
-      user: null,
+      user: {
+        id: "", // Get the ID from the route params
+        firstName: "",
+        lastName: "",
+        email: "",
+        roles: [{ roleName: "USER" }], // Updated to match the backend structure
+      },
       showConfirmationModal: false,
       confirmationMessage: '',
       successModal: {
@@ -121,7 +127,7 @@ export default {
     async getSelectedCar() {
       try {
         const carId = this.$route.params.carId;
-        const response = await axios.get(`http://localhost:8080/api/admin/cars/read/${carId}`);
+        const response = await axios.get(`http://localhost:8080/api/cars/read/${carId}`);
         this.selectedCar = response.data;
       } catch (error) {
         console.error('Error retrieving car:', error);
@@ -133,8 +139,18 @@ export default {
       try {
         const userId = 1; // Replace with the actual user ID from Vuex or other source//find user details JWT token
 
-        const response = await axios.get(`http://localhost:8080/api/admin/users/read/${userId}`);
-        this.user = response.data;
+        const response = await axios.get(`http://localhost:8080/api/user/profile/profile`);
+        //this.user.id = response.data;
+
+        const userData = response.data;//get all data
+        this.user.id = userData.id;//filter data per field
+        this.user.firstName = userData.firstName;
+        this.user.lastName = userData.lastName;
+        this.user.email = userData.email;
+       /* this.user.password = userData.password;*/
+        this.user.roles = userData.roles; // Include user roles
+
+
       } catch (error) {
         console.error('Error retrieving user:', error);
       }
@@ -155,7 +171,7 @@ export default {
         returnedDate: null,
       };
 
-      axios.post('http://localhost:8080/api/admin/rentals/create', rentalData)
+      axios.post('http://localhost:8080/api/user/rentals/create', rentalData)
           .then(response => {
             if (response.status === 200) {
               console.log(response);
