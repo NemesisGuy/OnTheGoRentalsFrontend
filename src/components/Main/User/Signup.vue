@@ -88,6 +88,8 @@ export default {
             lastName: this.lastName,
             email: this.email,
             password: this.password
+
+            //user authenticators
           })
           .then(response => {
             // Handle success
@@ -97,14 +99,14 @@ export default {
 
             const token = response.data.accessToken; // Assuming response.data contains the token
             // Save the token to the store
-            store.commit('setToken', token);
+            store.commit('setToken', token);//vuex
             console.log("Response token:  " + token); // Output the value of the token
             // console.log("Current stored token:  " +store.state.token); // Output the value of the token
             // Assuming you have received and stored the token in response.data.accessToken
             localStorage.setItem('token', response.data.accessToken);
             this.successModal.message = "Registration successful";
             this.successModal.show = true;
-        //     localStorage.setItem('token', null);//this will log the users out
+        //  localStorage.setItem('token', null);//this will log the users out
             //implement as button to nav or profile from to loge the user out
 
            this.$router.push( {name : "Home"} );//redirects to home page

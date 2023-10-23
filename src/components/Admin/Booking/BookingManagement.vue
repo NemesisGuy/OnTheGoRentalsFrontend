@@ -242,9 +242,11 @@ export default {
 
       axios
         .put(`http://localhost:8080/api/admin/bookings/update/${booking.bookingId}`, booking)
-        .then(() => {
+        .then((response) => {
+          this.loading = false;
           this.showSuccessModal("Booking updated successfully.");
-          this.getBookings();
+          console.log(response);
+         /* this.getBookings();*/
         })
         .catch((error) => {
           this.loading = false;

@@ -187,17 +187,15 @@ export default {
     },
 
     createBooking() {
-      this.loadingModal.show = false;
+      this.loadingModal.show = true;
       this.errorMessage = "";
 
       const booking = { 
         user: {
           id: this.selectedUser,
-          roles: [{ roleName: "USER" }]
         },
         car: {
           id: this.selectedCar,
-
         },
         issuedDate: this.selectedIssuedDate,
         returnedDate: this.selectedReturnedDate,
