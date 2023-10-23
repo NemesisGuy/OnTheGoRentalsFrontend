@@ -15,6 +15,7 @@ import HelpCenter from "@/components/Main/Help/HelpCenter.vue";
 import Faq from "@/components/Main/Help/Faq.vue";
 import adminFaqRoutes from "@/router/adminFaqRoutes";
 import adminHelpCenterRoutes from "@/router/adminHelpCenterRoutes";
+import adminDriverRoutes from "@/router/adminDriverRoutes";
 import Booking from "@/components/Main/Rental/Booking/Booking.vue";
 import adminBookingRoutes from './adminBookingRoutes';
 import AboutUs from "@/components/Main/About/AboutUs.vue";
@@ -25,6 +26,7 @@ import adminDamageReportRoutes from "@/router/adminDamageReportRoutes";
 import EditProfile from "@/components/Main/User/EditProfile.vue";
 
 
+import Driver from "@/components/Main/Driver/DriverList.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -62,6 +64,54 @@ const router = createRouter({
       name: 'CreateRental',
       component: CreateRental,
     },*/
+
+
+        {
+            path: '/cars/list/:category/:available',
+            name: 'CarList',
+            component: CarList,
+        },
+        {
+            path: '/user/profile/:id',
+            name: 'UserProfile',
+            component: UserProfile,
+        },
+        {
+            path: '/help-center',
+            name: 'HelpCenter',
+            component: HelpCenter,
+        },
+        {
+            path: '/booking',
+            name: 'Booking',
+            component: Booking,
+        },
+        {
+            path: '/driver',
+            name: 'Driver',
+            component: Driver,
+        },
+
+
+        {
+            path: '/faq',
+            name: 'Faq',
+            component: Faq,
+        },
+
+        {
+            path: '/admin',
+            component: AdminPage,
+            children: [
+                ...adminRoutes,
+                ...adminCarRoutes,
+                ...adminUserRoutes,
+                ...adminRentalRoutes,
+                ...adminFaqRoutes,
+                ...adminHelpCenterRoutes,
+                ...adminDriverRoutes,
+            ],
+        },
 
     {
       path: '/cars/list/:category/:available',
@@ -102,14 +152,16 @@ const router = createRouter({
         ...adminCarRoutes,
         ...adminUserRoutes,
         ...adminRentalRoutes,
-        ...adminBookingRoutes, 
+        ...adminBookingRoutes,
         ...adminFaqRoutes,
         ...adminHelpCenterRoutes,
         ...adminAboutUsRoutes,
         ...adminContactUsRoutes,
-        ...adminDamageReportRoutes
+        ...adminDamageReportRoutes,
+          ...adminDriverRoutes
       ],
     },
+
 
     {
       path: '/error',

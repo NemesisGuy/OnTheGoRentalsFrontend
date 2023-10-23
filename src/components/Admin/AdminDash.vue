@@ -12,6 +12,7 @@ import RentalDurations from "@/components/Admin/Charts/RentalDurations.vue";
       <h1>Admin Dash</h1>
     </div>
 
+
     <div class="graph-container">
       <h1>Rentals Over Time</h1>
       <RentalChart/>
