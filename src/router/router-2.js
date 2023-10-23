@@ -10,6 +10,7 @@ import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import adminRoutes from './adminRoutes';
 import adminCarRoutes from './adminCarRoutes';
 import adminUserRoutes from './adminUserRoutes';
+import adminFeedbackRoutes from "@/router/adminFeedbackRoutes";
 
 
 const router2 = createRouter({
@@ -53,6 +54,7 @@ const router2 = createRouter({
                 ...adminCarRoutes,
                 ...adminUserRoutes,
                 ...adminBookingRoutes,
+                ...adminFeedbackRoutes,
             ],
         },
         {

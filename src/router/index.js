@@ -27,6 +27,8 @@ import EditProfile from "@/components/Main/User/EditProfile.vue";
 
 
 import Driver from "@/components/Main/Driver/DriverList.vue";
+import Feedback from "@/components/Main/Feedback/feedback.vue";
+import adminFeedbackRoutes from "@/router/adminFeedbackRoutes";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -99,6 +101,12 @@ const router = createRouter({
             component: Faq,
         },
 
+      {
+          path: '/feedback',
+          name: 'Feedback',
+          component: Feedback,
+      },
+
         {
             path: '/admin',
             component: AdminPage,
@@ -143,6 +151,11 @@ const router = createRouter({
       name: 'Faq',
       component: Faq,
     },
+      {
+          path: '/feedback',
+          name: 'Feedback',
+          component: Feedback,
+      },
 
     {
       path: '/admin',
@@ -158,7 +171,8 @@ const router = createRouter({
         ...adminAboutUsRoutes,
         ...adminContactUsRoutes,
         ...adminDamageReportRoutes,
-          ...adminDriverRoutes
+          ...adminDriverRoutes,
+              ...adminFeedbackRoutes
       ],
     },
 

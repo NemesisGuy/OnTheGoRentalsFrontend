@@ -51,6 +51,8 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <router-link to="/help-center" class="dropdown-item">Help Center</router-link>
               <router-link to="/faq" class="dropdown-item">Faq</router-link>
+              <router-link to="/feedback" class="dropdown-item">Feedback</router-link>
+
             </div>
           </li>
           <li class="nav-item">

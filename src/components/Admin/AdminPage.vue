@@ -77,6 +77,21 @@
 
   </li>
           <li>
+            <router-link to="/admin/feedback">
+              <i class="fas fa-comment"></i>
+              <span class="menu-text" v-show="isExpanded">Feedback Management</span>
+            </router-link>
+
+
+          </li>
+
+
+
+
+
+
+
+          <li>
             <router-link to="/admin/settings">
               <i class="fas fa-gear"></i>
               <span class="menu-text" v-show="isExpanded">Settings</span>
