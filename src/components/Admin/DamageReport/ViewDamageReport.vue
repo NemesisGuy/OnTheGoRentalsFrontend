@@ -1,5 +1,5 @@
 <template>
-    <div class="card-container">
+    <div class="card-container card-container-admin">
         <div class="form-container">
         <div class="report-profile">
             <h1>Damage Report Profile</h1>
@@ -113,7 +113,7 @@ export default {
         return {
             damageReport: null,
             rental: null,
-            //user: null,
+            user: null,
             car: null,
         };
     },
@@ -190,7 +190,7 @@ export default {
 }
 
 .profile-details {
-    display: flex;
+/*    display: flex;*/
     flex-wrap: wrap;
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="card-container ">
+  <div class="card-container card-container-admin ">
     <div class="form-container">
     <div class="car-profile">
       <h1><i class="fas fa-car"></i> Car Profile: </h1>
@@ -86,7 +86,7 @@ export default {
 <style scoped>
 .card-container {
 
-padding: 50px;
+//padding: 50px;
   justify-content: center;
 }
 .car-profile {

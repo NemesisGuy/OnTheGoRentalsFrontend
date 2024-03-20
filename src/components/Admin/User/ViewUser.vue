@@ -1,6 +1,6 @@
 <template>
 
-    <div class="card-container">
+    <div class="card-container card-container-admin">
       <div class="form-container">
 <!--        <h1>User Profile</h1>-->
         <div v-if="user" class="profile-details">
@@ -12,11 +12,15 @@
             <img v-if="user.profileImageUrl" :src="user.profileImageUrl" alt="Profile Image" class="avatar">
             <img v-else src="@/assets/Images/Defaults/default-user-avatar.png" alt="Placeholder Image" class="avatar">
           </div>
-
-          <p><strong><i class="fas fa-user"></i> Username:</strong> {{ user.firstName}} {{ user.lastName }}</p>
-
-          <p><strong><i class="fas fa-user"></i> First Name:</strong> {{ user.firstName }}</p>
-          <p><strong><i class="fas fa-user"></i> Last Name:</strong> {{ user.lastName }}</p>
+          <div>
+            <p><strong><i class="fas fa-user"></i> Username:</strong> {{ user.username }}</p>
+          </div>
+          <div>
+            <p><strong><i class="fas fa-user"></i> First Name:</strong> {{ user.firstName }}</p>
+          </div>
+          <div>
+            <p><strong><i class="fas fa-user"></i> Last Name:</strong> {{ user.lastName }}</p>
+          </div>
 <!--
           <p><strong><i class="fas fa-phone"></i> Phone Number:</strong> {{ user.phoneNumber }}</p>
 -->
@@ -110,4 +114,5 @@ export default {
 .profile-info {
   margin-top: 20px;
 }
+
 </style>

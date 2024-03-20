@@ -523,6 +523,12 @@ h1 {
 
 .profile-details {
     margin-top: 20px;
+
+}
+
+.profile-details {
+    display: block !important; /* Override inherited display property */
+    flex-wrap: initial !important; /* Override inherited flex-wrap property */
 }
 
 label {
