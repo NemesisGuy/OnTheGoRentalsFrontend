@@ -1,20 +1,15 @@
-FROM node:20 as build-stage
+FROM node:lts-alpine
+# install simple http server for serving static content
+RUN npm install -g http-server
+# make the 'app' folder the current working directory
 WORKDIR /app
-
-# Clone the repository
-RUN git clone https://github.com/NemesisGuy/OnTheGoRentalsFrontend.git .
-
-# Install dependencies and build the Vue.js application
+# copy 'package.json' to install dependencies
+COPY package*.json ./
+# install dependencies
 RUN npm install
+# copy files and folders to the current working directory (i.e. 'app' folder)
+COPY . .
+# build app for production with minification
 RUN npm run build
-
-FROM nginx:latest
-
-# Copy the built files from the build-stage
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-
-LABEL authors="Peter Buckingham
-
+EXPOSE 8080
+CMD [ "http-server", "dist" ]

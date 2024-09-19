@@ -18,7 +18,7 @@
       <h2 class="content-header display-4">Our Services</h2>
       <div class="row">
         <div class="col-md-4">
-          <div class="card mb-4 shadow-lg">
+          <div class="card mb-4 shadow-lg home-card card" >
             <div class="card-body box-shadow">
               <h3 class="card-title content-header"><i class="fas fa-car-side"></i> Economy Cars</h3>
               <p class="card-text">Affordable cars for your everyday needs.</p>
@@ -35,7 +35,7 @@
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card mb-4 shadow-sm">
+          <div class="card mb-4 shadow-sm home-card">
             <div class="card-body box-shadow">
               <h3 class="card-title content-header"><i class="fas fa-gem"></i> Luxury Cars</h3>
               <p class="card-text">Experience the thrill of driving in style.</p>
@@ -53,7 +53,7 @@
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card mb-4 shadow-sm">
+          <div class="card mb-4 shadow-sm home-card">
             <div class="card-body box-shadow">
               <h3 class="card-title content-header"><i class="fas fa-tags"></i> Special Offers</h3>
               <p class="card-text">View our current deals and discounts.</p>
@@ -93,51 +93,5 @@ export default {
 </script>
 
 <style>
-.jumbotron {
-  background-image: url('../../../assets/Images/Background/paralax-stars.jpg');
-  background-size: cover;
-  height: 500px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  margin-bottom: 10px;
-  margin-top: .2rem;
-}
 
-.card {
-  min-height: 250px;
-  background: #a5a1ff;
-  background-color: #a5a1ff;
-  --bs-card-bg: #a5a1ff !important;
-}
-
-.custom-button {
-
-  align-items: center;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #fff;
-  background-color: #007bff;
-  border: none;
-  border-radius: 0.25rem;
-  transition: background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  text-decoration: none;
-
-}
-
-.custom-button:hover {
-  background-color: #0069d9;
-}
-
-.custom-button i {
-  margin: 0.5rem;
-}
-.button-container-margin{
-  margin: 1rem;
-
-
-}
 </style>

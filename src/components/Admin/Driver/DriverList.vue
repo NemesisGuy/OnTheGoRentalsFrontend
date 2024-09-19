@@ -96,11 +96,5 @@ export default {
 
 
 <style>
-.driver {
-  border: 1px solid #5e5a5a;
-  padding: 10px;
-  margin-bottom: 10px;
-  background-color: #bd1b1b;
-  color: #181818;
-}
+
 </style>

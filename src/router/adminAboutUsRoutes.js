@@ -30,12 +30,21 @@ const adminAboutUsRoutes =[
             adminContent: DeleteAboutUs,
         },
     },
+    // {
+    //     path: 'aboutUs/read/:id',
+    //     name: 'ViewAboutUs',
+    //     components:
+    //         {
+    //             adminContent: ViewAboutUs,
+    //         },
+    // },
     {
-    path: 'aboutUs/read/:id',
-    name: 'ViewAboutUs',
-    components: {
-    adminContent: ViewAboutUs,
-},
-},
+        path: 'aboutus/read/:id',
+        name: 'ViewAboutUs',
+        components:
+            {
+                adminContent: ViewAboutUs,
+            },
+    },
 ];
 export default adminAboutUsRoutes;

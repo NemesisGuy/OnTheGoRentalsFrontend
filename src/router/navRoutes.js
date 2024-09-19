@@ -1,8 +1,10 @@
-import Home from "@/components/Main/General/Home.vue";
-import CarList from "@/components/Main/Car/CarList.vue";
+
 import Login from "@/components/Main/User/Login.vue";
 import Signup from "@/components/Main/User/Signup.vue";
-import SignOut from "@/components/Main/User/SignOut.vue";
+import SignOut from "@/components/Main/User/Signout.vue";
+import AboutUs from "@/components/Main/About/AboutUs.vue";
+
+
 const navRoutes = [
 
     {
@@ -24,10 +26,17 @@ const navRoutes = [
         redirect: '/'
     },
     {
-        path: "/signout",
-        name: "SignOut",
+        path: '/signout',
+        name: 'Signout',
         component: SignOut,
     },
+    {
+        path: '/aboutus/latest',
+        name: "AboutUs",
+        component: AboutUs,
+    },
+
+
 ];
 
 export default navRoutes;

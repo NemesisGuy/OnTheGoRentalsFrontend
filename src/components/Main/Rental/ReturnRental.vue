@@ -112,14 +112,5 @@ export default {
 </script>
 
 <style scoped>
-.return-container {
-  margin-top: 20px;
-}
 
-.rental-details {
-  background-color: #f5f5f5;
-  padding: 10px;
-  margin-bottom: 20px;
-  color: black;
-}
 </style>

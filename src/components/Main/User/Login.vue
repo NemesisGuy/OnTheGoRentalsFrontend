@@ -97,7 +97,7 @@ export default {
       this.failureModal.show = false;
     },
     goToSignup() {
-      this.$router.push({name: 'Signup'});//eredirects to signup page
+      this.$router.push({name: 'Signup'});//redirects to signup page
     },
   },
   data() {

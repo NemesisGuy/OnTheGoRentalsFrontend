@@ -180,8 +180,6 @@ export default {
         roles: [{ roleName: "USER" }], // Updated to match the backend structure
       },
 
-
-
       sortBy: null, // Your sort option
       searchQuery: "",
       loading: false,
@@ -335,7 +333,7 @@ export default {
     cancelEdit(rental) {
       rental.editing = false;
     },
-    
+
     openRentalView(rentalId) {
       const token = localStorage.getItem('token');
       this.$router.push(`/admin/rentals/read/${rentalId}`

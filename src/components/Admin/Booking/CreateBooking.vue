@@ -8,7 +8,7 @@
         <div class="form-header">
           <h2>Create Booking</h2>
         </div>
-        
+
         <div class="form-group">
           <label for="user">User:</label>
           <select id="user" v-model="selectedUser" name="userId">
@@ -190,7 +190,7 @@ export default {
       this.loadingModal.show = true;
       this.errorMessage = "";
 
-      const booking = { 
+      const booking = {
         user: {
           id: this.selectedUser,
         },

@@ -175,61 +175,7 @@ export default {
 
 
 <style>
-.card-container {
-    display: flex;
-    padding: 50px;
-    justify-content: center;
 
-}
-.report-profile {
-    margin-top: 20px;
-}
-
-.report-profile h1 {
-    margin-bottom: 10px;
-}
-
-.profile-details {
-/*    display: flex;*/
-    flex-wrap: wrap;
-}
-
-.section {
-    flex: 1 1 50%;
-    margin-right: 20px;
-    margin-bottom: 20px;
-}
-
-.detail-row {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.detail-row > div {
-    flex: 1 1 50%;
-    display: flex;
-    align-items: center;
-}
-
-label {
-    font-weight: bold;
-    margin-right: 10px;
-}
-
-span {
-    margin-right: 10px;
-}
-
-/* Media query for narrow screens */
-@media (max-width: 500px) {
-    .profile-details {
-        flex-direction: column; /* Stack sections vertically */
-    }
-
-    .section {
-        margin-right: 0;
-    }
-}
 </style>
 
 

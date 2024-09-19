@@ -203,21 +203,5 @@ export default {
 </script>
 
 <style scoped>
-.rental-container {
-  margin-top: 20px;
-}
 
-.car-details {
-  background-color: #f5f5f5;
-  padding: 10px;
-  margin-bottom: 20px;
-  color: black;
-}
-
-.user-details {
-  background-color: #f5f5f5;
-  padding: 10px;
-  margin-bottom: 20px;
-  color: black;
-}
 </style>

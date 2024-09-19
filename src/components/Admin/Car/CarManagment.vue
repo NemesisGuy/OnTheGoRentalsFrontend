@@ -229,9 +229,7 @@ export default {
         const token = localStorage.getItem("token");
         axios
             .delete(`/api/admin/cars/delete/${this.carToDelete.id}`, {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
+
             })
             .then((response) => {
               this.fetchCars();
@@ -325,29 +323,5 @@ export default {
 
 
 <style scoped>
-.content-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.search-input {
-  display: flex;
-  align-items: center;
-}
-
-.search-input input {
-  margin-right: 10px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  margin-right: 10px;
-}
 
 </style>

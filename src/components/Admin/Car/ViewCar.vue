@@ -84,30 +84,7 @@ export default {
 </script>
 
 <style scoped>
-.card-container {
 
-//padding: 50px;
-  justify-content: center;
-}
-.car-profile {
-  margin-top: 20px;
-}
-
-.car-profile h1 {
-  margin-bottom: 10px;
-}
-
-.profile-details div {
-  margin-bottom: 10px;
-}
-
-label {
-  font-weight: bold;
-}
-
-span {
-  margin-left: 10px;
-}
 </style>
 
 

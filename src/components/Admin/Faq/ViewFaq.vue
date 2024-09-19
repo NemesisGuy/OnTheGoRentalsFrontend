@@ -64,37 +64,7 @@ export default {
 </script>
 
 <style scoped>
-.card-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 50px;
-}
 
-.rental-profile {
-  margin-top: 20px;
-}
-
-.rental-profile h1 {
-  margin-bottom: 10px;
-}
-
-.profile-details div {
-  margin-bottom: 10px;
-}
-
-label {
-  font-weight: bold;
-}
-
-span {
-  margin-left: 10px;
-}
-
-.back-button {
-  margin-top: 20px;
-  color: black;
-}
 </style>
 
 

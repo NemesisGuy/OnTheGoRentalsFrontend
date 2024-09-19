@@ -164,7 +164,8 @@ export default {
 
     if (token) {
       axios
-          .get(`http://localhost:8080/api/user/profile/profile`, {
+          .get(`http://localhost:8080/api/user/profile/profile`,
+              {
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -190,16 +191,6 @@ export default {
 </script>
 
 <style scoped>
-.profile-info {
-  margin-top: 20px;
-}
-.avatar {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-}
-.profile-image {
-  text-align: center;
-}
+
 </style>
 

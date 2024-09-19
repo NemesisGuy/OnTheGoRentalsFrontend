@@ -403,11 +403,6 @@ export default {
 
 
 <style>
-.create-rental {
-  margin: 50px auto;
-  width: 50%;
-  max-width: max-content;
 
-}
 
 </style>

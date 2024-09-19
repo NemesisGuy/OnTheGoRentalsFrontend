@@ -37,13 +37,6 @@ export default {
 </script>
 
 <style scoped>
-.modal-content{
-  padding: 20px;
-  background-color: #dff0d8;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-  border-color: #2b3d20;
-}
 
 
 </style>

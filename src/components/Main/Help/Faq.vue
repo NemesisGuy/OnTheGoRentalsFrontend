@@ -53,55 +53,6 @@ export default {
 <style scoped>
 
 
-.faq {
-  width: 650px;
-  background-color: #fff; /* FAQ container background color (White) */
-  padding: 30px;
-  border-radius: 10px;
-}
 
-.faq h1 {
-  margin-bottom: 20px;
-  text-align: center;
-  color: #555;
-}
-
-.back-button {
-  display: block;
-  text-align: center;
-  margin-bottom: 20px;
-  color: #f2105e; /* Button color (Purple) */
-  font-weight: bold;
-}
-
-.faq hr {
-  border: none;
-  border-top: 2px solid #f2105e;
-  margin: 20px 0;
-}
-
-.faq-list ul {
-  padding: 0;
-}
-
-.faq-item {
-  margin-bottom: 30px;
-}
-
-.faq-item h3 {
-  font-size: 1.5em;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.faq-item p {
-  font-size: 1.2em;
-  color: #555;
-}
-
-.faq-item h3, .faq-item p {
-  text-align: left;
-  margin: 0;
-}
 </style>
 

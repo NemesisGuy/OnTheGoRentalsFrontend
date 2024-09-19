@@ -103,16 +103,6 @@ export default {
 </script>
 
 <style scoped>
-.avatar {
-  width: 100px; /* Set the desired width */
-  height: 100px; /* Set the desired height */
-  object-fit: cover; /* Maintain aspect ratio */
-}
-.profile-image {
-  text-align: center;
-}
-.profile-info {
-  margin-top: 20px;
-}
+
 
 </style>

@@ -70,28 +70,5 @@ export default {
 <style scoped>
 
 
-.help-center-profile {
-  margin-top: 20px;
-}
-
-.help-center-profile h1 {
-  margin-bottom: 10px;
-}
-
-.profile-details div {
-  margin-bottom: 10px;
-}
-
-label {
-  font-weight: bold;
-}
-
-span {
-  margin-left: 10px;
-}
-
-.back-button {
-  margin-top: 20px;
-}
 </style>
 

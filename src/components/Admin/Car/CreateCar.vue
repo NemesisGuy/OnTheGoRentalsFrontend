@@ -191,8 +191,5 @@ export default {
 </script>
 
 <style scoped>
-.error-message {
-  color: red;
-  margin-top: 5px;
-}
+
 </style>

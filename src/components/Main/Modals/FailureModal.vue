@@ -38,29 +38,5 @@ export default {
 </script>
 
 <style scoped>
-.modal-content {
-  padding: 20px;
-  background-color: #ffdddd;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-  border-color: #cc0000;
-}
 
-.alert-failure {
-  border: 1px solid transparent;
-  border-radius: 4px;
-  background-color: #ffdddd;
-}
-
-.alert-failure-header {
-  color: #cc0000;
-}
-
-.alert-failure-body {
-  color: black;
-}
-
-.fa-times-circle {
-  color: #cc0000;
-}
 </style>

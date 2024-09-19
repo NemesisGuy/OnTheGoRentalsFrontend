@@ -20,64 +20,40 @@
         </div>
     </div>
 </template>
+
+
 <script>
 import axios from 'axios';
 
 export default {
-   name: 'AboutUs',
-    data() {
-        return {
-           about: null,
-        };
+  name: 'AboutUs',
+  data() {
+    return {
+      about: null, // Use null or an empty object to represent a single AboutUs entity
+    };
+  },
+  mounted() {
+    this.fetchAboutUs();
+    console.log('About Us component mounted');
+  },
+  methods: {
+    fetchAboutUs() {
+      axios
+          .get('http://localhost:8080/api/aboutUs/latest') // Fetch the latest AboutUs entry
+          .then(response => {
+            this.about = response.data; // Assign the response data directly to about
+            console.log('Fetched AboutUs data:', this.about);
+          })
+          .catch(error => {
+            console.error('Error fetching about us data:', error);
+          });
     },
-    mounted() {
-        this.fetchAboutUs();
-        console.log('About Us component mounted');
-    },
-    methods:{
-       fetchAboutUs() {
-           const aboutId = this.$route.params.id;
-
-           console.log('About ID:', aboutId);
-
-           axios
-               .get(`http://localhost:8080/api/aboutUs/read/${aboutId}`)
-               .then(response => {
-                   //this.fetchAboutUs();
-                   console.log(response.data);
-                   this.about = response.data;
-
-               })
-               .catch(error => {
-                   console.error(error);
-               });
-       },
-        navigateToAboutUs() {
-            // Use this.$router.push to navigate to About Us with id 1
-            this.$router.push({ name: 'AboutUs', params: { id: 2 } });
-        },
-    },
+  },
 };
 </script>
+
 <style>
-.about {
-    width: 650px;
-    height: 100%;
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-.content-header {
-    text-align: center;
-    margin-bottom:20px;
-}
 
-
-.about p {
-    font-size: 1.2em;
-    color: #555;
-}
 </style>
 
 

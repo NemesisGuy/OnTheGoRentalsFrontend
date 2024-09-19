@@ -12,9 +12,8 @@ import RentalDurations from "@/components/Admin/Charts/RentalDurations.vue";
       <h1>Admin Dash</h1>
     </div>
 
-
     <div class="graph-container">
-      <h1>Rentals Over Time</h1>
+      <h1>Rentals Per Day</h1>
       <RentalChart/>
     </div>
 
@@ -38,15 +37,6 @@ import RentalDurations from "@/components/Admin/Charts/RentalDurations.vue";
 </template>
 
 <style scoped>
-.graph-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 80%;
-  height: 80%;
-  margin: 2rem;
-}
 
 
 </style>

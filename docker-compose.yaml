@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  on-the-go-rentals-vue-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: on-the-go-rentals-vue-app
+    restart: always
+    ports:
+      - "5175:8080"
+    networks:
+      - vue-network
+networks:
+  vue-network:
+    driver: bridge

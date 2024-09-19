@@ -60,7 +60,7 @@ export default {
   },
   created() {
     // Check if the JWT token exists in localStorage or sessionStorage
-    const token = localStorage.getItem('token'); // Or use sessionStorage if you prefer
+    const token = localStorage.getItem('jwtToken'); // Or use sessionStorage if you prefer
     this.isLoggedIn = !!token; // Convert to a boolean
   }
 };
