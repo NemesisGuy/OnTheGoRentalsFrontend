@@ -105,7 +105,7 @@
     <div class="form-container">
       <div>
         <div class="form-header">
-          <h2><i class="fas fa-user"></i> Welcome to Your Profile</h2>
+          <h2><i class="fas fa-user"></i> {{ user.firstName }}</h2>
         </div>
         <hr>
         <div class="profile-info">

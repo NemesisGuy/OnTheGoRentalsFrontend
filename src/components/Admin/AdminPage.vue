@@ -105,14 +105,19 @@
     </div>
     <div class="admin-content-area" :class="{ expanded: isExpanded }">
       <!-- Main content goes here -->
+      <router-view></router-view> <!-- This will load AdminDash or other child routes -->
+
       <router-view name="adminContent"></router-view>
     </div>
   </div>
 </template>
 
 <script>
+import AdminDash from "@/components/Admin/AdminDash.vue";
+
 export default {
   name: "AdminPage",
+  components: {AdminDash},
   data() {
     return {
       isExpanded: false

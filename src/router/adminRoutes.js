@@ -1,41 +1,17 @@
-// Purpose: Contains all routes for the admin dashboard
 import AdminDash from "@/components/Admin/AdminDash.vue";
-import TestPage from "@/components/Main/General/TestPage.vue";
 import Settings from "@/components/Admin/Settings/Settings.vue";
-import AdminView from "@/components/Admin/AdminView.vue";
-
 
 const adminRoutes = [
     {
-        path: 'admin',
-        components: {
-            adminContent: AdminDash,
-        }
+        path: '', // Default path for /admin
+        name: 'AdminDash', // Optional: Give it a name for easy reference
+        component: AdminDash, // Load AdminDash as default
     },
     {
-        path: '/admin/test',
-        components: {
-            adminContent: TestPage,
-        }
-    },
-    {
-        path: '/admin/settings',
+        path: 'settings',
         name: 'AdminSettings',
-        components: {
-            adminContent: Settings,
-        }
+        component: Settings,
     },
-    {
-        path: '/adminview',
-        name: 'AdminView',
-        components: {
-            adminContent: AdminView,
-        }
-
-    },
-
-
-
 ];
 
 export default adminRoutes;

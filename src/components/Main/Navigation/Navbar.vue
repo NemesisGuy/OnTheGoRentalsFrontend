@@ -10,26 +10,10 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <!-- Show Login/Signup when not logged in -->
-          <li class="nav-item" v-if="!isLoggedIn">
-            <router-link to="/nav/user/login" class="nav-link blur-button">Login</router-link>
-          </li>
-          <li class="nav-item" v-if="!isLoggedIn">
-            <router-link to="/nav/user/signup" class="nav-link blur-button">Signup</router-link>
-          </li>
-
-          <!-- Common links -->
+        <ul class="navbar-nav me-auto">
+          <!-- Common links available to everyone -->
           <li class="nav-item">
             <router-link to="/aboutus/latest" class="nav-link blur-button">About Us</router-link>
-          </li>
-          <li class="nav-item" v-if="isLoggedIn">
-            <router-link to="/Booking" class="nav-link blur-button">Booking</router-link>
-          </li>
-
-          <!-- Admin Dashboard visible only for admin role -->
-          <li class="nav-item" v-if="isLoggedIn && isAdmin">
-            <router-link to="/admin" class="nav-link blur-button">Admin Dashboard</router-link>
           </li>
 
           <!-- Help dropdown -->
@@ -45,17 +29,36 @@
             </div>
           </li>
 
-          <!-- Show User Profile and Sign Out when logged in -->
-          <li class="nav-item" v-if="isLoggedIn">
-            <router-link to="/user/profile/profile" class="nav-link blur-button">
-              <i class="fas fa-user"></i> User Profile
-            </router-link>
+          <!-- Show Login/Signup when not logged in -->
+          <li class="nav-item" v-if="!isLoggedIn">
+            <router-link to="/nav/user/login" class="nav-link blur-button">Login</router-link>
           </li>
-          <li class="nav-item" v-if="isLoggedIn">
-            <router-link to="/signout" class="nav-link blur-button">Sign Out</router-link>
+          <li class="nav-item" v-if="!isLoggedIn">
+            <router-link to="/nav/user/signup" class="nav-link blur-button">Signup</router-link>
           </li>
-
         </ul>
+
+        <!-- User icon for logged-in users -->
+        <div class="nav-item dropdown" v-if="isLoggedIn">
+          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user-circle" style="font-size: 1.5rem;"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li>
+              <router-link to="/user/profile/profile" class="dropdown-item">User Profile</router-link>
+            </li>
+            <li>
+              <router-link to="/Booking" class="dropdown-item">Bookings</router-link>
+            </li>
+            <li v-if="isAdmin">
+              <router-link to="/admin" class="dropdown-item">Admin Dashboard</router-link>
+            </li>
+            <li>
+              <router-link to="/signout" class="dropdown-item">Sign Out</router-link>
+            </li>
+
+          </ul>
+        </div>
       </div>
     </div>
   </nav>

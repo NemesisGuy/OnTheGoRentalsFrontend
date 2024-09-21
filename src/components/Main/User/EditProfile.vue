@@ -1,6 +1,6 @@
 <template>
   <div class="card-container card-container-admin">
-    <div class="form-container-admin">
+    <div class="form-container">
       <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"></LoadingModal>
       <form @submit.prevent="editUserProfile">
         <h2 class="form-header">Edit User Profile</h2>

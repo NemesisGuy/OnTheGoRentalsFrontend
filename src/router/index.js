@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AdminPage from "@/components/Admin/AdminPage.vue";
-import adminRoutes from './adminRoutes';
+
 import adminCarRoutes from './adminCarRoutes';
 import adminUserRoutes from './adminUserRoutes';
 import navRoutes from './navRoutes';
@@ -24,9 +24,8 @@ import ContactUs from "@/components/Main/About/ContactUs.vue";
 import adminContactUsRoutes from "@/router/adminContactUsRoutes";
 import adminDamageReportRoutes from "@/router/adminDamageReportRoutes";
 import EditProfile from "@/components/Main/User/EditProfile.vue";
-
-
 import Driver from "@/components/Main/Driver/DriverList.vue";
+import adminRoutes from "@/router/adminRoutes";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -63,11 +62,6 @@ const router = createRouter({
             name: 'CarList',
             component: CarList,
         },
- /*       {
-            path: '/user/profile/:id',
-            name: 'UserProfile',
-            component: UserProfile,
-        },*/
         {
             path: '/user/profile/profile',
             name: 'UserProfile',
@@ -88,7 +82,6 @@ const router = createRouter({
             name: 'Faq',
             component: Faq,
         },
-
         {
             path: '/edit-profile',
             name: 'EditProfile',
@@ -99,12 +92,11 @@ const router = createRouter({
             name: 'HelpCenter',
             component: HelpCenter,
         },
-
         {
             path: '/admin',
             component: AdminPage,
             children: [
-                ...adminRoutes,
+                ...adminRoutes, // Spread the admin routes here
                 ...adminCarRoutes,
                 ...adminUserRoutes,
                 ...adminRentalRoutes,
@@ -115,10 +107,9 @@ const router = createRouter({
                 ...adminContactUsRoutes,
                 ...adminDamageReportRoutes,
                 ...adminDriverRoutes,
+
             ],
         },
-
-
         {
             path: '/error',
             component: () => import('@/components/Main/General/ErrorPage.vue'),
@@ -130,4 +121,5 @@ const router = createRouter({
         },
     ],
 });
+
 export default router;
