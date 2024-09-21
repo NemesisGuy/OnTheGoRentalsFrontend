@@ -114,6 +114,7 @@
 
 
 <script>
+import {jwtDecode} from "jwt-decode";
 import axios from "axios";
 import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "../../Main/Modals/LoadingModal.vue";
@@ -189,7 +190,15 @@ export default {
   methods: {
     fetchCars() {
       this.loading = true;
+
       const token = localStorage.getItem("token");
+      if (token) {
+        const decodedToken = jwtDecode(token);
+
+        if (decodedToken.role === "admin"){
+          console.log("Role : "+ decodedToken.role);
+        }
+      }
       axios
           .get("/api/admin/cars/all", {
             headers: {

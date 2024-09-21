@@ -29,57 +29,49 @@ import EditProfile from "@/components/Main/User/EditProfile.vue";
 import Driver from "@/components/Main/Driver/DriverList.vue";
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes: [
-    ...navRoutes,
-    ...carRoutes,
-    {
-      path: '/',
-      name: 'Home',
-      component: Home,
-    },
-    {
-      path: '/aboutUs/:id',
-      name: 'AboutUs',
-      component: AboutUs
-    },
-    {
-      path: '/contactUs',
-      name: 'ContactUs',
-      component: ContactUs
-    },
-    {
-      path: '/rental/:carId',
-      name: 'Rental',
-      component: Rental,
-    },
-    {
-      path: '/rental/return/:rentalId',
-      name: 'ReturnRental',
-      component: ReturnRental,
-    },
-    // You have a CreateRental route commented out, uncomment and add if needed
-    /*{
-      path: '/rental/create/',
-      name: 'CreateRental',
-      component: CreateRental,
-    },*/
-
-
+    history: createWebHistory(),
+    routes: [
+        ...navRoutes,
+        ...carRoutes,
+        {
+            path: '/',
+            name: 'Home',
+            component: Home,
+        },
+        {
+            path: '/aboutUs/:id',
+            name: 'AboutUs',
+            component: AboutUs
+        },
+        {
+            path: '/contactUs',
+            name: 'ContactUs',
+            component: ContactUs
+        },
+        {
+            path: '/rental/:carId',
+            name: 'Rental',
+            component: Rental,
+        },
+        {
+            path: '/rental/return/:rentalId',
+            name: 'ReturnRental',
+            component: ReturnRental,
+        },
         {
             path: '/cars/list/:category/:available',
             name: 'CarList',
             component: CarList,
         },
-        {
+ /*       {
             path: '/user/profile/:id',
             name: 'UserProfile',
             component: UserProfile,
-        },
+        },*/
         {
-            path: '/help-center',
-            name: 'HelpCenter',
-            component: HelpCenter,
+            path: '/user/profile/profile',
+            name: 'UserProfile',
+            component: UserProfile,
         },
         {
             path: '/booking',
@@ -91,12 +83,21 @@ const router = createRouter({
             name: 'Driver',
             component: Driver,
         },
-
-
         {
             path: '/faq',
             name: 'Faq',
             component: Faq,
+        },
+
+        {
+            path: '/edit-profile',
+            name: 'EditProfile',
+            component: EditProfile,
+        },
+        {
+            path: '/help-center',
+            name: 'HelpCenter',
+            component: HelpCenter,
         },
 
         {
@@ -107,71 +108,26 @@ const router = createRouter({
                 ...adminCarRoutes,
                 ...adminUserRoutes,
                 ...adminRentalRoutes,
+                ...adminBookingRoutes,
                 ...adminFaqRoutes,
                 ...adminHelpCenterRoutes,
+                ...adminAboutUsRoutes,
+                ...adminContactUsRoutes,
+                ...adminDamageReportRoutes,
                 ...adminDriverRoutes,
             ],
         },
 
-    {
-      path: '/cars/list/:category/:available',
-      name: 'CarList',
-      component: CarList,
-    },
-    {
-      path: '/user/profile/profile',
-      name: 'UserProfile',
-      component: UserProfile,
-    },
-    {
-      path: '/edit-profile',
-      name: 'EditProfile',
-      component: EditProfile,
-    },
-    {
-      path: '/help-center',
-      name: 'HelpCenter',
-      component: HelpCenter,
-    },
-    {
-      path: '/booking',
-      name: 'Booking',
-      component: Booking,
-    },
-    {
-      path: '/faq',
-      name: 'Faq',
-      component: Faq,
-    },
 
-    {
-      path: '/admin',
-      component: AdminPage,
-      children: [
-        ...adminRoutes,
-        ...adminCarRoutes,
-        ...adminUserRoutes,
-        ...adminRentalRoutes,
-        ...adminBookingRoutes,
-        ...adminFaqRoutes,
-        ...adminHelpCenterRoutes,
-        ...adminAboutUsRoutes,
-        ...adminContactUsRoutes,
-        ...adminDamageReportRoutes,
-          ...adminDriverRoutes
-      ],
-    },
-
-
-    {
-      path: '/error',
-      component: () => import('@/components/Main/General/ErrorPage.vue'),
-    },
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'ErrorPage',
-      component: () => import('@/components/Main/General/ErrorPage.vue'),
-    },
-  ],
+        {
+            path: '/error',
+            component: () => import('@/components/Main/General/ErrorPage.vue'),
+        },
+        {
+            path: '/:pathMatch(.*)*',
+            name: 'ErrorPage',
+            component: () => import('@/components/Main/General/ErrorPage.vue'),
+        },
+    ],
 });
 export default router;

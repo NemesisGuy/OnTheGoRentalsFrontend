@@ -1,5 +1,5 @@
 <template xmlns="http://www.w3.org/1999/html">
-  <div class="card-container card-container">
+  <div class="card-container">
     <div class="form-container">
       <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"></LoadingModal>
 
@@ -10,23 +10,23 @@
 
         <div class="form-group">
           <label for="user">User:</label>
-          <select id="user" v-model="selectedUser" name="userId">
-            <option v-for="user in users" :key="user.id" :value="user.id">
-              User ID: {{ user.id }} Email: {{ user.email }}
-            </option>
-          </select>
+          <input
+              id="user"
+              type="text"
+              :value="`${currentUser.firstName} ${currentUser.lastName}, ${currentUser.email}`"
+              readonly
+          />
         </div>
 
         <div class="form-group">
-          <label for="issuedDate">Issued Date:</label>
+          <label for="issuedDate">Rental Collection Date:</label>
           <input id="issuedDate" v-model="selectedIssuedDate" name="issuedDate" type="datetime-local">
         </div>
 
         <div class="form-group">
-  <label for="returnedDate">Returned Date:</label>
-  <input id="returnedDate" v-model="selectedReturnedDate" name="returnedDate" type="datetime-local">
-</div>
-
+          <label for="returnedDate">Rental Return Date:</label>
+          <input id="returnedDate" v-model="selectedReturnedDate" name="returnedDate" type="datetime-local">
+        </div>
 
         <div class="form-group">
           <label for="car">Car:</label>
@@ -49,21 +49,18 @@
   <div class="modal-body">
     <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
 
-    <!-- Add the LoadingModal component -->
-
-    <!-- Add the ConfirmationModal component -->
     <confirmation-modal
-      key="confirmationModal"
-      :show="showConfirmationModal"
-      @cancel="cancel"
-      @confirm="confirm"
+        key="confirmationModal"
+        :show="showConfirmationModal"
+        @cancel="cancel"
+        @confirm="confirm"
     >
       <template v-if="showConfirmationModal">
         <div>
           <h3>Confirmation</h3>
           <p>Are you sure you want to create this Booking?</p>
           <hr>
-          <p>User ID: {{ selectedUser }}</p>
+          <p>User: {{ `${currentUser.firstName} ${currentUser.lastName}, ${currentUser.email}` }}</p>
           <p>Issued Date: {{ selectedIssuedDate }}</p>
           <p>Returned Date: {{ selectedReturnedDate }}</p>
           <p>Car ID: {{ selectedCar }}</p>
@@ -73,31 +70,32 @@
       </template>
     </confirmation-modal>
 
-    <!-- Add the SuccessModal component -->
     <SuccessModal
-      v-if="successModal.show"
-      key="successModal"
-      :message="successModal.message"
-      :show="successModal.show"
-      @cancel="closeModal"
-      @close="closeModal"
-      @confirm="closeModal"
-      @ok="closeModal"
+        v-if="successModal.show"
+        key="successModal"
+        :message="successModal.message"
+        :show="successModal.show"
+        @cancel="closeModal"
+        @close="closeModal"
+        @confirm="closeModal"
+        @ok="closeModal"
     ></SuccessModal>
 
-    <!-- Add the FailureModal component -->
     <FailureModal
-      v-if="failModal.show"
-      key="failModal"
-      :message="failModal.message"
-      :show="failModal.show"
-      @cancel="closeModal"
-      @close="closeModal"
+        v-if="failModal.show"
+        key="failModal"
+        :message="failModal.message"
+        :show="failModal.show"
+        @cancel="closeModal"
+        @close="closeModal"
     ></FailureModal>
   </div>
 </template>
 
+
+
 <script>
+
 import axios from "axios";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
@@ -105,19 +103,13 @@ import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 
 export default {
-  computed: {
-    confirmationModal() {
-      return ConfirmationModal;
-    }
-  },
   data() {
     return {
-      users: [],
       cars: [],
-      selectedUser: "",
       selectedCar: "",
       selectedIssuedDate: "",
       selectedReturnedDate: "",
+      currentUser: {}, // Store the whole user object here
       confirm: null,
       cancel: null,
       loadingModal: {
@@ -141,48 +133,49 @@ export default {
     FailureModal,
     LoadingModal,
   },
-  mounted() {
-    this.fetchUsersList();
-    this.fetchCarsList();
+
+
+  created() {
+    // Check if the JWT token exists in localStorage
+    const token = localStorage.getItem('token');
+    this.isLoggedIn = !!token; // Convert to a boolean
+
+    // If logged in, fetch user profile to get user data
+    if (this.isLoggedIn) {
+      axios
+          .get('http://localhost:8080/api/user/profile/profile', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then(response => {
+            this.currentUser = response.data; // Store the whole user object
+            console.log("Current User:", this.currentUser);
+          })
+          .catch(error => {
+            console.error('Error fetching user profile:', error);
+            this.failModal.message = "Failed to fetch user profile";
+            this.failModal.show = true;
+          });
+    }
+
+    this.fetchCarsList(); // Fetch the cars list
   },
   methods: {
-    fetchUsersList() {
-      this.loadingModal.show = true;
-      axios
-        .get("http://localhost:8080/api/admin/users/list/all")
-        .then((response) => {
-          this.users = response.data;
-          this.loadingModal.show = false;
-        })
-        .catch((error) => {
-          console.log(error);
-          this.failModal.message = "Failed to fetch users list";
-          this.failModal.show = true;
-          this.loadingModal.show = false;
-        })
-        .finally(() => {
-          this.loadingModal.show = false;
-        });
-    },
-
     fetchCarsList() {
       this.loadingModal.show = true;
       axios
-        .get("http://localhost:8080/api/admin/cars/all")
-        .then((response) => {
-          this.cars = response.data;
-          this.loadingModal.show = false;
-        })
-        .catch((error) => {
-  console.log(error);
-  this.failModal.message = "Failed to fetch cars list";
-  this.failModal.show = true;
-  this.loadingModal.show = false;
-})
-
-        .finally(() => {
-          this.loadingModal.show = false;
-        });
+          .get("http://localhost:8080/api/cars/list/available/all")
+          .then((response) => {
+            this.cars = response.data;
+            this.loadingModal.show = false;
+          })
+          .catch((error) => {
+            console.log(error);
+            this.failModal.message = "Failed to fetch cars list";
+            this.failModal.show = true;
+            this.loadingModal.show = false;
+          });
     },
 
     createBooking() {
@@ -191,7 +184,7 @@ export default {
 
       const booking = {
         user: {
-          id: this.selectedUser,
+          id: this.currentUser.id, // Automatically set to the current user
         },
         car: {
           id: this.selectedCar,
@@ -207,29 +200,29 @@ export default {
         this.showConfirmationModal = false;
 
         axios
-          .post("http://localhost:8080/api/admin/bookings/create", booking)
-          .then((response) => {
-            if (response && response.data) {
-              console.log("Booking created successfully");
-              this.successModal.message =
-                "Booking created successfully:\n" +
-                `User: ${response.data.user.email}.\n` +
-                `Car: ${response.data.car.make} ${response.data.car.model}.\n` +
-                `Issued Date: ${response.data.issuedDate}.\n` +
-                `Returned Date: ${response.data.returnedDate}.\n`;
-              this.successModal.show = true;
-            } else {
-              console.error("Response or response.data is undefined");
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-            this.errorMessage = error.response.data;
-            this.failModal.show = true;
-          })
-          .finally(() => {
-            this.loadingModal.show = false;
-          });
+            .post("http://localhost:8080/api/bookings/create", booking)
+            .then((response) => {
+              if (response && response.data) {
+                console.log("Booking created successfully");
+                this.successModal.message =
+                    "Booking created successfully:\n" +
+                    `User: ${this.currentUser.email}.\n` +
+                    `Car: ${response.data.car.make} ${response.data.car.model}.\n` +
+                    `Issued Date: ${response.data.issuedDate}.\n` +
+                    `Returned Date: ${response.data.returnedDate}.\n`;
+                this.successModal.show = true;
+              } else {
+                console.error("Response or response.data is undefined");
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              this.errorMessage = error.response.data;
+              this.failModal.show = true;
+            })
+            .finally(() => {
+              this.loadingModal.show = false;
+            });
       };
 
       this.cancel = () => {
@@ -245,4 +238,6 @@ export default {
     },
   },
 };
+
+
 </script>
