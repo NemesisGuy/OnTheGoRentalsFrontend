@@ -34,7 +34,7 @@ export default {
       if (token) {
         try {
           // Fetch the user profile to get the user ID
-          const profileResponse = await api.get(`/api/user/profile/profile`, {
+          const profileResponse = await api.get(`/api/user/profile/read/profile`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
