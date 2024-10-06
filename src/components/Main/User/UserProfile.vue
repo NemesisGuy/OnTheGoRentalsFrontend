@@ -18,9 +18,8 @@
           <hr>
           <div class="button-container">
             <button @click="editProfile" class="update-button button"><i class="fa fa-pencil"></i> Edit Profile</button>
-            <button class="read-button button">
-              <router-link to="/user/profile/rental-history">View Rental History</router-link>
-            </button>
+            <button @click="viewRentalHistory"  class="read-button button">
+                View Rental History </button>
           </div>
         </div>
       </div>
@@ -64,10 +63,14 @@ export default {
     editProfile() {
       this.$router.push("/edit-profile");
     },
+    viewRentalHistory() {
+      this.$router.push("/user/profile/rental-history");
+    }
   },
 };
 </script>
 
 <style scoped>
+
 /* Your styles here */
 </style>
