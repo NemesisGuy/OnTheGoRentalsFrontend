@@ -13,21 +13,31 @@
                 <label>Question:</label>
                 <span>{{ faq.question }}</span>
               </div>
+
               <div>
                 <label>Answer:</label>
                 <span>{{ faq.answer }}</span>
               </div>
+
             </div>
+
           </div>
+
         </div>
+
         <div v-else>
           <p>Loading FAQ profile...</p>
         </div>
+
+      </div>
+
+      <div class="button-container">
+        <button @click="goBack" class="back-button button "><i class="fas fa-arrow-left"></i> Back</button>
       </div>
     </div>
-    <button @click="goBack" class="back-button">
-      <i class="fas fa-arrow-left"></i> Back
-    </button>
+
+
+
   </div>
 </template>
 
@@ -49,7 +59,11 @@ export default {
     fetchFAQProfile() {
       const faqId = this.$route.params.id;
       api
-          .get(`/api/admin/faq/read/${faqId}`)
+          .get(`/api/admin/faq/read/${faqId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          })
           .then((response) => {
             this.faq = response.data;
           })

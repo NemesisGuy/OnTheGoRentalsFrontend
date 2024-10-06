@@ -1,13 +1,24 @@
 <template>
     <div class="content-container">
-        <div class="content-header">
+      <div class="content-header">
         <h1><i class="fa fa-info-circle" aria-hidden="true" ></i>
-            About Us Management
+          About Us Management
         </h1>
+        <div class="search-bar-container">
+          <div class="search-bar">
+            <div class="search-input">
+              <input v-model="searchQuery" placeholder="Search..." type="text" />
+              <button @click="resetSearch" class="read-button button">
+                <i class="fas fa-search"> </i> Reset
+              </button>
+            </div>
             <router-link class="add-button button" to="/admin/aboutUs/create">
-                <i class= "fa fa-info-circle"></i> Add About Details
+              <i class= "fa fa-info-circle"></i> Add About Details
             </router-link>
+          </div>
         </div>
+
+      </div>
         <table>
             <thead>
             <tr>

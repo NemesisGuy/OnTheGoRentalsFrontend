@@ -23,6 +23,7 @@
       <tr>
         <th @click="sortFaqs('id')">ID <i class="fas fa-sort"></i></th>
         <th @click="sortFaqs('question')">Question <i class="fas fa-sort"></i></th>
+        <th @click="sortFaqs('answer')">Answer <i class="fas fa-sort"></i></th>
         <th class="actions-column">Actions</th>
       </tr>
       </thead>
@@ -35,6 +36,10 @@
         <td v-if="!faq.editing">{{ faq.question }}</td>
         <td v-else>
           <input v-model="faq.question" type="text">
+        </td>
+        <td v-if="!faq.editing">{{ faq.answer }}</td>
+        <td v-else>
+          <input v-model="faq.answer" type="text">
         </td>
         <td>
           <template v-if="!faq.editing">
@@ -69,6 +74,7 @@
               <hr>
               <p>FAQ ID: {{ faq.id }}</p>
               <p>Question: {{ faq.question }}</p>
+              <p>Answer: {{ faq.answer }}</p>
               <hr>
               <p><b>Warning!!!</b> This action cannot be undone.</p>
             </div>

@@ -76,7 +76,11 @@ export default {
       this.loadingModal.show = true;
 
       this.errorMessage = '';
-      api.post('/api/admin/faq/create', this.faq)
+      api.post('/api/admin/faq/create', this.faq, {
+        headers:{
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
           .then(response => {
             console.log('FAQ added successfully');
             console.log(response.data);
