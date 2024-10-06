@@ -36,6 +36,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
   name: 'ViewHelpCenter',
@@ -51,8 +52,8 @@ export default {
     fetchHelpCenterProfile() {
       const helpCenterId = this.$route.params.id;
 
-      axios
-          .get(`http://localhost:8080/api/admin/help-center/read/${helpCenterId}`)
+      api
+          .get(`/api/admin/help-center/read/${helpCenterId}`)
           .then((response) => {
             this.helpCenter = response.data;
           })

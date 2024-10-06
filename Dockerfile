@@ -1,32 +1,29 @@
-# Build stage
+# Stage 1: Build the Vue.js app
 FROM node:lts-alpine AS build-stage
 
-# Set the working directory
+# Set working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json and package-lock.json to install dependencies
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy the rest of your application code
+# Copy the entire Vue.js app into the container
 COPY . .
 
-# Build the application for production
+# Build the Vue.js app for production
 RUN npm run build
 
-# Production stage
+# Stage 2: Serve the app using Nginx
 FROM nginx:stable-alpine AS production-stage
 
-# Copy built files from the build stage
+# Copy the built app from the previous stage to Nginx's default directory
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-# Copy custom NGINX configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port 80
+# Expose port 80 (the default Nginx port)
 EXPOSE 80
 
-# Command to run NGINX
+# Command to start Nginx
 CMD ["nginx", "-g", "daemon off;"]

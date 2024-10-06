@@ -114,14 +114,17 @@
 
 
 <script>
+
+
 import {jwtDecode} from "jwt-decode";
 import axios from "axios";
 import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "../../Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import api from "@/api";
 // Add this line to set a default base URL for your API
-axios.defaults.baseURL = 'http://localhost:8080';
+
 
 // Add an interceptor for every request
 axios.interceptors.request.use(
@@ -199,7 +202,7 @@ export default {
           console.log("Role : "+ decodedToken.role);
         }
       }
-      axios
+      api
           .get("/api/admin/cars/all", {
             headers: {
               Authorization: `Bearer ${token}`
@@ -236,7 +239,7 @@ export default {
       if (this.carToDelete) {
         this.loading = true;
         const token = localStorage.getItem("token");
-        axios
+        api()
             .delete(`/api/admin/cars/delete/${this.carToDelete.id}`, {
 
             })
@@ -285,7 +288,7 @@ export default {
     },
     pushUpdatedCar(car) {
       const token = localStorage.getItem("token");
-      axios
+      api
           .put(`/api/admin/cars/update/${car.id}`, car, {
             headers: {
               Authorization: `Bearer ${token}`

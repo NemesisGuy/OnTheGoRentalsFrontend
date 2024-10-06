@@ -27,6 +27,7 @@
 <script>
 import axios from 'axios';
 import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
+import api from "@/api";
 
 
 export default {
@@ -45,8 +46,8 @@ export default {
     fetchDriverProfile() {
       const id = this.$route.params.id;
       const token = localStorage.getItem('token');
-      axios
-          .get(`http://localhost:8080/api/admin/drivers/read/${id}`,{
+      api
+          .get(`/api/admin/drivers/read/${id}`,{
             headers: {
               Authorization: `Bearer ${token}`,
             },

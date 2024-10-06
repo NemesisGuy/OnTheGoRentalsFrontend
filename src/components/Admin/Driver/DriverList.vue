@@ -27,6 +27,7 @@
 <script>
 import axios from 'axios';
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import api from "@/api";
 
 export default {
   name: 'DriverList',
@@ -49,8 +50,8 @@ export default {
     fetchDrivers() {
       this.loading = true;
       const category = this.$route.params.category;
-      axios
-          .get(`http://localhost:8080/api/admin/drivers/${category}`)
+      api
+          .get(`/api/admin/drivers/${category}`)
           .then((response) => {
             this.drivers = response.data;
             this.category = category;

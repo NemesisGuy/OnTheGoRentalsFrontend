@@ -34,6 +34,7 @@
 </template>
 <script>
 import axios from "axios";
+import api from "@/api";
 
 export default {
     data(){
@@ -53,7 +54,7 @@ export default {
             this.errorMessage = '';
             const token = localStorage.getItem('token');
             console.log("token", localStorage.getItem('token'))
-            axios.post("http://localhost:8080/api/admin/aboutUs/create", this.about, {
+            api.post("/api/admin/aboutUs/create", this.about, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',

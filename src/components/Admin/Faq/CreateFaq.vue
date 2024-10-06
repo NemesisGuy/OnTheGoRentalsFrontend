@@ -46,6 +46,7 @@ import axios from "axios";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import api from "@/api";
 
 export default {
   components: {LoadingModal, FailureModal, SuccessModal},
@@ -75,7 +76,7 @@ export default {
       this.loadingModal.show = true;
 
       this.errorMessage = '';
-      axios.post('http://localhost:8080/api/admin/faq/create', this.faq)
+      api.post('/api/admin/faq/create', this.faq)
           .then(response => {
             console.log('FAQ added successfully');
             console.log(response.data);

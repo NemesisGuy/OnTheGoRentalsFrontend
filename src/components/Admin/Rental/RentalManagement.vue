@@ -138,9 +138,10 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import process from "process";
 import baseURL from "@/api.js";
+import api from "@/api.js";
 /*const backendUrl = process.env.VUE_APP_BACKEND_URL;*/
 // Add this line to set a default base URL for your API
-axios.defaults.baseURL = 'http://localhost:8080';
+/*axios.defaults.baseURL = 'http://localhost:8080';*/
 
 // Add an interceptor for every request
 axios.interceptors.request.use(
@@ -201,7 +202,7 @@ export default {
     getRentals() {
       this.loading = true;
       const token = localStorage.getItem('token');
-      axios
+      api
           .get(`/api/admin/rentals/list/all`, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -269,7 +270,7 @@ export default {
         console.log("Deleting rental with id: ", rentalId);
         this.loading = true;
         const token = localStorage.getItem('token');
-        axios
+        api
             .delete(`/api/admin/rentals/delete/${rentalId}`, {
               headers: {
                 Authorization: `Bearer ${token}`
@@ -315,7 +316,7 @@ export default {
       // Send the temporary rental object to the backend
       this.loading = true;
       const token = localStorage.getItem('token');
-      axios
+      api
           .put(`/api/admin/rentals/update/${tempRental.rentalId}`, tempRental, {
             headers: {
               Authorization: `Bearer ${token}`

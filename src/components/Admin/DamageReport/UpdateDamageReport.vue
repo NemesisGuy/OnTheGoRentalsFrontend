@@ -62,6 +62,7 @@
 </template>
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 
 export default{
@@ -79,8 +80,8 @@ export default{
     },
     methods: {
         fetchDamageReport(){
-            axios
-                .get(`http://localhost:8080/api/admin/damageReport/all`)
+          api
+                .get(`/api/admin/damageReport/all`)
                 .then((response) => {
                     this.damageReport = response.data;
                 })
@@ -97,8 +98,8 @@ export default{
             }
         },
         deleteDamageReport(damageReportId){
-            axios
-                .delete(`http://localhost:8080/api/admin/damageReport/delete/${damageReportId}`)
+          api
+                .delete(`/api/admin/damageReport/delete/${damageReportId}`)
                 .then((response) => {
                     this.fetchDamageReport();
                     console.log(response);
@@ -116,8 +117,8 @@ export default{
             damageReport.editMode = !damageReport.editMode;
         },
         updateDamageReport(damageReport) {
-            axios
-                .put(`http://localhost:8080/api/admin/damageReport/update/${damageReport.id}`, damageReport)
+          api
+                .put(`/api/admin/damageReport/update/${damageReport.id}`, damageReport)
                 .then((response) => {
                     console.log(response);
                     console.log('Report updated');

@@ -87,6 +87,7 @@ export default {
     console.log("Current token:  " + store.state.token); // Output the value of the token
 
     console.log("Currency Symbol : " + currencySymbol.value); // Output the value of the currency symbol
+
   }
 
 };

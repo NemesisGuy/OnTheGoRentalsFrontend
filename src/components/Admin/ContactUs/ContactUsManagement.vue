@@ -127,6 +127,7 @@ import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import api from "@/api";
 
 export default {
     name: 'ContactUsManagement',
@@ -159,8 +160,8 @@ export default {
             this.loading = true;
             const token = localStorage.getItem('token');
             console.log("token", localStorage.getItem('token'))
-            axios
-                .get('http://localhost:8080/api/admin/contactUs/all', {
+            api
+                .get('/api/admin/contactUs/all', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -194,8 +195,8 @@ export default {
                 this.loading = true;
                 const token = localStorage.getItem('token');
                 console.log("token", localStorage.getItem('token'))
-                axios
-                    .delete(`http://localhost:8080/api/admin/contactUs/delete/${this.contactToDeleteId.id}`, {
+                api
+                    .delete(`/api/admin/contactUs/delete/${this.contactToDeleteId.id}`, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
@@ -224,7 +225,7 @@ export default {
             this.loading = true;
             const token = localStorage.getItem('token');
             console.log("token", localStorage.getItem('token'))
-            axios
+            api
                 .put(`http://localhost:8080/api/admin/contactUs/update/${contact.id}`, contact, {
                     headers: {
                         Authorization: `Bearer ${token}`

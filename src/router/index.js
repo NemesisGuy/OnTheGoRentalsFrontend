@@ -26,6 +26,7 @@ import adminDamageReportRoutes from "@/router/adminDamageReportRoutes";
 import EditProfile from "@/components/Main/User/EditProfile.vue";
 import Driver from "@/components/Main/Driver/DriverList.vue";
 import adminRoutes from "@/router/adminRoutes";
+import RentalHistory from "@/components/Main/User/RentalHistory.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -67,6 +68,11 @@ const router = createRouter({
             name: 'UserProfile',
             component: UserProfile,
         },
+        {
+            path: '/user/profile/rental-history',
+            name: 'RentalHistory',
+            component: RentalHistory,        }
+,
         {
             path: '/booking',
             name: 'Booking',

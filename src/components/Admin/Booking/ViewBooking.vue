@@ -13,16 +13,20 @@
             <hr />
             <div class="detail-row">
               <div>
-                <label>Booking ID:</label>
-                <span>{{ booking.bookingId }}</span>
+                <label> ID:</label>
+                <span>{{ booking.id }}</span>
               </div>
               <div>
-                <label>Booking Date:</label>
-                <span>{{ booking.issuedDate }}</span>
+                <label> Status:</label>
+                <span>{{ booking.status }}</span>
+              </div>
+              <div>
+                <label>Collection Date:</label>
+                <span>{{ booking.bookingStartDate }}</span>
               </div>
               <div>
                 <label>Return Date:</label>
-                <span>{{ booking.returnedDate }}</span>
+                <span>{{ booking.bookingEndDate }}</span>
               </div>
             </div>
           </div>
@@ -32,26 +36,26 @@
             <h3>Customer Details:</h3>
             <hr />
             <div class="detail-row">
-              <div>
-                <label>Customer Name:</label>
+<!--              <div>
+                <label>Name:</label>
                 <span>{{ user.userName }}</span>
-              </div>
+              </div>-->
               <div>
-                <label>Customer First Name:</label>
+                <label>First Name:</label>
                 <span>{{ user.firstName }}</span>
               </div>
               <div>
-                <label>Customer Last Name:</label>
+                <label>Last Name:</label>
                 <span>{{ user.lastName }}</span>
               </div>
               <div>
-                <label>Customer Email:</label>
+                <label>Email:</label>
                 <span>{{ user.email }}</span>
               </div>
-              <div>
+<!--              <div>
                 <label>Customer Phone Number:</label>
                 <span>{{ user.phoneNumber }}</span>
-              </div>
+              </div>-->
             </div>
           </div>
 
@@ -61,23 +65,23 @@
             <hr />
             <div class="detail-row">
               <div>
-                <label>Car Make:</label>
+                <label>Make:</label>
                 <span>{{ car.make }}</span>
               </div>
               <div>
-                <label>Car Model:</label>
+                <label>Model:</label>
                 <span>{{ car.model }}</span>
               </div>
               <div>
-                <label>Car Year:</label>
+                <label>Year:</label>
                 <span>{{ car.year }}</span>
               </div>
               <div>
-                <label>Price Group:</label>
+                <label>Group:</label>
                 <span>{{ car.priceGroup }}</span>
               </div>
               <div>
-                <label>License Plate:</label>
+                <label>Plate:</label>
                 <span>{{ car.licensePlate }}</span>
               </div>
             </div>
@@ -96,6 +100,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
   name: 'ViewBooking',
@@ -111,10 +116,14 @@ export default {
   },
   methods: {
     fetchBookingProfile() {
-      const bookingId = this.$route.params.id;
+      const id = this.$route.params.id;
 
-      axios
-        .get(`http://localhost:8080/api/admin/bookings/read/${bookingId}`)
+      api
+        .get(`/api/admin/bookings/read/${id}`,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
         .then((response) => {
           this.booking = response.data;
           this.fetchUserProfile();
@@ -127,8 +136,13 @@ export default {
     fetchUserProfile() {
       const userId = this.booking.user.id;
 
-      axios
-        .get(`http://localhost:8080/api/admin/users/read/${userId}`)
+      api
+        .get(`http://localhost:8080/api/admin/users/read/${userId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            })
         .then((response) => {
           this.user = response.data;
         })
@@ -139,8 +153,12 @@ export default {
     fetchCarProfile() {
       const carId = this.booking.car.id;
 
-      axios
-        .get(`http://localhost:8080/api/admin/cars/read/${carId}`)
+      api
+        .get(`/api/admin/cars/read/${carId}`,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
         .then((response) => {
           this.car = response.data;
         })

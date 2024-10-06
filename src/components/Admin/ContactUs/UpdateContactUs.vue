@@ -50,6 +50,7 @@
 </template>
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
     name: 'ContactUpdate',
@@ -65,8 +66,8 @@ export default {
     },
     methods: {
         fetchContact(){
-            axios
-                .get(`http://localhost:8080/api/admin/contactUs/all`)
+            api
+                .get(`/api/admin/contactUs/all`)
                 .then((response) => {
                     this.contact = response.data;
                 })
@@ -83,8 +84,8 @@ export default {
             }
         },
         deleteContact(contactId) {
-            axios
-                .delete(`http://localhost:8080/api/admin/contactUs/delete/${contactId}`)
+            api
+                .delete(`/api/admin/contactUs/delete/${contactId}`)
                 .then((response) => {
                     this.fetchContact();
                     console.log(response);
@@ -102,8 +103,8 @@ export default {
             contact.editMode = !contact.editMode;
         },
         updateContact(contact) {
-            axios
-                .put(`http://localhost:8080/api/admin/contactUs/update/${contact.id}`, contact)
+            api
+                .put(`/api/admin/contactUs/update/${contact.id}`, contact)
                 .then((response) => {
                     console.log(response);
                     console.log('Query updated');

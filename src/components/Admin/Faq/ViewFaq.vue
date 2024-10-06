@@ -33,6 +33,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
   name: 'ViewFAQ',
@@ -47,8 +48,8 @@ export default {
   methods: {
     fetchFAQProfile() {
       const faqId = this.$route.params.id;
-      axios
-          .get(`http://localhost:8080/api/admin/faq/read/${faqId}`)
+      api
+          .get(`/api/admin/faq/read/${faqId}`)
           .then((response) => {
             this.faq = response.data;
           })

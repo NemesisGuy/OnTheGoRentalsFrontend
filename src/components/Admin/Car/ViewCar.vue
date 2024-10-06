@@ -33,8 +33,9 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 // Add this line to set a default base URL for your API
-axios.defaults.baseURL = 'http://localhost:8080';
+
 
 // Add an interceptor for every request
 axios.interceptors.request.use(
@@ -66,7 +67,7 @@ export default {
       // Assuming you have the car ID or any other identifier to fetch the car's profile
       const carId = this.$route.params.id// Get the category from the route parameter
       const token = localStorage.getItem('token');
-      axios
+      api
           .get(`/api/admin/cars/read/${carId}`, {
             headers: {
               Authorization: `Bearer ${token}`

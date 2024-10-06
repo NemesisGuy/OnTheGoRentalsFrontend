@@ -106,6 +106,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
     name: 'ViewDamageReport',
@@ -130,7 +131,7 @@ export default {
 
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`http://localhost:8080/api/admin/damageReport/read/${damageReportId}`, {
+                const response = await api.get(`/api/admin/damageReport/read/${damageReportId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -155,7 +156,7 @@ export default {
 
                 try {
                     const token = localStorage.getItem('token');
-                    const response = await axios.get(`http://localhost:8080/api/admin/rentals/read/${rentalId}`, {
+                    const response = await api.get(`/api/admin/rentals/read/${rentalId}`, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },

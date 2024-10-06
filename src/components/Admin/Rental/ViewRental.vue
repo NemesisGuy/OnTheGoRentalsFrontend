@@ -93,8 +93,9 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 // Add this line to set a default base URL for your API
-axios.defaults.baseURL = 'http://localhost:8080';
+// axios.defaults.baseURL = 'http://localhost:8080';
 
 // Add an interceptor for every request
 axios.interceptors.request.use(
@@ -128,7 +129,7 @@ export default {
     fetchRentalProfile() {
       const rentalId = this.$route.params.id;
       const token = localStorage.getItem('token');
-      axios
+      api
           .get(`/api/admin/rentals/read/${rentalId}`
               , {
                 headers: {
@@ -147,7 +148,7 @@ export default {
     fetchUserProfile() {
       const userId = this.rental.user.id;
       const token = localStorage.getItem('token');
-      axios
+      api
           .get(`/api/admin/users/read/${userId}`, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -163,7 +164,7 @@ export default {
     fetchCarProfile() {
       const carId = this.rental.car.id;
       const token = localStorage.getItem('token');
-      axios
+      api
           .get(`/api/admin/cars/read/${carId}`, {
             headers: {
               Authorization: `Bearer ${token}`

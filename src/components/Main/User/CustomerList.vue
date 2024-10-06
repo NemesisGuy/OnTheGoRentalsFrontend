@@ -24,6 +24,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
   name: 'CustomerList',
@@ -68,8 +69,8 @@ export default {
   },
   methods: {
     fetchCustomers() {
-      axios
-          .get('http://localhost:8080/api/customers')
+      api
+          .get('/api/customers')
           .then(response => {
             this.customers = response.data;
           })

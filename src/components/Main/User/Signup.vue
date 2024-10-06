@@ -50,6 +50,7 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import store from "@/store/store";
+import api from "@/api";
 
 export default {
   computed: {
@@ -81,8 +82,8 @@ export default {
   methods: {
     register() {
       this.loadingModal= true;
-      axios
-          .post("http://localhost:8080/api/user/register", {
+      api
+          .post("/api/user/register", {
 
             firstName: this.firstName,
             lastName: this.lastName,

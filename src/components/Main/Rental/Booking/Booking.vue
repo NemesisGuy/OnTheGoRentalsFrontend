@@ -101,6 +101,7 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
+import api from "@/api";
 
 export default {
   data() {
@@ -134,7 +135,11 @@ export default {
     LoadingModal,
   },
 
-
+ mounted() {
+   // Check if the JWT token exists in localStorage
+   const token = localStorage.getItem('token');
+   this.isLoggedIn = !!token; // Convert to a boolean
+ },
   created() {
     // Check if the JWT token exists in localStorage
     const token = localStorage.getItem('token');
@@ -142,8 +147,8 @@ export default {
 
     // If logged in, fetch user profile to get user data
     if (this.isLoggedIn) {
-      axios
-          .get('http://localhost:8080/api/user/profile/profile', {
+      api
+          .get('/api/user/profile/read/profile', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -162,10 +167,18 @@ export default {
     this.fetchCarsList(); // Fetch the cars list
   },
   methods: {
+
     fetchCarsList() {
+      // Check if the JWT token exists in localStorage
+      const token = localStorage.getItem('token');
+      this.isLoggedIn = !!token; // Convert to a boolean
       this.loadingModal.show = true;
-      axios
-          .get("http://localhost:8080/api/cars/list/available/all")
+      api
+          .get("/api/cars/list/available/all",{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
           .then((response) => {
             this.cars = response.data;
             this.loadingModal.show = false;
@@ -179,7 +192,10 @@ export default {
     },
 
     createBooking() {
-      this.loadingModal.show = true;
+      // Check if the JWT token exists in localStorage
+      const token = localStorage.getItem('token');
+      this.isLoggedIn = !!token; // Convert to a boolean
+      //this.loadingModal.show = true;
       this.errorMessage = "";
 
       const booking = {
@@ -189,8 +205,9 @@ export default {
         car: {
           id: this.selectedCar,
         },
-        issuedDate: this.selectedIssuedDate,
-        returnedDate: this.selectedReturnedDate,
+        bookingStartDate: this.selectedIssuedDate,
+        bookingEndDate: this.selectedReturnedDate,
+        status: "PENDING",
       };
 
       this.showConfirmationModal = true;
@@ -199,24 +216,22 @@ export default {
         this.loadingModal.show = true;
         this.showConfirmationModal = false;
 
-        axios
-            .post("http://localhost:8080/api/bookings/create", booking)
+        api
+            .post("/api/bookings/create", booking,{
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
             .then((response) => {
-              if (response && response.data) {
-                console.log("Booking created successfully");
-                this.successModal.message =
-                    "Booking created successfully:\n" +
-                    `User: ${this.currentUser.email}.\n` +
-                    `Car: ${response.data.car.make} ${response.data.car.model}.\n` +
-                    `Issued Date: ${response.data.issuedDate}.\n` +
-                    `Returned Date: ${response.data.returnedDate}.\n`;
-                this.successModal.show = true;
-              } else {
-                console.error("Response or response.data is undefined");
-              }
+              this.loadingModal.show = false;
+              console.log("Booking created successfully");
+              this.successModal.message = "Booking created successfully";
+              this.successModal.show = true;
             })
             .catch((error) => {
+              this.loadingModal.show = false;
               console.log(error);
+
               this.errorMessage = error.response.data;
               this.failModal.show = true;
             })

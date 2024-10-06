@@ -53,8 +53,9 @@ import axios from "axios";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import api from "@/api";
 
-axios.defaults.baseURL = 'http://localhost:8080';
+//axios.defaults.baseURL = 'http://localhost:8080';
 
 axios.interceptors.request.use(
     config => {
@@ -102,7 +103,7 @@ export default {
     loadUserProfile() {
       this.loading = true;
       const token = localStorage.getItem('token');
-      axios.get(`/api/user/profile/profile`, {
+      api.get(`/api/user/profile/read/profile`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -133,7 +134,7 @@ export default {
       const token = localStorage.getItem('token');
 
       if (token) {
-        axios.put(`/api/user/profile/update`, {
+        api.put(`/api/user/profile/update`, {
 
           id: this.$route.params.id,
           firstName: this.editedUser.firstName,

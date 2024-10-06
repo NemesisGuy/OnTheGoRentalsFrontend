@@ -33,6 +33,7 @@
 </template>
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
     name: 'DeleteContact',
@@ -48,8 +49,8 @@ export default {
     },
     methods: {
         fetchContact(){
-            axios
-                .get('http://localhost:8080/api/admin/contactUs/all')
+            api
+                .get('/api/admin/contactUs/all')
                 .then((response) => {
                     this.contact = response.data;
                 })
@@ -66,8 +67,8 @@ export default {
             }
         },
         deleteContact(contactId) {
-            axios
-                .delete(`http://localhost:8080/api/admin/contactUs/delete/${contactId}`)
+           api
+                .delete(`/api/admin/contactUs/delete/${contactId}`)
                 .then((response) => {
                     this.fetchContact();
                     console.log(response);

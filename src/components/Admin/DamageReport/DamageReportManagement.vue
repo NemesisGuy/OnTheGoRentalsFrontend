@@ -130,6 +130,7 @@ import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
+import api from "@/api";
 
 export default {
     name: "DamageReportManagement",
@@ -164,8 +165,8 @@ export default {
             this.loading = true;
             const token = localStorage.getItem('token');
             console.log("token", localStorage.getItem('token'))
-            axios
-                .get(`http://localhost:8080/api/admin/damageReport/all`, {
+            api
+                .get(`/api/admin/damageReport/all`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -231,8 +232,8 @@ export default {
                 this.loading = true;
                 const token = localStorage.getItem('token');
                 console.log("token", localStorage.getItem('token'))
-                axios
-                    .delete(`http://localhost:8080/api/admin/damageReport/delete/${damageReportId}`, {
+                api
+                    .delete(`/api/admin/damageReport/delete/${damageReportId}`, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
@@ -270,8 +271,8 @@ export default {
             this.loading = true;
             const token = localStorage.getItem('token');
             console.log("token", localStorage.getItem('token'))
-            axios
-                .put(`http://localhost:8080/api/admin/damageReport/update/${damageReport.id}`, damageReport, {
+          api
+                .put(`/api/admin/damageReport/update/${damageReport.id}`, damageReport, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

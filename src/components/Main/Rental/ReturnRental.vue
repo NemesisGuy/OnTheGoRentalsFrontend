@@ -34,6 +34,7 @@ import ConfirmationModal from '@/components/Main/Modals/ConfirmationModal.vue';
 import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
 import SuccessModal from '@/components/Main/Modals/SuccessModal.vue';
 import FailureModal from '@/components/Main/Modals/FailureModal.vue';
+import api from "@/api";
 
 export default {
   name: 'Return',
@@ -67,7 +68,7 @@ export default {
       try {
         this.loading = true;
         const rentalId = this.$route.params.rentalId;
-        const response = await axios.get(`http://localhost:8080/api/rentals/${rentalId}`);
+        const response = await api.get(`/api/rentals/${rentalId}`);
         this.selectedRental = response.data;
         this.loading = false;
       } catch (error) {

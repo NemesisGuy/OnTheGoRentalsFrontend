@@ -110,6 +110,7 @@ import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import api from "@/api";
 
 export default{
     name: "AboutUsManagement",
@@ -137,8 +138,8 @@ export default{
             this.loading = true;
             const token = localStorage.getItem('token');
             console.log("token", localStorage.getItem('token'))
-            axios
-                .get('http://localhost:8080/api/admin/aboutUs/all', {
+            api
+                .get('/api/admin/aboutUs/all', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -153,6 +154,7 @@ export default{
                     this.loading = false;
                     this.showFailureModal("Failed to fetch the details. Please try again.");
                     console.log("token", localStorage.getItem('token'))
+
                 });
         },
         sortAboutUs(sortKey) {
@@ -172,8 +174,8 @@ export default{
                 this.loading = true;
                 const token = localStorage.getItem('token');
                 console.log("token", localStorage.getItem('token'))
-                axios
-                    .delete(`http://localhost:8080/api/admin/aboutUs/delete/${this.aboutToBeDeletedId.id}`, {
+                api
+                    .delete(`/api/admin/aboutUs/delete/${this.aboutToBeDeletedId.id}`, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
@@ -202,8 +204,8 @@ export default{
             this.loading = true;
             const token = localStorage.getItem('token');
             console.log("token", localStorage.getItem('token'))
-            axios
-                .put(`http://localhost:8080/api/admin/aboutUs/update/${about.id}`, about, {
+            api
+                .put(`/api/admin/aboutUs/update/${about.id}`, about, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

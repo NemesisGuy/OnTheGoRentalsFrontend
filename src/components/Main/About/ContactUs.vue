@@ -55,6 +55,7 @@ import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
+import api from "@/api";
 
 export default {
     computed: {
@@ -86,8 +87,8 @@ export default {
     methods: {
         contact(){
             this.loadingModal= true;
-            axios
-                .post("http://localhost:8080/api/contactUs/create", {
+            api
+                .post("/api/contactUs/create", {
                     title: this.title,
                     firstName: this.firstName,
                     lastName: this.lastName,

@@ -35,6 +35,7 @@ import axios from 'axios';
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import api from "@/api";
 
 export default {
   components: {
@@ -56,7 +57,7 @@ export default {
     login() {
       this.loadingModal = true;
 
-      axios.post('http://localhost:8080/api/user/authenticate', {
+      api.post('/api/user/authenticate', {
         email: this.email,
         password: this.password
       })

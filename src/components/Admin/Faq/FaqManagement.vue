@@ -87,8 +87,9 @@ import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import deleteFaq from "@/components/Admin/Faq/DeleteFaq.vue";
+import api from "@/api";
 
-axios.defaults.baseURL = 'http://localhost:8080';
+/*axios.defaults.baseURL = 'http://localhost:8080';*/
 
 axios.interceptors.request.use(
     config => {
@@ -134,7 +135,7 @@ export default {
     fetchFaqs() {
       this.loading = true;
       const token = localStorage.getItem('token');
-      axios
+      api
           .get("/api/admin/faq/get-all", {
             headers: {
               Authorization: `Bearer ${token}`
@@ -172,7 +173,7 @@ export default {
     confirmDelete(id) {
       const faqId = id;
       const token = localStorage.getItem("token");
-      axios
+      api
           .delete(`/api/admin/faq/delete/${faqId}`, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -194,7 +195,7 @@ export default {
     },
     saveFaq(faq) {
       const token = localStorage.getItem('token');
-      axios
+      api
           .put(`/api/admin/faq/update/${faq.id}`, faq, {
             headers: {
               Authorization: `Bearer ${token}`

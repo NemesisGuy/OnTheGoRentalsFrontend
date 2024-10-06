@@ -24,6 +24,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
   name: 'AboutUs',
@@ -38,8 +39,8 @@ export default {
   },
   methods: {
     fetchAboutUs() {
-      axios
-          .get('http://localhost:8080/api/aboutUs/latest') // Fetch the latest AboutUs entry
+      api
+          .get('/api/aboutUs/latest') // Fetch the latest AboutUs entry
           .then(response => {
             this.about = response.data; // Assign the response data directly to about
             console.log('Fetched AboutUs data:', this.about);

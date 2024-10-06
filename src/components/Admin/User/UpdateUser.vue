@@ -66,8 +66,9 @@ import axios from "axios";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import api from "@/api";
 // Add this line to set a default base URL for your API
-axios.defaults.baseURL = 'http://localhost:8080';
+/*axios.defaults.baseURL = 'http://localhost:8080';*/
 
 // Add an interceptor for every request
 axios.interceptors.request.use(
@@ -123,7 +124,7 @@ export default {
       console.log("Updating user:", this.user);
       // Send the user data to the backend API or perform any other necessary actions
       const token = localStorage.getItem('token');
-      axios
+      api
           .put(`/api/admin/users/update/${this.user.id}`, this.user, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -155,7 +156,7 @@ export default {
       // Assuming you have the user ID or any other identifier to fetch the user's profile
       const userId = this.$route.params.id; // Get the user ID from the route parameter
       const token = localStorage.getItem('token');
-      axios
+      api
           .get(`/api/admin/users/read/${userId}`, {
             headers: {
               Authorization: `Bearer ${token}`

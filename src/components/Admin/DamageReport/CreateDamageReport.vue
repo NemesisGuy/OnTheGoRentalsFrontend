@@ -195,6 +195,7 @@ import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import api from "@/api";
 
 axios.interceptors.request.use(
     config => {
@@ -246,7 +247,7 @@ export default {
             try {
                 const token = localStorage.getItem('token');
                 console.log("token", localStorage.getItem('token'))
-                const response = await axios.get('http://localhost:8080/api/admin/rentals/list/all', {
+                const response = await api.get('/api/admin/rentals/list/all', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -267,7 +268,7 @@ export default {
 
             try {
                 const token = localStorage.getItem('token');
-                const rentalResponse = await axios.get(`http://localhost:8080/api/admin/rentals/read/${this.selectedRental}`, {
+                const rentalResponse = await api.get(`/api/admin/rentals/read/${this.selectedRental}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -297,7 +298,7 @@ export default {
                 console.log('Report:', report);  // Check if the report is formed correctly
 
 
-                await axios.post('http://localhost:8080/api/admin/damageReport/create', report, {
+                await api.post('/api/admin/damageReport/create', report, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',

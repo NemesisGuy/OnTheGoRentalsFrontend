@@ -34,8 +34,9 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 // Add this line to set a default base URL for your API
-axios.defaults.baseURL = 'http://localhost:8080';
+/*axios.defaults.baseURL = 'http://localhost:8080';*/
 
 // Add an interceptor for every request
 axios.interceptors.request.use(
@@ -67,7 +68,7 @@ export default {
   methods: {
     fetchUsers() {
       const token = localStorage.getItem('token');
-      axios
+      api
           .get('/api/admin/users/all', {
             headers: {
               Authorization: `Bearer ${token}`
@@ -90,7 +91,7 @@ export default {
     },
     deleteUser(userId) {
       const token = localStorage.getItem('token');
-      axios
+      api
           .delete(`/api/admin/users/delete/${userId}`, {
             headers: {
               Authorization: `Bearer ${token}`

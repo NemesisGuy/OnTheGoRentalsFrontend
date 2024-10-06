@@ -26,6 +26,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
   name: 'HelpCenter',
@@ -51,8 +52,8 @@ export default {
   },
   methods: {
     fetchHelpCenters() {
-      axios
-          .get('http://localhost:8080/api/help-center/get-all')
+      api
+          .get('/api/help-center/get-all')
           .then((response) => {
             this.helpCenters = response.data;
             this.originalHelpCenters = response.data;

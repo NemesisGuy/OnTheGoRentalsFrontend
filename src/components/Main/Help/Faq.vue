@@ -24,6 +24,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
   name: 'Faq',
@@ -37,8 +38,8 @@ export default {
   },
   methods: {
     fetchFaqList() {
-      axios
-          .get('http://localhost:8080/api/faq/get-all')
+      api
+          .get('/api/faq/get-all')
           .then((response) => {
             this.faqList = response.data;
           })

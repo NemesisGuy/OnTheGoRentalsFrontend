@@ -42,6 +42,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
   name: 'DriverUpdate',
@@ -81,8 +82,8 @@ export default {
       }
     },
     deleteDriver(id) {
-      axios
-          .delete(`http://localhost:8080/api/admin/drivers/delete/${id}`)
+      api
+          .delete(`/api/admin/drivers/delete/${id}`)
           .then((response) => {
             this.fetchDrivers();
             console.log(response);
@@ -100,8 +101,8 @@ export default {
       driver.editMode = !driver.editMode;
     },
     updateDriver(driver) {
-      axios
-          .put(`http://localhost:8080/api/admin/drivers/update/${driver.id}`, driver)
+      api
+          .put(`/api/admin/drivers/update/${driver.id}`, driver)
           .then((response) => {
             console.log(response);
             console.log('Driver updated');

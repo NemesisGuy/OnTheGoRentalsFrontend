@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+
+  # Vue.js Frontend
+  on-the-go-rentals-vue-app:
+    image: nemesisguy/on-the-go-rentals-vue-app:latest  # Using the Docker Hub image for Vue.js app
+    container_name: on-the-go-rentals-vue-app
+    restart: always
+    environment:
+      - VITE_APP_API_URL=http://on-the-go-rentals-spring-boot-app:8080  # Change to your backend URL
+      #- vite_app_api_url=http://on-the-go-rentals-spring-boot-app:8080
+    ports:
+      - "5175:80"  # Maps port 8080 of the Vue.js app to 5175 on the server
+    networks:
+      - app-network
+      # Connects to the same network as the backend and database
+
+  # Spring Boot Backend
+  on-the-go-rentals-spring-boot-app:
+    image: nemesisguy/on-the-go-rentals-backend:latest  # Using the Docker Hub image for Spring Boot backend
+    container_name: on-the-go-rentals-spring-boot-app
+    restart: always
+    environment:
+      #SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/OnTheGoRentalsDatabase?createDatabaseIfNotExist=true
+      #SPRING_DATASOURCE_USERNAME: root
+      #SPRING_DATASOURCE_PASSWORD: my_secret_password
+      # new format
+      MYSQL_DATABASE_NAME: OnTheGoRentalsDatabase
+      MYSQL_DATABASE_USERNAME: root
+      MYSQL_DATABASE_PASSWORD: my_secret_password
+      MYSQL_DATABASE_PORT: 3306
+      MYSQL_DATABASE_HOST: mysql-container
+    ports:
+      - "8080:8080"  # Maps port 8080 for the Spring Boot app
+    depends_on:
+      - mysql-container  # Ensures the database starts before Spring Boot app
+    networks:
+      - app-network
+
+  # MySQL Database
+  mysql-container:
+    image: mysql:5.7
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_HOST: '%' #Allow  Remote contections....
+      MYSQL_ROOT_PASSWORD: my_secret_password
+      MYSQL_DATABASE: OnTheGoRentalsDatabase
+
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+

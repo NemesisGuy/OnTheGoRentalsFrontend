@@ -25,6 +25,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
   name: 'DriverList',
@@ -69,8 +70,8 @@ export default {
   },
   methods: {
     fetchDrivers() {
-      axios
-          .get('http://localhost:8080/api/drivers')
+      api
+          .get('/api/drivers')
           .then(response => {
             this.drivers = response.data;
           })

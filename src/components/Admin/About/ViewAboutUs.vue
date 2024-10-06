@@ -32,6 +32,7 @@
 </template>
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
     name: 'viewAboutUs',
@@ -48,8 +49,8 @@ export default {
             const aboutId = this.$route.params.id;
             const token = localStorage.getItem('token');
 
-            axios
-                .get(`http://localhost:8080/api/admin/aboutUs/read/${aboutId}`, {
+            api
+                .get(`/api/admin/aboutUs/read/${aboutId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

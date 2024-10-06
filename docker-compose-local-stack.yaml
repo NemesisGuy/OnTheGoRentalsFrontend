@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  on-the-go-rentals-vue-app:
+    build:
+      context: .  # Path to your Vue.js project
+      dockerfile: Dockerfile
+    container_name: on-the-go-rentals-vue-app
+    restart: always
+    ports:
+      - "5175:80"
+    environment:
+      VITE_BACKEND_URL: ${VITE_BACKEND_URL:-http://localhost:8080}  # Default value if not set
+    networks:
+      - app-network
+
+  on-the-go-rentals-spring-boot-app:
+    build:
+      context: C:/Users/Reign/IdeaProjects/OnTheGoRentals/
+      dockerfile: Dockerfile
+    container_name: on-the-go-rentals-spring-boot-app
+    restart: always
+    environment:
+      MYSQL_DATABASE_NAME: OnTheGoRentalsDatabase
+      MYSQL_DATABASE_USERNAME: root
+      MYSQL_DATABASE_PASSWORD: my_secret_password
+      MYSQL_DATABASE_PORT: 3306
+      MYSQL_DATABASE_HOST: Database
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-container
+    networks:
+      - app-network
+
+  mysql-container:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: my_secret_password
+      MYSQL_DATABASE: OnTheGoRentalsDatabase
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

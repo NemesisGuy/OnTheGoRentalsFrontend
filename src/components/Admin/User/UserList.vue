@@ -33,8 +33,9 @@
 <script>
 import axios from 'axios';
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import api from "@/api";
 // Add this line to set a default base URL for your API
-axios.defaults.baseURL = 'http://localhost:8080';
+/*axios.defaults.baseURL = 'http://localhost:8080';*/
 
 // Add an interceptor for every request
 axios.interceptors.request.use(
@@ -72,7 +73,7 @@ export default {
     fetchUsers() {
       this.loading = true;
       const category = this.$route.params.category;
-      axios
+      api
           .get(`/api/admin/users/${category}`)
           .then((response) => {
             this.users = response.data;

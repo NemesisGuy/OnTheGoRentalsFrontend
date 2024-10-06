@@ -63,6 +63,7 @@ import ConfirmationModal from '@/components/Main/Modals/ConfirmationModal.vue';
 import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
 import SuccessModal from '@/components/Main/Modals/SuccessModal.vue';
 import FailureModal from '@/components/Main/Modals/FailureModal.vue';
+import api from "@/api";
 
 export default {
   name: 'Rental',
@@ -127,7 +128,7 @@ export default {
     async getSelectedCar() {
       try {
         const carId = this.$route.params.carId;
-        const response = await axios.get(`http://localhost:8080/api/cars/read/${carId}`);
+        const response = await api.get(`/api/cars/read/${carId}`);
         this.selectedCar = response.data;
       } catch (error) {
         console.error('Error retrieving car:', error);
@@ -139,7 +140,7 @@ export default {
       try {
         const userId = 1; // Replace with the actual user ID from Vuex or other source//find user details JWT token
 
-        const response = await axios.get(`http://localhost:8080/api/user/profile/profile`);
+        const response = await api.get(`/api/user/profile/profile`);
         //this.user.id = response.data;
 
         const userData = response.data;//get all data

@@ -28,6 +28,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
   name: 'DeleteDriver',
@@ -43,8 +44,8 @@ export default {
   },
   methods: {
     fetchDrivers() {
-      axios
-          .get('http://localhost:8080/api/admin/drivers/get-all')
+      api
+          .get('/api/admin/drivers/get-all')
           .then((response) => {
             this.drivers = response.data;
           })
@@ -61,8 +62,8 @@ export default {
       }
     },
     deleteDriver(id) {
-      axios
-          .delete(`http://localhost:8080/api/admin/drivers/delete/${id}`)
+      api
+          .delete(`/api/admin/drivers/delete/${id}`)
           .then((response) => {
             this.fetchDrivers();
             console.log(response);

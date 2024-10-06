@@ -130,8 +130,9 @@ import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import api from "@/api";
 // Add this line to set a default base URL for your API
-axios.defaults.baseURL = 'http://localhost:8080';
+/*axios.defaults.baseURL = 'http://localhost:8080';*/
 
 // Add an interceptor for every request
 axios.interceptors.request.use(
@@ -179,7 +180,7 @@ export default {
       this.loading = true;
       const token = localStorage.getItem('token');
       console.log("token", localStorage.getItem('token'))
-      axios.get('/api/admin/users/list/all', {
+      api.get('/api/admin/users/list/all', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -213,8 +214,8 @@ export default {
         this.loading = true;
           const token = localStorage.getItem('token');
           console.log("token", localStorage.getItem('token'))
-        axios
-            .delete(`http://localhost:8080/api/admin/users/delete/${this.userToDeleteId.id}`,{
+        api
+            .delete(`/api/admin/users/delete/${this.userToDeleteId.id}`,{
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -252,8 +253,8 @@ export default {
       user.roles = user.roles.map(role => role.roleName);
       // roles: [{ roleName: "USER" }], // Updated to match the backend structure
 
-      axios
-          .put(`http://localhost:8080/api/admin/users/update/${user.id}`, user,{
+      api
+          .put(`api/admin/users/update/${user.id}`, user,{
               headers: {
                   Authorization: `Bearer ${token}`
               }
@@ -273,7 +274,7 @@ export default {
       user.editing = false;
     },
 
-   /* axios
+   /* api
     .get("http://localhost:8080/api/user/profile", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`

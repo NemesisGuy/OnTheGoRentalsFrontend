@@ -49,6 +49,7 @@
 </template>
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
     name: 'AboutUpdate',
@@ -64,8 +65,8 @@ export default {
     },
     methods: {
         fetchAbout() {
-            axios
-                .get('http://localhost:8080/api/admin/aboutUs/all')
+            api
+                .get('/api/admin/aboutUs/all')
                 .then((response) => {
                     this.about = response.data;
                 })
@@ -82,8 +83,8 @@ export default {
             }
         },
         deleteAbout(aboutId){
-            axios
-                .delete(`http://localhost:8080/api/admin/aboutUs/delete/${aboutId}`)
+            api
+                .delete(`/api/admin/aboutUs/delete/${aboutId}`)
                 .then((response) => {
                     this.fetchAbout();
                     console.log(response);
@@ -101,8 +102,8 @@ export default {
             about.editMode = !about.editMode;
         },
         updateAbout(about) {
-            axios
-                .put(`http://localhost:8080/api/admin/aboutUs/update/${about.id}`, about)
+            api
+                .put(`/api/admin/aboutUs/update/${about.id}`, about)
                 .then((response) => {
                     console.log(response);
                     console.log('About details updated');

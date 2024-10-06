@@ -75,8 +75,8 @@ import {PriceGroup} from "@/enums/PriceGroup";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
-// Add this line to set a default base URL for your API
-axios.defaults.baseURL = 'http://localhost:8080';
+import api from "@/api";
+
 
 // Add an interceptor for every request
 axios.interceptors.request.use(
@@ -127,7 +127,7 @@ export default {
       this.errorMessage = ''; // Reset the error message
       const token = localStorage.getItem('token');
 
-      axios.post('/api/admin/cars/create', this.car
+      api.post('/api/admin/cars/create', this.car
           , {
             headers: {
               Authorization: `Bearer ${token}`

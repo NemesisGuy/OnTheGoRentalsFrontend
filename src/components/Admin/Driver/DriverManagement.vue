@@ -112,6 +112,7 @@ import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import api from "@/api";
 
 export default {
   name: "DriversManagement",
@@ -144,8 +145,8 @@ export default {
       this.loading = true;
       const token = localStorage.getItem('token');
       console.log("token", localStorage.getItem('token'))
-      axios
-          .get("http://localhost:8080/api/admin/drivers/get-all",{
+      api
+          .get("/api/admin/drivers/get-all",{
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -179,8 +180,8 @@ export default {
         this.loading = true;
         const token = localStorage.getItem('token');
         console.log("token", localStorage.getItem('token'))
-        axios
-            .delete(`http://localhost:8080/api/admin/drivers/delete/${this.driverToDeleteId.id}`, {
+        api
+            .delete(`/api/admin/drivers/delete/${this.driverToDeleteId.id}`, {
               headers: {
                 Authorization: `Bearer ${token}`
               }
@@ -209,8 +210,8 @@ export default {
       this.loading = true;
       const token = localStorage.getItem('token');
       console.log("token", localStorage.getItem('token'))
-      axios
-          .put(`http://localhost:8080/api/admin/drivers/update/${driver.id}`, driver, {
+      api
+          .put(`/api/admin/drivers/update/${driver.id}`, driver, {
             headers: {
               Authorization: `Bearer ${token}`
             }

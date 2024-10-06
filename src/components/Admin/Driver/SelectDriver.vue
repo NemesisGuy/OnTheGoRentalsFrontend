@@ -36,6 +36,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
   name: 'DriverSelection',
@@ -52,8 +53,8 @@ export default {
   },
   methods: {
     fetchDrivers() {
-      axios
-          .get('http://localhost:8080/api/admin/drivers/all')
+      api
+          .get('/api/admin/drivers/all')
           .then((response) => {
             this.drivers = response.data;
           })

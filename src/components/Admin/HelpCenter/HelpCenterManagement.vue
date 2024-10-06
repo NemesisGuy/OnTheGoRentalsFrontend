@@ -85,6 +85,7 @@
 
 <script>
 import axios from "axios";
+import api from "@/api";
 
 export default {
   data() {
@@ -95,8 +96,8 @@ export default {
   },
   methods: {
     fetchArticles() {
-      axios
-          .get("http://localhost:8080/api/admin/help-center/get-all")
+      api
+          .get("/api/admin/help-center/get-all")
           .then((response) => {
             this.articles = response.data;
           })
@@ -113,8 +114,8 @@ export default {
     },
     confirmDelete(id) {
       const articleId = id;
-      axios
-          .delete(`http://localhost:8080/api/admin/help-center/delete/${articleId}`)
+      api
+          .delete(`/api/admin/help-center/delete/${articleId}`)
           .then(() => {
             this.fetchArticles();
           })

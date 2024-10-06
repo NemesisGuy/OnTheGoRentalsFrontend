@@ -28,6 +28,7 @@
 
 <script>
 import axios from "axios";
+import api from "@/api";
 
 export default {
   data() {
@@ -45,8 +46,8 @@ export default {
       console.log("token", localStorage.getItem('token'))
       console.log("Adding driver:", this.driver);
 
-      axios
-          .post('http://localhost:8080/api/admin/drivers/create', this.driver,{
+      api
+          .post('/api/admin/drivers/create', this.driver,{
         headers: {
           Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',

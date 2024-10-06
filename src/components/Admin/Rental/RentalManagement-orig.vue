@@ -107,6 +107,7 @@ import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import api from "@/api";
 
 export default {
   name: "RentalManagement",
@@ -137,8 +138,8 @@ export default {
   methods: {
     getRentals() {
       this.loading = true;
-      axios
-          .get("http://localhost:8080/api/admin/rentals/list/all")
+      api
+          .get("/api/admin/rentals/list/all")
           .then((response) => {
             this.rentals = response.data;
             this.sortedRentals = response.data;
@@ -164,8 +165,8 @@ export default {
       if (this.rentalToDelete) {
         const rentalId = this.rentalToDelete.id;
         this.loading = true;
-        axios
-            .delete(`http://localhost:8080/api/admin/rentals/delete/${rentalId}`)
+        api
+            .delete(`/api/admin/rentals/delete/${rentalId}`)
             .then(() => {
               this.showSuccessModal("Rental deleted successfully.");
               this.getRentals();
@@ -188,8 +189,8 @@ export default {
     saveRental(rental) {
       rental.editing = false;
       this.loading = true;
-      axios
-          .put(`http://localhost:8080/api/admin/rentals/update/${rental.rentalId}`, rental)
+      api
+          .put(`/api/admin/rentals/update/${rental.rentalId}`, rental)
           .then(() => {
             this.showSuccessModal("Rental updated successfully.");
             this.getRentals();

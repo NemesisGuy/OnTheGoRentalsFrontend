@@ -41,6 +41,7 @@
 <script>
 import axios from 'axios';
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import api from "@/api";
 
 export default {
     name: 'ContactProfile',
@@ -59,8 +60,8 @@ export default {
             const contactId = this.$route.params.id;
             const token = localStorage.getItem('token');
 
-            axios
-                .get(`http://localhost:8080/api/admin/contactUs/read/${contactId}`, {
+          api
+                .get(`/api/admin/contactUs/read/${contactId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

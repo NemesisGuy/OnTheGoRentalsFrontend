@@ -1,11 +1,13 @@
+/*
 
-/*filename: RentalsHistoryChartConfig.js*/
+/!*filename: RentalsHistoryChartConfig.js*!/
 import axios from 'axios';
+import api from "@/api";
 
 
 export async function fetchRentalsHistoryData() {
     try {
-        const response = await axios.get('http://localhost:8080/api/admin/rentals/list/all');
+        const response = await api.get('/api/admin/rentals/list/all');
         console.log('Response data:', response.data);
 
         const rentals = response.data;
@@ -43,3 +45,4 @@ export async function fetchRentalsHistoryData() {
         return null;
     }
 }
+*/

@@ -30,6 +30,7 @@
 </template>
 <script>
 import axios from 'axios';
+import api from "@/api";
 
 export default {
     name: 'DeleteDamageReport',
@@ -45,8 +46,8 @@ export default {
     },
     methods:{
         fetchDamageReport(){
-            axios
-                .get('http://localhost:8080/api/admin/damageReport/all')
+          api
+                .get('/api/admin/damageReport/all')
                 .then((response) => {
                     this.damageReport = response.data;
                 })
@@ -63,8 +64,8 @@ export default {
             }
         },
         deleteDamageReport(damageReportId){
-            axios
-                .delete(`http://localhost:8080/api/admin/damageReport/delete/${damageReportId}`)
+          api
+                .delete(`/api/admin/damageReport/delete/${damageReportId}`)
                 .then((response) => {
                     this.fetchDamageReport();
                     console.log(response);

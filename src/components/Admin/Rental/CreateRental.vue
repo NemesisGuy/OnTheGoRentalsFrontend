@@ -133,9 +133,10 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
+import api from "@/api";
 // Define your headers
 // Add this line to set a default base URL for your API
-axios.defaults.baseURL = 'http://localhost:8080';
+// axios.defaults.baseURL = 'http://localhost:8080';
 
 // Add an interceptor for every request
 axios.interceptors.request.use(
@@ -201,7 +202,7 @@ export default {
     fetchUsersList() {
       this.loadingModal.show = true;
       const token = localStorage.getItem('token');
-      axios
+      api
           .get('/api/admin/users/list/all'
               , {
                 headers: {
@@ -227,7 +228,7 @@ export default {
     fetchCarsList() {
       this.loadingModal.show = true;
       const token = localStorage.getItem('token');
-      axios
+      api
           .get('/api/admin/cars/all', {
             headers: {
               Authorization: `Bearer ${token}`
@@ -275,7 +276,7 @@ export default {
 
       // Fetch user details
       const token = localStorage.getItem('token');
-      axios
+      api
           .get(`/api/admin/users/read/${this.selectedUser}`, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -293,7 +294,7 @@ export default {
             console.log(rental.user);
 
             // Fetch car details
-            axios
+            api
                 .get(`/api/admin/cars/read/${this.selectedCar}`, {
                   headers: {
                     Authorization: `Bearer ${token}`
@@ -312,7 +313,7 @@ export default {
 
                     // Make the POST request to create the rental
                   /*  console.log(rental.userObject);*/
-                    axios
+                    api
                         .post('/api/admin/rentals/create', rental, {
                           headers: {
                             Authorization: `Bearer ${token}`

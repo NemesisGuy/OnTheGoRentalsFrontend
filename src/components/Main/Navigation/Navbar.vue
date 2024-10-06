@@ -66,7 +66,8 @@
 
 <script>
 import axios from "axios";
-import { ref, watchEffect } from "vue";  // Import necessary functions from Vue 3
+import { ref, watchEffect } from "vue";
+import api from "@/api";  // Import necessary functions from Vue 3
 
 export default {
   setup() {
@@ -79,15 +80,15 @@ export default {
 
       if (isLoggedIn.value) {
         // Fetch user profile to get roles
-        axios
-            .get('http://localhost:8080/api/user/profile/profile', {
+        api
+            .get('/api/user/profile/read/profile', {
               headers: {
                 Authorization: `Bearer ${token}`
               }
             })
             .then(response => {
               const roles = response.data.roles || [];
-              isAdmin.value = roles.some(role => role.roleName === 'ADMIN');
+            isAdmin.value = roles.some(role => role.roleName === 'ADMIN' || role.roleName === 'SUPERADMIN');
             })
             .catch(error => {
               console.error('Error fetching user role:', error);

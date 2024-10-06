@@ -104,6 +104,7 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
+import api from "@/api";
 
 export default {
   computed: {
@@ -149,8 +150,8 @@ export default {
   methods: {
     fetchUsersList() {
       this.loadingModal.show = true;
-      axios
-        .get("http://localhost:8080/api/admin/users/list/all")
+      api
+        .get("/api/admin/users/list/all")
         .then((response) => {
           this.users = response.data;
           this.loadingModal.show = false;
@@ -168,8 +169,8 @@ export default {
 
     fetchCarsList() {
       this.loadingModal.show = true;
-      axios
-        .get("http://localhost:8080/api/admin/cars/all")
+      api
+        .get("/api/admin/cars/all")
         .then((response) => {
           this.cars = response.data;
           this.loadingModal.show = false;
@@ -207,8 +208,8 @@ export default {
         this.loadingModal.show = true;
         this.showConfirmationModal = false;
 
-        axios
-          .post("http://localhost:8080/api/admin/bookings/create", booking)
+        api
+          .post("/api/admin/bookings/create", booking)
           .then((response) => {
             if (response && response.data) {
               console.log("Booking created successfully");

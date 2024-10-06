@@ -32,6 +32,7 @@
 
 <script>
 import axios from "axios";
+import api from "@/api";
 
 export default {
   data() {
@@ -51,7 +52,7 @@ export default {
       this.errorMessage = '';
       this.loadingModal.show = true;
 
-      axios.post('http://localhost:8080/api/admin/help-center/create', this.helpCenter)
+      api.post('/api/admin/help-center/create', this.helpCenter)
           .then(response => {
             console.log('Help Center entry added successfully');
             console.log(response.data);

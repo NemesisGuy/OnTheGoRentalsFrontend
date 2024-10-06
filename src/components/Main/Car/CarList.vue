@@ -36,6 +36,7 @@
 <script>
 import axios from 'axios';
 import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
+import api from "@/api";
 
 export default {
   name: 'CarList',
@@ -60,13 +61,13 @@ export default {
       const category = this.$route.params.category;
       const available = this.$route.params.available === 'true'; // Convert the string to boolean
 
-      let endpoint = `http://localhost:8080/api/cars/list/${category}`;
+      let endpoint = `/api/cars/list/${category}`;
 
       if (available) {
-        endpoint = `http://localhost:8080/api/cars/list/available/${category}`;
+        endpoint = `/api/cars/list/available/${category}`;
       }
 
-      axios
+      api
           .get(endpoint)
           .then((response) => {
             this.cars = response.data;

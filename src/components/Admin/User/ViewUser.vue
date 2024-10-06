@@ -45,9 +45,10 @@
 <script>
 import axios from 'axios';
 import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
+import api from "@/api";
 
 // Add this line to set a default base URL for your API
-axios.defaults.baseURL = '';
+
 
 // Add an interceptor for every request
 axios.interceptors.request.use(
@@ -82,7 +83,7 @@ export default {
       // Assuming you have the user ID or any other identifier to fetch the user's profile
       const userId = this.$route.params.id; // Get the user ID from the route parameter
       const token = localStorage.getItem('token');
-      axios
+      api
           .get(`/api/admin/users/read/${userId}`, {
             headers: {
               Authorization: `Bearer ${token}`
