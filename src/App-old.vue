@@ -1,14 +1,15 @@
+<!--
 <template>
   <div class="app">
     <navbar></navbar>
     <div class="app-container">
       <div class="app-content">
-        <!-- Your content -->
+        &lt;!&ndash; Your content &ndash;&gt;
         <router-view></router-view>
       </div>
-<!--      <footer>
+&lt;!&ndash;      <footer>
         <Footer></Footer>
-      </footer>-->
+      </footer>&ndash;&gt;
     </div>
   </div>
 </template>
@@ -32,3 +33,4 @@ export default {
 <style>
 
 </style>
+-->

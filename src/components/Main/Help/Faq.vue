@@ -4,17 +4,37 @@
       <h1>Frequently Asked Questions</h1>
       <hr>
       <div v-if="faqList" class="faq-list">
-        <ul>
-          <li v-for="faq in faqList" :key="faq.id" class="faq-item">
-            <h3>{{ faq.question }}</h3>
-            <p>{{ faq.answer }}</p>
-            <hr>
-          </li>
-        </ul>
+        <div class="accordion" id="faqAccordion">
+          <div v-for="faq in faqList" :key="faq.id" class="accordion-item">
+            <h2 class="accordion-header" :id="`heading${faq.id}`">
+              <button
+                  class="accordion-button"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  :data-bs-target="`#collapse${faq.id}`"
+                  aria-expanded="false"
+                  :aria-controls="`collapse${faq.id}`"
+              >
+                {{ faq.question }}
+              </button>
+            </h2>
+            <div
+                :id="`collapse${faq.id}`"
+                class="accordion-collapse collapse"
+                :aria-labelledby="`heading${faq.id}`"
+                data-bs-parent="#faqAccordion"
+            >
+              <div class="accordion-body">
+                {{ faq.answer }}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div v-else>
         <p>Loading FAQs...</p>
       </div>
+      <hr>
       <div class="button-container">
         <router-link class="deny-button button" to="/help-center">Back to Help Center</router-link>
       </div>
@@ -52,7 +72,11 @@ export default {
 </script>
 
 <style scoped>
-
+.button-container{
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
 
 
 </style>

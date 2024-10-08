@@ -22,7 +22,7 @@
             <div class="card-body box-shadow">
               <h3 class="card-title content-header"><i class="fas fa-car-side"></i> Economy Cars</h3>
               <p class="card-text">Affordable cars for your everyday needs.</p>
-              <p class="card-text mt-2">Starting at {{ currencyData.currencySymbol }}550.00/day</p>
+              <p class="card-text mt-2">Starting at <!--{{ currencyData.currencySymbol }}-->550.00/day</p>
               <div class="justify-content-between align-items-center">
                 <!-- Link to view available economy cars -->
                 <div class="button-container button-container-margin" >
@@ -39,7 +39,7 @@
             <div class="card-body box-shadow">
               <h3 class="card-title content-header"><i class="fas fa-gem"></i> Luxury Cars</h3>
               <p class="card-text">Experience the thrill of driving in style.</p>
-              <p class="card-text mt-2">Starting at {{ currencyData.currencySymbol }}800.00/day</p>
+              <p class="card-text mt-2">Starting at <!--{{ currencyData.currencySymbol }}-->800.00/day</p>
               <div class="justify-content-between align-items-center">
                 <!-- Link to view available luxury cars -->
                 <div class="button-container button-container-margin">
@@ -57,7 +57,7 @@
             <div class="card-body box-shadow">
               <h3 class="card-title content-header"><i class="fas fa-tags"></i> Special Offers</h3>
               <p class="card-text">View our current deals and discounts.</p>
-              <p class="card-text mt-2">Starting at {{ currencyData.currencySymbol }}450.00/day </p>
+              <p class="card-text mt-2">Starting at <!--{{ currencyData.currencySymbol }}-->450.00/day </p>
               <div class="justify-content-between align-items-center">
                 <!-- Link to view available special cars -->
                 <div class="button-container button-container-margin">
@@ -77,16 +77,16 @@
 
 
 <script>
-import store, {currencySymbol} from "@/store/store";
+/*import store, {currencySymbol} from "@/store/store";*/
 /*import {currencySymbol} from "@/store/currencyStore";*/
 
 export default {
   name: 'Home',
-  props: ['currencyData'],
+ /* props: ['currencyData'],*/
   mounted() {
-    console.log("Current token:  " + store.state.token); // Output the value of the token
+   // console.log("Current token:  " + store.state.token); // Output the value of the token
 
-    console.log("Currency Symbol : " + currencySymbol.value); // Output the value of the currency symbol
+   // console.log("Currency Symbol : " + currencySymbol.value); // Output the value of the currency symbol
 
   }
 

@@ -49,7 +49,7 @@ import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
-import store from "@/store/store";
+/*import store from "@/store/store";*/
 import api from "@/api";
 
 export default {
@@ -100,7 +100,7 @@ export default {
 
             const token = response.data.accessToken; // Assuming response.data contains the token
             // Save the token to the store
-            store.commit('setToken', token);//vuex
+           /* store.commit('setToken', token);//vuex*/
             console.log("Response token:  " + token); // Output the value of the token
             // console.log("Current stored token:  " +store.state.token); // Output the value of the token
             // Assuming you have received and stored the token in response.data.accessToken

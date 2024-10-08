@@ -97,7 +97,7 @@ export default {
   methods: {
     fetchArticles() {
       api
-          .get("/api/admin/help-center/get-all")
+          .get("/api/admin/help-center/get-all",{ headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }})
           .then((response) => {
             this.articles = response.data;
           })
@@ -115,7 +115,11 @@ export default {
     confirmDelete(id) {
       const articleId = id;
       api
-          .delete(`/api/admin/help-center/delete/${articleId}`)
+          .delete(`/api/admin/help-center/delete/${articleId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          })
           .then(() => {
             this.fetchArticles();
           })

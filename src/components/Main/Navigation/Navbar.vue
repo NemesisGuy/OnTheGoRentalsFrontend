@@ -108,4 +108,17 @@ export default {
 
 <style>
 /* Add your custom styles here */
+.navbar-custom {
+  position: fixed; /* Fixes the navbar at the top */
+  top: 0;
+  left: 0;
+  width: 100%; /* Ensures the navbar spans the full width of the viewport */
+  z-index: 1000; /* Ensures the navbar is on top of other content */
+  background-color: #fff; /* Set the background color if necessary */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better visibility */
+}
+
+body, .content {
+  margin-top: 60px; /* Adjust this based on the height of your navbar */
+}
 </style>

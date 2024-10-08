@@ -1,3 +1,5 @@
+<template ></template>
+<!--
 <template>
   <div class="card-container card-container-admin">
     <div class="form-container-admin">
@@ -80,3 +82,4 @@ onMounted(async () => {
   currencySymbol.value = response.data.currencySymbol;
 });
 </script>
+-->

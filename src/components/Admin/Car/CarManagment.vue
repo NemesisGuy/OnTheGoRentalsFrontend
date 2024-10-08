@@ -239,7 +239,7 @@ export default {
       if (this.carToDelete) {
         this.loading = true;
         const token = localStorage.getItem("token");
-        api()
+        api
             .delete(`/api/admin/cars/delete/${this.carToDelete.id}`, {
 
             })

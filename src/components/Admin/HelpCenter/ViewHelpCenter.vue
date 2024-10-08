@@ -2,11 +2,13 @@
   <div class="card-container">
     <div class="form-container">
       <h1>Help Center Entry</h1>
+      <hr>
       <div class="profile-details" v-if="helpCenter">
         <div>
           <label>Title:</label>
           <span>{{ helpCenter.title }}</span>
         </div>
+
         <div>
           <label>Category:</label>
           <span>{{ helpCenter.category }}</span>
@@ -27,10 +29,14 @@
       <div v-else>
         <p>Loading Help Center entry...</p>
       </div>
+      <hr>
+      <div class="button-container">
+        <button @click="goBack" class="button">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+      </div>
     </div>
-    <button @click="goBack" class="back-button">
-      <i class="fas fa-arrow-left"></i> Back
-    </button>
+
   </div>
 </template>
 
@@ -53,7 +59,11 @@ export default {
       const helpCenterId = this.$route.params.id;
 
       api
-          .get(`/api/admin/help-center/read/${helpCenterId}`)
+          .get(`/api/admin/help-center/read/${helpCenterId}` , {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          })
           .then((response) => {
             this.helpCenter = response.data;
           })

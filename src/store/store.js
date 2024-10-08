@@ -1,3 +1,4 @@
+/*
 // store.js
 
 import { createStore } from 'vuex';
@@ -30,3 +31,4 @@ export const setCurrencySymbol = (symbol) => {
     currencySymbol.value = symbol;
     // Save to localStorage or send to backend for persistence
 };
+*/

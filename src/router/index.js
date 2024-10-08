@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AdminPage from "@/components/Admin/AdminPage.vue";
-
 import adminCarRoutes from './adminCarRoutes';
 import adminUserRoutes from './adminUserRoutes';
 import navRoutes from './navRoutes';
@@ -71,8 +70,9 @@ const router = createRouter({
         {
             path: '/user/profile/rental-history',
             name: 'RentalHistory',
-            component: RentalHistory,        }
-,
+            component: RentalHistory,
+        }
+        ,
         {
             path: '/booking',
             name: 'Booking',

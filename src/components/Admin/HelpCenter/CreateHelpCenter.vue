@@ -9,8 +9,8 @@
           <h1>Help Center Entry</h1>
         </div>
         <div class="form-group">
-          <label for="category">Title:</label>
-          <input type="text" id="category" v-model="helpCenter.category" required>
+          <label for="title">Title:</label>
+          <input type="text" id="title" v-model="helpCenter.title" required>
         </div>
         <div class="form-group">
           <label for="category">Category:</label>
@@ -18,12 +18,16 @@
         </div>
         <div class="form-group">
           <label for="content">Content:</label>
-          <input type="text" id="content" v-model="helpCenter.category" required>
+          <textarea id="content" v-model="helpCenter.content" required></textarea>
         </div>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
         <div class="button-container">
-          <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
-          <button @click="goBack" class="deny-button button"><i class="fas fa-arrow-left"></i> Back</button>
+          <button class="confirm-button button" type="submit">
+            <i class="fas fa-check"></i> Confirm
+          </button>
+          <button @click="goBack" class="deny-button button">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
         </div>
       </form>
     </div>
@@ -33,11 +37,14 @@
 <script>
 import axios from "axios";
 import api from "@/api";
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 
 export default {
+  components: { LoadingModal },
   data() {
     return {
       helpCenter: {
+        title: '',    // Add 'title' property to your helpCenter object
         category: '',
         content: ''
       },
@@ -52,22 +59,19 @@ export default {
       this.errorMessage = '';
       this.loadingModal.show = true;
 
-      api.post('/api/admin/help-center/create', this.helpCenter)
-          .then(response => {
-            console.log('Help Center entry added successfully');
-            console.log(response.data);
-            console.log(response);
-            this.resetForm();
-            this.loadingModal.show = false;
-          })
+      api.post('/api/admin/help-center/create', this.helpCenter, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }).then(response => {
+        console.log('Help Center entry added successfully');
+        this.resetForm();
+        this.loadingModal.show = false;
+      })
           .catch(error => {
-            console.log(error);
             this.loadingModal.show = false;
             if (error.response && error.response.status === 400) {
               this.errorMessage = 'Invalid data. Please check the entered values.';
-              console.log(error.response.data);
-              console.log(error.response.status);
-              console.log(error.response);
             } else {
               this.errorMessage = 'An error occurred while adding the Help Center entry.';
             }
@@ -75,6 +79,7 @@ export default {
     },
     resetForm() {
       this.helpCenter = {
+        title: '',   // Reset the 'title' field as well
         category: '',
         content: ''
       };
@@ -87,5 +92,31 @@ export default {
 </script>
 
 <style scoped>
-</style>
+.form-group {
+  margin-bottom: 15px;
+}
 
+input[type="text"],
+textarea {
+  width: 100%; /* Ensure the input and textarea are full width */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box; /* Make sure padding is included in the width */
+  font-size: 16px;
+}
+
+textarea {
+  min-height: 120px; /* Ensure textarea is tall enough */
+  resize: vertical;  /* Allow vertical resizing only, or remove for fixed height */
+}
+
+button {
+  margin-right: 10px;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+}
+</style>

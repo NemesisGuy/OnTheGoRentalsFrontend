@@ -1,3 +1,4 @@
+/*
 import axios from "axios";
 
 axios.interceptors.request.use(
@@ -15,4 +16,4 @@ axios.interceptors.request.use(
         console.error("Request Error:", error);
         return Promise.reject(error);
     }
-);
+);*/

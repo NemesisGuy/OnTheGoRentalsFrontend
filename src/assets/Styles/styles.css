@@ -71,8 +71,7 @@ html, body, #app {
 }
 
 .card-container {
-    background-color: var(--secondary-color);
-    justify-content: center;
+
 }
 
 .card-container-admin {
@@ -86,7 +85,7 @@ html, body, #app {
 .form-container-admin {
     width: 650px;
     padding: 30px;
-    border-radius: 10px;
+    border-radius: 4px;
     box-shadow: var(--box-shadow-color) 0px 0px 5px 0px;
 }
 
@@ -604,9 +603,12 @@ h2 {
 /* Extracted from components 2024 Sep 12 */
 .card-container {
     display: flex;
-    padding: 50px;
+    padding: 15px;
     justify-content: center;
+    background-color: var(--secondary-color);
+
 }
+
 
 .booking-profile {
     margin-top: 20px;
@@ -837,12 +839,7 @@ h2 {
     margin-top: 10px;
 }
 
-/* Extracted from components 2024 Sep 12 */
-.card-container {
-    display: flex;
-    padding: 50px;
-    justify-content: center;
-}
+
 
 .booking-profile {
     margin-top: 20px;
@@ -946,11 +943,7 @@ span {
     }
 }
 
-.card-container {
-    display: flex;
-    padding: 50px;
-    justify-content: center;
-}
+
 
 .car-profile {
     margin-top: 20px;
@@ -1054,11 +1047,7 @@ span {
     max-width: max-content;
 }
 
-.card-container {
-    display: flex;
-    padding: 50px;
-    justify-content: center;
-}
+
 
 .rental-profile {
     margin-top: 20px;
@@ -1695,7 +1684,11 @@ span {
     box-shadow: 0 0 8px 4px rgba(52, 152, 219, 0.5); /* Blurred border effect */
     filter: blur(0.5px); /* Optional: slight blur to the button */
 }
-
+.button-container{
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
 
 /* Media Queries for Responsive Layout */
 @media (max-width: 768px) {

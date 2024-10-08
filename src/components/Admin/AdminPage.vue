@@ -94,12 +94,12 @@
               <span class="menu-text" v-show="isExpanded">Test</span>
             </router-link>
           </li>
-          <li>
+<!--          <li>
             <router-link to="/rental/return/1">
               <i class="fas fa-undo"></i>
               <span class="menu-text" v-show="isExpanded">Rental Return</span>
             </router-link>
-          </li>
+          </li>-->
         </ul>
       </div>
     </div>
