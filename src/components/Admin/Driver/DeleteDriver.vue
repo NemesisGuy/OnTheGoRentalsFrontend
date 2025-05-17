@@ -18,7 +18,9 @@
           <td>{{ driver.firstName }}</td>
           <td>{{ driver.lastName }}</td>
           <td>{{ driver.licenseCode }}</td>
-          <td><button @click="deleteDriver(driver.id)">Delete</button></td>
+          <td>
+            <button @click="deleteDriver(driver.id)">Delete</button>
+          </td>
         </tr>
         </tbody>
       </table>

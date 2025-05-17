@@ -27,11 +27,7 @@ export default {
         const checkUserRole = (token) => {
             // Fetch user profile to get roles
             api
-                .get('/api/user/profile/read/profile', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
+                .get('/api/user/profile/read/profile')
                 .then(response => {
                     const roles = response.data.roles || [];
                     isAdmin.value = roles.some(role => role.roleName === 'ADMIN' || role.roleName === 'SUPERADMIN');

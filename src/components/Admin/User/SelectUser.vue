@@ -2,9 +2,10 @@
   <div class="user-selection-container">
     <div class="card user-list-card">
       <h2>User List</h2>
-      <input type="text" v-model="searchQuery" placeholder="Search User" />
+      <input type="text" v-model="searchQuery" placeholder="Search User"/>
       <ul>
-        <li v-for="user in filteredUsers" :key="user.id" @click="selectUser(user.id)" :class="{ active: selectedUserId === user.id }">
+        <li v-for="user in filteredUsers" :key="user.id" @click="selectUser(user.id)"
+            :class="{ active: selectedUserId === user.id }">
           {{ user.userName }}
         </li>
       </ul>
@@ -83,11 +84,7 @@ export default {
     fetchUsers() {
       const token = localStorage.getItem('token');
       api
-          .get('/api/admin/users/all', {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .get('/api/admin/users/all')
           .then((response) => {
             this.users = response.data;
           })

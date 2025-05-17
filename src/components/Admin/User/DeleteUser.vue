@@ -24,7 +24,9 @@
           <td>{{ user.lastName }}</td>
           <td>{{ user.phoneNumber }}</td>
           <td>{{ user.role }}</td>
-          <td><button @click="deleteUser(user.id)">Delete</button></td>
+          <td>
+            <button @click="deleteUser(user.id)">Delete</button>
+          </td>
         </tr>
         </tbody>
       </table>
@@ -69,11 +71,7 @@ export default {
     fetchUsers() {
       const token = localStorage.getItem('token');
       api
-          .get('/api/admin/users/all', {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .get('/api/admin/users/all')
           .then((response) => {
             this.users = response.data;
           })
@@ -92,11 +90,7 @@ export default {
     deleteUser(userId) {
       const token = localStorage.getItem('token');
       api
-          .delete(`/api/admin/users/delete/${userId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .delete(`/api/admin/users/delete/${userId}`)
           .then((response) => {
             this.fetchUsers();
             console.log(response);

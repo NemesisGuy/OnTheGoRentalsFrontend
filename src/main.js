@@ -13,6 +13,8 @@ import './assets/Styles/styles.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@fortawesome/fontawesome-free/js/all.js';
 import { Line } from 'vue-chartjs';
+import { formatDateTime } from '@/utils/dateUtils.js'
+
 
 createApp(App)
     .component('LineChart', Line )

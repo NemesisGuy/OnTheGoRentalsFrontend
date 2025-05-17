@@ -7,7 +7,7 @@
       <div class="search-bar-container">
         <div class="search-bar">
           <div class="search-input">
-            <input v-model="searchQuery" placeholder="Search..." type="text" />
+            <input v-model="searchQuery" placeholder="Search..." type="text"/>
             <button @click="resetSearch" class="read-button  button">
               <i class="fas fa-search"></i> Reset
             </button>
@@ -22,29 +22,29 @@
       <thead>
       <tr>
         <th @click="sortRentals('id')">ID <i class="fas fa-sort"></i></th>
-<!--        <th @click="sortRentals('user.userName')">User <i class="fas fa-sort"></i></th>-->
+        <!--        <th @click="sortRentals('user.userName')">User <i class="fas fa-sort"></i></th>-->
         <th @click="sortRentals('user.firstName')">First Name <i class="fas fa-sort"></i></th>
         <th @click="sortRentals('user.lastName')">Last Name <i class="fas fa-sort"></i></th>
         <th @click="sortRentals('car.make')">Make <i class="fas fa-sort"></i></th>
         <th @click="sortRentals('car.model')">Model <i class="fas fa-sort"></i></th>
         <th @click="sortRentals('issuer')">Issuer <i class="fas fa-sort"></i></th>
-        <th @click="sortRentals('dateRented')">Date Rented </th>
-        <th @click="sortRentals('dateReturned')">Date Returned </th>
-        <th @click="sortRentals('receiver')">Receiver </th>
-        <th @click="sortRentals('finePaid')">Fine Paid </th>
+        <th @click="sortRentals('dateRented')">Date Rented</th>
+        <th @click="sortRentals('dateReturned')">Date Returned</th>
+        <th @click="sortRentals('receiver')">Receiver</th>
+        <th @click="sortRentals('finePaid')">Fine Paid</th>
         <th class="actions-column">Actions</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="rental in filteredRentals" :key="rental.rentalId">
-        <td v-if="!rental.editing">{{ rental.rentalId  }}</td>
+      <tr v-for="rental in filteredRentals" :key="rental.id">
+        <td v-if="!rental.editing">{{rental.id}}</td>
         <td v-else>
-          <input type="text" v-model="rental.rentalId " >
+          <input type="text" v-model="rental.id">
         </td>
-<!--        <td v-if="!rental.editing">{{ rental.user.userName }}</td>
-        <td v-else>
-          <input type="text" v-model="rental.user.userName">
-        </td>-->
+        <!--        <td v-if="!rental.editing">{{ rental.user.userName }}</td>
+                <td v-else>
+                  <input type="text" v-model="rental.user.userName">
+                </td>-->
         <td v-if="!rental.editing">{{ rental.user.firstName }}</td>
         <td v-else>
           <input type="text" v-model="rental.user.firstName">
@@ -61,16 +61,19 @@
         <td v-else>
           <input type="text" v-model="rental.car.model">
         </td>
-        <td v-if="!rental.editing">{{ typeof rental.issuer === 'string' ? rental.issuer.toLowerCase() : rental.issuer }}</td>
+        <td v-if="!rental.editing">{{
+            typeof rental.issuer === 'string' ? rental.issuer.toLowerCase() : rental.issuer
+          }}
+        </td>
         <td v-else>
           <input type="text" v-model="rental.issuer">
         </td>
 
-        <td v-if="!rental.editing">{{ rental.issuedDate }}</td>
+        <td v-if="!rental.editing">{{ formatDateTime(rental.issuedDate) }}</td>
         <td v-else>
-        <input type="text" v-model="rental.issuedDate">
-      </td>
-        <td v-if="!rental.editing">{{ rental.returnedDate }}</td>
+          <input type="text" v-model="rental.issuedDate">
+        </td>
+        <td v-if="!rental.editing">{{ formatDateTime(rental.returnedDate) }}</td>
         <td v-else>
           <input type="text" v-model="rental.returnedDate">
         </td>
@@ -87,11 +90,12 @@
             <button @click="editRental(rental)" class="update-button button">
               <i class="fas fa-edit"></i> Edit
             </button>
-           <button @click="deleteRental(rental.rentalId)" class="delete-button button">
+            <button @click="deleteRental(rental.id)" class="delete-button button">
               <i class="fas fa-trash-alt"></i> Delete
             </button>
 
-           <button @click="openRentalView(rental.rentalId)" class="read-button button" ><i class="fas fa-eye"></i> Read</button>
+            <button @click="openRentalView(rental.id)" class="read-button button"><i class="fas fa-eye"></i> Read
+            </button>
           </div>
           <div v-else>
             <button @click="saveRental(rental)" class="accept-button button">
@@ -117,15 +121,17 @@
           <p>Are you sure you want to delete this rental?</p>
           <hr>
           <h3>Rental Details:</h3>
-         <p> {{ rentalToDelete }} <!--{{ rentalToDelete.user.lastName }}--></p>
-<!--          <p>Car: {{ rentalToDelete.car.model }}</p>-->
+          <p> {{ rentalToDelete }} <!--{{ rentalToDelete.user.lastName }}--></p>
+          <!--          <p>Car: {{ rentalToDelete.car.model }}</p>-->
           <hr>
           <p><b>Warning!!!</b> This action cannot be undone.</p>
         </div>
       </template>
     </confirmation-modal>
-    <SuccessModal v-if="successModal.show" @close="closeModal" @cancel="closeModal" :show="successModal.show" :message="successModal.message"></SuccessModal>
-    <FailureModal v-if="failModal.show" @close="closeModal" @cancel="closeModal" :show="failModal.show" :message="failModal.message"></FailureModal>
+    <SuccessModal v-if="successModal.show" @close="closeModal" @cancel="closeModal" :show="successModal.show"
+                  :message="successModal.message"></SuccessModal>
+    <FailureModal v-if="failModal.show" @close="closeModal" @cancel="closeModal" :show="failModal.show"
+                  :message="failModal.message"></FailureModal>
   </div>
 </template>
 
@@ -142,7 +148,7 @@ import api from "@/api.js";
 /*const backendUrl = process.env.VUE_APP_BACKEND_URL;*/
 // Add this line to set a default base URL for your API
 /*axios.defaults.baseURL = 'http://localhost:8080';*/
-
+import { formatDateTime } from '@/utils/dateUtils.js'
 // Add an interceptor for every request
 axios.interceptors.request.use(
     config => {
@@ -167,18 +173,19 @@ export default {
     LoadingModal,
     SuccessModal,
     FailureModal,
+
   },
   data() {
     return {
       rentals: [],
       sortedRentalsList: [],
-     user: {
-        id:"", // Get the ID from the route params
+      user: {
+        id: "", // Get the ID from the route params
         firstName: "",
         lastName: "",
         email: "",
         password: "",
-        roles: [{ roleName: "USER" }], // Updated to match the backend structure
+        roles: [{roleName: "USER"}], // Updated to match the backend structure
       },
 
       sortBy: null, // Your sort option
@@ -194,20 +201,16 @@ export default {
         show: false,
         message: "",
       },
-     /* backendUrl: process.env.VUE_APP_BACKEND_URL,*/
+      /* backendUrl: process.env.VUE_APP_BACKEND_URL,*/
     };
   },
   methods: {
-
+    formatDateTime,
     getRentals() {
       this.loading = true;
       const token = localStorage.getItem('token');
       api
-          .get(`/api/admin/rentals/list/all`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .get(`/api/admin/rentals/list/all`)
           .then((response) => {
             this.rentals = response.data;
             this.sortedRentalsList = [...this.rentals]; // Assign to data property instead of computed property
@@ -265,17 +268,13 @@ export default {
     },
     confirmDeleteRental() {
       if (this.rentalToDelete) {
-      //  const rentalId = this.rentalToDelete.rentalId;  //was this
+        //  const rentalId = this.rentalToDelete.rentalId;  //was this
         const rentalId = this.rentalToDelete;  //should be this LMAO
         console.log("Deleting rental with id: ", rentalId);
         this.loading = true;
         const token = localStorage.getItem('token');
         api
-            .delete(`/api/admin/rentals/delete/${rentalId}`, {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            })
+            .delete(`/api/admin/rentals/delete/${rentalId}`)
             .then(() => {
               this.showSuccessModal("Rental deleted successfully.");
               this.getRentals();
@@ -293,13 +292,13 @@ export default {
     },
     editRental(rental) {
       rental.editing = true;
-      rental.id = rental.rentalId; // Add this line to set rental.id to rental.rentalId
-      console.log("Editing rental button sent this id: ", rental.id );
+      //rental.id = rental.rentalId; // Add this line to set rental.id to rental.rentalId
+      console.log("Editing rental button sent this id: ", rental.id);
     },
     saveRental(rental) {
       // Create a temporary rental object without authorities
       const tempRental = {
-        rentalId: rental.id, // Add the rentalId
+        id: rental.id, // Add the rentalId
         userId: rental.user.id, // Add the userId
         carId: rental.car.id, // Add the carId
         receiver: rental.receiver,
@@ -310,18 +309,14 @@ export default {
         fine: Math.floor(rental.fine),
         // Add other properties as needed
       };
-      console.log("tempid sent this id: ", tempRental.rentalId);
+      console.log("tempid sent this id: ", tempRental.id);
       console.info("Saving rental: ", tempRental);
 
       // Send the temporary rental object to the backend
       this.loading = true;
       const token = localStorage.getItem('token');
       api
-          .put(`/api/admin/rentals/update/${tempRental.rentalId}`, tempRental, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .put(`/api/admin/rentals/update/${tempRental.id}`, tempRental)
           .then(() => {
             this.showSuccessModal("Rental updated successfully.");
             this.getRentals();
@@ -338,11 +333,7 @@ export default {
     openRentalView(rentalId) {
       const token = localStorage.getItem('token');
       this.$router.push(`/admin/rentals/read/${rentalId}`
-          , {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
+          );
     },
     resetSearch() {
       this.searchQuery = "";
@@ -381,7 +372,6 @@ export default {
   },
 
 
-
   computed: {
     sortedRentalsList() {
       if (this.sortBy) {
@@ -414,7 +404,6 @@ export default {
     },
 
 
-
   },
 
 
@@ -425,6 +414,6 @@ export default {
 };
 </script>
 
-<style >
+<style>
 
 </style>

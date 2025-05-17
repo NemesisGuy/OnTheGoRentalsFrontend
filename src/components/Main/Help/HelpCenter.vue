@@ -89,7 +89,7 @@ export default {
   left: 0; /* Sticks the sidebar to the left of the screen */
   width: 17rem; /* Sets the width of the sidebar */
   height: 100%; /* Makes the sidebar span the full height of the viewport */
- /* background-color: var(--primary-color);*/
+  /* background-color: var(--primary-color);*/
   padding: 20px;
   /*
   margin-top: 80px;
@@ -108,7 +108,7 @@ export default {
 .help-entry {
   margin-bottom: 20px;
   padding: 10px;
- /* border-bottom: 1px solid #ddd;*/
+  /* border-bottom: 1px solid #ddd;*/
 }
 
 </style>

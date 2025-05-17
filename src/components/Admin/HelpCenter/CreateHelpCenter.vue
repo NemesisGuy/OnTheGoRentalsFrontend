@@ -40,7 +40,7 @@ import api from "@/api";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 
 export default {
-  components: { LoadingModal },
+  components: {LoadingModal},
   data() {
     return {
       helpCenter: {
@@ -108,7 +108,7 @@ textarea {
 
 textarea {
   min-height: 120px; /* Ensure textarea is tall enough */
-  resize: vertical;  /* Allow vertical resizing only, or remove for fixed height */
+  resize: vertical; /* Allow vertical resizing only, or remove for fixed height */
 }
 
 button {

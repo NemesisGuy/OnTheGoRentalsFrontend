@@ -1,24 +1,40 @@
 <template>
   <div class="card-container card-container-admin">
     <div class="form-container">
-      <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"></LoadingModal>
+      <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"/>
       <form @submit.prevent="editUserProfile">
         <h2 class="form-header">Edit User Profile</h2>
+
         <div class="form-group">
           <label for="firstName">First Name:</label>
           <input id="firstName" v-model="editedUser.firstName" placeholder="Enter first name" required type="text">
         </div>
+
         <div class="form-group">
           <label for="lastName">Last Name:</label>
           <input id="lastName" v-model="editedUser.lastName" placeholder="Enter last name" required type="text">
         </div>
+
         <div class="form-group">
           <label for="email">Email:</label>
           <input id="email" v-model="editedUser.email" placeholder="Enter email" required type="email">
         </div>
 
+        <div class="form-group">
+          <label for="password">New Password:</label>
+          <input id="password" v-model="editedUser.password" placeholder="Enter new password" type="password">
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password:</label>
+          <input id="confirmPassword" v-model="editedUser.confirmPassword" placeholder="Confirm new password"
+                 type="password">
+        </div>
+
         <div class="button-container">
-          <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Save Changes</button>
+          <button class="confirm-button button" type="submit">
+            <i class="fas fa-check"></i> Save Changes
+          </button>
           <router-link :to="{ name: 'UserProfile' }" class="update-button button">
             <i class="fas fa-arrow-left"></i> Back to Profile
           </router-link>
@@ -35,7 +51,7 @@
         @close="closeModal"
         @confirm="closeModal"
         @ok="closeModal"
-    ></SuccessModal>
+    />
 
     <FailureModal
         v-if="failModal.show"
@@ -44,7 +60,7 @@
         :show="failModal.show"
         @cancel="closeModal"
         @close="closeModal"
-    ></FailureModal>
+    />
   </div>
 </template>
 
@@ -55,23 +71,9 @@ import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import api from "@/api";
 
-//axios.defaults.baseURL = 'http://localhost:8080';
-
-axios.interceptors.request.use(
-    config => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
-      }
-      return config;
-    },
-    error => {
-      return Promise.reject(error);
-    }
-);
 
 export default {
-  components: { LoadingModal, FailureModal, SuccessModal },
+  components: {LoadingModal, FailureModal, SuccessModal},
   data() {
     return {
       editedUser: {
@@ -80,20 +82,12 @@ export default {
         lastName: "",
         email: "",
         password: "",
-        roles: [{ roleName: "USER" }]
+        confirmPassword: "",
+        roles: [{roleName: "USER"}]
       },
-      loadingModal: {
-        show: false,
-      },
-      errorMessage: '',
-      successModal: {
-        show: false,
-        message: ""
-      },
-      failModal: {
-        show: false,
-        message: ""
-      }
+      loadingModal: {show: false},
+      successModal: {show: false, message: ""},
+      failModal: {show: false, message: ""}
     };
   },
   mounted() {
@@ -101,28 +95,14 @@ export default {
   },
   methods: {
     loadUserProfile() {
-      this.loading = true;
       const token = localStorage.getItem('token');
-      api.get(`/api/user/profile/read/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      api.get(`/api/user/profile/read/profile`)
           .then(response => {
-            this.editedUser = {
-              firstName: response.data.firstName,
-              lastName: response.data.lastName,
-              email: response.data.email
-            };
-            const userData = response.data;
-            this.user.id = userData.id;
-            this.user.firstName = userData.firstName;
-            this.user.lastName = userData.lastName;
-            this.user.email = userData.email;
-            this.user.password = userData.password;
-            this.user.roles = userData.roles;
-            this.loading = false;
-
+            const user = response.data;
+            this.editedUser.id = user.id;
+            this.editedUser.firstName = user.firstName;
+            this.editedUser.lastName = user.lastName;
+            this.editedUser.email = user.email;
           })
           .catch(error => {
             console.error('Error retrieving user:', error);
@@ -131,50 +111,48 @@ export default {
     editUserProfile() {
       this.loadingModal.show = true;
 
+      if (this.editedUser.password && this.editedUser.password !== this.editedUser.confirmPassword) {
+        this.loadingModal.show = false;
+        this.failModal.message = "Passwords do not match.";
+        this.failModal.show = true;
+        return;
+      }
+
       const token = localStorage.getItem('token');
 
-      if (token) {
-        api.put(`/api/user/profile/update`, {
+      const userPayload = {
+        id: this.editedUser.id,
+        firstName: this.editedUser.firstName,
+        lastName: this.editedUser.lastName,
+        email: this.editedUser.email,
+        roles: this.editedUser.roles
+      };
 
-          id: this.$route.params.id,
-          firstName: this.editedUser.firstName,
-          lastName: this.editedUser.lastName,
-          email: this.editedUser.email,
-          roles: [{ roleName: "USER" }]
-
-        }, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-            .then(response => {
-              console.log(response);
-              this.loadingModal.show = false;
-              this.successModal.message = "Profile updated successfully";
-              this.successModal.show = true;
-            })
-            .catch(error => {
-              console.error('Error updating user profile:', error);
-              this.loadingModal.show = false;
-              this.failModal.message = "Failed to update profile. Please try again.";
-              this.failModal.show = true;
-            });
-      } else {
-        console.error('Token not found');
+      if (this.editedUser.password) {
+        userPayload.password = this.editedUser.password;
       }
+
+      api.put(`/api/user/profile/update`, userPayload )
+          .then(response => {
+            this.loadingModal.show = false;
+            this.successModal.message = "Profile updated successfully";
+            this.successModal.show = true;
+          })
+          .catch(error => {
+            console.error('Error updating user profile:', error);
+            this.loadingModal.show = false;
+            this.failModal.message = "Failed to update profile. Please try again.";
+            this.failModal.show = true;
+          });
     },
     closeModal() {
       this.successModal.show = false;
       this.failModal.show = false;
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style scoped>
-
+/* Add your scoped styles here if needed */
 </style>
-
-
-
-

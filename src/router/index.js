@@ -57,8 +57,13 @@ const router = createRouter({
             name: 'ReturnRental',
             component: ReturnRental,
         },
-        {
+      /*  {
             path: '/cars/list/:category/:available',
+            name: 'CarList',
+            component: CarList,
+        },*/
+        {
+            path: '/cars/list/available/:category/:',
             name: 'CarList',
             component: CarList,
         },
@@ -75,6 +80,11 @@ const router = createRouter({
         ,
         {
             path: '/booking',
+            name: 'Booking',
+            component: Booking,
+        },
+        {
+            path: '/booking/:carId',
             name: 'Booking',
             component: Booking,
         },

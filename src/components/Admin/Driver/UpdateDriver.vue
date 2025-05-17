@@ -17,13 +17,13 @@
         <tr v-for="driver in sortedDrivers" :key="driver.id">
           <td>{{ driver.id }}</td>
           <td>
-            <input v-model="driver.firstName" :disabled="!driver.editMode" />
+            <input v-model="driver.firstName" :disabled="!driver.editMode"/>
           </td>
           <td>
-            <input v-model="driver.lastName" :disabled="driver.editMode" />
+            <input v-model="driver.lastName" :disabled="driver.editMode"/>
           </td>
           <td>
-            <input v-model="driver.licenseCode" :disabled="!driver.editMode" />
+            <input v-model="driver.licenseCode" :disabled="!driver.editMode"/>
           </td>
           <td>
             <button @click="toggleEditMode(driver)" class="btn-small">

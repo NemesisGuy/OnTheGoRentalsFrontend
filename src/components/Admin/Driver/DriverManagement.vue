@@ -146,11 +146,7 @@ export default {
       const token = localStorage.getItem('token');
       console.log("token", localStorage.getItem('token'))
       api
-          .get("/api/admin/drivers/get-all",{
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .get("/api/admin/drivers/get-all")
           .then((response) => {
             this.drivers = response.data;
             this.sortedDrivers = response.data;
@@ -181,11 +177,7 @@ export default {
         const token = localStorage.getItem('token');
         console.log("token", localStorage.getItem('token'))
         api
-            .delete(`/api/admin/drivers/delete/${this.driverToDeleteId.id}`, {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            })
+            .delete(`/api/admin/drivers/delete/${this.driverToDeleteId.id}`)
             .then(() => {
               this.showSuccessModal("Driver deleted successfully.");
               this.getDrivers();
@@ -211,11 +203,7 @@ export default {
       const token = localStorage.getItem('token');
       console.log("token", localStorage.getItem('token'))
       api
-          .put(`/api/admin/drivers/update/${driver.id}`, driver, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .put(`/api/admin/drivers/update/${driver.id}`, driver)
           .then(() => {
             this.showSuccessModal("Driver updated successfully.");
             this.getDrivers();

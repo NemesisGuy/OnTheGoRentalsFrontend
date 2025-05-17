@@ -1,18 +1,18 @@
 <template>
   <div class="chart">
     <LoadingModalSection :show="isLoading">Loading chart...</LoadingModalSection>
-    <Pie v-if="!isLoading && chartData" :data="chartData" :options="chartOptions" />
+    <Pie v-if="!isLoading && chartData" :data="chartData" :options="chartOptions"/>
 
   </div>
 </template>
 
 <script>
-import { Doughnut } from 'vue-chartjs';
-import { Pie } from 'vue-chartjs';
+import {Doughnut} from 'vue-chartjs';
+import {Pie} from 'vue-chartjs';
 
-import { fetchRentalsData } from './rentalsApi';
+import {fetchRentalsData} from './rentalsApi';
 import LoadingModalSection from "@/components/Main/Modals/LoadingModalSection.vue";
-import { PriceGroup } from '@/enums/PriceGroup';
+import {PriceGroup} from '@/enums/PriceGroup';
 
 export default {
   name: 'RentalsDistributionChart',

@@ -11,13 +11,16 @@
           <p><strong>Return Date:</strong> {{ selectedRental.returnDate }}</p>
           <p><strong>Total Amount:</strong> {{ selectedRental.totalAmount }}</p>
         </div>
-        <button v-if="selectedRental" class="return-button" @click="showConfirmationModal = true">Confirm Return</button>
+        <button v-if="selectedRental" class="return-button" @click="showConfirmationModal = true">Confirm Return
+        </button>
       </div>
     </div>
   </div>
-  <SuccessModal v-if="successModal.show" @close="closeModal" :show="successModal.show" :message="successModal.message"></SuccessModal>
-  <FailureModal v-if="failModal.show" @close="closeModal" :show="failModal.show" :message="failModal.message"></FailureModal>
-  <LoadingModal v-if="loading" show />
+  <SuccessModal v-if="successModal.show" @close="closeModal" :show="successModal.show"
+                :message="successModal.message"></SuccessModal>
+  <FailureModal v-if="failModal.show" @close="closeModal" :show="failModal.show"
+                :message="failModal.message"></FailureModal>
+  <LoadingModal v-if="loading" show/>
   <ConfirmationModal
       v-if="showConfirmationModal"
       @confirm="confirmReturn"

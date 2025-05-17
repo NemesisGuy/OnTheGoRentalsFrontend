@@ -1,21 +1,31 @@
 <template>
-  <div class="rental-history">
-    <h2>Your Rental History</h2>
-    <ul v-if="rentals.length">
-      <li v-for="rental in rentals" :key="rental.rentalId">
-        <h3>Rental ID: {{ rental.rentalId }}</h3>
-        <p>Car: {{ rental.car.make }} {{ rental.car.model }}</p>
-        <p>Start Date: {{ rental.issuedDate }}</p>
-        <p>End Date: {{ rental.returnedDate }}</p>
-        <p>Status: {{ rental.returnedDate ? 'Returned' : 'Active' }}</p>
-      </li>
-    </ul>
-    <p v-else>No rentals found.</p>
+  <div class="card-container">
+    <div class="form-container">
+      <div class="rental-history">
+        <div class="form-header">
+          <h2>Your Rental History</h2>
+          <hr>
+        </div>
+        <ol v-if="rentals.length">
+          <li v-for="rental in rentals" :key="rental.rentalId">
+            <p><strong>Rental ID:</strong> {{ rental.id }}</p>
+            <p><strong> Car:</strong> {{ rental.car.make }} {{ rental.car.model }}</p>
+            <p><strong>Start Date:</strong> {{ formatDateTime(rental.issuedDate) }}</p>
+            <p><strong>End Date:</strong> {{ formatDateTime(rental.returnedDate) }}</p>
+            <p><strong>Status:</strong> {{ rental.returnedDate ? 'Returned' : 'Active' }}</p>
+            <hr>
+          </li>
+
+        </ol>
+        <p v-else>No rentals found.</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import api from "@/api";
+import {formatDateTime}  from "@/utils/dateUtils";
 
 export default {
   data() {
@@ -28,24 +38,17 @@ export default {
     this.fetchRentalHistory();
   },
   methods: {
+    formatDateTime,
     async fetchRentalHistory() {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
       if (token) {
         try {
           // Fetch the user profile to get the user ID
-          const profileResponse = await api.get(`/api/user/profile/read/profile`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const profileResponse = await api.get(`/api/user/profile/read/profile`);
           this.user = profileResponse.data;
 
           // Fetch the rental history using the user ID
-          const rentalHistoryResponse = await api.get(`/api/user/profile/${this.user.id}/rental-history`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const rentalHistoryResponse = await api.get(`/api/user/profile/${this.user.id}/rental-history`);
           this.rentals = rentalHistoryResponse.data;
         } catch (error) {
           console.error("Error fetching rental history:", error);

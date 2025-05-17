@@ -95,7 +95,7 @@ export default {
         lastName: "",
         email: "",
         password: "",
-        roles: [{ roleName: "USER" }], // Updated to match the backend structure
+        roles: [{roleName: "USER"}], // Updated to match the backend structure
       },
       loadingModal: {
         show: false,
@@ -119,12 +119,10 @@ export default {
       console.log("Adding user:", this.user);
       // Send the user data to the backend API or perform any other necessary actions
       const token = localStorage.getItem('token');
+      const userToSend = JSON.parse(JSON.stringify(this.user)); // 👈 safe copy
+
       api
-          .post("/api/admin/users/create", this.user, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .post("/api/admin/users/create", userToSend)
           .then((response) => {
             // Handle success
             console.log(response);
@@ -142,7 +140,7 @@ export default {
           });
 
       // You can access the user object using 'this.user' in this method
-      console.log("Adding user:", this.user);
+      console.log("Adding user:", userToSend);
 
       // Reset the form after adding the user
       this.resetForm();
@@ -159,7 +157,8 @@ export default {
         lastName: "",
         email: "",
         password: "",
-        roles: ["USER"],
+        roles: [{ roleName: "USER" }],
+
 
       };
     },

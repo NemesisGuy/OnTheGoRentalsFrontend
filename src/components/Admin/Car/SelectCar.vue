@@ -2,9 +2,10 @@
   <div class="car-selection-container">
     <div class="card car-list-card">
       <h2>Car List</h2>
-      <input type="text" v-model="searchQuery" placeholder="Search Car" />
+      <input type="text" v-model="searchQuery" placeholder="Search Car"/>
       <ul>
-        <li v-for="car in filteredCars" :key="car.id" @click="selectCar(car.id)" :class="{ active: selectedCarId === car.id }">
+        <li v-for="car in filteredCars" :key="car.id" @click="selectCar(car.id)"
+            :class="{ active: selectedCarId === car.id }">
           {{ car.make }} {{ car.model }} ({{ car.year }})
         </li>
       </ul>
@@ -84,11 +85,7 @@ export default {
       const token = localStorage.getItem('token');
       api
           .get('/api/admin/cars/all'
-              , {
-                headers: {
-                  Authorization: `Bearer ${token}`
-                }
-              })
+              )
           .then((response) => {
             this.cars = response.data;
           })

@@ -59,7 +59,7 @@
         </td>
         <td v-if="!user.editing">
         <span v-for="(role, index) in user.roles" :key="index">
-          {{ role.roleName }}
+          {{ role}}
          <span v-if="index < user.roles.length - 1">, </span>
         </span>
         </td>
@@ -77,7 +77,7 @@
             <button class="delete-button button" @click="deleteUser(user)">
               <i class="fas fa-trash"></i> Delete
             </button>
-            <button class="update-button button" @click="editUser(user)" >
+            <button class="update-button button" @click="editUser(user)">
               <i class="fas fa-edit"></i> Edit
             </button>
             <button class="read-button button" @click="openUserView(user.id)">
@@ -178,23 +178,17 @@ export default {
   methods: {
     getUsers() {
       this.loading = true;
-      const token = localStorage.getItem('token');
-      console.log("token", localStorage.getItem('token'))
-      api.get('/api/admin/users/list/all', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      api.get('/api/admin/users/list/all')
           .then((response) => {
             this.users = response.data;
             this.sortedUsers = response.data;
             this.loading = false;
-            console.log("token", localStorage.getItem('token'))
+
           })
           .catch((error) => {
             this.loading = false;
             this.showFailureModal("Failed to fetch users. Please try again.");
-            console.log("token", localStorage.getItem('token'))
+
           });
     },
     sortUsers(sortKey) {
@@ -212,14 +206,9 @@ export default {
       if (this.userToDeleteId) {
         const userId = this.userToDeleteId.id;
         this.loading = true;
-          const token = localStorage.getItem('token');
-          console.log("token", localStorage.getItem('token'))
+
         api
-            .delete(`/api/admin/users/delete/${this.userToDeleteId.id}`,{
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
+            .delete(`/api/admin/users/delete/${this.userToDeleteId.id}`)
             .then(() => {
               this.showSuccessModal("User deleted successfully.");
               this.getUsers();
@@ -238,27 +227,22 @@ export default {
     },
     editUser(user) {
       /*user.editing = true;*/
-    //  this.$router.push(`/admin/users/update/${user.id}`);
-      this.$router.push({ name: 'updateUser', params: { id: user.id } });
+      //  this.$router.push(`/admin/users/update/${user.id}`);
+      this.$router.push({name: 'updateUser', params: {id: user.id}});
     },
     saveUser(user) {
       user.editing = false;
       this.loading = true;
-        const token = localStorage.getItem('token');
-        console.log("token", localStorage.getItem('token'))
+
 
       // Convert the roles property to an array of objects
-     // user.roles = user.roles.map(roleName => ({roleName}));
+      // user.roles = user.roles.map(roleName => ({roleName}));
       // Convert the roles property to an array of role names
       user.roles = user.roles.map(role => role.roleName);
       // roles: [{ roleName: "USER" }], // Updated to match the backend structure
 
       api
-          .put(`api/admin/users/update/${user.id}`, user,{
-              headers: {
-                  Authorization: `Bearer ${token}`
-              }
-          })
+          .put(`api/admin/users/update/${user.id}`, user)
 
           .then(() => {
             this.showSuccessModal("User updated successfully.");
@@ -267,26 +251,32 @@ export default {
           .catch((error) => {
             this.loading = false;
             this.showFailureModal("Failed to update user. Please try again.");
-              console.log("token", localStorage.getItem('token'))
           });
     },
     cancelEdit(user) {
       user.editing = false;
     },
 
-   /* api
-    .get("http://localhost:8080/api/user/profile", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    })*/
+    /* api
+     .get("http://localhost:8080/api/user/profile", {
+       headers: {
+         Authorization: `Bearer ${localStorage.getItem('token')}`
+       }
+     })*/
 
     openUserView(userId) {
-      this.$router.push(`/admin/users/read/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+      api.get(`/api/admin/users/read/${userId}`)
+          .then(response => {
+            // Optionally store user data in state or localStorage if needed
+            // this.selectedUser = response.data;
+
+            // Navigate only if API call succeeds
+            this.$router.push(`/admin/users/read/${userId}`);
+          })
+          .catch(error => {
+            console.error("User fetch failed:", error);
+            // Optional: show error modal, toast, etc.
+          });
     },
     resetSearch() {
       this.searchQuery = "";

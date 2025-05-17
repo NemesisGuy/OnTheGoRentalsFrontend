@@ -9,9 +9,9 @@
     <br>
     <button @click="showConfirmationModal" class="update-button button">Show Confirmation Modal</button>
 
-    <loading-modal :show="loadingModalVisible" @close="hideLoadingModal" />
-    <success-modal :show="successModalVisible" @close="hideSuccessModal" message="It Worked, Nice!" />
-    <failure-modal :show="failureModalVisible" @close="hideFailureModal" message="It didn't Work, Not Nice!" />
+    <loading-modal :show="loadingModalVisible" @close="hideLoadingModal"/>
+    <success-modal :show="successModalVisible" @close="hideSuccessModal" message="It Worked, Nice!"/>
+    <failure-modal :show="failureModalVisible" @close="hideFailureModal" message="It didn't Work, Not Nice!"/>
 
     <confirmation-modal :show="confirmationModalVisible" @confirm="confirmAction" @cancel="cancelAction">
       <!-- Slot content for the confirmation modal -->

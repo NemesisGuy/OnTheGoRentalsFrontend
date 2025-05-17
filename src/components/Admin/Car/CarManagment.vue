@@ -7,15 +7,15 @@
       </h1>
       <div class="search-bar-container">
         <div class="search-bar">
-            <div class="search-input">
-              <input v-model="searchQuery" placeholder="Search..." type="text" />
-              <button @click="resetSearch" class="read-button button">
-                <i class="fas fa-search"> </i> Reset
-              </button>
-            </div>
-            <router-link to="/admin/cars/create" class="add-button button">
-              <i class="fas fa-car"> </i> Add Car
-            </router-link>
+          <div class="search-input">
+            <input v-model="searchQuery" placeholder="Search..." type="text"/>
+            <button @click="resetSearch" class="read-button button">
+              <i class="fas fa-search"> </i> Reset
+            </button>
+          </div>
+          <router-link to="/admin/cars/create" class="add-button button">
+            <i class="fas fa-car"> </i> Add Car
+          </router-link>
         </div>
       </div>
 
@@ -23,13 +23,13 @@
     <table>
       <thead>
       <tr>
-        <th @click="sortCars('id')">ID  <i class="fas fa-sort"></i></th>
-        <th @click="sortCars('make')">Make  <i class="fas fa-sort"></i></th>
-        <th @click="sortCars('model')">Model  <i class="fas fa-sort"></i></th>
-        <th @click="sortCars('year')">Year  <i class="fas fa-sort"></i></th>
-        <th @click="sortCars('category')">Category  <i class="fas fa-sort"></i></th>
-        <th @click="sortCars('priceGroup')">Price Group  <i class="fas fa-sort"></i></th>
-        <th @click="sortCars('available')">Available  <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('id')">ID <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('make')">Make <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('model')">Model <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('year')">Year <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('category')">Category <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('priceGroup')">Price Group <i class="fas fa-sort"></i></th>
+        <th @click="sortCars('available')">Available <i class="fas fa-sort"></i></th>
         <th class="actions-column">Actions</th>
       </tr>
       </thead>
@@ -69,7 +69,7 @@
           <template v-if="!car.editing">
             <button @click="deleteCar(car.id)" class="delete-button button">
               <i class="fas fa-trash"></i> Delete
-              </button>
+            </button>
             <button @click="editCar(car)" class="update-button button"><i class="fas fa-edit"></i> Edit</button>
             <button @click="openCarView(car.id)" class="read-button button"><i class="fas fa-eye"></i> Read</button>
           </template>
@@ -105,8 +105,10 @@
         </div>
       </template>
     </confirmation-modal>
-    <SuccessModal v-if="successModal.show" @close="closeModal" @cancel="closeModal" :show="successModal.show" :message="successModal.message"></SuccessModal>
-    <FailureModal v-if="failModal.show"    @close="closeModal" @cancel="closeModal" :show="failModal.show"    :message="failModal.message">   </FailureModal>
+    <SuccessModal v-if="successModal.show" @close="closeModal" @cancel="closeModal" :show="successModal.show"
+                  :message="successModal.message"></SuccessModal>
+    <FailureModal v-if="failModal.show" @close="closeModal" @cancel="closeModal" :show="failModal.show"
+                  :message="failModal.message"></FailureModal>
 
 
   </div>
@@ -198,16 +200,12 @@ export default {
       if (token) {
         const decodedToken = jwtDecode(token);
 
-        if (decodedToken.role === "admin"){
-          console.log("Role : "+ decodedToken.role);
+        if (decodedToken.role === "admin") {
+          console.log("Role : " + decodedToken.role);
         }
       }
       api
-          .get("/api/admin/cars/all", {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .get("/api/admin/cars/all")
           .then((response) => {
             this.cars = response.data;
             console.log(response);
@@ -240,15 +238,13 @@ export default {
         this.loading = true;
         const token = localStorage.getItem("token");
         api
-            .delete(`/api/admin/cars/delete/${this.carToDelete.id}`, {
-
-            })
+            .delete(`/api/admin/cars/delete/${this.carToDelete.id}`, {})
             .then((response) => {
               this.fetchCars();
               console.log(response);
               console.log("Car deleted");
               this.successModal.show = true; // Show success modal
-              this.successModal.message = "Car ID: "+this.carToDelete.id+ "was deleted successfully! Please refresh the page to see the changes."
+              this.successModal.message = "Car ID: " + this.carToDelete.id + "was deleted successfully! Please refresh the page to see the changes."
             })
             .catch((error) => {
               console.log(error);
@@ -266,11 +262,7 @@ export default {
     },
     openCarView(carId) {
       const token = localStorage.getItem("token");
-      this.$router.push(`/admin/cars/read/${carId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      this.$router.push(`/admin/cars/read/${carId}`);
     },
     sortCars(sortBy) {
       this.sortBy = sortBy;
@@ -289,11 +281,7 @@ export default {
     pushUpdatedCar(car) {
       const token = localStorage.getItem("token");
       api
-          .put(`/api/admin/cars/update/${car.id}`, car, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .put(`/api/admin/cars/update/${car.id}`, car)
           .then((response) => {
             console.log(response);
             console.log("Car updated");

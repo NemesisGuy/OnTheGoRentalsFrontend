@@ -1,7 +1,7 @@
 <template>
   <div class="content-container">
     <div class="card-container">
-      <h1>Update  Cars</h1>
+      <h1>Update Cars</h1>
       <h2>List of {{ category }} Cars</h2>
       <table>
         <thead>
@@ -21,16 +21,16 @@
         <tr v-for="car in sortedCars" :key="car.id">
           <td>{{ car.id }}</td>
           <td>
-            <input v-model="car.make" :disabled="!car.editMode" />
+            <input v-model="car.make" :disabled="!car.editMode"/>
           </td>
           <td>
-            <input v-model="car.model" :disabled="!car.editMode" />
+            <input v-model="car.model" :disabled="!car.editMode"/>
           </td>
           <td>
-            <input v-model="car.year" :disabled="!car.editMode" />
+            <input v-model="car.year" :disabled="!car.editMode"/>
           </td>
           <td>
-            <input v-model="car.category" :disabled="!car.editMode" />
+            <input v-model="car.category" :disabled="!car.editMode"/>
           </td>
           <td>
             <select v-model="car.priceGroup" :disabled="!car.editMode" required>
@@ -46,7 +46,7 @@
           </td>
 
           <td>
-            <input v-model="car.licensePlate" :disabled="!car.editMode" />
+            <input v-model="car.licensePlate" :disabled="!car.editMode"/>
           </td>
           <td>
             <button @click="toggleEditMode(car)">
@@ -102,11 +102,7 @@ export default {
       const category = 'all';
       const token = localStorage.getItem('token');
       api
-          .get(`/api/cars/${category}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .get(`/api/cars/${category}`)
           .then((response) => {
             this.cars = response.data.map((car) => ({
               ...car,
@@ -129,11 +125,7 @@ export default {
     deleteCar(carId) {
       const token = localStorage.getItem('token');
       api
-          .delete(`/api/admin/cars/delete/${carId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .delete(`/api/admin/cars/delete/${carId}`)
           .then((response) => {
             this.fetchCars();
             console.log(response);
@@ -153,11 +145,7 @@ export default {
     updateCar(car) {
       const token = localStorage.getItem('token');
       axios
-          .put(`/api/admin/cars/update/${car.id}`, car, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .put(`/api/admin/cars/update/${car.id}`, car)
           .then((response) => {
             console.log(response);
             console.log('Car updated');

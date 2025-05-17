@@ -19,14 +19,14 @@
         </div>
 
         <div class="form-group">
-          <label for="issuedDate">Issued Date:</label>
+          <label for="issuedDate">Collection Date:</label>
           <input id="issuedDate" v-model="selectedIssuedDate" name="issuedDate" type="datetime-local">
         </div>
 
         <div class="form-group">
-  <label for="returnedDate">Returned Date:</label>
-  <input id="returnedDate" v-model="selectedReturnedDate" name="returnedDate" type="datetime-local">
-</div>
+          <label for="returnedDate">Return Date:</label>
+          <input id="returnedDate" v-model="selectedReturnedDate" name="returnedDate" type="datetime-local">
+        </div>
 
 
         <div class="form-group">
@@ -54,10 +54,10 @@
 
     <!-- Add the ConfirmationModal component -->
     <confirmation-modal
-      key="confirmationModal"
-      :show="showConfirmationModal"
-      @cancel="cancel"
-      @confirm="confirm"
+        key="confirmationModal"
+        :show="showConfirmationModal"
+        @cancel="cancel"
+        @confirm="confirm"
     >
       <template v-if="showConfirmationModal">
         <div>
@@ -76,24 +76,24 @@
 
     <!-- Add the SuccessModal component -->
     <SuccessModal
-      v-if="successModal.show"
-      key="successModal"
-      :message="successModal.message"
-      :show="successModal.show"
-      @cancel="closeModal"
-      @close="closeModal"
-      @confirm="closeModal"
-      @ok="closeModal"
+        v-if="successModal.show"
+        key="successModal"
+        :message="successModal.message"
+        :show="successModal.show"
+        @cancel="closeModal"
+        @close="closeModal"
+        @confirm="closeModal"
+        @ok="closeModal"
     ></SuccessModal>
 
     <!-- Add the FailureModal component -->
     <FailureModal
-      v-if="failModal.show"
-      key="failModal"
-      :message="failModal.message"
-      :show="failModal.show"
-      @cancel="closeModal"
-      @close="closeModal"
+        v-if="failModal.show"
+        key="failModal"
+        :message="failModal.message"
+        :show="failModal.show"
+        @cancel="closeModal"
+        @close="closeModal"
     ></FailureModal>
   </div>
 </template>
@@ -150,95 +150,103 @@ export default {
   methods: {
     fetchUsersList() {
       this.loadingModal.show = true;
+
       api
-        .get("/api/admin/users/list/all")
-        .then((response) => {
-          this.users = response.data;
-          this.loadingModal.show = false;
-        })
-        .catch((error) => {
-          console.log(error);
-          this.failModal.message = "Failed to fetch users list";
-          this.failModal.show = true;
-          this.loadingModal.show = false;
-        })
-        .finally(() => {
-          this.loadingModal.show = false;
-        });
+          .get("/api/admin/users/list/all", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          })
+          .then((response) => {
+            this.users = response.data;
+            this.loadingModal.show = false;
+          })
+          .catch((error) => {
+            console.log(error);
+            this.failModal.message = "Failed to fetch users list";
+            this.failModal.show = true;
+            this.loadingModal.show = false;
+          })
+          .finally(() => {
+            this.loadingModal.show = false;
+          });
     },
 
     fetchCarsList() {
       this.loadingModal.show = true;
       api
-        .get("/api/admin/cars/all")
-        .then((response) => {
-          this.cars = response.data;
-          this.loadingModal.show = false;
-        })
-        .catch((error) => {
-  console.log(error);
-  this.failModal.message = "Failed to fetch cars list";
-  this.failModal.show = true;
-  this.loadingModal.show = false;
-})
+          .get("/api/admin/cars/all", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          })
+          .then((response) => {
+            this.cars = response.data;
+            this.loadingModal.show = false;
+          })
+          .catch((error) => {
+            console.log(error);
+            this.failModal.message = "Failed to fetch cars list";
+            this.failModal.show = true;
+            this.loadingModal.show = false;
+          })
 
-        .finally(() => {
-          this.loadingModal.show = false;
-        });
+          .finally(() => {
+            this.loadingModal.show = false;
+          });
     },
 
     createBooking() {
-      this.loadingModal.show = true;
       this.errorMessage = "";
 
       const booking = {
-        user: {
-          id: this.selectedUser,
-        },
-        car: {
-          id: this.selectedCar,
-        },
+        user: { id: this.selectedUser },
+        car: { id: this.selectedCar },
         issuedDate: this.selectedIssuedDate,
         returnedDate: this.selectedReturnedDate,
       };
 
+      // Open confirmation modal (no loading modal yet)
       this.showConfirmationModal = true;
 
+      // Define confirmation action
       this.confirm = () => {
         this.loadingModal.show = true;
         this.showConfirmationModal = false;
 
-        api
-          .post("/api/admin/bookings/create", booking)
-          .then((response) => {
-            if (response && response.data) {
-              console.log("Booking created successfully");
-              this.successModal.message =
-                "Booking created successfully:\n" +
-                `User: ${response.data.user.email}.\n` +
-                `Car: ${response.data.car.make} ${response.data.car.model}.\n` +
-                `Issued Date: ${response.data.issuedDate}.\n` +
-                `Returned Date: ${response.data.returnedDate}.\n`;
-              this.successModal.show = true;
-            } else {
-              console.error("Response or response.data is undefined");
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-            this.errorMessage = error.response.data;
-            this.failModal.show = true;
-          })
-          .finally(() => {
-            this.loadingModal.show = false;
-          });
+        api.post("/api/admin/bookings/create", booking, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+            .then((response) => {
+              if (response && response.data) {
+                console.log("Booking created successfully");
+                this.successModal.message =
+                    "Booking created successfully:\n" +
+                    `User: ${response.data.user.email}.\n` +
+                    `Car: ${response.data.car.make} ${response.data.car.model}.\n` +
+                    `Issued Date: ${response.data.issuedDate}.\n` +
+                    `Returned Date: ${response.data.returnedDate}.\n`;
+                this.successModal.show = true;
+              } else {
+                console.error("Response or response.data is undefined");
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              this.failModal.message = error.response?.data || "Booking failed.";
+              this.failModal.show = true;
+            })
+            .finally(() => {
+              this.loadingModal.show = false;
+            });
       };
 
-      this.cancel = () => {
-        this.loadingModal.show = false;
-        this.showConfirmationModal = false;
-      };
-    },
+      // Define cancel action
+
+
+  },
 
     closeModal() {
       this.successModal.show = false;

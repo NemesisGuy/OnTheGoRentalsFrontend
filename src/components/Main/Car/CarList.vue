@@ -1,7 +1,7 @@
 <template>
   <div class="content-container">
     <h1>List of {{ category }} Cars</h1>
-    <loading-modal v-if="loading" show />
+    <loading-modal v-if="loading" show/>
     <table>
       <thead>
       <tr>
@@ -25,23 +25,27 @@
         <td>{{ car.priceGroup }}</td>
         <td>{{ car.licensePlate }}</td>
         <td>
-          <button class="accept-button button" @click="rentCar(car)"><i class="fas fa-handshake"></i> Rent</button>
+          <button class="accept-button button" @click="bookCar(car)"><i class="fas fa-handshake"></i> Book</button>
         </td>
       </tr>
       </tbody>
     </table>
   </div>
+  <FailureModal v-if="failModal.show" @close="closeFailureModalAndRedirectToLogin" @cancel="closeModal" :show="failModal.show"
+                :message="failModal.message"></FailureModal>
 </template>
 
 <script>
 import axios from 'axios';
 import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
 import api from "@/api";
+import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 
 export default {
   name: 'CarList',
   components: {
     LoadingModal,
+    FailureModal,
   },
   data() {
     return {
@@ -50,6 +54,11 @@ export default {
       sortColumn: '',
       sortDirection: '',
       loading: false,
+
+      failModal: {
+        show: false,
+        message: "",
+      },
     };
   },
   mounted() {
@@ -88,14 +97,39 @@ export default {
         this.sortDirection = 'asc';
       }
     },
-    rentCar(car) {
-      // Perform the rental process here
-      console.log('Renting car:', car);
-      this.$router.push(`/rental/${car.id}`);
+    bookCar(car) {
+      // Perform the booking process here
+      //push to login if not logged in
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        // User is not logged in, show modal saying we will redirect to login
+        this.showFailureModal("You need to be logged in to book a car. Redirecting to login page...");
+
+
+      }else{
+      console.log('Booking car:', car);
+      //this.$router.push(`/booking/${car.id}`);
+      this.$router.push({ name: 'Booking', params: { carId: car.id } });}
+
+
+
+    },
+    showFailureModal(message) {
+      this.failModal = {
+        show: true,
+        message: message,
+      };
+    },
+    closeFailureModalAndRedirectToLogin() {
+
+        this.failModal.show = false;
+        this.$router.push({ name: 'Login' });
+
 
 
     },
   },
+
   computed: {
     sortedCars() {
       if (this.sortColumn && this.sortDirection) {
@@ -115,6 +149,7 @@ export default {
       return this.cars;
     },
   },
+
 };
 </script>
 

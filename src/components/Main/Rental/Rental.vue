@@ -2,7 +2,7 @@
   <div class="container">
     <div class="content-container">
       <div class="rental-container">
-        <h1>Rent Car</h1>
+        <h1>Book Car</h1>
         <div v-if="selectedCar" class="car-details">
           <p><strong>ID:</strong> {{ selectedCar.id }}</p>
           <p><strong>Make:</strong> {{ selectedCar.make }}</p>
@@ -16,16 +16,16 @@
           <h2>User Details</h2>
           <div v-if="user" class="user-details">
             <p><strong>ID:</strong> {{ user.id }}</p>
-<!--            <p><strong>User Name:</strong> {{ user.userName }}</p>-->
+            <!--            <p><strong>User Name:</strong> {{ user.userName }}</p>-->
             <p><strong>First Name:</strong> {{ user.firstName }}</p>
             <p><strong>Last Name:</strong> {{ user.lastName }}</p>
             <p><strong>Email:</strong> {{ user.email }}</p>
-<!--            <p><strong>Phone:</strong> {{ user.phoneNumber }}</p>-->
+            <!--            <p><strong>Phone:</strong> {{ user.phoneNumber }}</p>-->
           </div>
         </div>
         <div class="button-container">
           <button class="read-button button" @click="goToCarList"><i class="fas fa-arrow-left"></i> Back</button>
-          <button v-if="selectedCar" class="accept-button button" @click="showConfirmationModal = true">Confirm Rental
+          <button v-if="selectedCar" class="accept-button button" @click="showConfirmationModal = true">Confirm Booking
           </button>
         </div>
       </div>
@@ -81,7 +81,7 @@ export default {
         firstName: "",
         lastName: "",
         email: "",
-        roles: [{ roleName: "USER" }], // Updated to match the backend structure
+        roles: [{roleName: "USER"}], // Updated to match the backend structure
       },
       showConfirmationModal: false,
       confirmationMessage: '',
@@ -139,8 +139,10 @@ export default {
     async getUserDetails() {
       try {
         const userId = 1; // Replace with the actual user ID from Vuex or other source//find user details JWT token
+//http://localhost:8080/api/user/profile/read/profile
 
-        const response = await api.get(`/api/user/profile/profile`);
+        //const response = await api.get(`/api/user/profile/profile`);
+        const response = await api.get(`/api/user/profile/read/profile`);
         //this.user.id = response.data;
 
         const userData = response.data;//get all data
@@ -148,7 +150,7 @@ export default {
         this.user.firstName = userData.firstName;
         this.user.lastName = userData.lastName;
         this.user.email = userData.email;
-       /* this.user.password = userData.password;*/
+        /* this.user.password = userData.password;*/
         this.user.roles = userData.roles; // Include user roles
 
 
@@ -158,7 +160,7 @@ export default {
     },
     confirmRental() {
       this.showConfirmationModal = false;
-      this.confirmationMessage = `Are you sure you want to confirm this rental? ${this.selectedCar.model} ${this.user.name}`;
+      this.confirmationMessage = `Are you sure you want to confirm this booking? ${this.selectedCar.model} ${this.user.name}`;
       this.loading = true;
 
       const rentalData = {
@@ -172,7 +174,7 @@ export default {
         returnedDate: null,
       };
 
-      axios.post('http://localhost:8080/api/user/rentals/create', rentalData)
+      api.post('http://localhost:8080/api/user/booking/create', rentalData)
           .then(response => {
             if (response.status === 200) {
               console.log(response);

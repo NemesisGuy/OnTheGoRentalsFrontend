@@ -1,8 +1,7 @@
-
 <template>
   <div class="content-container">
     <div class="content-header">
-      <h1><i class="fas fa-file-contract" ></i>
+      <h1><i class="fas fa-file-contract"></i>
         Rental Management
       </h1>
       <div class="search-bar">
@@ -50,28 +49,28 @@
         <td>{{ rental.receiver }}</td>
         <td>{{ rental.finePayed }}</td>
 
-          <!-- other table cells -->
-          <td>
-            <button class="delete-button" @click="deleteRental(rental)">
-              <i class="fas fa-trash"></i> Delete
+        <!-- other table cells -->
+        <td>
+          <button class="delete-button" @click="deleteRental(rental)">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+          <template v-if="!rental.editing">
+            <button class="update-button" @click="editRental(rental)">
+              <i class="fas fa-edit"></i> Edit
             </button>
-            <template v-if="!rental.editing">
-              <button class="update-button" @click="editRental(rental)">
-                <i class="fas fa-edit"></i> Edit
-              </button>
-            </template>
-            <template v-else>
-              <button class="update-button" @click="saveRental(rental)">
-                <i class="fas fa-save"></i> Save
-              </button>
-              <button class="delete-button" @click="cancelEdit(rental)">
-                <i class="fas fa-times"></i> Cancel
-              </button>
-            </template>
-            <button class="read-button" @click="openRentalView(rental)">
-              <i class="fas fa-eye"></i> Read
+          </template>
+          <template v-else>
+            <button class="update-button" @click="saveRental(rental)">
+              <i class="fas fa-save"></i> Save
             </button>
-          </td>
+            <button class="delete-button" @click="cancelEdit(rental)">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </template>
+          <button class="read-button" @click="openRentalView(rental)">
+            <i class="fas fa-eye"></i> Read
+          </button>
+        </td>
 
 
       </tr>
@@ -96,8 +95,10 @@
         </div>
       </template>
     </confirmation-modal>
-    <SuccessModal v-if="successModal.show" @close="closeModal" @cancel="closeModal" :show="successModal.show" :message="successModal.message"></SuccessModal>
-    <FailureModal v-if="failModal.show" @close="closeModal" @cancel="closeModal" :show="failModal.show" :message="failModal.message"></FailureModal>
+    <SuccessModal v-if="successModal.show" @close="closeModal" @cancel="closeModal" :show="successModal.show"
+                  :message="successModal.message"></SuccessModal>
+    <FailureModal v-if="failModal.show" @close="closeModal" @cancel="closeModal" :show="failModal.show"
+                  :message="failModal.message"></FailureModal>
   </div>
 </template>
 
@@ -169,6 +170,7 @@ export default {
             .delete(`/api/admin/rentals/delete/${rentalId}`)
             .then(() => {
               this.showSuccessModal("Rental deleted successfully.");
+              /*this.loading = false;*/
               this.getRentals();
             })
             .catch((error) => {

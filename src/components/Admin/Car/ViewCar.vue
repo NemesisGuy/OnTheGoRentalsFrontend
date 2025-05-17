@@ -1,32 +1,32 @@
 <template>
   <div class="card-container card-container-admin ">
     <div class="form-container">
-    <div class="car-profile">
-      <h1><i class="fas fa-car"></i> Car Profile: </h1>
-      <div class="profile-details" v-if="car">
-        <div>
-          <p><label>Make:</label><span>{{ car.make }}</span></p>
+      <div class="car-profile">
+        <h1><i class="fas fa-car"></i> Car Profile: </h1>
+        <div class="profile-details" v-if="car">
+          <div>
+            <p><label>Make:</label><span>{{ car.make }}</span></p>
 
-          <p><label>Model:</label><span>{{ car.model }}</span></p>
+            <p><label>Model:</label><span>{{ car.model }}</span></p>
 
-          <p><label>Year:</label><span>{{ car.year }}</span></p>
-
-
-          <p><label>Category:</label><span>{{ car.category }}</span></p>
-
-          <p><label>Price Group:</label><span>{{ car.priceGroup }}</span></p>
+            <p><label>Year:</label><span>{{ car.year }}</span></p>
 
 
-         <p><label>License Plate: </label>{{ car.licensePlate }}</p>
-          <p> <label>Available: </label>{{ car.available }}</p>
+            <p><label>Category:</label><span>{{ car.category }}</span></p>
+
+            <p><label>Price Group:</label><span>{{ car.priceGroup }}</span></p>
+
+
+            <p><label>License Plate: </label>{{ car.licensePlate }}</p>
+            <p><label>Available: </label>{{ car.available }}</p>
 
 
           </div>
+        </div>
+        <div v-else>
+          <p>Loading car profile...</p>
+        </div>
       </div>
-      <div v-else>
-        <p>Loading car profile...</p>
-      </div>
-    </div>
     </div>
   </div>
 </template>
@@ -68,11 +68,7 @@ export default {
       const carId = this.$route.params.id// Get the category from the route parameter
       const token = localStorage.getItem('token');
       api
-          .get(`/api/admin/cars/read/${carId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .get(`/api/admin/cars/read/${carId}`)
           .then((response) => {
             this.car = response.data;
           })

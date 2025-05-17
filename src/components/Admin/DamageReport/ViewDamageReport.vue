@@ -1,183 +1,234 @@
 <template>
-    <div class="card-container card-container-admin">
-        <div class="form-container">
-        <div class="report-profile">
-            <h1>Damage Report Profile</h1>
-            <hr>
-            <div class="profile-details" v-if="damageReport && rental">
-                <div class="section">
-                    <h3>Report Details:</h3>
-                    <hr>
-                    <div class="detail-row">
-                        <div>
-                            <label>Damage Report ID:</label>
-                            <span>{{ damageReport.id }}</span>
-                        </div>
-                        <div>
-                            <label>Description:</label>
-                            <span>{{ damageReport.description }}</span>
-                        </div>
-                        <div>
-                            <label>Date & Time:</label>
-                            <span>{{ damageReport.dateAndTime }}</span>
-                        </div>
-                        <div>
-                            <label>Location:</label>
-                            <span>{{ damageReport.location }}</span>
-                        </div>
-                        <div>
-                            <label>Repair Cost:</label>
-                            <span>{{ damageReport.repairCost }}</span>
-                        </div>
-                    </div>
-                    <div class="section">
-                        <h3>Rental Details:</h3>
-                        <hr>
-                        <div class="detail-row">
-                        <div v-if="damageReport.rental">
-                            <div>
-                                <label>Rental ID:</label>
-                                <span>{{ damageReport.rental.rentalId }}</span>
-                            </div>
-                    <div>
-                    <label>Issuer:</label>
-                    <span>{{ damageReport.rental.issuer }}</span>
-                </div>
-                            <div>
-                                <label>First Name:</label>
-                                <span>{{ damageReport.rental.user.firstName }}</span>
-                            </div>
-                            <div>
-                                <label>Last Name:</label>
-                                <span>{{ damageReport.rental.user.lastName }}</span>
-                            </div>
-                            <div>
-                                <label>Email:</label>
-                                <span>{{ damageReport.rental.user.userName }}</span>
-                            </div>
-                            <div>
-                                <label>Rental Date:</label>
-                                <span>{{ damageReport.rental.issuedDate }}</span>
-                            </div>
-                            <div>
-                                <label>Return Date:</label>
-                                <span>{{ damageReport.rental.returnedDate }}</span>
-                            </div>
-                            <div>
-                            <label>Fine:</label>
-                            <span>{{ damageReport.rental.fine }}</span>
-                        </div>
-                        </div>
-                            <div v-if="damageReport.rental.car">
-                            <div class="section">
-                                <h3>Car Details:</h3>
-                                <hr>
-                                <div class="detail-row">
-                            <div>
-                                <label>Car Make:</label>
-                                <span>{{ damageReport.rental.car.make }}</span>
-                            </div>
-                            <div>
-                                <label>Car Model:</label>
-                                <span>{{ damageReport.rental.car.model }}</span>
-                            </div>
-                            <div>
-                                <label>Car Year:</label>
-                                <span>{{ damageReport.rental.car.year }}</span>
-                            </div>
-                            <div>
-                                <label>Car Category:</label>
-                                <span>{{ damageReport.rental.car.category }}</span>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+  <div class="card-container card-container-admin">
+    <div class="form-container">
+      <div class="report-profile">
+        <h1>Damage Report Profile</h1>
+        <hr/>
+        <div class="profile-details" v-if="damageReport && rental && user && car">
+          <div class="section">
+            <h3>Report Details:</h3>
+            <hr/>
+            <div class="detail-row">
+              <div>
+                <label>Report ID:</label>
+                <span>{{ damageReport.id }}</span>
+              </div>
+              <div>
+                <label>Description:</label>
+                <span>{{ formatDateTime( damageReport.description) }}</span>
+              </div>
+              <div>
+                <label>Date & Time:</label>
+                <span>{{formatDateTime(  damageReport.dateAndTime) }}</span>
+              </div>
+              <div>
+                <label>Location:</label>
+                <span>{{ damageReport.location }}</span>
+              </div>
+              <div>
+                <label>Repair Cost:</label>
+                <span>{{ damageReport.repairCost }}</span>
+              </div>
             </div>
+          </div>
+
+          <div class="section">
+            <h3>Rental Details:</h3>
+            <hr/>
+            <div class="detail-row">
+              <div>
+                <label>Rental ID:</label>
+                <span>{{ rental.id }}</span>
+              </div>
+              <div>
+                <label>Rental Date:</label>
+                <span>{{formatDateTime( rental.issuedDate )}}</span>
+              </div>
+              <div>
+                <label>Return Date:</label>
+                <span>{{ formatDateTime( rental.returnedDate) }}</span>
+              </div>
+              <div>
+                <label>Fine:</label>
+                <span>{{ rental.fine }}</span>
+              </div>
             </div>
-            <div v-else>
-                <p>Loading report profile...</p>
+          </div>
+
+          <div class="section">
+            <h3>Customer Details:</h3>
+            <hr/>
+            <div class="detail-row">
+              <div>
+                <label>Customer Name:</label>
+                <span>{{ user.firstName }} {{ user.lastName }}</span>
+              </div>
+              <div>
+                <label>Email:</label>
+                <span>{{ user.email }}</span>
+              </div>
+              <div>
+                <label>Phone:</label>
+                <span>{{ user.phoneNumber }}</span>
+              </div>
             </div>
+          </div>
+
+          <div class="section">
+            <h3>Car Details:</h3>
+            <hr/>
+            <div class="detail-row">
+              <div>
+                <label>Make:</label>
+                <span>{{ car.make }}</span>
+              </div>
+              <div>
+                <label>Model:</label>
+                <span>{{ car.model }}</span>
+              </div>
+              <div>
+                <label>Year:</label>
+                <span>{{ car.year }}</span>
+              </div>
+              <div>
+                <label>Category:</label>
+                <span>{{ car.category }}</span>
+              </div>
+              <div>
+                <label>License Plate:</label>
+                <span>{{ car.licensePlate }}</span>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <div v-else>
+          <p>Loading report profile...</p>
+        </div>
+      </div>
     </div>
-    </div>
+  </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 import api from "@/api";
 
+// Add interceptor to automatically attach token
+axios.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+);
+
 export default {
-    name: 'ViewDamageReport',
-    data() {
-        return {
-            damageReport: null,
-            rental: null,
-            user: null,
-            car: null,
-        };
+  name: "ViewDamageReport",
+  data() {
+    return {
+      damageReport: null,
+      rental: null,
+      user: null,
+      car: null,
+    };
+  },
+  mounted() {
+    this.fetchDamageReport();
+
+
+  },
+  methods: {
+    fetchDamageReport() {
+      const reportId = this.$route.params.id;
+      const token = localStorage.getItem('token');
+      api
+          .get(`/api/admin/damageReport/read/${reportId}`)
+          .then((response) => {
+            console.log("Response Fetching Damage Report:", response);
+            this.damageReport = response.data;
+            /*  console.log(this.damageReport);
+              console.log(this.damageReport.id);
+              console.log(this.damageReport.rental.id);
+              console.log(this.damageReport.rental.user.id);
+              console.log(this.damageReport.rental.car.id);*/
+            // Fetch related profiles
+            this.fetchRentalProfile();
+            this.fetchUserProfile();
+            this.fetchCarProfile();
+          })
+          .catch((error) => {
+            console.log("Error fetching damage report:", error);
+          });
     },
-    mounted() {
-        console.log('ViewDamageReport component is mounted');
-        this.fetchReportProfile();
+
+    fetchRentalProfile() {
+      const rentalId = this.damageReport.rental.id;
+      const token = localStorage.getItem('token');
+      api
+          .get(`/api/admin/rentals/read/${rentalId}`)
+          .then((response) => {
+            console.log("Response Fetching Rental:");
+            this.rental = response.data;
+            console.log(response);
+            // console.log(this.rental.user);
+
+          })
+          .catch((error) => {
+            console.log("Error fetching rental:", error);
+          });
     },
-    methods: {
 
-        async fetchReportProfile() {
-            const damageReportId = this.$route.params.id;
+    fetchUserProfile() {
+      const userId = this.damageReport.rental.user.id;
+      const token = localStorage.getItem('token');
+      api
+          .get(`/api/admin/users/read/${userId}`)
+          .then((response) => {
+            console.log("Response Fetching User:");
+            // console.log(response);
+            this.user = response.data;
+            // console.log(this.user);
 
-            console.log('Fetching damage report...');
+          })
+          .catch((error) => {
+            console.log("Error fetching user:", error);
+          });
+    },
 
-            try {
-                const token = localStorage.getItem('token');
-                const response = await api.get(`/api/admin/damageReport/read/${damageReportId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+    fetchCarProfile() {
+      const carId = this.damageReport.rental.car.id;
+      const token = localStorage.getItem('token');
+      api
+          .get(`/api/admin/cars/read/${carId}`)
+          .then((response) => {
+            console.log("Response Fetching Car:");
+            this.car = response.data;
+            // console.log(this.car);
+          })
+          .catch((error) => {
+            console.log("Error fetching car:", error);
+          });
+    },
+    formatDateTime(dateTimeStr) {
+      const options = {
+        year: 'numeric',
+        month: 'short', // 'long' for full month name
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      };
+      return new Date(dateTimeStr).toLocaleString('en-ZA', options);
+    }
 
-
-                this.damageReport = response.data;
-                console.log('Damage Report:', this.damageReport);
-
-                // Now that we have the damage report, let's fetch the rental profile
-                await this.fetchRentalProfile();
-            } catch (error) {
-                console.error('Error fetching damage report:', error);
-            }
-        },
-
-        async fetchRentalProfile() {
-            //if (this.damageReport && this.damageReport.rental) {
-                const rentalId = this.damageReport.rental.id;
-
-                console.log('Fetching rental profile...');
-
-                try {
-                    const token = localStorage.getItem('token');
-                    const response = await api.get(`/api/admin/rentals/read/${rentalId}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
-
-
-                    this.rental = response.data;
-                    console.log('Rental Profile:', this.rental);
-                } catch (error) {
-                    console.error('Error fetching rental profile:', error);
-                }
-            //}
-            },
-        },
+  },
 };
 </script>
 
-
-<style>
-
+<style scoped>
+/* Add your scoped styles here if needed */
 </style>
-
-
-

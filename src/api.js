@@ -1,0 +1,129 @@
+//API.JS
+import axios from 'axios';
+import process from "process";
+// import router from '@/router'; // Import your Vue router if you need to redirect
+
+const API_BASE_URL = process.env.VITE_API_BASE_URL || 'http://localhost:8080';
+
+/*const api = axios.create({
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});*/
+const api = axios.create({
+    baseURL: process.env.VITE_API_BASE_URL || 'http://localhost:8080', // Adjust as needed
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+// Variable to keep track of the refresh token request, to avoid multiple parallel refresh attempts
+let isRefreshing = false;
+// Array to hold all the requests that failed due to 401 and are waiting for a new token
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+    failedQueue.forEach(prom => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve(token);
+        }
+    });
+    failedQueue = [];
+};
+
+// 🔐 Add Authorization token (Access Token) to every request if available
+api.interceptors.request.use(
+    (config) => {
+        const accessToken = localStorage.getItem('accessToken'); // Use 'accessToken'
+        if (accessToken) {
+            config.headers.Authorization = `Bearer ${accessToken}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
+// 🚨 Handle responses globally, including token refresh
+api.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+
+        // Check if it's a 401 error and not a retry, and not the refresh token URL itself
+        if (error.response && error.response.status === 401 && !originalRequest._retry && originalRequest.url !== '/api/user/refresh') {
+            if (isRefreshing) {
+                // If already refreshing, add the original request to the queue
+                return new Promise(function(resolve, reject) {
+                    failedQueue.push({ resolve, reject });
+                })
+                    .then(token => {
+                        originalRequest.headers['Authorization'] = 'Bearer ' + token;
+                        return api(originalRequest); // Retry with new token
+                    })
+                    .catch(err => {
+                        return Promise.reject(err); // Propagate error if queue processing fails
+                    });
+            }
+
+            originalRequest._retry = true; // Mark this request as a retry attempt
+            isRefreshing = true;
+
+            const refreshToken = localStorage.getItem('refreshToken');
+            if (!refreshToken) {
+                console.error('No refresh token available. Logging out.');
+                // Handle logout: clear local storage, redirect to login
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('user'); // Or any other user info
+                // router.push('/login'); // Example using Vue Router
+                isRefreshing = false;
+                processQueue(new Error('No refresh token'), null); // Reject queued requests
+                return Promise.reject(error); // Reject the original error
+            }
+
+            try {
+                console.log('Attempting to refresh token...');
+                const response = await axios.post(`${API_BASE_URL}/api/user/refresh`, {
+                    refreshToken: refreshToken,
+                });
+
+                const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+
+                // Store the new tokens
+                localStorage.setItem('accessToken', newAccessToken);
+                if (newRefreshToken) { // If backend rotates refresh tokens and sends a new one
+                    localStorage.setItem('refreshToken', newRefreshToken);
+                }
+
+                // Update the Authorization header for the original request
+                api.defaults.headers.common['Authorization'] = 'Bearer ' + newAccessToken;
+                originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken;
+
+                processQueue(null, newAccessToken); // Process queued requests with the new token
+                return api(originalRequest); // Retry the original request
+
+            } catch (refreshError) {
+                console.error('Error refreshing token:', refreshError.response ? refreshError.response.data : refreshError.message);
+                processQueue(refreshError, null); // Reject queued requests due to refresh failure
+
+                // Handle refresh token failure: clear local storage, redirect to login
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('user'); // Or any other user info
+                // router.push('/login'); // Example using Vue Router
+                // alert('Your session has expired. Please log in again.');
+
+                return Promise.reject(refreshError); // Reject with the refresh error
+            } finally {
+                isRefreshing = false;
+            }
+        }
+
+        // For other errors, just reject them
+        return Promise.reject(error);
+    }
+);
+
+export default api;

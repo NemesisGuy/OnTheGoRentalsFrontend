@@ -7,7 +7,7 @@
       <div class="search-bar-container">
         <div class="search-bar">
           <div class="search-input">
-            <input v-model="searchQuery" placeholder="Search..." type="text" />
+            <input v-model="searchQuery" placeholder="Search..." type="text"/>
             <button class="button read-button" @click="resetSearch">
               <i class="fas fa-search"></i> Reset
             </button>
@@ -30,19 +30,19 @@
         <th>Actions</th>
       </tr>
       </thead>
-      <tbody>
+      <tbody v-if="!loading">
       <tr v-for="article in articles" :key="article.id">
         <td v-if="!article.editing">{{ article.id }}</td>
         <td v-else>
-          <input type="text" v-model="article.id" disabled />
+          <input type="text" v-model="article.id" disabled/>
         </td>
         <td v-if="!article.editing">{{ article.title }}</td>
         <td v-else>
-          <input type="text" v-model="article.title" />
+          <input type="text" v-model="article.title"/>
         </td>
         <td v-if="!article.editing">{{ article.category }}</td>
         <td v-else>
-          <input type="text" v-model="article.category" />
+          <input type="text" v-model="article.category"/>
         </td>
         <td v-if="!article.editing">{{ article.content }}</td>
         <td v-else>
@@ -50,11 +50,11 @@
         </td>
         <td v-if="!article.editing">{{ article.createdAt }}</td>
         <td v-else>
-          <input type="text" v-model="article.createdAt" disabled />
+          <input type="text" v-model="article.createdAt" disabled/>
         </td>
         <td v-if="!article.editing">{{ article.updatedAt }}</td>
         <td v-else>
-          <input type="text" v-model="article.updatedAt" disabled />
+          <input type="text" v-model="article.updatedAt" disabled/>
         </td>
         <td>
           <!-- Actions -->
@@ -80,29 +80,40 @@
       </tr>
       </tbody>
     </table>
+    <div v-if="loading" class="loading">Loading...</div>
+    <loading-modal v-if="loading" show></loading-modal>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import api from "@/api";
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 
 export default {
+  name: "HelpCenterManagement",
+  components: {
+    LoadingModal,
+  },
   data() {
     return {
       articles: [],
       searchQuery: "",
+      loading: false,
     };
   },
   methods: {
     fetchArticles() {
+      this.loading = true;
       api
-          .get("/api/admin/help-center/get-all",{ headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }})
+          .get("/api/admin/help-center/get-all", {headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}})
           .then((response) => {
             this.articles = response.data;
+            this.loading = false;
           })
           .catch((error) => {
             console.error(error);
+            this.loading = false;
           });
     },
     deleteArticle(id) {

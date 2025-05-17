@@ -1,13 +1,13 @@
 <template>
   <div class="chart">
-    <LoadingModalSection :show="isLoading"> Loading chart... </LoadingModalSection>
+    <LoadingModalSection :show="isLoading"> Loading chart...</LoadingModalSection>
     <Doughnut v-if="!isLoading && chartData" :data="chartData" :options="chartOptions"/>
   </div>
 </template>
 
 
 <script>
-import { Chart as ChartJS, ArcElement, CategoryScale,Legend, LinearScale, Title, Tooltip,} from 'chart.js'
+import {Chart as ChartJS, ArcElement, CategoryScale, Legend, LinearScale, Title, Tooltip,} from 'chart.js'
 import {Bar, Doughnut} from 'vue-chartjs'
 
 import {fetchRentalsData} from "@/components/Admin/Charts/rentalsApi";
@@ -58,8 +58,7 @@ export default {
     } catch (error) {
       console.error('Error fetching rentals data:', error);
       // Handle error case
-    }
-    finally {
+    } finally {
       this.isLoading = false; // Hide loading modal
     }
   },

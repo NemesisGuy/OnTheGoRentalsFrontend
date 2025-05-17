@@ -2,9 +2,10 @@
   <div class="driver-selection-container">
     <div class="card driver-list-card">
       <h2>Driver List</h2>
-      <input type="text" v-model="searchQuery" placeholder="Search Driver" />
+      <input type="text" v-model="searchQuery" placeholder="Search Driver"/>
       <ul>
-        <li v-for="driver in filteredDrivers" :key="driver.id" @click="selectDriver(driver.id)" :class="{ active: selectedDriverId === driver.id }">
+        <li v-for="driver in filteredDrivers" :key="driver.id" @click="selectDriver(driver.id)"
+            :class="{ active: selectedDriverId === driver.id }">
           {{ driver.firstName }}
         </li>
       </ul>

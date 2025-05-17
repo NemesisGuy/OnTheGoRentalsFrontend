@@ -4,10 +4,12 @@
       <div class="alert-success">
         <div class="alert-success-header">
           <h1><i class="fas fa-check-circle"></i></h1>
-          <h2> Success</h2>
+          <h2>Success</h2>
         </div>
         <div class="alert-success-body">
-          <p>{{ message }}</p>
+          <!-- Conditionally render HTML or plain text -->
+          <div v-if="containsHTML" v-html="message"></div>
+          <p v-else>{{ message }}</p>
         </div>
         <div class="modal-actions">
           <button class="confirm-button button" @click="close">OK</button>
@@ -29,6 +31,13 @@ export default {
       required: true
     }
   },
+  computed: {
+    containsHTML() {
+      // Simple regex to detect HTML tags in message
+      const htmlTagRegex = /<\/?[a-z][\s\S]*>/i;
+      return htmlTagRegex.test(this.message);
+    }
+  },
   methods: {
     close() {
       this.$emit('close');
@@ -36,7 +45,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-
-</style>

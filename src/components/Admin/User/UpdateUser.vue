@@ -4,7 +4,7 @@
       <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"></LoadingModal>
       <form @submit.prevent="updateUser">
         <h2 class="form-header">Update User</h2>
-        <h3 class="form-subheader">User ID: {{user.id }}</h3>
+        <h3 class="form-subheader">User ID: {{ user.id }}</h3>
 
         <div class="form-group">
           <label for="firstName">First Name:</label>
@@ -18,7 +18,7 @@
           <label for="email">Email:</label>
           <input id="email" v-model="user.email" placeholder="Enter email" required type="email">
         </div>
-<!--password-->
+        <!--password-->
         <div class="form-group">
           <label for="password">Password:</label>
           <input id="password" v-model="user.password" placeholder="Enter password" required type="password">
@@ -97,7 +97,7 @@ export default {
         lastName: "",
         email: "",
         password: "",
-        roles: [{ roleName: "USER" }], // Updated to match the backend structure
+        roles: [{roleName: "USER"}], // Updated to match the backend structure
       },
       loading: false, // Add this line to define the loading state
       loadingModal: {
@@ -125,11 +125,7 @@ export default {
       // Send the user data to the backend API or perform any other necessary actions
       const token = localStorage.getItem('token');
       api
-          .put(`/api/admin/users/update/${this.user.id}`, this.user, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .put(`/api/admin/users/update/${this.user.id}`, this.user)
           .then((response) => {
             // Handle success
             console.log(response);
@@ -157,13 +153,9 @@ export default {
       const userId = this.$route.params.id; // Get the user ID from the route parameter
       const token = localStorage.getItem('token');
       api
-          .get(`/api/admin/users/read/${userId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .get(`/api/admin/users/read/${userId}`)
           .then((response) => {
-           // this.user = response.data;
+            // this.user = response.data;
             const userData = response.data;//get all data
             this.user.id = userData.id;//filter data per field
             this.user.firstName = userData.firstName;

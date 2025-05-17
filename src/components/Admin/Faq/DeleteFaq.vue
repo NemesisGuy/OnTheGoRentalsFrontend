@@ -1,27 +1,27 @@
 <template>
-<!--  <div class="content-container">-->
-<!--    <div class="card-container">-->
-<!--      <h1>List of FAQs</h1>-->
-<!--      <table>-->
-<!--        <thead>-->
-<!--        <tr>-->
-<!--          <th @click="sortFaqs('id')">ID</th>-->
-<!--          <th @click="sortFaqs('question')">Question</th>-->
-<!--          <th @click="sortFaqs('answer')">Answer</th>-->
-<!--          <th>Delete</th>-->
-<!--        </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--        <tr v-for="faq in sortedFaqs" :key="faq.id">-->
-<!--          <td>{{ faq.id }}</td>-->
-<!--          <td>{{ faq.question }}</td>-->
-<!--          <td>{{ faq.answer }}</td>-->
-<!--          <td><button @click="deleteFaq(faq.id)">Delete</button></td>-->
-<!--        </tr>-->
-<!--        </tbody>-->
-<!--      </table>-->
-<!--    </div>-->
-<!--  </div>-->
+  <!--  <div class="content-container">-->
+  <!--    <div class="card-container">-->
+  <!--      <h1>List of FAQs</h1>-->
+  <!--      <table>-->
+  <!--        <thead>-->
+  <!--        <tr>-->
+  <!--          <th @click="sortFaqs('id')">ID</th>-->
+  <!--          <th @click="sortFaqs('question')">Question</th>-->
+  <!--          <th @click="sortFaqs('answer')">Answer</th>-->
+  <!--          <th>Delete</th>-->
+  <!--        </tr>-->
+  <!--        </thead>-->
+  <!--        <tbody>-->
+  <!--        <tr v-for="faq in sortedFaqs" :key="faq.id">-->
+  <!--          <td>{{ faq.id }}</td>-->
+  <!--          <td>{{ faq.question }}</td>-->
+  <!--          <td>{{ faq.answer }}</td>-->
+  <!--          <td><button @click="deleteFaq(faq.id)">Delete</button></td>-->
+  <!--        </tr>-->
+  <!--        </tbody>-->
+  <!--      </table>-->
+  <!--    </div>-->
+  <!--  </div>-->
 </template>
 
 <script>

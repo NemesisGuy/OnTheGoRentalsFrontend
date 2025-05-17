@@ -18,15 +18,16 @@
       <h2 class="content-header display-4">Our Services</h2>
       <div class="row">
         <div class="col-md-4">
-          <div class="card mb-4 shadow-lg home-card card" >
+          <div class="card mb-4 shadow-lg home-card card">
             <div class="card-body box-shadow">
               <h3 class="card-title content-header"><i class="fas fa-car-side"></i> Economy Cars</h3>
               <p class="card-text">Affordable cars for your everyday needs.</p>
               <p class="card-text mt-2">Starting at <!--{{ currencyData.currencySymbol }}-->550.00/day</p>
               <div class="justify-content-between align-items-center">
                 <!-- Link to view available economy cars -->
-                <div class="button-container button-container-margin" >
-                  <router-link :to="{ name: 'CarList', params: { category: 'economy', available: true } }" class="custom-button">
+                <div class="button-container button-container-margin">
+                  <router-link :to="{ name: 'CarList', params: { category: 'economy', available: true } }"
+                               class="custom-button">
                     <i class="fas fa-info-circle"></i> View
                   </router-link>
                 </div>
@@ -82,11 +83,11 @@
 
 export default {
   name: 'Home',
- /* props: ['currencyData'],*/
+  /* props: ['currencyData'],*/
   mounted() {
-   // console.log("Current token:  " + store.state.token); // Output the value of the token
+    // console.log("Current token:  " + store.state.token); // Output the value of the token
 
-   // console.log("Currency Symbol : " + currencySymbol.value); // Output the value of the currency symbol
+    // console.log("Currency Symbol : " + currencySymbol.value); // Output the value of the currency symbol
 
   }
 

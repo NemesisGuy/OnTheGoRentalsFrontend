@@ -1,18 +1,20 @@
 <template>
   <loading-modal v-if="loadingModal" show/>
-  <div class ="card-container">
+  <div class="card-container">
     <div class="form-container" @submit.prevent="register">
       <form>
-        <h2 class="form-header"> <i class="fas fa-user-plus"></i> Signup</h2>
+        <h2 class="form-header"><i class="fas fa-user-plus"></i> Signup</h2>
 
 
         <div class="form-group">
           <label for="first-name"><i class="fas fa-user"></i> First Name:</label>
-          <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" v-model="firstName" required>
+          <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" v-model="firstName"
+                 required>
         </div>
         <div class="form-group">
           <label for="last-name"><i class="fas fa-user"></i> Last Name:</label>
-          <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" v-model="lastName" required>
+          <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" v-model="lastName"
+                 required>
         </div>
 
         <div class="form-group">
@@ -21,23 +23,25 @@
         </div>
         <div class="form-group">
           <label for="password"><i class="fas fa-lock"></i> Password:</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" v-model="password" required>
+          <input type="password" id="password" name="password" placeholder="Enter your password" v-model="password"
+                 required>
         </div>
         <div class="form-group">
           <label for="confirm-password"><i class="fas fa-lock"></i> Confirm Password:</label>
-          <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+          <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password"
+                 required>
         </div>
-       <div class="button-container">
-        <button class="add-button button"   type="submit" ><i class="fas fa-user-plus"></i> Signup</button>
-        <button class="read-button button" @click="goToLogin"><i class="fas fa-sign-in-alt"></i> Login</button>
-       </div>
+        <div class="button-container">
+          <button class="add-button button" type="submit"><i class="fas fa-user-plus"></i> Signup</button>
+          <button class="read-button button" @click="goToLogin"><i class="fas fa-sign-in-alt"></i> Login</button>
+        </div>
       </form>
     </div>
   </div>
 
   <div class="modal-body">
-    <success-modal :show="successModal.show" @close="closeModal" :message="successModal.message" />
-    <failure-modal :show="failureModal.show" @close="closeModal" :message="failureModal.message" />
+    <success-modal :show="successModal.show" @close="closeModal" :message="successModal.message"/>
+    <failure-modal :show="failureModal.show" @close="closeModal" :message="failureModal.message"/>
   </div>
 
 </template>
@@ -53,8 +57,7 @@ import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import api from "@/api";
 
 export default {
-  computed: {
-  },
+  computed: {},
   components: {
     LoadingModal,
     SuccessModal,
@@ -73,15 +76,15 @@ export default {
       failureMessage: "",
       errorMessage: '',
       loadingModal: false,
-      successModal: {show:false, message: ""},
-      failureModal: {show:false, message: ""},
-      confirmationModal: {show:false, message: ""},
+      successModal: {show: false, message: ""},
+      failureModal: {show: false, message: ""},
+      confirmationModal: {show: false, message: ""},
 
     };
   },
   methods: {
     register() {
-      this.loadingModal= true;
+      this.loadingModal = true;
       api
           .post("/api/user/register", {
 
@@ -100,21 +103,21 @@ export default {
 
             const token = response.data.accessToken; // Assuming response.data contains the token
             // Save the token to the store
-           /* store.commit('setToken', token);//vuex*/
+            /* store.commit('setToken', token);//vuex*/
             console.log("Response token:  " + token); // Output the value of the token
             // console.log("Current stored token:  " +store.state.token); // Output the value of the token
             // Assuming you have received and stored the token in response.data.accessToken
             localStorage.setItem('token', response.data.accessToken);
             this.successModal.message = "Registration successful";
             this.successModal.show = true;
-        //  localStorage.setItem('token', null);//this will log the users out
+            //  localStorage.setItem('token', null);//this will log the users out
             //implement as button to nav or profile from to loge the user out
 
-           this.$router.push( {name : "Home"} );//redirects to home page
+            this.$router.push({name: "Home"});//redirects to home page
           })
           .catch(error => {
             // Handle error
-            this.loadingModal= false;
+            this.loadingModal = false;
             console.log("An error occurred: registration failed");
             console.log(error);
             this.successModal.show = false;

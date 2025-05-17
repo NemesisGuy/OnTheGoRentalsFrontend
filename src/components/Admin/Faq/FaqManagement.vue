@@ -27,7 +27,7 @@
         <th class="actions-column">Actions</th>
       </tr>
       </thead>
-      <tbody>
+      <tbody v-if="!loading">
       <tr v-for="faq in filteredFaqs" :key="faq.id">
         <td v-if="!faq.editing">{{ faq.id }}</td>
         <td v-else>
@@ -83,6 +83,9 @@
       </tr>
       </tbody>
     </table>
+    <div v-if="loading" class="loading">Loading...</div>
+    <loading-modal v-if="loading" show></loading-modal>
+
   </div>
 </template>
 
@@ -142,11 +145,7 @@ export default {
       this.loading = true;
       const token = localStorage.getItem('token');
       api
-          .get("/api/admin/faq/get-all", {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .get("/api/admin/faq/get-all")
           .then((response) => {
             this.faqs = response.data;
             this.sortedFaqs = response.data;
@@ -180,11 +179,7 @@ export default {
       const faqId = id;
       const token = localStorage.getItem("token");
       api
-          .delete(`/api/admin/faq/delete/${faqId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .delete(`/api/admin/faq/delete/${faqId}`)
           .then(() => {
             this.fetchFaqs();
           })
@@ -202,11 +197,7 @@ export default {
     saveFaq(faq) {
       const token = localStorage.getItem('token');
       api
-          .put(`/api/admin/faq/update/${faq.id}`, faq, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .put(`/api/admin/faq/update/${faq.id}`, faq)
           .then(() => {
             this.showSuccessModal("FAQ updated successfully");
             faq.editing = false;

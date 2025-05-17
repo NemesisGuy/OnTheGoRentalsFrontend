@@ -1,5 +1,5 @@
 <template>
-  <div class="card-container">
+  <div class="card-container card-container-admin">
     <div class="form-container">
       <div class="rental-profile">
         <h1>FAQ Profile</h1>
@@ -35,7 +35,6 @@
         <button @click="goBack" class="back-button button "><i class="fas fa-arrow-left"></i> Back</button>
       </div>
     </div>
-
 
 
   </div>

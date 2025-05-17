@@ -105,7 +105,7 @@ export default {
         priceGroup: PriceGroup.LUXURY,
         licensePlate: '000000'
       },
-      errorMessage: '' ,// Added error message data property
+      errorMessage: '',// Added error message data property
       successModal: {
         show: false,
         message: ""
@@ -128,11 +128,7 @@ export default {
       const token = localStorage.getItem('token');
 
       api.post('/api/admin/cars/create', this.car
-          , {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          )
           .then(response => {
             // Handle success
             console.log('Car added successfully');

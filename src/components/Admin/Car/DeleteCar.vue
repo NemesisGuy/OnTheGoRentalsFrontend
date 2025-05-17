@@ -24,7 +24,9 @@
           <td>{{ car.category }}</td>
           <td>{{ car.priceGroup }}</td>
           <td>{{ car.licensePlate }}</td>
-          <td><button @click="deleteCar(car.id)">Delete</button></td>
+          <td>
+            <button @click="deleteCar(car.id)">Delete</button>
+          </td>
         </tr>
         </tbody>
       </table>
@@ -71,11 +73,7 @@ export default {
       const category = 'all';
       const token = localStorage.getItem('token');
       api
-          .get(`/api/cars/${category}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .get(`/api/cars/${category}`)
           .then((response) => {
             this.cars = response.data;
             this.category = category;
@@ -96,11 +94,7 @@ export default {
       const token = localStorage.getItem('token');
       axios
           .delete(`api/admin/cars/delete/${carId}`
-              , {
-                headers: {
-                  Authorization: `Bearer ${token}`
-                }
-              })
+              )
           .then((response) => {
             this.fetchCars();
             console.log(response);

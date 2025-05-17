@@ -1,28 +1,28 @@
 <template>
   <div class="card-container card-container-admin">
     <div class="form-container-admin">
-    <form @submit.prevent="addDriver">
-      <h2 class="form-header">Add Driver</h2>
+      <form @submit.prevent="addDriver">
+        <h2 class="form-header">Add Driver</h2>
 
 
-      <div class="form-group">
+        <div class="form-group">
 
-        <label for="firstname">Firstname:</label>
-        <input type="text" id="firstname" v-model="driver.firstName" required placeholder="Enter Firstname">
-      </div>
-      <div class="form-group">
-        <label for="lastname">Lastname:</label>
-        <input type="text" id="lastname" v-model="driver.lastName" required placeholder="Enter Lastname">
-      </div>
-      <div class="form-group">
-        <label for="licenseCode">License Code:</label>
-        <input type="text" id="licenseCode" v-model="driver.licenseCode" required placeholder="Enter license code">
-      </div>
-      <div class="button-container">
-      <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Add</button>
-      </div>
-    </form>
-  </div>
+          <label for="firstname">Firstname:</label>
+          <input type="text" id="firstname" v-model="driver.firstName" required placeholder="Enter Firstname">
+        </div>
+        <div class="form-group">
+          <label for="lastname">Lastname:</label>
+          <input type="text" id="lastname" v-model="driver.lastName" required placeholder="Enter Lastname">
+        </div>
+        <div class="form-group">
+          <label for="licenseCode">License Code:</label>
+          <input type="text" id="licenseCode" v-model="driver.licenseCode" required placeholder="Enter license code">
+        </div>
+        <div class="button-container">
+          <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Add</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -47,12 +47,12 @@ export default {
       console.log("Adding driver:", this.driver);
 
       api
-          .post('/api/admin/drivers/create', this.driver,{
-        headers: {
-          Authorization: `Bearer ${token}`,
+          .post('/api/admin/drivers/create', this.driver, {
+            headers: {
+              Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',
-        },
-      })
+            },
+          })
           .then((response) => {
             console.log(response);
           })
@@ -61,7 +61,6 @@ export default {
           });
 
       console.log("Adding driver:", this.driver);
-
 
 
       this.resetForm();

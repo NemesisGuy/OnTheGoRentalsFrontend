@@ -1,9 +1,9 @@
 <template>
-    <div>
-        <h1>Sales Items</h1>
-        <h2>Nothing to see here...</h2>
+  <div>
+    <h1>Sales Items</h1>
+    <h2>Nothing to see here...</h2>
 
-    </div>
+  </div>
 </template>
 <script setup>
 </script>

@@ -22,9 +22,9 @@
       <thead>
       <tr>
         <th @click="sortBookings('bookingId')">Booking ID <i class="fas fa-sort"></i></th>
-        <th @click="sortBookings('user.userName')">User <i class="fas fa-sort"></i></th>
-        <th @click="sortBookings('user.firstName')">First Name <i class="fas fa-sort"></i></th>
-        <th @click="sortBookings('user.lastName')">Last Name <i class="fas fa-sort"></i></th>
+<!--        <th @click="sortBookings('user.userName')">User <i class="fas fa-sort"></i></th>-->
+        <th @click="sortBookings('user.firstName')">User First Name <i class="fas fa-sort"></i></th>
+        <th @click="sortBookings('user.lastName')">User Last Name <i class="fas fa-sort"></i></th>
         <th @click="sortBookings('car.make')">Car Make <i class="fas fa-sort"></i></th>
         <th @click="sortBookings('car.model')">Car Model <i class="fas fa-sort"></i></th>
         <th @click="sortBookings('dateBooked')">Date Booked</th>
@@ -38,10 +38,10 @@
         <td v-else>
           <input v-model="booking.id" type="text">
         </td>
-        <td v-if="!booking.editing">{{ booking.user.userName }}</td>
-        <td v-else>
-          <input v-model="booking.user.userName" type="text">
-        </td>
+<!--        <td v-if="!booking.editing">{{ booking.user.userName }}</td>-->
+<!--        <td v-else>-->
+<!--          <input v-model="booking.user.userName" type="text">-->
+<!--        </td>-->
         <td v-if="!booking.editing">{{ booking.user.firstName }}</td>
         <td v-else>
           <input v-model="booking.user.firstName" type="text">
@@ -59,11 +59,11 @@
         <td v-else>
           <input v-model="booking.car.model" type="text">
         </td>
-        <td v-if="!booking.editing">{{ booking.bookingStartDate }}</td>
+        <td v-if="!booking.editing">{{formatDateTime( booking.bookingStartDate) }}</td>
         <td v-else>
           <input v-model="booking.bookingStartDate" type="text">
         </td>
-        <td v-if="!booking.editing">{{ booking.bookingEndDate }}</td>
+        <td v-if="!booking.editing">{{ formatDateTime(booking.bookingEndDate) }}</td>
         <td v-else>
           <input v-model="booking.bookingEndDate" type="text">
         </td>
@@ -110,7 +110,8 @@
         </div>
       </template>
     </confirmation-modal>
-    <SuccessModal v-if="successModal.show" :message="successModal.message" :show="successModal.show" @cancel="closeModal"
+    <SuccessModal v-if="successModal.show" :message="successModal.message" :show="successModal.show"
+                  @cancel="closeModal"
                   @close="closeModal"></SuccessModal>
     <FailureModal v-if="failModal.show" :message="failModal.message" :show="failModal.show" @cancel="closeModal"
                   @close="closeModal"></FailureModal>
@@ -123,7 +124,9 @@ import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
-import api from "@/api.js";
+import api from "/src/api";
+import { formatDateTime } from '@/utils/dateUtils.js'
+
 // Add an interceptor for every request
 axios.interceptors.request.use(
     config => {
@@ -152,12 +155,12 @@ export default {
     return {
       bookings: [],
       user: {
-        id:"", // Get the ID from the route params
+        id: "", // Get the ID from the route params
         firstName: "",
         lastName: "",
         email: "",
         password: "",
-        roles: [{ roleName: "USER" }], // Updated to match the backend structure
+        roles: [{roleName: "USER"}], // Updated to match the backend structure
       },
       sortedBookingsList: [],
       sortBy: null,
@@ -176,6 +179,7 @@ export default {
     };
   },
   methods: {
+    formatDateTime,
     getBookings() {
       this.loading = true;
       api

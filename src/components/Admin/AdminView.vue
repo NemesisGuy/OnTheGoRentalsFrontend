@@ -100,11 +100,6 @@ export default {
 }
 
 
-
-
-
-
-
 .blur-button {
   /* Basic button styles */
   padding: 10px 20px;

@@ -56,7 +56,7 @@ export default {
         question: '',
         answer: ''
       },
-      errorMessage: '' ,
+      errorMessage: '',
       successModal: {
         show: false,
         message: ""
@@ -77,7 +77,7 @@ export default {
 
       this.errorMessage = '';
       api.post('/api/admin/faq/create', this.faq, {
-        headers:{
+        headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })

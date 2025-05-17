@@ -91,8 +91,8 @@
           <p>Receiver ID: {{ selectedReceiver }}</p>
           <p>Car ID: {{ selectedCar }}</p>
           <p>Fine: {{ fine }}</p>
-          <p>Issued Date: {{ selectedIssuedDate }}</p>
-          <p>Returned Date: {{ selectedReturnedDate }}</p>
+          <p>Issued Date: {{ formatDateTime(selectedIssuedDate) }}</p>
+          <p>Returned Date: {{ formatDateTime(selectedReturnedDate) }}</p>
           <hr>
           <p><b>Warning!!!</b> This action cannot be undone.</p>
 
@@ -134,6 +134,7 @@ import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import api from "@/api";
+import {formatDateTime} from "@/utils/dateUtils";
 // Define your headers
 // Add this line to set a default base URL for your API
 // axios.defaults.baseURL = 'http://localhost:8080';
@@ -199,16 +200,14 @@ export default {
     this.fetchCarsList();
   },
   methods: {
+    formatDateTime,
+
     fetchUsersList() {
       this.loadingModal.show = true;
       const token = localStorage.getItem('token');
       api
           .get('/api/admin/users/list/all'
-              , {
-                headers: {
-                  Authorization: `Bearer ${token}`
-                }
-              })
+          )
           .then(response => {
             this.users = response.data;
             this.loadingModal.show = false;
@@ -229,11 +228,7 @@ export default {
       this.loadingModal.show = true;
       const token = localStorage.getItem('token');
       api
-          .get('/api/admin/cars/all', {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .get('/api/admin/cars/all')
           .then(response => {
             this.cars = response.data;
             this.loadingModal.show = false;
@@ -277,11 +272,7 @@ export default {
       // Fetch user details
       const token = localStorage.getItem('token');
       api
-          .get(`/api/admin/users/read/${this.selectedUser}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
+          .get(`/api/admin/users/read/${this.selectedUser}`)
           .then(response => {
             const userData = response.data;
             rental.user.id = userData.id;
@@ -295,11 +286,7 @@ export default {
 
             // Fetch car details
             api
-                .get(`/api/admin/cars/read/${this.selectedCar}`, {
-                  headers: {
-                    Authorization: `Bearer ${token}`
-                  }
-                })
+                .get(`/api/admin/cars/read/${this.selectedCar}`)
                 .then(response => {
                   rental.car = response.data;
 
@@ -312,25 +299,24 @@ export default {
                     this.showConfirmationModal = false;
 
                     // Make the POST request to create the rental
-                  /*  console.log(rental.userObject);*/
+                    /*  console.log(rental.userObject);*/
                     api
-                        .post('/api/admin/rentals/create', rental, {
-                          headers: {
-                            Authorization: `Bearer ${token}`
-                          }
-                        })
+                        .post('/api/admin/rentals/create', rental)
                         .then(response => {
                           console.log('Rental created successfully');
                           this.loadingModal.show = false;
 
-                          this.successModal.message = "Rental created successfully: " + "\n" +
-                              "User: " + response.data.user.firstName + " " + response.data.user.lastName + "." + "\n" +
-                              "Car: " + response.data.car.make + " " + response.data.car.model + "." + "\n" +
-                              +"Issuer: " + response.data.issuer + "." + "\n" +
-                              +"Receiver: " + response.data.receiver + "." + "\n" +
-                              +"Fine: " + response.data.fine + "." + "\n" +
-                              +"Issued Date: " + response.data.issuedDate + "." + "\n" +
-                              +"Returned Date: " + response.data.returnedDate + "." + "\n";
+                          this.successModal.message = `
+                            <p>Rental created successfully:</p>
+                            <p>User: ${response.data.user.firstName} ${response.data.user.lastName}.</p>
+                            <p>Car: ${response.data.car.make} ${response.data.car.model}.</p>
+                            <p>Issuer: ${response.data.issuer}.</p>
+                            <p>Receiver: ${response.data.receiver}.</p>
+                            <p>Fine: ${response.data.fine}.</p>
+                            <p>Issued Date: ${formatDateTime(response.data.issuedDate)}.</p>
+                            <p>Returned Date: ${formatDateTime(response.data.returnedDate)}.</p>
+`;
+
                           this.successModal.show = true;
 
                           // Reset the form after creating the rental

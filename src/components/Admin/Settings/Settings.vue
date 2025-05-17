@@ -1,4 +1,4 @@
-<template ></template>
+<template></template>
 <!--
 <template>
   <div class="card-container card-container-admin">
@@ -60,22 +60,14 @@ const submitForm = async () => {
 
   // Send a request to update the currency
   const token = localStorage.getItem('token');
-  await api.put('/api/admin/settings/update', data, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+  await api.put('/api/admin/settings/update', data);
 };
 
 
 onMounted(async () => {
   // Fetch current settings data
   const token = localStorage.getItem('token');
-  const response = await api.get('/api/admin/settings/read', {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+  const response = await api.get('/api/admin/settings/read');
   //id.value = response.data.id;
   id.value = response.data.id;
   currencyName.value = response.data.currencyName;

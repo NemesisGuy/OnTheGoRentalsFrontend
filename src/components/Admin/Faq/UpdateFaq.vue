@@ -1,40 +1,40 @@
 <template>
-<!--  <div class="content-container">-->
-<!--    <div class="card-container">-->
-<!--      <h1>Update FAQs</h1>-->
-<!--      <h2>List of {{ category }} FAQs</h2>-->
-<!--      <table>-->
-<!--        <thead>-->
-<!--        <tr>-->
-<!--          <th @click="sortFaqs('id')">ID</th>-->
-<!--          <th @click="sortFaqs('question')">Question</th>-->
-<!--          <th @click="sortFaqs('answer')">Answer</th>-->
-<!--          <th>Edit</th>-->
-<!--          <th>Delete</th>-->
-<!--        </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--        <tr v-for="faq in sortedFaqs" :key="faq.id">-->
-<!--          <td>{{ faq.id }}</td>-->
-<!--          <td>-->
-<!--            <input v-model="faq.question" :disabled="!faq.editMode" />-->
-<!--          </td>-->
-<!--          <td>-->
-<!--            <input v-model="faq.answer" :disabled="!faq.editMode" />-->
-<!--          </td>-->
-<!--          <td>-->
-<!--            <button @click="toggleEditMode(faq)">-->
-<!--              {{ faq.editMode ? 'Save' : 'Edit' }}-->
-<!--            </button>-->
-<!--          </td>-->
-<!--          <td>-->
-<!--            <button @click="deleteFaq(faq.id)">Delete</button>-->
-<!--          </td>-->
-<!--        </tr>-->
-<!--        </tbody>-->
-<!--      </table>-->
-<!--    </div>-->
-<!--  </div>-->
+  <!--  <div class="content-container">-->
+  <!--    <div class="card-container">-->
+  <!--      <h1>Update FAQs</h1>-->
+  <!--      <h2>List of {{ category }} FAQs</h2>-->
+  <!--      <table>-->
+  <!--        <thead>-->
+  <!--        <tr>-->
+  <!--          <th @click="sortFaqs('id')">ID</th>-->
+  <!--          <th @click="sortFaqs('question')">Question</th>-->
+  <!--          <th @click="sortFaqs('answer')">Answer</th>-->
+  <!--          <th>Edit</th>-->
+  <!--          <th>Delete</th>-->
+  <!--        </tr>-->
+  <!--        </thead>-->
+  <!--        <tbody>-->
+  <!--        <tr v-for="faq in sortedFaqs" :key="faq.id">-->
+  <!--          <td>{{ faq.id }}</td>-->
+  <!--          <td>-->
+  <!--            <input v-model="faq.question" :disabled="!faq.editMode" />-->
+  <!--          </td>-->
+  <!--          <td>-->
+  <!--            <input v-model="faq.answer" :disabled="!faq.editMode" />-->
+  <!--          </td>-->
+  <!--          <td>-->
+  <!--            <button @click="toggleEditMode(faq)">-->
+  <!--              {{ faq.editMode ? 'Save' : 'Edit' }}-->
+  <!--            </button>-->
+  <!--          </td>-->
+  <!--          <td>-->
+  <!--            <button @click="deleteFaq(faq.id)">Delete</button>-->
+  <!--          </td>-->
+  <!--        </tr>-->
+  <!--        </tbody>-->
+  <!--      </table>-->
+  <!--    </div>-->
+  <!--  </div>-->
 </template>
 
 <script>

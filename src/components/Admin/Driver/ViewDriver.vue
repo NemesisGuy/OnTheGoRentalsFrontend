@@ -1,27 +1,30 @@
 <template>
-  <div class="driver-profile">
-    <h1>Driver Profile</h1>
-    <div v-if="driver" class="profile-details">
-      <div>
-        <label>First Name:</label>
-        <span>{{ driver.firstName }}</span>
+  <div class="card-container card-container-admin">
+    <div class="form-container">
+      <div class="driver-profile">
+        <h1>Driver Profile</h1>
+        <div v-if="driver" class="profile-details">
+          <div>
+            <label>First Name:</label>
+            <span>{{ driver.firstName }}</span>
+          </div>
+          <div>
+            <label>Last Name:</label>
+            <span>{{ driver.lastName }}</span>
+          </div>
+          <div>
+            <label>License Code:</label>
+            <span>{{ driver.licenseCode }}</span>
+          </div>
+        </div>
+        <div v-else>
+          <loading-modal v-if="loading"/>
+          <p>Loading driver profile...</p>
+        </div>
       </div>
-      <div>
-        <label>Last Name:</label>
-        <span>{{ driver.lastName }}</span>
-      </div>
-      <div>
-        <label>License Code:</label>
-        <span>{{ driver.licenseCode }}</span>
-      </div>
-    </div>
-    <div v-else>
-      <loading-modal v-if="loading" />
-      <p>Loading driver profile...</p>
     </div>
   </div>
 </template>
-
 
 
 <script>
@@ -47,7 +50,7 @@ export default {
       const id = this.$route.params.id;
       const token = localStorage.getItem('token');
       api
-          .get(`/api/admin/drivers/read/${id}`,{
+          .get(`/api/admin/drivers/read/${id}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

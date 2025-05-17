@@ -80,6 +80,31 @@ html, body, #app {
     box-shadow: var(--box-shadow-color) 0px 0px 2px 0px;
 }
 
+/* Wide Card Styles & Wide Form Styles */
+.card-container-wide{
+    margin: 20px;
+    display: flex;
+    align-items: center;
+    color: black;
+    padding: 20px;
+    background-color: var(--secondary-color);
+    box-shadow: var(--box-shadow-color) 0px 0px 5px 0px;
+}
+.card-container-admin-wide {
+    max-width: 90%;
+    margin: 20px auto;
+    box-shadow: var(--box-shadow-color) 0px 0px 2px 0px;
+}
+.form-container-wide{
+    width: 100%;
+    padding: 30px;
+    border-radius: 4px;
+    box-shadow: var(--box-shadow-color) 0px 0px 5px 0px;
+    margin: 0 auto;
+    background-color: var(--background-color);
+}
+
+
 /* Form Styles */
 .form-container,
 .form-container-admin {
@@ -173,7 +198,9 @@ select {
 }
 
 .button-container button {
+    /*
     margin: 10px;
+    */
 }
 
 .button:hover,
@@ -1124,9 +1151,9 @@ span {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 80%;
+    width: 100%;
     height: 80%;
-    margin: 2rem;
+    margin: 10px;
 }
 
 .admin-area {
@@ -1689,6 +1716,18 @@ span {
     justify-content: center;
     margin-top: 15px;
 }
+/*charts*/
+.charts-container, .charts-container-admin {
+    width: 100%;
+    padding: 30px;
+    border-radius: 4px;
+    box-shadow: var(--box-shadow-color) 0 0 5px 0;
+}
+
+
+
+
+
 
 /* Media Queries for Responsive Layout */
 @media (max-width: 768px) {

@@ -1,24 +1,24 @@
 <template>
-    <div class= "card-container">
-        <div class="form-container" @submit.prevent="about">
-            <div>
-                <div class="form-header">
-                    <h2> About Us</h2>
-                </div>
-                <hr>
-                <div class="profile-info" v-if="about">
-                    <p><strong><i class="fa fa-map-marker"></i> Address:</strong> {{ about.address }}</p>
-                    <p><strong><i class="fa fa-calendar"></i> Office Hours:</strong> {{ about.officeHours }}</p>
-                    <p><strong><i class="fas fa-envelope"></i> Email:</strong> {{ about.email }}</p>
-                    <p><strong><i class="fas fa-phone"></i> Telephone Number:</strong> {{ about.telephone }}</p>
-                    <p><strong><i class="fa fa-mobile" aria-hidden="true"></i> WhatsApp Number:</strong> {{ about.whatsApp }}</p>
-                </div>
-                <div v-else>
-                    Loading...
-                </div>
+  <div class="card-container">
+    <div class="form-container" @submit.prevent="about">
+      <div>
+        <div class="form-header">
+          <h2> About Us</h2>
         </div>
+        <hr>
+        <div class="profile-info" v-if="about">
+          <p><strong><i class="fa fa-map-marker"></i> Address:</strong> {{ about.address }}</p>
+          <p><strong><i class="fa fa-calendar"></i> Office Hours:</strong> {{ about.officeHours }}</p>
+          <p><strong><i class="fas fa-envelope"></i> Email:</strong> {{ about.email }}</p>
+          <p><strong><i class="fas fa-phone"></i> Telephone Number:</strong> {{ about.telephone }}</p>
+          <p><strong><i class="fa fa-mobile" aria-hidden="true"></i> WhatsApp Number:</strong> {{ about.whatsApp }}</p>
         </div>
+        <div v-else>
+          Loading...
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 

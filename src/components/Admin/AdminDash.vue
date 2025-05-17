@@ -4,33 +4,42 @@ import RentalChart from './Charts/RentalChart.vue'
 import CarUseChart from './Charts/CarUseChart.vue'
 import PieChart from './Charts/PieChart.vue'
 import RentalDurations from "@/components/Admin/Charts/RentalDurations.vue";
+import CarPopularityChart from "@/components/Admin/Charts/CarUseChart.vue";
 </script>
 
 <template>
-  <div class="content-container">
-    <div>
-      <h1>Admin Dash</h1>
-    </div>
+  <div class="card-container-wide card-container-admin-wide ">
+    <div class="form-container-wide">
+      <div class="form-header">
+        <h1><i class="fas fa-chart-bar"></i> Admin Dashboard</h1>
+      </div>
+      <hr>
 
-    <div class="graph-container">
-      <h1>Rentals Per Day</h1>
-      <RentalChart/>
-    </div>
+      <div class="graph-container">
+        <h2>Rentals Per Day</h2>
+        <RentalChart/>
 
-    <div class="graph-container">
-      <h1>Car Usage </h1>
-      <CarUseChart/>
-    </div>
-    <div class="graph-container">
-      <h1>Car Price Groups </h1>
-      <PieChart/>
-    </div>
-    <div class="graph-container">
-      <h1>Rental Durations </h1>
-      <RentalDurations/>
-    </div>
+      </div>
+      <hr>
 
+      <div class="graph-container">
+        <h2>Car Usage </h2>
+        <CarUseChart/>
+      </div>
+      <hr>
 
+      <div class="graph-container">
+        <h2>Car Price Groups Usage </h2>
+        <PieChart/>
+      </div>
+      <hr>
+
+      <div class="graph-container">
+        <h2>Rental Durations </h2>
+        <RentalDurations/>
+      </div>
+      <hr>
+    </div>
   </div>
 
 

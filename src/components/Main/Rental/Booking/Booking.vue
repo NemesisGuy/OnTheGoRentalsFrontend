@@ -47,7 +47,9 @@
   </div>
 
   <div class="modal-body">
+<!--
     <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+-->
 
     <confirmation-modal
         key="confirmationModal"
@@ -61,9 +63,9 @@
           <p>Are you sure you want to create this Booking?</p>
           <hr>
           <p>User: {{ `${currentUser.firstName} ${currentUser.lastName}, ${currentUser.email}` }}</p>
-          <p>Issued Date: {{ selectedIssuedDate }}</p>
-          <p>Returned Date: {{ selectedReturnedDate }}</p>
-          <p>Car ID: {{ selectedCar }}</p>
+          <p>Issued Date: {{ formatDateTime(selectedIssuedDate) }}</p>
+          <p>Returned Date: {{ formatDateTime(selectedReturnedDate) }}</p>
+          <p>Car ID: {{ selectedCar }} </p>
           <hr>
           <p><b>Warning!!!</b> This action cannot be undone.</p>
         </div>
@@ -93,15 +95,14 @@
 </template>
 
 
-
 <script>
-
 import axios from "axios";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import api from "@/api";
+import { formatDateTime } from "@/utils/dateUtils";
 
 export default {
   data() {
@@ -110,7 +111,7 @@ export default {
       selectedCar: "",
       selectedIssuedDate: "",
       selectedReturnedDate: "",
-      currentUser: {}, // Store the whole user object here
+      currentUser: {},
       confirm: null,
       cancel: null,
       loadingModal: {
@@ -135,46 +136,52 @@ export default {
     LoadingModal,
   },
 
- mounted() {
-   // Check if the JWT token exists in localStorage
-   const token = localStorage.getItem('token');
-   this.isLoggedIn = !!token; // Convert to a boolean
- },
-  created() {
-    // Check if the JWT token exists in localStorage
-    const token = localStorage.getItem('token');
-    this.isLoggedIn = !!token; // Convert to a boolean
+  mounted() {
+    const token = localStorage.getItem("accessToken");
+    this.isLoggedIn = !!token;
+  },
 
-    // If logged in, fetch user profile to get user data
+  created() {
+    const token = localStorage.getItem("accessToken");
+    this.isLoggedIn = !!token;
+
     if (this.isLoggedIn) {
       api
-          .get('/api/user/profile/read/profile', {
+          .get("/api/user/profile/read/profile", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           })
-          .then(response => {
-            this.currentUser = response.data; // Store the whole user object
+          .then((response) => {
+            this.currentUser = response.data;
             console.log("Current User:", this.currentUser);
           })
-          .catch(error => {
-            console.error('Error fetching user profile:', error);
+          .catch((error) => {
+            console.error("Error fetching user profile:", error);
             this.failModal.message = "Failed to fetch user profile";
             this.failModal.show = true;
           });
     }
 
-    this.fetchCarsList(); // Fetch the cars list
+    const routeCarId = this.$route.params.carId;
+    if (routeCarId) {
+      this.selectedCar = routeCarId;
+    }else {
+      this.selectedCar = "";
+    }
+
+    this.fetchCarsList();
   },
+
   methods: {
+    formatDateTime,
 
     fetchCarsList() {
-      // Check if the JWT token exists in localStorage
-      const token = localStorage.getItem('token');
-      this.isLoggedIn = !!token; // Convert to a boolean
+      const token = localStorage.getItem("accessToken");
+      this.isLoggedIn = !!token;
       this.loadingModal.show = true;
       api
-          .get("/api/cars/list/available/all",{
+          .get("/api/cars/list/available/all", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -191,16 +198,37 @@ export default {
           });
     },
 
+    validateInputs() {
+      if (!this.selectedIssuedDate || !this.selectedReturnedDate || !this.selectedCar) {
+        this.errorMessage = "All fields are required.";
+        return false;
+      }
+
+      const issue = new Date(this.selectedIssuedDate);
+      const returnDate = new Date(this.selectedReturnedDate);
+      if (returnDate <= issue) {
+        this.errorMessage = "Return date must be after the collection date.";
+        return false;
+      }
+
+      this.errorMessage = ""; // Clear error if valid
+      return true;
+    },
+
     createBooking() {
-      // Check if the JWT token exists in localStorage
-      const token = localStorage.getItem('token');
-      this.isLoggedIn = !!token; // Convert to a boolean
-      //this.loadingModal.show = true;
-      this.errorMessage = "";
+      const token = localStorage.getItem("accessToken");
+      this.isLoggedIn = !!token;
+
+      // Validate inputs before proceeding
+      if (!this.validateInputs()) {
+        this.failModal.message = this.errorMessage;
+        this.failModal.show = true;
+        return;
+      }
 
       const booking = {
         user: {
-          id: this.currentUser.id, // Automatically set to the current user
+          id: this.currentUser.id,
         },
         car: {
           id: this.selectedCar,
@@ -217,7 +245,7 @@ export default {
         this.showConfirmationModal = false;
 
         api
-            .post("/api/bookings/create", booking,{
+            .post("/api/bookings/create", booking, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -231,8 +259,8 @@ export default {
             .catch((error) => {
               this.loadingModal.show = false;
               console.log(error);
-
-              this.errorMessage = error.response.data;
+              this.errorMessage = error.response?.data || "Failed to create booking";
+              this.failModal.message = this.errorMessage;
               this.failModal.show = true;
             })
             .finally(() => {
@@ -253,6 +281,5 @@ export default {
     },
   },
 };
-
-
 </script>
+

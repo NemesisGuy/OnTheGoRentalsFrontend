@@ -12,11 +12,7 @@ export function fetchRentalsData() {
     rentalsDataPromise = new Promise(async (resolve, reject) => {
         try {
             const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-            const response = await api.get('/api/admin/rentals/list/all', { // Corrected API request
-                headers: {
-                    Authorization: `Bearer ${token}` // Add the token to the headers
-                }
-            });
+            const response = await api.get('/api/admin/rentals/list/all');
 
             const data = response.data; // axios directly returns the data in `response.data`
             resolve(data); // Resolve the promise with fetched data
@@ -35,11 +31,7 @@ export function fetchRentalsData() {
 export async function fetchRentalById(rentalId) {
     try {
         const token = localStorage.getItem('token');
-        const response = await api.get(`/api/admin/rentals/${rentalId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const response = await api.get(`/api/admin/rentals/${rentalId}`);
         return response.data; // Return the rental data
     } catch (error) {
         console.error('Error fetching rental by ID:', error);
@@ -50,11 +42,7 @@ export async function fetchRentalById(rentalId) {
 export async function createRental(rentalData) {
     try {
         const token = localStorage.getItem('token');
-        const response = await api.post('/api/admin/rentals/create', rentalData, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const response = await api.post('/api/admin/rentals/create', rentalData);
         return response.data; // Return the created rental data
     } catch (error) {
         console.error('Error creating rental:', error);

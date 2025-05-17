@@ -18,7 +18,8 @@
 
           <!-- Help dropdown -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle blur-button" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+            <a class="nav-link dropdown-toggle blur-button" href="#" id="navbarDropdown" role="button"
+               data-bs-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false">
               Help
             </a>
@@ -39,24 +40,30 @@
         </ul>
 
         <!-- User icon for logged-in users -->
+        <!-- Ensure this entire div is correctly positioned by your CSS if me-auto on ul is not enough -->
         <div class="nav-item dropdown" v-if="isLoggedIn">
-          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
+             aria-expanded="false">
             <i class="fas fa-user-circle" style="font-size: 1.5rem;"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
             <li>
+              <!-- Assuming /user/profile/profile is a generic link that works
+                   or you have a way to dynamically generate it if it needs an ID -->
               <router-link to="/user/profile/profile" class="dropdown-item">User Profile</router-link>
             </li>
             <li>
-              <router-link to="/Booking" class="dropdown-item">Bookings</router-link>
+              <router-link to="/booking/0" class="dropdown-item">Bookings</router-link>
             </li>
-            <li v-if="isAdmin">
+            <li v-if="isAdmin"> <!-- Conditional rendering for Admin Dashboard -->
+              <hr class="dropdown-divider" v-if="isAdmin"/> <!-- Divider only if admin link is shown -->
               <router-link to="/admin" class="dropdown-item">Admin Dashboard</router-link>
             </li>
             <li>
-              <router-link to="/signout" class="dropdown-item">Sign Out</router-link>
+              <hr class="dropdown-divider">
+              <!-- Changed to call a method for logout -->
+              <a href="#" @click.prevent="handleLogout" class="dropdown-item">Sign Out</a>
             </li>
-
           </ul>
         </div>
       </div>
@@ -65,44 +72,110 @@
 </template>
 
 <script>
-import axios from "axios";
-import { ref, watchEffect } from "vue";
-import api from "@/api";  // Import necessary functions from Vue 3
+import { ref, watchEffect, onMounted, onUnmounted } from "vue"; // Added onUnmounted
+import { useRouter } from 'vue-router';
+import api from "@/api";
+// api import is not strictly needed in this version of the navbar if logout doesn't call backend
+// but keep it if your handleLogout eventually does.
+// import api from "@/api";
 
 export default {
+  name: "Navbar", // Good practice to name components
   setup() {
+    const router = useRouter();
     const isLoggedIn = ref(false);
     const isAdmin = ref(false);
+    // Removed userEmail and userId refs as they are not directly used in your provided template
+    // If you decide to display user email or need ID for dynamic links, you can re-add them.
 
-    const checkLoginState = () => {
-      const token = localStorage.getItem('token');
-      isLoggedIn.value = !!token;
+    const updateAuthStatus = () => {
+      const accessToken = localStorage.getItem('accessToken');
+      isLoggedIn.value = !!accessToken; // True if accessToken exists, false otherwise
 
       if (isLoggedIn.value) {
-        // Fetch user profile to get roles
-        api
-            .get('/api/user/profile/read/profile', {
-              headers: {
-                Authorization: `Bearer ${token}`
+        try {
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            const userData = JSON.parse(storedUser);
+            const roles = userData.roles || []; // Default to empty array if not present
+
+            // Corrected isAdmin check
+            isAdmin.value = roles.some(role => {
+              // Check if roles are stored as simple strings or as objects with a roleName property
+              if (typeof role === 'string') {
+                return role === 'ADMIN' || role === 'SUPERADMIN';
+              } else if (typeof role === 'object' && role !== null && role.roleName) {
+                return role.roleName === 'ADMIN' || role.roleName === 'SUPERADMIN';
               }
-            })
-            .then(response => {
-              const roles = response.data.roles || [];
-            isAdmin.value = roles.some(role => role.roleName === 'ADMIN' || role.roleName === 'SUPERADMIN');
-            })
-            .catch(error => {
-              console.error('Error fetching user role:', error);
+              return false;
             });
+          } else {
+            // If no 'user' object in localStorage, assume not admin
+            isAdmin.value = false;
+          }
+        } catch (e) {
+          console.error("Error parsing user data from localStorage for Navbar:", e);
+          // If parsing fails, treat as not logged in or non-admin for safety
+          isLoggedIn.value = false;
+          isAdmin.value = false;
+        }
+      } else {
+        // If not logged in, not an admin
+        isAdmin.value = false;
       }
+      // console.log(`Navbar auth status updated: isLoggedIn=${isLoggedIn.value}, isAdmin=${isAdmin.value}`);
     };
 
-    watchEffect(() => {
-      // This will automatically re-run when `localStorage` is updated
-      checkLoginState();
+    // Call on mount
+    onMounted(() => {
+      updateAuthStatus();
+      // Listen for a custom event that might be dispatched after login/logout from other components
+      window.addEventListener('auth-change', updateAuthStatus);
     });
 
-    return { isLoggedIn, isAdmin };
-  }
+    // Clean up event listener when component is unmounted
+    onUnmounted(() => {
+      window.removeEventListener('auth-change', updateAuthStatus);
+    });
+
+    // watchEffect is good for reacting to changes in reactive dependencies used *within its callback*.
+    // For localStorage changes, which are outside Vue's reactivity system,
+    // relying on 'auth-change' event or onMounted/route changes is more direct.
+    // If you want to keep watchEffect, ensure it depends on something that *does* change reactively
+    // when auth status might change, or it might not re-run as expected for localStorage alone.
+    // For simplicity and to directly address localStorage, the event listener is more explicit.
+    // watchEffect(() => {
+    //   updateAuthStatus();
+    // });
+
+
+    const handleLogout = () => {
+      api.post('/logout')
+          .catch(error => {
+            console.error("Logout request failed:", error);
+          })
+          .finally(() => {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+
+            isLoggedIn.value = false;
+            isAdmin.value = false;
+
+            window.dispatchEvent(new CustomEvent('auth-change'));
+
+            router.push('/nav/user/login').then(() => {
+              window.location.reload();
+            });
+          });
+    };
+
+    return {
+      isLoggedIn,
+      isAdmin,
+      handleLogout,
+    };
+  },
 };
 </script>
 
@@ -120,5 +193,11 @@ export default {
 
 body, .content {
   margin-top: 60px; /* Adjust this based on the height of your navbar */
+}
+
+/* Your existing .logo, .nav-link, .blur-button, .dropdown-menu, etc. styles should remain here */
+.logo {
+  height: 40px;
+  width: auto;
 }
 </style>

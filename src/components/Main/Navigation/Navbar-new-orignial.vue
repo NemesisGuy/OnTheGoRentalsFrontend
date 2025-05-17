@@ -27,7 +27,8 @@
             <router-link to="/admin" class="nav-link blur-button">Admin Dashboard</router-link>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle blur-button" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+            <a class="nav-link dropdown-toggle blur-button" href="#" id="navbarDropdown" role="button"
+               data-bs-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false">
               Help
             </a>

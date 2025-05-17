@@ -72,7 +72,7 @@ export default {
 </script>
 
 <style scoped>
-.button-container{
+.button-container {
   display: flex;
   justify-content: center;
   margin-top: 10px;

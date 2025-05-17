@@ -5,26 +5,26 @@
       <div class="sidebar-container">
         <ul>
           <li>
-<!--            <a href="#" @click="toggleSidebar"  class="toggle-button"></a>-->
-           <button class="toggle-button" @click="toggleSidebar">
-
+            <!--            <a href="#" @click="toggleSidebar"  class="toggle-button"></a>-->
+            <button class="toggle-button" @click="toggleSidebar">
 
               {{ isExpanded ? 'Collapse' : 'Expand' }}
             </button>
           </li>
-          <li>
-<!--            <button class="button" >-->
-            <router-link to="/admin/aboutUs">
-              <i class="fa fa-info-circle" aria-hidden="true"></i>
-              <span class="menu-text" v-show="isExpanded">About Management </span>
-            </router-link>
-<!--            </button>-->
-          </li>
+
           <li>
             <router-link to="/admin/dashboard">
               <i class="fas fa-chart-bar"></i>
               <span class="menu-text" v-show="isExpanded">Dashboard</span>
             </router-link>
+          </li>
+          <li>
+            <!--            <button class="button" >-->
+            <router-link to="/admin/aboutUs">
+              <i class="fa fa-info-circle" aria-hidden="true"></i>
+              <span class="menu-text" v-show="isExpanded">About Management </span>
+            </router-link>
+            <!--            </button>-->
           </li>
           <li>
             <router-link to="/admin/damageReport">
@@ -94,12 +94,12 @@
               <span class="menu-text" v-show="isExpanded">Test</span>
             </router-link>
           </li>
-<!--          <li>
-            <router-link to="/rental/return/1">
-              <i class="fas fa-undo"></i>
-              <span class="menu-text" v-show="isExpanded">Rental Return</span>
-            </router-link>
-          </li>-->
+          <!--          <li>
+                      <router-link to="/rental/return/1">
+                        <i class="fas fa-undo"></i>
+                        <span class="menu-text" v-show="isExpanded">Rental Return</span>
+                      </router-link>
+                    </li>-->
         </ul>
       </div>
     </div>
