@@ -5,10 +5,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: on-the-go-rentals-vue-app
+    container_name: on-the-go-rentals-vue-app-1
     restart: always
     ports:
       - "5175:80"
+    environment:
+      -  BACKEND_API_BASE_URL=http://localhost:8080
 
     networks:
       - vue-network

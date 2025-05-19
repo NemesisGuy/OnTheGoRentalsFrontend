@@ -18,7 +18,9 @@
         </div>
       </div>
     </div>
-    <table>
+    <ShimmerAdminTable v-if="loading" :rows="20" :columns="1" />
+
+    <table v-else>
       <thead>
       <tr>
         <th @click="sortRentals('id')">ID <i class="fas fa-sort"></i></th>
@@ -138,10 +140,12 @@
 
 <script>
 import axios from "axios";
-import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
+import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import ShimmerAdminTable from "@/components/Main/Loaders/ShimmerAdminTable.vue";
+
 import process from "process";
 import baseURL from "@/api.js";
 import api from "@/api.js";
@@ -150,6 +154,7 @@ import api from "@/api.js";
 /*axios.defaults.baseURL = 'http://localhost:8080';*/
 import { formatDateTime } from '@/utils/dateUtils.js'
 // Add an interceptor for every request
+/*
 axios.interceptors.request.use(
     config => {
       const token = localStorage.getItem('token');
@@ -164,6 +169,7 @@ axios.interceptors.request.use(
       return Promise.reject(error);
     }
 );
+*/
 
 
 export default {
@@ -173,6 +179,7 @@ export default {
     LoadingModal,
     SuccessModal,
     FailureModal,
+    ShimmerAdminTable,
 
   },
   data() {

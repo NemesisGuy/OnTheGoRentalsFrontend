@@ -21,10 +21,16 @@ FROM nginx:stable-alpine AS production-stage
 
 # Copy the built app from the previous stage to Nginx's default directory
 COPY --from=build-stage /app/dist /usr/share/nginx/html
+# Add entrypoint for runtime env injection
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+RUN rm /etc/nginx/conf.d/default.conf # Remove default
 # Copy a custom nginx configuration file (if needed)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose port 80 (the default Nginx port)
 EXPOSE 80
-
+# Start container using entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
 # Command to start Nginx
 CMD ["nginx", "-g", "daemon off;"]

@@ -4,7 +4,7 @@
       <div class="rental-profile">
         <h1>Rental Profile</h1>
         <hr>
-        <div class="profile-details" v-if="rental && user && car">
+        <div class="profile-details" v-if="!loading">
           <div class="section">
             <h3>Rental Details:</h3>
             <hr>
@@ -81,6 +81,8 @@
           </div>
         </div>
         <div v-else>
+          <ShimmerCard />
+          <LoadingModal show="show" />
           <p>Loading rental profile...</p>
         </div>
       </div>
@@ -93,33 +95,25 @@
 <script>
 import axios from 'axios';
 import api from "@/api";
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+
 import { formatDateTime } from '@/utils/dateUtils.js'
+import ShimmerCard from "@/components/Main/Loaders/ShimmerCard.vue";
 
 // Add this line to set a default base URL for your API
 // axios.defaults.baseURL = 'http://localhost:8080';
 
-// Add an interceptor for every request
-axios.interceptors.request.use(
-    config => {
-      const token = localStorage.getItem('token');
 
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
-      }
 
-      return config;
-    },
-    error => {
-      return Promise.reject(error);
-    }
-);
 export default {
   name: 'ViewRental',
+  components: {ShimmerCard, LoadingModal},
   data() {
     return {
       rental: null,
       user: null,
       car: null,
+      loading: true,
     };
   },
   mounted() {
@@ -130,6 +124,7 @@ export default {
     formatDateTime,
 
     fetchRentalProfile() {
+      this.loading = true;
       const rentalId = this.$route.params.id;
       const token = localStorage.getItem('token');
       api
@@ -139,9 +134,11 @@ export default {
             this.rental = response.data;
             this.fetchUserProfile();
             this.fetchCarProfile();
+            this.loading = false;
           })
           .catch((error) => {
             console.log(error);
+            this.loading = false;
           });
     },
     fetchUserProfile() {
