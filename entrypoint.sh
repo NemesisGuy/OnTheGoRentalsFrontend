@@ -13,7 +13,7 @@ set -e
 # This is the environment variable Docker Compose will pass into the container.
 # We provide a fallback for local testing or if the variable isn't set.
 # The fallback should be your typical local development backend URL.
-FALLBACK_BACKEND_URL="http://localhost:8087/api" # Default for local dev if backend is on 8087
+FALLBACK_BACKEND_URL="http://localhost:8080/" # Default for local dev if backend is on 8088
 URL_TO_CONFIGURE_IN_APP="${BACKEND_API_BASE_URL:-$FALLBACK_BACKEND_URL}"
 
 CONFIG_FILE_PATH="/usr/share/nginx/html/config.js"

@@ -16,7 +16,7 @@ const getApiBaseUrl = () => {
     // VUE_APP_ or VITE_ prefixes are for build-time variables
     const buildTimeApiUrl = process.env.VUE_APP_BACKEND_URL || // Example of a clearer build-time var name
         (typeof import.meta !== 'undefined' ? import.meta.env.VITE_BACKEND_API_URL : undefined) ||
-        'http://localhost:8087/api'; // Hardcoded default dev backend
+        'http://localhost:8080/'; // Hardcoded default dev backend
     console.warn("Vue src/api.js: Runtime config not found, using build-time or default fallback API URL:", buildTimeApiUrl);
     return buildTimeApiUrl;
 };
