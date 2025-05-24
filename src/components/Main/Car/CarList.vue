@@ -16,8 +16,8 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="car in sortedCars" :key="car.id">
-        <td>{{ car.id }}</td>
+      <tr v-for="car in sortedCars" :key="car.uuid">
+        <td>{{ car.uuid }}</td>
         <td>{{ car.make }}</td>
         <td>{{ car.model }}</td>
         <td>{{ car.year }}</td>
@@ -70,10 +70,10 @@ export default {
       const category = this.$route.params.category;
       const available = this.$route.params.available === 'true'; // Convert the string to boolean
 
-      let endpoint = `/api/cars/list/${category}`;
+      let endpoint = `/api/v1/cars`;
 
       if (available) {
-        endpoint = `/api/cars/list/available/${category}`;
+        endpoint = `/api/v1/cars/available`;
       }
 
       api
@@ -109,7 +109,7 @@ export default {
       }else{
       console.log('Booking car:', car);
       //this.$router.push(`/booking/${car.id}`);
-      this.$router.push({ name: 'Booking', params: { carId: car.id } });}
+      this.$router.push({ name: 'Booking', params: { carUuid: car.uuid } });}
 
 
 
@@ -152,4 +152,9 @@ export default {
 
 };
 </script>
+<style >
+.content-container {
+  max-width: 100%;
+}
+</style>
 

@@ -14,7 +14,7 @@
             <div class="detail-row">
               <div>
                 <label> ID:</label>
-                <span>{{ booking.id }}</span>
+                <span>{{ booking.uuid }}</span>
               </div>
               <div>
                 <label> Status:</label>
@@ -127,6 +127,7 @@ export default {
             },
           })
           .then((response) => {
+             console.log("booking response: ", response.data);
             this.booking = response.data;
             this.fetchUserProfile();
             this.fetchCarProfile();
@@ -136,7 +137,7 @@ export default {
           });
     },
     fetchUserProfile() {
-      const userId = this.booking.user.id;
+      const userId = this.booking.user.uuid;
 
       api
           .get(`http://localhost:8080/api/admin/users/read/${userId}`,
@@ -153,7 +154,7 @@ export default {
           });
     },
     fetchCarProfile() {
-      const carId = this.booking.car.id;
+      const carId = this.booking.car.uuid;
 
       api
           .get(`/api/admin/cars/read/${carId}`, {

@@ -26,6 +26,7 @@ import EditProfile from "@/components/Main/User/EditProfile.vue";
 import Driver from "@/components/Main/Driver/DriverList.vue";
 import adminRoutes from "@/router/adminRoutes";
 import RentalHistory from "@/components/Main/User/RentalHistory.vue";
+import MyBookings from "@/components/Main/User/MyBookings.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -76,15 +77,20 @@ const router = createRouter({
             path: '/user/profile/rental-history',
             name: 'RentalHistory',
             component: RentalHistory,
-        }
-        ,
+        },
+        {
+            path: '/my-bookings', // Or /user/bookings, /profile/bookings, etc.
+            name: 'MyBookings',   // This name is used in $router.push({ name: 'MyBookings' })
+            component: MyBookings,
+            meta: { requiresAuth: true } // Ensure only authenticated users can access
+        },
         {
             path: '/booking',
             name: 'Booking',
             component: Booking,
         },
         {
-            path: '/booking/:carId',
+            path: '/booking/:carUuid?',
             name: 'Booking',
             component: Booking,
         },

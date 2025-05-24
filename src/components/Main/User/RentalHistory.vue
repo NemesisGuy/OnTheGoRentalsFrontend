@@ -54,8 +54,8 @@
         <!-- Rental list -->
         <ol v-else-if="rentals.length">
           <li v-for="rental in rentals" :key="rental.rentalId">
-            <p><strong>Rental ID:</strong> {{ rental.id }}</p>
-            <p><strong>Car:</strong> {{ rental.car.make }} {{ rental.car.model }}</p>
+            <p><strong>Rental ID:</strong> {{ rental.uuid }}</p>
+            <p><strong>Car:</strong> {{ rental.car.make }}, {{ rental.car.model }}, {{rental.car.licensePlate}}</p>
             <p><strong>Start Date:</strong> {{ formatDateTime(rental.issuedDate) }}</p>
             <p><strong>End Date:</strong> {{ formatDateTime(rental.returnedDate) }}</p>
             <p><strong>Status:</strong> {{ rental.returnedDate ? 'Returned' : 'Active' }}</p>
@@ -106,9 +106,12 @@ export default {
       try {
         const profileResponse = await api.get(`/api/user/profile/read/profile`);
         this.user = profileResponse.data;
+        // console.log(this.user);
 
-        const rentalHistoryResponse = await api.get(`/api/user/profile/${this.user.id}/rental-history`);
+
+        const rentalHistoryResponse = await api.get(`/api/user/profile/rental-history`);
         this.rentals = rentalHistoryResponse.data;
+        // console.log(this.rentals);
       } catch (error) {
         console.error("Error fetching rental history:", error);
       } finally {

@@ -40,7 +40,7 @@ export default {
   methods: {
     fetchAboutUs() {
       api
-          .get('/api/aboutUs/latest') // Fetch the latest AboutUs entry
+          .get('/api/v1/about-us/latest') // Fetch the latest AboutUs entry
           .then(response => {
             this.about = response.data; // Assign the response data directly to about
             console.log('Fetched AboutUs data:', this.about);

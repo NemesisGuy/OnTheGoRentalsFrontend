@@ -35,7 +35,6 @@
         <div class="form-header">
           <h2><i class="fas fa-user"></i> {{ user.firstName }}</h2>
         </div>
-        <hr>
         <div class="profile-info">
           <div class="profile-image">
             <img
@@ -63,10 +62,11 @@
             <button @click="viewRentalHistory" class="read-button button">
               View Rental History
             </button>
+            <button @click="viewBookingHistory" class="update-button button">View Booking History</button>
           </div>
         </div>
+        <hr>
       </div>
-
     </div>
   </div>
 </template>
@@ -123,6 +123,11 @@ export default {
     viewRentalHistory() {
       this.$router.push("/user/profile/rental-history");
     },
+    viewBookingHistory()
+    {
+      // this.$router.push("/user-profile/my-bookings");
+      this.$router.push({ name: 'MyBookings' }); // Or 'MyBookings' if you defined that
+    }
   },
 };
 </script>

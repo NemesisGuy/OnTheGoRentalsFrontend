@@ -34,10 +34,10 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="car in filteredCars" :key="car.id">
-        <td v-if="!car.editing">{{ car.id }}</td>
+      <tr v-for="car in filteredCars" :key="car.uuid">
+        <td v-if="!car.editing">{{ car.uuid }}</td>
         <td v-else>
-          <input type="text" v-model="car.id" disabled>
+          <input type="text" v-model="car.uuid" disabled>
         </td>
         <td v-if="!car.editing">{{ car.make }}</td>
         <td v-else>
@@ -67,11 +67,11 @@
         </td>
         <td>
           <template v-if="!car.editing">
-            <button @click="deleteCar(car.id)" class="delete-button button">
+            <button @click="deleteCar(car.uuid)" class="delete-button button">
               <i class="fas fa-trash"></i> Delete
             </button>
             <button @click="editCar(car)" class="update-button button"><i class="fas fa-edit"></i> Edit</button>
-            <button @click="openCarView(car.id)" class="read-button button"><i class="fas fa-eye"></i> Read</button>
+            <button @click="openCarView(car.uuid)" class="read-button button"><i class="fas fa-eye"></i> Read</button>
           </template>
           <template v-else>
             <button @click="saveCar(car)" class="update-button button">Save</button>
@@ -227,7 +227,7 @@ export default {
     },
     deleteCar(carId) {
       this.showConfirmationModal = true;
-      this.carToDelete = this.cars.find((car) => car.id === carId);
+      this.carToDelete = this.cars.find((car) => car.uuid === carId);
     },
     cancelDelete() {
       this.showConfirmationModal = false;
@@ -238,13 +238,13 @@ export default {
         this.loading = true;
         const token = localStorage.getItem("token");
         api
-            .delete(`/api/admin/cars/delete/${this.carToDelete.id}`, {})
+            .delete(`/api/admin/cars/delete/${this.carToDelete.uuid}`, {})
             .then((response) => {
               this.fetchCars();
               console.log(response);
               console.log("Car deleted");
               this.successModal.show = true; // Show success modal
-              this.successModal.message = "Car ID: " + this.carToDelete.id + "was deleted successfully! Please refresh the page to see the changes."
+              this.successModal.message = "Car ID: " + this.carToDelete.uuid + "was deleted successfully! Please refresh the page to see the changes."
             })
             .catch((error) => {
               console.log(error);
@@ -281,13 +281,13 @@ export default {
     pushUpdatedCar(car) {
       const token = localStorage.getItem("token");
       api
-          .put(`/api/admin/cars/update/${car.id}`, car)
+          .put(`/api/admin/cars/update/${car.uuid}`, car)
           .then((response) => {
             console.log(response);
             console.log("Car updated");
             this.loading = false;
             this.successModal.show = true; // Show success modal
-            this.successModal.message = "Car ID: " + car.id + " was updated successfully"; // Show success modal
+            this.successModal.message = "Car ID: " + car.uuid + " was updated successfully"; // Show success modal
 
 
           })
@@ -296,7 +296,7 @@ export default {
             console.log("Car not updated");
             this.loading = false;
             this.failModal.show = true; // Show fail modal
-            this.failModal.message = "Car ID: " + car.id + "was not updated successfully"; // Show success modal
+            this.failModal.message = "Car ID: " + car.uuid + "was not updated successfully"; // Show success modal
 
           })
           .finally(() => {

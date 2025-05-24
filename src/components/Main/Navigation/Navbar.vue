@@ -53,7 +53,8 @@
               <router-link to="/user/profile/profile" class="dropdown-item">User Profile</router-link>
             </li>
             <li>
-              <router-link to="/booking/0" class="dropdown-item">Bookings</router-link>
+<!--     to="/booking/0" is a dirty patche cause of the router SORRY BRO :(        -->
+              <router-link to="/booking" class="dropdown-item">Bookings</router-link>
             </li>
             <li v-if="isAdmin"> <!-- Conditional rendering for Admin Dashboard -->
               <hr class="dropdown-divider" v-if="isAdmin"/> <!-- Divider only if admin link is shown -->
@@ -150,13 +151,15 @@ export default {
 
 
     const handleLogout = () => {
-      api.post('/logout')
+      api.post('/api/user/logout')
           .catch(error => {
             console.error("Logout request failed:", error);
           })
           .finally(() => {
+            // Client-side cleanup happens regardless of backend call success
+
             localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
+            // localStorage.removeItem('refreshToken'); // No longer needed from localStorage
             localStorage.removeItem('user');
 
             isLoggedIn.value = false;

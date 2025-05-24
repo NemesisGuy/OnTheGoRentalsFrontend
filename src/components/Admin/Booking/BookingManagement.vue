@@ -33,10 +33,10 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="booking in filteredBookings" :key="booking.id">
-        <td v-if="!booking.editing">{{ booking.id }}</td>
+      <tr v-for="booking in filteredBookings" :key="booking.uuid">
+        <td v-if="!booking.editing">{{ booking.uuid }}</td>
         <td v-else>
-          <input v-model="booking.id" type="text">
+          <input v-model="booking.uuid" type="text">
         </td>
 <!--        <td v-if="!booking.editing">{{ booking.user.userName }}</td>-->
 <!--        <td v-else>-->
@@ -72,10 +72,10 @@
             <button class="update-button button" @click="editBooking(booking)">
               <i class="fas fa-edit"></i> Edit
             </button>
-            <button class="delete-button button" @click="deleteBooking(booking.id)">
+            <button class="delete-button button" @click="deleteBooking(booking.uuid)">
               <i class="fas fa-trash-alt"></i> Delete
             </button>
-            <button class="read-button button" @click="openBookingView(booking.id)">
+            <button class="read-button button" @click="openBookingView(booking.uuid)">
               <i class="fas fa-eye"></i> View
             </button>
           </div>
@@ -272,7 +272,7 @@ export default {
       booking.editing = true;
     },
     updateBooking(booking) {
-      booking.Id = booking.id;
+      booking.Id = booking.uud;
       booking.bookingStartDate = booking.bookingStartDate;
       booking.bookingEndDate = booking.bookingEndDate;
       booking.user = {
@@ -285,7 +285,7 @@ export default {
 
 
       api
-          .put(`/api/admin/bookings/update/${booking.id}`, booking,
+          .put(`/api/admin/bookings/update/${booking.uuid}`, booking,
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,

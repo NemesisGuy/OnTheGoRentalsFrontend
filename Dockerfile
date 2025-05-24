@@ -25,9 +25,12 @@ COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-RUN rm /etc/nginx/conf.d/default.conf # Remove default
+RUN rm -f /etc/nginx/conf.d/default.conf # Remove default
 # Copy a custom nginx configuration file (if needed)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY ./dist /usr/share/nginx/html
+
 # Expose port 80 (the default Nginx port)
 EXPOSE 80
 # Start container using entrypoint
