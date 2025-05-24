@@ -60,9 +60,9 @@
               <i class="fa fa-pencil"></i> Edit Profile
             </button>
             <button @click="viewRentalHistory" class="read-button button">
-              View Rental History
+              Rental History
             </button>
-            <button @click="viewBookingHistory" class="update-button button">View Booking History</button>
+            <button @click="viewBookingHistory" class="accept-button button">Booking History</button>
           </div>
         </div>
         <hr>
