@@ -55,7 +55,7 @@ api.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
-        const refreshUrl = '/api/user/refresh'; // Relative to baseURL
+        const refreshUrl = '/api/v1/auth/refresh'; // Relative to baseURL
 
         if (error.response && error.response.status === 401 && !originalRequest._retry && originalRequest.url !== refreshUrl) {
             if (isRefreshing) {

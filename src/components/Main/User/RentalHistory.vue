@@ -104,12 +104,12 @@ export default {
       }
 
       try {
-        const profileResponse = await api.get(`/api/user/profile/read/profile`);
+        const profileResponse = await api.get(`/api/v1/users/me/profile`);
         this.user = profileResponse.data;
         // console.log(this.user);
 
 
-        const rentalHistoryResponse = await api.get(`/api/user/profile/rental-history`);
+        const rentalHistoryResponse = await api.get(`/api/v1/users/me/rental-history`);
         this.rentals = rentalHistoryResponse.data;
         // console.log(this.rentals);
       } catch (error) {

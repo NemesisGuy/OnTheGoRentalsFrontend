@@ -106,7 +106,7 @@ export default {
       }
 
       try {
-        const response = await api.get('/api/user/profile/read/profile');
+        const response = await api.get('/api/v1/users/me/profile');
         this.user = response.data;
       } catch (error) {
         console.error("Error fetching user profile:", error.response?.data || error.message);

@@ -97,7 +97,7 @@ export default {
       this.failureModal.show = false; // Reset failure modal
 
       try {
-        const response = await api.post("/api/user/register", {
+        const response = await api.post("/api/v1/auth/register", {
           firstName: this.firstName,
           lastName: this.lastName,
           email: this.email,

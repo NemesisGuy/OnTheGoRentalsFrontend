@@ -96,7 +96,7 @@ export default {
   methods: {
     loadUserProfile() {
       const token = localStorage.getItem('token');
-      api.get(`/api/user/profile/read/profile`)
+      api.get(`/api/v1/users/me/profile`)
           .then(response => {
             const user = response.data;
             this.editedUser.id = user.id;
@@ -132,7 +132,7 @@ export default {
         userPayload.password = this.editedUser.password;
       }
 
-      api.put(`/api/user/profile/update`, userPayload )
+      api.put(`/api/v1/users/me/profile`, userPayload )
           .then(response => {
             this.loadingModal.show = false;
             this.successModal.message = "Profile updated successfully";

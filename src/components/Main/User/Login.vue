@@ -67,7 +67,7 @@ export default {
       console.log("Values before API call - Email:", this.email, "Password:", this.password);
 
       try {
-        const response = await api.post('/api/user/authenticate', {
+        const response = await api.post('/api/v1/auth/login', {
           email: this.email,
           password: this.password
         });

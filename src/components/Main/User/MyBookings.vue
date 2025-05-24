@@ -4,7 +4,7 @@
       <div class="my-bookings-container">
         <LoadingModal v-if="isLoading" :show="true" message="Fetching your bookings..."/>
 
-        <div class="page-header">
+        <div class="page-header form-header">
           <h1><i class="fas fa-calendar-alt"></i> My Bookings</h1>
           <p v-if="!isLoading && bookings.length === 0" class="no-bookings-message">
             You currently have no bookings.
