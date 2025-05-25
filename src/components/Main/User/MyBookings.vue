@@ -151,7 +151,7 @@ export default {
       try {
         // The backend controller endpoint is GET /api/bookings/my-bookings
         const response = await api.get('/api/v1/bookings/my-bookings');
-        this.bookings = response.data || []; // Ensure it's an array
+        this.bookings = response.data.data || []; // Ensure it's an array
         console.log("Fetched user bookings:", this.bookings);
       } catch (error) {
         console.error("Error fetching user bookings:", error.response ? error.response.data : error.message);

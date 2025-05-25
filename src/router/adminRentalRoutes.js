@@ -21,8 +21,8 @@ const adminRentalRoutes = [
 
     },
     {
-        path: '/admin/rentals/read/:id',
-        name: 'ReadRental',
+        path: '/admin/rentals/read/:uuid',
+        name: 'ViewRental',
         components:{
             adminContent : ReadRental,
         },

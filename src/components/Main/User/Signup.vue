@@ -47,41 +47,35 @@
 </template>
 
 <script>
-// import axios from "axios"; // Not needed if using 'api' instance
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
-// import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue"; // Not used in this snippet
-import api from "@/api"; // Your configured Axios instance
+import api from "@/api";
 
 export default {
+  name: "SignupPage", // Or RegisterPage
   components: {
     LoadingModal,
     SuccessModal,
     FailureModal,
-    // ConfirmationModal,
   },
-  name: "Signup", // Or Register
   data() {
     return {
       firstName: "",
       lastName: "",
       email: "",
       password: "",
-      // confirmPassword: "", // You have an input for this, but it's not bound or used yet
+      confirmPassword: "",
       loadingModal: false,
       successModal: { show: false, message: "" },
       failureModal: { show: false, message: "" },
-      // confirmationModal: { show: false, message: "" },
     };
   },
   methods: {
-    async register() { // Changed to async
-      // Basic client-side validation (you should add more)
-      const confirmPasswordInput = document.getElementById('confirm-password'); // Get confirm password value
-      const confirmPassword = confirmPasswordInput ? confirmPasswordInput.value : '';
+    async register() {
+      if (this.loadingModal) return;
 
-      if (this.password !== confirmPassword) {
+      if (this.password !== this.confirmPassword) {
         this.failureModal.message = "Passwords do not match!";
         this.failureModal.show = true;
         return;
@@ -92,102 +86,107 @@ export default {
         return;
       }
 
-      if (this.loadingModal) return;
       this.loadingModal = true;
-      this.failureModal.show = false; // Reset failure modal
+      this.failureModal.show = false;
 
       try {
-        const response = await api.post("/api/v1/auth/register", {
+        const response = await api.post("/api/v1/auth/register", { // Ensure this path is correct
           firstName: this.firstName,
           lastName: this.lastName,
           email: this.email,
           password: this.password
         });
 
-        console.log("Registration successful. Response:", response);
+        console.log("Signup Response Data (wrapped):", response.data);
 
-        // Backend now sends AuthResponseDto in the body and refresh token as HttpOnly cookie
-        // Destructure the access token and user info from response.data
-        const { accessToken, email: responseEmail, roles, tokenType } = response.data;
+        if (response.data && response.data.status === "success" && response.data.data) {
+          // Destructure from response.data.data (which is your AuthResponseDto)
+          const { accessToken, email: responseEmail, roles, tokenType } = response.data.data;
 
-        if (accessToken && tokenType === "Bearer") {
-          // Store the access token in localStorage
-          localStorage.setItem('accessToken', accessToken);
+          console.log("Unwrapped AuthResponseDto Data from Signup:", response.data.data);
 
-          // Store basic user info (email, roles) in localStorage
-          // This helps the Navbar and other components update without an immediate extra API call
-          const user = {
-            email: responseEmail || this.email, // Use email from response if available
-            roles: roles || ['USER'],      // Default to USER role if not provided, or use from response
-          };
-          localStorage.setItem('user', JSON.stringify(user));
+          if (accessToken && tokenType === "Bearer") {
+            localStorage.setItem('accessToken', accessToken);
+            // Refresh token is an HttpOnly cookie set by the backend.
 
-          // Dispatch an event so other components (like Navbar) can update their state
-          window.dispatchEvent(new CustomEvent('auth-change'));
+            const user = {
+              email: responseEmail || this.email,
+              roles: roles || ['USER'], // Default role for new signup if not in response
+              // id: response.data.data.userId // if backend sends userId in AuthResponseDto's data
+            };
+            localStorage.setItem('user', JSON.stringify(user));
 
-          this.successModal.message = "Registration successful! You are now logged in.";
-          this.successModal.show = true;
+            window.dispatchEvent(new CustomEvent('auth-change'));
 
-          // After showing success, redirect to home
-          setTimeout(() => {
-            this.onSuccessModalClose(); // This method will handle redirect
-          }, 1500); // Give user a moment to see the success message
+            this.successModal.message = "Registration successful! You are now logged in.";
+            this.successModal.show = true;
 
+            setTimeout(() => {
+              this.onSuccessModalClose();
+            }, 1500);
+          } else {
+            console.error("Signup successful, but AuthResponseDto did not contain expected token data. Received:", response.data.data);
+            this.failureModal.message = "Signup successful, but received an unexpected response structure.";
+            this.failureModal.show = true;
+          }
         } else {
-          console.error("Registration response did not contain expected token data. Received:", response.data);
-          this.failureModal.message = "Registration failed: Unexpected server response.";
+          let errorMsg = "Registration failed: Unexpected server response format.";
+          if (response.data && response.data.errors && response.data.errors.length > 0) {
+            errorMsg = response.data.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join(', ');
+          } else if (response.data && response.data.message) {
+            errorMsg = response.data.message;
+          }
+          console.error("Signup response was not successful or data was missing. Full response:", response.data);
+          this.failureModal.message = errorMsg;
           this.failureModal.show = true;
         }
-
       } catch (error) {
-        console.error("Registration API Error:", error);
-        this.loadingModal = false; // Ensure loading modal is hidden on error
+        console.error("Signup API Error:", error);
         let errorMessage = "Registration failed. Please try again.";
-        if (error.response) {
-          if (error.response.status === 409 || error.response.status === 303) { // 303 SEE_OTHER from your backend for existing email
-            errorMessage = "An account with this email already exists.";
-          } else if (error.response.data) {
-            if (typeof error.response.data === 'string' && error.response.data.length < 100) { // Avoid huge HTML error pages
-              errorMessage = error.response.data;
-            } else if (error.response.data.message) {
-              errorMessage = error.response.data.message;
+        if (error.response && error.response.data) {
+          const apiResponse = error.response.data; // Should be ApiResponse
+          if (apiResponse.errors && apiResponse.errors.length > 0) {
+            errorMessage = apiResponse.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join('; ');
+            if (errorMessage.toLowerCase().includes("email is already taken")) { // More specific check
+              errorMessage = "An account with this email already exists. Please try logging in.";
             }
+          } else if (typeof apiResponse === 'string') {
+            errorMessage = apiResponse;
+          } else if (apiResponse.message) {
+            errorMessage = apiResponse.message;
+          } else if (error.response.status === 303 || error.response.status === 409) { // SEE_OTHER or CONFLICT for existing email
+            errorMessage = "An account with this email already exists.";
           }
+        } else if (error.request) {
+          errorMessage = "No response from server. Please check your network connection.";
+        } else {
+          errorMessage = "An unexpected error occurred during registration. Please try again.";
         }
         this.failureModal.message = errorMessage;
         this.failureModal.show = true;
       } finally {
-        // This will run regardless of success or failure of the try block,
-        // but we already set loadingModal = false in success and error specific blocks.
-        // If an unexpected error occurs before those, this ensures it's reset.
-        if (this.loadingModal) { // Only set if it wasn't already set by success/error
-          this.loadingModal = false;
-        }
+        this.loadingModal = false;
       }
     },
-    onSuccessModalClose() { // New method to handle successful registration/login redirect
+    onSuccessModalClose() {
       this.successModal.show = false;
       this.$router.push({ name: "Home" });
       setTimeout(() => {
-        window.location.reload(); // Reload to ensure Navbar and other states are fresh
+        window.location.reload();
       }, 0);
+    },
+    closeFailureModal() {
+      this.failureModal.show = false;
     },
     goToLogin() {
       if (this.loadingModal) return;
       this.$router.push({ name: 'Login' });
-    },
-    closeModal() {
-      // this.showConfirmationModal = false; // If you re-add confirmation modal
-      this.successModal.show = false;
-      this.failureModal.show = false;
     },
   }
 };
 </script>
 
 <style scoped>
-/* Add your component-specific styles here */
-
 
 </style>
 

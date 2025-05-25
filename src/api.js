@@ -86,7 +86,7 @@ api.interceptors.response.use(
 
                 console.log('Refresh API call successful. Response data:', refreshResponse.data);
 
-                const { accessToken: newAccessToken /*, refreshToken: newRotatedRefreshToken - no longer in body */ } = refreshResponse.data;
+                const { accessToken: newAccessToken /*, refreshToken: newRotatedRefreshToken - no longer in body */ } = refreshResponse.data.data;
 
                 localStorage.setItem('accessToken', newAccessToken);
                 // No need to store new refresh token from response body, it's set as a new cookie by the backend.
@@ -104,6 +104,7 @@ api.interceptors.response.use(
                 console.error('!!! Error refreshing token:', refreshError);
                 if (refreshError.response) {
                     console.error('Refresh Error Response Data:', refreshError.response.data);
+                    console.error('Refresh Error Response Error:', refreshError.response.errors);
                     console.error('Refresh Error Response Status:', refreshError.response.status);
                     // If refresh fails (e.g., cookie expired or invalid), backend might return 401/403
                     // This usually means user needs to log in again.

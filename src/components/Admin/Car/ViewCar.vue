@@ -2,19 +2,24 @@
   <div class="card-container card-container-admin ">
     <div class="form-container">
       <div class="car-profile">
-        <h1><i class="fas fa-car"></i> Car Profile: </h1>
+        <div class="form-header">
+          <h2><i class="fas fa-car"></i> Car Profile: </h2>
+          <hr>
+        </div>
         <div class="profile-details" v-if="car">
           <div>
-            <p><label>Make:</label><span>{{ car.make }}</span></p>
+            <p><label>ID: </label><span>{{ car.uuid }}</span></p>
 
-            <p><label>Model:</label><span>{{ car.model }}</span></p>
+            <p><label>Make: </label><span>{{ car.make }}</span></p>
 
-            <p><label>Year:</label><span>{{ car.year }}</span></p>
+            <p><label>Model: </label><span>{{ car.model }}</span></p>
+
+            <p><label>Year: </label><span>{{ car.year }}</span></p>
 
 
-            <p><label>Category:</label><span>{{ car.category }}</span></p>
+            <p><label>Category: </label><span>{{ car.category }}</span></p>
 
-            <p><label>Price Group:</label><span>{{ car.priceGroup }}</span></p>
+            <p><label>Price Group: </label><span>{{ car.priceGroup }}</span></p>
 
 
             <p><label>License Plate: </label>{{ car.licensePlate }}</p>
@@ -65,12 +70,13 @@ export default {
   methods: {
     fetchCarProfile() {
       // Assuming you have the car ID or any other identifier to fetch the car's profile
-      const carId = this.$route.params.id// Get the category from the route parameter
+      console.log("Fetching Car profile..." + this.$route.params.uuid);
+      const uuid = this.$route.params.uuid// Get the category from the route parameter
       const token = localStorage.getItem('token');
       api
-          .get(`/api/admin/cars/read/${carId}`)
+          .get(`/api/v1/admin/cars/${uuid}`)
           .then((response) => {
-            this.car = response.data;
+            this.car = response.data.data;
           })
           .catch((error) => {
             console.log(error);

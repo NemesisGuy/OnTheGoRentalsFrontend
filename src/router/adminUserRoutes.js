@@ -15,13 +15,14 @@ const adminUserRoutes = [
     },
     {
         path: 'users/create',
+        name: 'CreateUser',
         components: {
             adminContent: CreateUser,
         },
     },
     {
         path: 'users/update/:id',
-        name: 'updateUser',
+        name: 'UpdateUser',
         components: {
             adminContent: UpdateUser,
         },
@@ -33,7 +34,7 @@ const adminUserRoutes = [
         },
     },
     {
-        path: 'users/read/:id',
+        path: 'users/read/:uuid',
         name: 'ViewUser',
         components: {
             adminContent: ViewUser,

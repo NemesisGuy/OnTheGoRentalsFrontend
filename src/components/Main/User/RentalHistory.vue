@@ -105,12 +105,12 @@ export default {
 
       try {
         const profileResponse = await api.get(`/api/v1/users/me/profile`);
-        this.user = profileResponse.data;
+        this.user = profileResponse.data.data;
         // console.log(this.user);
 
 
         const rentalHistoryResponse = await api.get(`/api/v1/users/me/rental-history`);
-        this.rentals = rentalHistoryResponse.data;
+        this.rentals = rentalHistoryResponse.data.data;
         // console.log(this.rentals);
       } catch (error) {
         console.error("Error fetching rental history:", error);

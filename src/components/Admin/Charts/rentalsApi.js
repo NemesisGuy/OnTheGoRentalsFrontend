@@ -12,9 +12,9 @@ export function fetchRentalsData() {
     rentalsDataPromise = new Promise(async (resolve, reject) => {
         try {
             const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-            const response = await api.get('/api/admin/rentals/list/all');
+            const response = await api.get('/api/v1/admin/rentals');
 
-            const data = response.data; // axios directly returns the data in `response.data`
+            const data = response.data.data; // axios directly returns the data in `response.data`
             resolve(data); // Resolve the promise with fetched data
 
         } catch (error) {

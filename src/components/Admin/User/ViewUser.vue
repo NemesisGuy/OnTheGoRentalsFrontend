@@ -11,6 +11,7 @@
           <img v-else src="@/assets/Images/Defaults/default-user-avatar.png" alt="Placeholder" class="avatar">
         </div>
         <div>
+          <p><strong><i class="fas fa-id-badge"></i> User ID:</strong> {{ user.uuid }}</p>
           <p><strong><i class="fas fa-user"></i> First Name:</strong> {{ user.firstName }}</p>
         </div>
         <div>
@@ -68,11 +69,11 @@ export default {
   methods: {
     fetchUserProfile() {
       this.loading = true;
-      const userId = this.$route.params.id;
+      const uuid = this.$route.params.uuid;
       api
-          .get(`/api/admin/users/read/${userId}`)
+          .get(`/api/v1/admin/users/${uuid}`)
           .then((response) => {
-            this.user = response.data;
+            this.user = response.data.data;
             this.loading = false;
           })
           .catch((error) => {

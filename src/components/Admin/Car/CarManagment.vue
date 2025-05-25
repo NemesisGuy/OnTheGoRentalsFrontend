@@ -92,7 +92,7 @@
         <div>
           <p>Are you sure you want to delete this Car?</p>
           <hr>
-          <p>ID: {{ carToDelete.id }}</p>
+          <p>ID: {{ carToDelete.uuid }}</p>
           <p>Make: {{ carToDelete.make }}</p>
           <p>Model: {{ carToDelete.model }}</p>
           <p>Year: {{ carToDelete.year }}</p>
@@ -205,9 +205,9 @@ export default {
         }
       }
       api
-          .get("/api/admin/cars/all")
+          .get("/api/v1/admin/cars")
           .then((response) => {
-            this.cars = response.data;
+            this.cars = response.data.data;
             console.log(response);
           })
           .catch((error) => {
@@ -260,9 +260,10 @@ export default {
             });
       }
     },
-    openCarView(carId) {
+    openCarView(uuid) {
       const token = localStorage.getItem("token");
-      this.$router.push(`/admin/cars/read/${carId}`);
+     // this.$router.push(`/admin/cars/read/${carId}`);
+      this.$router.push({ name: 'ViewCar', params: { uuid: uuid } });
     },
     sortCars(sortBy) {
       this.sortBy = sortBy;

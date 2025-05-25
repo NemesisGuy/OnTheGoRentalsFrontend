@@ -1,40 +1,42 @@
 <template>
   <div class="card-container">
-    <div class="form-container">
-      <LoadingModal v-if="isLoading" show></LoadingModal>
-
+    <div class="form-container"> <!-- Or profile-display-container -->
+      <!-- Shimmer loading effect -->
       <div v-if="isLoading">
         <div class="shimmer-card">
-          <!-- Title line -->
-          <div class="shimmer-line shimmer centered" style="width: 80%; height: 20px;"></div>
-          <hr>
-          <!-- Avatar -->
+          <div class="shimmer-line shimmer centered" style="width: 60%; height: 24px; margin-bottom: 15px;"></div>
+          <hr style="margin-bottom: 20px;">
           <div class="centered">
             <div class="shimmer-avatar shimmer"></div>
           </div>
-          <hr>
-          <!-- Text lines -->
-          <div class="shimmer-line shimmer centered" style="width: 70%;"></div>
-          <div class="shimmer-line shimmer centered" style="width: 90%;"></div>
-          <div class="shimmer-line shimmer centered" style="width: 50%;"></div>
-          <hr>
-          <!-- Simulated button shimmer -->
-          <div class="centered">
-            <div class="shimmer-button shimmer"
-                 style="width: 150px; height: 40px; border-radius: 5px; margin-right: 20px"></div>
-            <div class="shimmer-button shimmer" style="width: 150px; height: 40px; border-radius: 5px;"></div>
+          <hr style="margin-top: 20px; margin-bottom: 20px;">
+          <div class="shimmer-line shimmer" style="width: 40%; height: 16px; margin-bottom: 15px;"></div>
+          <div class="shimmer-line shimmer" style="width: 70%; height: 16px;"></div>
+          <div class="shimmer-line shimmer" style="width: 50%; height: 16px; margin-bottom: 15px;"></div>
+          <div class="shimmer-line shimmer" style="width: 80%; height: 16px;"></div>
+          <hr style="margin-top: 20px; margin-bottom: 20px;">
+          <div class="button-container-shimmer centered">
+            <div class="shimmer-button shimmer"></div>
+            <div class="shimmer-button shimmer"></div>
+            <div class="shimmer-button shimmer"></div>
           </div>
         </div>
       </div>
 
-      <div v-else-if="errorLoading">
-        <p class="error-text">Failed to load profile. Please try again later.</p>
+      <div v-else-if="errorLoading && !isLoading">
+        <p class="error-text">{{ failModal.message || "Failed to load profile. Please try again later." }}</p>
       </div>
 
-      <div v-else>
+      <div v-else-if="user && user.uuid">
         <div class="form-header">
-          <h2><i class="fas fa-user"></i> {{ user.firstName }}</h2>
+          <h2>
+            <i class="fas fa-user"></i>
+            {{ user.firstName || 'User' }} {{ user.lastName || '' }}
+            <span v-if="user.firstName || user.lastName">'s Profile</span>
+            <span v-else>Profile</span>
+          </h2>
         </div>
+        <hr>
         <div class="profile-info">
           <div class="profile-image">
             <img
@@ -51,65 +53,122 @@
             />
           </div>
           <hr>
-          <p><strong><i class="fas fa-envelope"></i> Email:</strong> {{ user.email }}</p>
-          <p><strong><i class="fas fa-user"></i> First Name:</strong> {{ user.firstName }}</p>
-          <p><strong><i class="fas fa-user"></i> Last Name:</strong> {{ user.lastName }}</p>
+          <p><strong><i class="fas fa-id-card"></i> UUID: </strong> {{ user.uuid ? user.uuid : 'N/A' }}...</p>
+          <p><strong><i class="fas fa-envelope"></i> Email: </strong> {{ user.email || 'N/A' }}</p>
+          <p><strong><i class="fas fa-user"></i> First Name: </strong> {{ user.firstName || 'N/A' }}</p>
+          <p><strong><i class="fas fa-user"></i> Last Name: </strong> {{ user.lastName || 'N/A' }}</p>
+          <p v-if="user.roles && user.roles.length > 0">
+            <strong><i class="fas fa-user-shield"></i> Roles: </strong> {{ user.roles.join(', ') }}
+          </p>
           <hr>
           <div class="button-container">
             <button @click="editProfile" class="update-button button">
               <i class="fa fa-pencil"></i> Edit Profile
             </button>
-            <button @click="viewRentalHistory" class="read-button button">
-              Rental History
+            <button @click="viewMyBookings" class="action-button button"> <!-- Changed class -->
+              <i class="fas fa-calendar-plus"></i> My Bookings
             </button>
-            <button @click="viewBookingHistory" class="accept-button button">Booking History</button>
+            <button @click="viewMyRentalHistory" class="read-button button"> <!-- Changed class -->
+              <i class="fas fa-history"></i> My Rental History
+            </button>
           </div>
         </div>
-        <hr>
+      </div>
+      <div v-else-if="!isLoading && !errorLoading && (!user || !user.uuid)">
+        <p class="error-text">User profile data is not available.</p>
       </div>
     </div>
+  </div>
+
+  <div class="modal-body-container">
+    <LoadingModal :show="showActualLoadingModal" message="Processing..."/>
+    <FailureModal
+        key="profileFailureModal"
+        :message="failModal.message"
+        :show="failModal.show"
+        @close="closeFailModal"
+    />
   </div>
 </template>
 
 <script>
 import api from '@/api';
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 
 export default {
   name: "UserProfile",
   components: {
     LoadingModal,
+    FailureModal,
   },
   data() {
     return {
       user: {},
       isLoading: true,
       errorLoading: false,
+      showActualLoadingModal: false, // For actions initiated from this page, not initial load
+      failModal: { show: false, message: "" },
     };
   },
-
+  computed: {
+    isUserLoggedIn() {
+      return !!localStorage.getItem('accessToken');
+    }
+  },
   async mounted() {
     await this.fetchUserProfile();
   },
-
   methods: {
     async fetchUserProfile() {
       this.isLoading = true;
       this.errorLoading = false;
+      this.failModal.show = false;
 
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        console.error("No access token found");
-        this.errorLoading = true;
+      if (!localStorage.getItem('accessToken')) {
+        console.warn("UserProfile: No access token found. Redirecting to login.");
+        this.failModal.message = "You are not logged in. Redirecting to login...";
+        this.failModal.show = true;
         this.isLoading = false;
+        this.errorLoading = true;
+        setTimeout(() => {
+          this.$router.push({ name: 'Login' });
+        }, 1500);
         return;
       }
 
       try {
         const response = await api.get('/api/v1/users/me/profile');
-        this.user = response.data;
+        if (response.data && response.data.status === "success" && response.data.data) {
+          this.user = response.data.data;
+          if (!this.user.uuid) {
+            console.error("UserProfile: Fetched user data is incomplete or missing UUID.", this.user);
+            this.errorLoading = true;
+            this.failModal.message = "Profile data loaded is incomplete.";
+            this.failModal.show = true;
+          }
+        } else {
+          let errorMsg = "Failed to load profile: Unexpected response structure.";
+          if(response.data && response.data.errors && response.data.errors.length > 0) {
+            errorMsg = response.data.errors.map(e => e.message).join(', ');
+          } else if (response.data && response.data.message) {
+            errorMsg = response.data.message;
+          }
+          console.error("UserProfile: Fetch successful but response format unexpected or status not success.", response.data);
+          this.failModal.message = errorMsg;
+          this.failModal.show = true;
+          this.errorLoading = true;
+        }
       } catch (error) {
-        console.error("Error fetching user profile:", error.response?.data || error.message);
+        console.error("Error fetching user profile:", error.response?.data || error.message, error);
+        let errorMsg = "An error occurred while fetching your profile.";
+        if (error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
+          errorMsg = error.response.data.errors.map(e => e.message).join(', ');
+        } else if (error.response && error.response.data && typeof error.response.data === 'string') {
+          errorMsg = error.response.data;
+        }
+        this.failModal.message = errorMsg;
+        this.failModal.show = true;
         this.errorLoading = true;
       } finally {
         this.isLoading = false;
@@ -117,16 +176,19 @@ export default {
     },
 
     editProfile() {
-      this.$router.push("/edit-profile");
+      this.$router.push({ name: 'EditProfile' }); // Ensure 'EditProfile' route exists
     },
 
-    viewRentalHistory() {
-      this.$router.push("/user/profile/rental-history");
+    viewMyBookings() {
+      this.$router.push({ name: 'MyBookings' }); // Ensure 'MyBookings' route name is correct
     },
-    viewBookingHistory()
-    {
-      // this.$router.push("/user-profile/my-bookings");
-      this.$router.push({ name: 'MyBookings' }); // Or 'MyBookings' if you defined that
+
+    viewMyRentalHistory() {
+      this.$router.push({ name: 'RentalHistory' }); // Ensure 'MyRentalHistory' route name is correct
+    },
+
+    closeFailModal() {
+      this.failModal.show = false;
     }
   },
 };
@@ -134,64 +196,190 @@ export default {
 
 <style scoped>
 .card-container {
+  display: flex;
+  justify-content: center;
   padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.form-container { /* Using this class for consistent card appearance */
+  background-color: #ffffff;
+  padding: 25px 35px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 700px;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.form-header h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.form-header h2 i {
+  margin-right: 12px;
+  color: #007bff;
+}
+
+.profile-info {
+  text-align: left;
+}
+
+.profile-info p {
+  margin-bottom: 15px;
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.7;
+  display: flex;
+  align-items: center;
+}
+
+.profile-info p strong i {
+  margin-right: 10px;
+  color: #007bff;
+  width: 24px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.profile-image {
+  text-align: center;
+  margin-bottom: 25px;
 }
 
 .avatar {
-  width: 100px;
-  height: 100px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #fff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
+.button-container {
+  display: flex;
+  justify-content: center; /* Center buttons if fewer, or space-around */
+  flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+  margin-top: 30px;
+  gap: 15px;
+}
+
+.button {
+  padding: 12px 22px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  min-width: 160px; /* Give buttons some minimum width */
+}
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+.button i {
+  margin-right: 8px;
+}
+
+.update-button {
+  background-color: #ffc107; /* Warning yellow */
+  color: #212529;
+}
+.update-button:hover {
+  background-color: #e0a800;
+}
+
+.read-button { /* For Rental History */
+  background-color: #17a2b8; /* Info cyan */
+  color: white;
+}
+.read-button:hover {
+  background-color: #138496;
+}
+
+.action-button { /* New class for My Bookings, or reuse one */
+  background-color: #007bff; /* Primary blue */
+  color: white;
+}
+.action-button:hover {
+  background-color: #0056b3;
+}
+
+
+.loading-container, .error-container {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.1rem;
+  color: #555;
+}
+.error-text { /* For direct error message in template if not using modal */
+  color: #dc3545;
+  font-weight: bold;
+  text-align: center;
+  padding: 20px;
+}
+
+hr {
+  margin: 25px 0;
+  border: 0;
+  border-top: 1px solid #e9ecef;
+}
+
+.modal-body-container {
+  /* For positioning modals if needed */
+}
+
+/* Shimmer effect styles - kept as is from previous */
 .shimmer-card {
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 12px;
   background: #fff;
 }
-
 .shimmer {
-  animation: shimmer 1.5s infinite linear;
-  background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
-  background-size: 1000px 100%;
+  animation: shimmer 1.8s infinite linear;
+  background: linear-gradient(to right, #f0f0f0 8%, #e0e0e0 18%, #f0f0f0 33%);
+  background-size: 1200px 100%;
   border-radius: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
-
 .shimmer-avatar {
-  width: 100px;
-  height: 100px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   margin-bottom: 20px;
 }
-
 .shimmer-line {
-  height: 15px;
+  height: 16px;
 }
-
-.centered {
+.shimmer-line.centered {
+  margin-left: auto;
+  margin-right: auto;
+}
+.button-container-shimmer {
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin: 0 auto;
+  gap: 15px;
+  margin-top: 30px;
 }
-
 .shimmer-button {
-  margin-top: 20px;
+  height: 45px;
+  width: 160px;
+  border-radius: 6px;
 }
-
 
 @keyframes shimmer {
   0% {
-    background-position: -1000px 0;
+    background-position: -1200px 0;
   }
   100% {
-    background-position: 1000px 0;
+    background-position: 1200px 0;
   }
-}
-
-.error-text {
-  color: red;
-  font-weight: bold;
-  text-align: center;
 }
 </style>

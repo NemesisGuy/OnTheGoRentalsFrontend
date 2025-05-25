@@ -35,7 +35,7 @@ const adminCarRoutes = [
         },
     },
     {
-        path: 'cars/read/:id',
+        path: 'cars/read/:uuid',
         name: 'ViewCar',
         components: {
             adminContent: ViewCar,

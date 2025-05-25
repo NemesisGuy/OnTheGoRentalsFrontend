@@ -79,7 +79,7 @@ export default {
       api
           .get(endpoint)
           .then((response) => {
-            this.cars = response.data;
+            this.cars = response.data.data;
             this.category = category;
             this.loading = false;
           })

@@ -3,7 +3,7 @@
     <div class="form-container">
       <LoadingModal v-if="loadingModal.show" :show="loadingModal.show" message="Processing..."></LoadingModal>
 
-      <form ref="bookingForm" @submit.prevent="initiateBookingCreation"> <!-- Changed to initiate a confirmation step -->
+      <form ref="bookingForm" @submit.prevent="initiateBookingCreation">
         <div class="form-header">
           <h2>Create Booking</h2>
         </div>
@@ -16,7 +16,7 @@
               :value="currentUser && currentUser.email ? `${currentUser.firstName} ${currentUser.lastName} (${currentUser.email})` : 'Loading user...'"
               readonly
               class="form-control-plaintext"
-          /><!-- Optional: for better readonly styling -->
+          />
         </div>
 
         <div class="form-group">
@@ -31,7 +31,7 @@
 
         <div class="form-group">
           <label for="car">Select Car:</label>
-          <select id="car" v-model="selectedCarUuid" name="carUuid" class="form-select"> <!-- Changed v-model target -->
+          <select id="car" v-model="selectedCarUuid" name="carUuid" class="form-select">
             <option disabled value="">Please select a car</option>
             <option v-for="car in availableCars" :key="car.uuid" :value="car.uuid">
               {{ car.make }} {{ car.model }} ({{ car.year }}) - {{ car.priceGroup }}
@@ -50,7 +50,7 @@
     </div>
   </div>
 
-  <div class="modal-body-container"> <!-- Wrapper for modals -->
+  <div class="modal-body-container">
     <ConfirmationModal
         key="bookingConfirmationModal"
         :show="showConfirmationModal"
@@ -58,7 +58,6 @@
         @cancel="cancelBookingCreation"
         @confirm="confirmAndCreateBooking"
     >
-      <!-- Content for confirmation modal passed via slot -->
       <template #default>
         <p>Are you sure you want to create this booking with the following details?</p>
         <hr>
@@ -94,10 +93,10 @@ import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import api from "@/api";
-import { formatDateTime } from "@/utils/dateUtils"; // Ensure this utility exists and works
+import { formatDateTime } from "@/utils/dateUtils";
 
 export default {
-  name: "CreateBooking", // Renamed for clarity
+  name: "CreateBooking",
   components: {
     ConfirmationModal,
     SuccessModal,
@@ -106,20 +105,21 @@ export default {
   },
   data() {
     return {
-      availableCars: [], // Renamed from cars for clarity
-      selectedCarUuid: "", // Will hold the UUID string of the selected car
-      selectedIssuedDate: this.getDefaultDateTime(), // Initialize with default
-      selectedReturnedDate: this.getDefaultDateTime(2), // Initialize with default (e.g., 2 days later)
-      currentUser: { // Initialize as an object
+      availableCars: [],
+      selectedCarUuid: "",
+      selectedIssuedDate: this.getDefaultDateTime(),
+      selectedReturnedDate: this.getDefaultDateTime(2),
+      currentUser: {
         uuid: null,
         firstName: '',
         lastName: '',
         email: ''
       },
       loadingModal: {
-        show: false,
+        show: false, // This controls the <LoadingModal> component passed as prop
       },
-      validationErrorMessage: "", // For displaying validation errors
+      initialDataLoading: true, // Separate flag for initial page load shimmer/blocker
+      validationErrorMessage: "",
       showConfirmationModal: false,
       successModal: {
         show: false,
@@ -129,7 +129,6 @@ export default {
         show: false,
         message: "",
       },
-      // No need for this.confirm and this.cancel as data properties for the modal
     };
   },
   computed: {
@@ -138,22 +137,23 @@ export default {
       return this.availableCars.find(car => car.uuid === this.selectedCarUuid);
     }
   },
-  async mounted() { // Changed to async for await
-    this.loadingModal.show = true;
-    await this.fetchCurrentUserProfile(); // Wait for profile to load
-    await this.fetchAvailableCarsList();   // Then fetch cars
+  async mounted() {
+    this.initialDataLoading = true; // For overall page loading state if needed beyond shimmer
+    this.loadingModal.show = true; // Show loading modal during initial fetches
+    await this.fetchCurrentUserProfile();
+    await this.fetchAvailableCarsList();
     this.preselectCarIfRouteParam();
     this.loadingModal.show = false;
+    this.initialDataLoading = false;
   },
   methods: {
-    formatDateTime, // Make utility function available in template
+    formatDateTime,
 
     getDefaultDateTime(addDays = 0) {
       const now = new Date();
       if (addDays > 0) {
         now.setDate(now.getDate() + addDays);
       }
-      // Format to YYYY-MM-DDTHH:MM (required by datetime-local)
       const year = now.getFullYear();
       const month = (now.getMonth() + 1).toString().padStart(2, '0');
       const day = now.getDate().toString().padStart(2, '0');
@@ -163,20 +163,20 @@ export default {
     },
 
     async fetchCurrentUserProfile() {
-      // No need to get token from localStorage, api.js interceptor handles it
       try {
-        const response = await api.get("/api/user/profile/read/profile"); // Endpoint from UserController
-        this.currentUser = response.data; // Assuming response.data is UserResponseDTO
-        if (!this.currentUser.uuid) {
-          console.error("Fetched user profile does not contain UUID:", this.currentUser);
-          this.failModal.message = "Failed to fetch complete user profile. Cannot create booking.";
-          this.failModal.show = true;
+        const response = await api.get("/api/v1/users/me/profile");
+        if (response.data && response.data.status === "success" && response.data.data) {
+          this.currentUser = response.data.data;
+          if (!this.currentUser.uuid) {
+            console.error("Fetched user profile does not contain UUID:", this.currentUser);
+            this.failModal.message = "Failed to fetch complete user profile. Cannot create booking.";
+            this.failModal.show = true;
+          }
+        } else {
+          this.handleApiResponseError(response.data, "Failed to load user profile data.");
         }
       } catch (error) {
-        console.error("Error fetching user profile:", error.response ? error.response.data : error.message);
-        this.failModal.message = "Failed to fetch user profile. Please ensure you are logged in.";
-        this.failModal.show = true;
-        // Potentially redirect to login if profile fetch fails due to auth
+        this.handleApiCatchError(error, "Failed to fetch user profile. Please ensure you are logged in.");
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
           this.$router.push({ name: 'Login' });
         }
@@ -184,49 +184,60 @@ export default {
     },
 
     preselectCarIfRouteParam() {
-      const routeCarUuid = this.$route.params.carUuid; // Expecting carUuid from route
+      const routeCarUuid = this.$route.params.carUuid;
       if (routeCarUuid) {
-        // Check if this car is in the available list
-        if (this.availableCars.some(car => car.uuid === routeCarUuid)) {
-          this.selectedCarUuid = routeCarUuid;
+        if (this.availableCars && this.availableCars.length > 0) {
+          const carExists = this.availableCars.some(car => car.uuid === routeCarUuid);
+          if (carExists) {
+            this.selectedCarUuid = routeCarUuid;
+          } else {
+            console.warn(`Car with UUID ${routeCarUuid} from route param not found in available cars. List:`, this.availableCars);
+            this.failModal.message = `The car selected from the previous page (UUID: ${routeCarUuid}) is not available or does not exist. Please select another.`;
+            this.failModal.show = true;
+          }
         } else {
-          console.warn(`Car with UUID ${routeCarUuid} from route param not found in available cars list.`);
-          this.failModal.message = `The selected car (UUID: ${routeCarUuid}) is not available or does not exist.`;
-          this.failModal.show = true;
+          console.warn("Available cars list is empty, cannot pre-select car from route param yet.");
+          // This might happen if car list fetch fails or is slow. User will have to select manually.
         }
       }
     },
 
     async fetchAvailableCarsList() {
-      // No need to get token from localStorage, api.js interceptor handles it
       try {
-        // Use the corrected endpoint from your public CarController
-        const response = await api.get("/api/v1/cars/available");
-        this.availableCars = response.data; // Assuming response.data is List<CarResponseDTO>
+        const response = await api.get("/api/v1/cars/available"); // Path from CarController
+        if (response.data && response.data.status === "success" && response.data.data) {
+          this.availableCars = response.data.data; // <<<< CORRECTLY ACCESS NESTED data
+          console.log("Booking.vue: Fetched available cars:", this.availableCars);
+        } else if (response.data && response.data.status === "success" && response.data.data === null) {
+          this.availableCars = []; // No available cars, still a success response
+          console.log("Booking.vue: No available cars found.");
+        } else {
+          this.handleApiResponseError(response.data, "Failed to load available cars list.");
+          this.availableCars = []; // Ensure it's an array on failure
+        }
       } catch (error) {
-        console.error("Error fetching available cars list:", error.response ? error.response.data : error.message);
-        this.failModal.message = "Failed to fetch available cars list.";
-        this.failModal.show = true;
+        this.handleApiCatchError(error, "Failed to fetch available cars list.");
+        this.availableCars = []; // Ensure it's an array on catch
       }
     },
 
     validateInputs() {
-      this.validationErrorMessage = ""; // Clear previous error
+      this.validationErrorMessage = "";
       if (!this.selectedIssuedDate || !this.selectedReturnedDate || !this.selectedCarUuid) {
-        this.validationErrorMessage = "All fields (Collection Date, Return Date, Car) are required.";
+        this.validationErrorMessage = "Collection Date, Return Date, and Car selection are required.";
+        return false;
+      }
+      if (!this.currentUser || !this.currentUser.uuid) {
+        this.validationErrorMessage = "User information is missing. Please try logging in again.";
         return false;
       }
       const issue = new Date(this.selectedIssuedDate);
-      const returnD = new Date(this.selectedReturnedDate); // Renamed to avoid conflict
+      const returnD = new Date(this.selectedReturnedDate);
       const now = new Date();
-
-      if (issue < now) {
-        // Allowing a small grace period for "now" comparisons due to millisecond differences
-        const gracePeriod = 5 * 60 * 1000; // 5 minutes
-        if ((now.getTime() - issue.getTime()) > gracePeriod) {
-          this.validationErrorMessage = "Collection date cannot be in the past.";
-          return false;
-        }
+      const gracePeriod = 5 * 60 * 1000; // 5 minutes grace for "now"
+      if (issue.getTime() < (now.getTime() - gracePeriod)) {
+        this.validationErrorMessage = "Collection date cannot be in the past.";
+        return false;
       }
       if (returnD <= issue) {
         this.validationErrorMessage = "Return date must be after the collection date.";
@@ -241,45 +252,37 @@ export default {
         this.failModal.show = true;
         return;
       }
-      // If inputs are valid, show confirmation modal
       this.showConfirmationModal = true;
     },
 
     async confirmAndCreateBooking() {
-      this.showConfirmationModal = false; // Close confirmation modal
+      this.showConfirmationModal = false;
       this.loadingModal.show = true;
 
-      // Construct the payload to EXACTLY match BookingRequestDTO on the backend
       const bookingPayload = {
-        // Assuming the backend expects these fields
         userUuid: this.currentUser.uuid,
         carUuid: this.selectedCarUuid,
         bookingStartDate: this.selectedIssuedDate,
         bookingEndDate: this.selectedReturnedDate,
-        // Status is set by the backend, do not send it from client for initial creation
       };
       console.log("About to send this Booking Payload:", bookingPayload);
 
       try {
-        // Use the correct endpoint as defined in your BookingController @RequestMapping and @PostMapping
-        const response = await api.post("/api/v1/bookings", bookingPayload); // Corrected endpoint
+        const response = await api.post("/api/v1/bookings", bookingPayload); // Path from BookingController
 
         this.loadingModal.show = false;
-        console.log("Booking created successfully. Response:", response.data);
-        // Assuming response.data is BookingResponseDTO
-        this.successModal.message = `Booking for car ${response.data.car?.make} ${response.data.car?.model || 'Details N/A'} has been created!`;
-        this.successModal.show = true;
-        // Redirect or clear form after success is handled by closeAndRedirectToBookings
+        if (response.data && response.data.status === "success" && response.data.data) {
+          const createdBooking = response.data.data; // This is BookingResponseDTO
+          console.log("Booking created successfully. Response DTO:", createdBooking);
+          this.successModal.message = `Booking for car ${createdBooking.car?.make || ''} ${createdBooking.car?.model || 'Details N/A'} has been created!`;
+          this.successModal.show = true;
+        } else {
+          this.handleApiResponseError(response.data, "Failed to create booking: Unexpected server response.");
+        }
       } catch (error) {
         this.loadingModal.show = false;
-        console.error("Booking creation API error:", error.response ? error.response.data : error.message, error);
-        this.failModal.message = error.response?.data?.message || error.response?.data || "Failed to create booking. Please try again.";
-        if (error.response && error.response.data && typeof error.response.data === 'string' && error.response.data.includes("not available")) {
-          this.failModal.message = error.response.data; // Show specific backend message if car not available
-        }
-        this.failModal.show = true;
+        this.handleApiCatchError(error, "Failed to create booking. Please try again.");
       }
-      // loadingModal.show = false; // Moved to try/catch to ensure it's always reset
     },
 
     cancelBookingCreation() {
@@ -287,17 +290,115 @@ export default {
       console.log("Booking creation cancelled by user.");
     },
 
+    handleApiResponseError(responseData, defaultMessage) {
+      let errorMsg = defaultMessage;
+      if (responseData && responseData.errors && responseData.errors.length > 0) {
+        errorMsg = responseData.errors.map(e => e.message || e.field).join(', ');
+      } else if (responseData && responseData.message) { // If your error ApiResponse has a single message
+        errorMsg = responseData.message;
+      }
+      console.error("API Response Error:", responseData);
+      this.failModal.message = errorMsg;
+      this.failModal.show = true;
+    },
+
+    handleApiCatchError(error, defaultMessage) {
+      console.error("API Catch Error:", error.response ? error.response.data : error.message, error);
+      let errorMessage = defaultMessage;
+      if (error.response && error.response.data) {
+        const apiResponse = error.response.data; // This should be your ApiResponse
+        if (apiResponse.errors && apiResponse.errors.length > 0) {
+          errorMessage = apiResponse.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join('; ');
+        } else if (typeof apiResponse === 'string' && apiResponse.length < 200) { // Avoid huge HTML error pages
+          errorMessage = apiResponse;
+        } else if (apiResponse.message) {
+          errorMessage = apiResponse.message;
+        } else if (error.response.statusText && error.response.statusText !== "") {
+          errorMessage = `Error ${error.response.status}: ${error.response.statusText}`;
+        }
+      } else if (error.request) {
+        errorMessage = "No response from server. Please check your network connection.";
+      }
+      this.failModal.message = errorMessage;
+      this.failModal.show = true;
+    },
+
     closeFailureModal() {
       this.failModal.show = false;
     },
-    closeAndRedirectToBookings() { // Renamed for clarity
+    closeAndRedirectToBookings() {
       this.successModal.show = false;
-      this.$router.push({ name: 'MyBookings' }); // Or wherever user's bookings are listed
-      // No forced window.location.reload() here, let Vue Router handle navigation.
-      // If Navbar needs update, it should rely on 'auth-change' event or reactive state.
+      this.$router.push({ name: 'MyBookings' });
     }
   },
 };
 </script>
 
-
+<style scoped>
+/* Basic styling, adapt as needed */
+.card-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+.form-container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 600px;
+}
+.form-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+.form-control, .form-select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.form-control-plaintext {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  box-sizing: border-box;
+  cursor: default;
+}
+.button-container {
+  text-align: center;
+  margin-top: 20px;
+}
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.confirm-button {
+  background-color: #28a745;
+  color: white;
+}
+.confirm-button:disabled {
+  background-color: #94d3a2;
+  cursor: not-allowed;
+}
+.modal-body-container {
+  position: relative;
+  z-index: 1050;
+}
+</style>

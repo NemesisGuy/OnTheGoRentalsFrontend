@@ -67,61 +67,81 @@ export default {
       console.log("Values before API call - Email:", this.email, "Password:", this.password);
 
       try {
-        const response = await api.post('/api/v1/auth/login', {
+        const response = await api.post('/api/v1/auth/login', { // Ensure this path is correct
           email: this.email,
           password: this.password
         });
 
-        console.log("Login Response Data:", response.data);
+        console.log("Full Login Response Data (wrapped):", response.data); // Log the entire ApiResponse
 
-        // Destructure what's available in the response body
-        // refreshToken is no longer expected here.
-        const { accessToken, email: responseEmail, roles, accessTokenExpiresIn, tokenType } = response.data;
+        // Check if the response status is "success" and data exists
+        if (response.data && response.data.status === "success" && response.data.data) {
+          // Destructure from response.data.data (which is your AuthResponseDto)
+          const { accessToken, email: responseEmail, roles, accessTokenExpiresIn, tokenType } = response.data.data;
 
-        // Check for the presence of the accessToken and correct tokenType
-        if (accessToken && tokenType === "Bearer") {
-          localStorage.setItem('accessToken', accessToken);
-          // DO NOT try to get refreshToken from response.data to store in localStorage.
-          // It's now an HttpOnly cookie handled by the browser.
+          console.log("Unwrapped AuthResponseDto Data:", response.data.data);
 
-          const user = {
-            email: responseEmail || this.email,
-            roles: roles || [],
-            // id: userIdFromServerIfAvailable // If your AuthResponseDto includes user ID
-          };
-          localStorage.setItem('user', JSON.stringify(user));
+          // Check for the presence of the accessToken and correct tokenType
+          if (accessToken && tokenType === "Bearer") {
+            localStorage.setItem('accessToken', accessToken);
+            // Refresh token is now an HttpOnly cookie handled by the browser.
 
-          // Dispatch auth-change event so Navbar and other components can update
-          window.dispatchEvent(new CustomEvent('auth-change'));
+            const user = {
+              email: responseEmail || this.email,
+              roles: roles || [],
+              // id: response.data.data.userId // If your AuthResponseDto from backend includes userId
+            };
+            localStorage.setItem('user', JSON.stringify(user));
 
-          this.successModal.message = "Login successful!";
-          this.successModal.show = true;
+            window.dispatchEvent(new CustomEvent('auth-change'));
 
-          setTimeout(() => {
-            this.onSuccessModalClose();
-          }, 1000);
+            this.successModal.message = "Login successful!";
+            this.successModal.show = true;
 
+            setTimeout(() => {
+              this.onSuccessModalClose();
+            }, 1000);
+
+          } else {
+            console.error("Login successful, but AuthResponseDto did not contain expected token data. Received AuthResponseDto:", response.data.data);
+            this.failureModal.message = "Login successful, but received an unexpected response structure.";
+            this.failureModal.show = true;
+          }
         } else {
-          console.error("Login response did not contain expected access token data or tokenType. Received:", response.data);
-          this.failureModal.message = "Login failed: Invalid server response structure.";
+          // Handle cases where response.data.status is not "success" or response.data.data is missing
+          // This might happen if the ApiResponseWrapperAdvice has an issue or if an error was wrapped unexpectedly.
+          // Or if GlobalExceptionHandler returned a success-like status for an error (less likely).
+          let errorMsg = "Login failed: Unexpected server response format.";
+          if (response.data && response.data.errors && response.data.errors.length > 0) {
+            errorMsg = response.data.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join(', ');
+          } else if (response.data && response.data.message) { // If your error ApiResponse has a single message
+            errorMsg = response.data.message;
+          }
+          console.error("Login response was not successful or data was missing. Full response:", response.data);
+          this.failureModal.message = errorMsg;
           this.failureModal.show = true;
         }
 
       } catch (error) {
-        console.error("Login API Error:", error);
+        console.error("Login API Error (catch block):", error);
         let errorMessage = "Login failed. Please check your credentials.";
+
+        // Axios error structure: error.response contains the server's response
         if (error.response && error.response.data) {
-          if (typeof error.response.data === 'string') {
-            errorMessage = error.response.data;
-          } else if (error.response.data.message) {
-            errorMessage = error.response.data.message;
+          const apiResponse = error.response.data; // This should be your ApiResponse for errors
+          if (apiResponse.errors && apiResponse.errors.length > 0) {
+            errorMessage = apiResponse.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join('; ');
+          } else if (typeof apiResponse === 'string') { // Fallback if error response is just a string
+            errorMessage = apiResponse;
+          } else if (apiResponse.message) { // If your error response has a general message field
+            errorMessage = apiResponse.message;
           } else if (error.response.status === 401) {
             errorMessage = "Invalid email or password.";
           }
         } else if (error.request) {
           errorMessage = "No response from server. Please check your network connection.";
         } else {
-          errorMessage = "An unexpected error occurred. Please try again.";
+          errorMessage = "An unexpected error occurred during login. Please try again.";
         }
         this.failureModal.message = errorMessage;
         this.failureModal.show = true;
@@ -136,7 +156,7 @@ export default {
         window.location.reload();
       }, 0);
     },
-    closeModal() {
+    closeModal() { // Renamed to closeFailureModal for clarity if only used by FailureModal
       this.failureModal.show = false;
     },
     goToSignup() {
