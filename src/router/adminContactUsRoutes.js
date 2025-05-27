@@ -13,6 +13,7 @@ const adminContactUsRoutes =[
     },
     {
         path: 'contactUs/create',
+        name:"CreateContactUs",
         components: {
             adminContent: CreateContactUs
         },
@@ -30,7 +31,7 @@ const adminContactUsRoutes =[
         },
     },
     {
-        path: 'contactUs/read/:id',
+        path: 'contactUs/read/:uuid',
         name: 'ViewContactUs',
         components: {
             adminContent: ViewContactUs

@@ -2,20 +2,24 @@
   <div class="card-container card-container-admin">
     <div class="form-container">
       <div class="report-profile">
-        <h1>Damage Report Profile</h1>
+        <div class="form-header">
+          <h2><i class="fas fa-exclamation-triangle"></i> Damage Report Profile</h2>
+        </div>
+
         <hr/>
         <div class="profile-details" v-if="damageReport && rental && user && car">
           <div class="section">
-            <h3>Report Details:</h3>
+
+            <h3><i class="fas fa-exclamation-triangle"></i> Report Details:</h3>
             <hr/>
             <div class="detail-row">
               <div>
-                <label>Report ID:</label>
-                <span>{{ damageReport.id }}</span>
+                <label>ID:</label>
+                <span>{{ damageReport.uuid }}</span>
               </div>
               <div>
                 <label>Description:</label>
-                <span>{{ formatDateTime( damageReport.description) }}</span>
+                <span>{{  damageReport.description}}</span>
               </div>
               <div>
                 <label>Date & Time:</label>
@@ -33,12 +37,12 @@
           </div>
 
           <div class="section">
-            <h3>Rental Details:</h3>
+            <h3><i class="fas fa-file-alt"></i> Rental Details:</h3>
             <hr/>
             <div class="detail-row">
               <div>
-                <label>Rental ID:</label>
-                <span>{{ rental.id }}</span>
+                <label>ID:</label>
+                <span>{{ rental.uuid }}</span>
               </div>
               <div>
                 <label>Rental Date:</label>
@@ -54,11 +58,14 @@
               </div>
             </div>
           </div>
-
           <div class="section">
-            <h3>Customer Details:</h3>
+            <h3><i class="fas fa-user"></i> Customer Details:</h3>
             <hr/>
             <div class="detail-row">
+              <div>
+                <label>ID:</label>
+                <span>{{ user.uuid }}</span>
+              </div>
               <div>
                 <label>Customer Name:</label>
                 <span>{{ user.firstName }} {{ user.lastName }}</span>
@@ -67,17 +74,18 @@
                 <label>Email:</label>
                 <span>{{ user.email }}</span>
               </div>
-              <div>
-                <label>Phone:</label>
-                <span>{{ user.phoneNumber }}</span>
-              </div>
+
             </div>
           </div>
 
           <div class="section">
-            <h3>Car Details:</h3>
+            <h3><i class="fas fa-car"></i> Car Details:</h3>
             <hr/>
             <div class="detail-row">
+              <div>
+                <label>ID:</label>
+                <span>{{ car.uuid }}</span>
+              </div>
               <div>
                 <label>Make:</label>
                 <span>{{ car.make }}</span>
@@ -100,11 +108,15 @@
               </div>
             </div>
           </div>
+          <hr/>
         </div>
 
         <div v-else>
           <p>Loading report profile...</p>
         </div>
+      </div>
+      <div class="button-container">
+        <button class="back-button button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
       </div>
     </div>
   </div>
@@ -139,17 +151,16 @@ export default {
   mounted() {
     this.fetchDamageReport();
 
-
   },
   methods: {
     fetchDamageReport() {
-      const reportId = this.$route.params.id;
-      const token = localStorage.getItem('token');
+      const reportId = this.$route.params.uuid;
+
       api
-          .get(`/api/admin/damageReport/read/${reportId}`)
+          .get(`/api/v1/admin/damage-reports/${reportId}`)
           .then((response) => {
             console.log("Response Fetching Damage Report:", response);
-            this.damageReport = response.data;
+            this.damageReport = response.data.data;
             /*  console.log(this.damageReport);
               console.log(this.damageReport.id);
               console.log(this.damageReport.rental.id);
@@ -166,13 +177,13 @@ export default {
     },
 
     fetchRentalProfile() {
-      const rentalId = this.damageReport.rental.id;
-      const token = localStorage.getItem('token');
+      const rentalId = this.damageReport.rental.uuid;
+
       api
-          .get(`/api/admin/rentals/read/${rentalId}`)
+          .get(`/api/v1/admin/rentals/${rentalId}`)
           .then((response) => {
             console.log("Response Fetching Rental:");
-            this.rental = response.data;
+            this.rental = response.data.data;
             console.log(response);
             // console.log(this.rental.user);
 
@@ -183,14 +194,14 @@ export default {
     },
 
     fetchUserProfile() {
-      const userId = this.damageReport.rental.user.id;
-      const token = localStorage.getItem('token');
+      const userId = this.damageReport.rental.user.uuid;
+
       api
-          .get(`/api/admin/users/read/${userId}`)
+          .get(`/api/v1/admin/users/${userId}`)
           .then((response) => {
             console.log("Response Fetching User:");
             // console.log(response);
-            this.user = response.data;
+            this.user = response.data.data;
             // console.log(this.user);
 
           })
@@ -200,13 +211,13 @@ export default {
     },
 
     fetchCarProfile() {
-      const carId = this.damageReport.rental.car.id;
-      const token = localStorage.getItem('token');
+      const carId = this.damageReport.rental.car.uuid;
+
       api
-          .get(`/api/admin/cars/read/${carId}`)
+          .get(`/api/v1/admin/cars/${carId}`)
           .then((response) => {
             console.log("Response Fetching Car:");
-            this.car = response.data;
+            this.car = response.data.data;
             // console.log(this.car);
           })
           .catch((error) => {
@@ -223,7 +234,10 @@ export default {
         hour12: false
       };
       return new Date(dateTimeStr).toLocaleString('en-ZA', options);
-    }
+    },
+    goBack() {
+      this.$router.go(-1);
+    },
 
   },
 };

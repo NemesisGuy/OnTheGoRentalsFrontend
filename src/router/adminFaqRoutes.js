@@ -7,30 +7,35 @@ import ViewFaq from "@/components/Admin/Faq/ViewFaq.vue";
 const adminFaqRoutes = [
     {
         path: 'faq',
+        name: 'FaqManagement',
         components: {
             adminContent: FaqManagement
         },
     },
     {
         path: 'faq/create',
+        name: 'CreateFaq',
         components: {
             adminContent: CreateFaq
         },
     },
     {
-        path: 'faq/update/:id',
+        path: 'faq/update/:uuid',
+        name: 'UpdateFaq',
         components: {
             adminContent: UpdateFaq
         },
     },
     {
-        path: 'faq/delete/:id',
+        path: 'faq/delete/:uuid',
+        name: 'DeleteFaq',
         components: {
             adminContent: DeleteFaq
         },
     },
     {
-        path: 'faq/view/:id',
+        path: 'faq/view/:uuid',
+        name: 'ViewFaq',
         components: {
             adminContent: ViewFaq
         },

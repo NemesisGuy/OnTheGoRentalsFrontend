@@ -16,27 +16,27 @@ const adminDamageReportRoutes = [
     },
     {
         path: 'damageReport/create',
-        //name: 'CreateDamageReport',
+        name: 'CreateDamageReport',
         components: {
             adminContent: CreateDamageReport,
         },
     },
     {
-        path: 'damageReport/read/:id',
+        path: 'damageReport/read/:uuid',
         name: 'ViewDamageReport',
         components: {
             adminContent: ViewDamageReport,
         },
     },
     {
-        path: 'damageReport/update/:id',
+        path: 'damageReport/update/:uuid',
         name: 'UpdateDamageReport',
         components: {
             adminContent: UpdateDamageReport,
         },
     },
     {
-        path: 'damageReport/delete/:id',
+        path: 'damageReport/delete/:uuid',
         name: 'DeleteDamageReport',
         components: {
             adminContent: DeleteDamageReport,

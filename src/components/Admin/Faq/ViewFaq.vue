@@ -2,7 +2,10 @@
   <div class="card-container card-container-admin">
     <div class="form-container">
       <div class="rental-profile">
-        <h1>FAQ Profile</h1>
+        <div class="form-header">
+          <h2><i class="fas fa-question-circle"></i> FAQ Profile</h2>
+        </div>
+
         <hr>
         <div class="profile-details" v-if="faq">
           <div class="section">
@@ -22,7 +25,7 @@
             </div>
 
           </div>
-
+  <hr>
         </div>
 
         <div v-else>
@@ -56,15 +59,11 @@ export default {
   },
   methods: {
     fetchFAQProfile() {
-      const faqId = this.$route.params.id;
+      const faqId = this.$route.params.uuid;
       api
-          .get(`/api/admin/faq/read/${faqId}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          })
+          .get(`/api/v1/admin/faqs/${faqId}`)
           .then((response) => {
-            this.faq = response.data;
+            this.faq = response.data.data;
           })
           .catch((error) => {
             console.log(error);

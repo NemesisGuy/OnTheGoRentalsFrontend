@@ -63,7 +63,11 @@
           </li>
         </ol>
 
+
         <p v-else>No rentals found.</p>
+      </div>
+      <div class="button-container">
+        <button class="back-button button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
       </div>
     </div>
   </div>
@@ -118,6 +122,9 @@ export default {
         this.loading = false;
         this.showLoadingModal = false;
       }
+    },
+    goBack() {
+      this.$router.go(-1);
     },
   },
 };

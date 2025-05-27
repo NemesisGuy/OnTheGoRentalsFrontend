@@ -86,12 +86,16 @@
               </div>
             </div>
           </div>
+          <hr>
         </div>
         <div v-else>
           <ShimmerCard/>
           <LoadingModal show="show"/>
           <p>Loading rental profile...</p>
         </div>
+      </div>
+      <div class="button-container">
+        <button class="back-button button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
       </div>
     </div>
 
@@ -170,6 +174,9 @@ export default {
           .catch((error) => {
             console.log(error);
           });
+    },
+    goBack() {
+      this.$router.go(-1);
     },
   },
 };

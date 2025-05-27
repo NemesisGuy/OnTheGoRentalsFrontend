@@ -39,7 +39,7 @@ const adminAboutUsRoutes =[
     //         },
     // },
     {
-        path: 'aboutus/read/:id',
+        path: 'aboutUs/read/:uuid',
         name: 'ViewAboutUs',
         components:
             {

@@ -39,8 +39,10 @@
     --color-background: #fff; /* Background color */
     --color-text-light: #555; /* Light text color */
     --color-text-dark: #333; /* Dark text color */
+    --color-text-black : #000; /* Black text color */
     --color-border: #ccc; /* Border color */
     --color-border-dark: #2b3d20; /* Darker border color for modals */
+    --button-back: #6c757d; /* Button Background Color */
 }
 /* Global Styles */
 html, body, #app {
@@ -191,16 +193,19 @@ select {
 }
 
 .button-container {
+    /*
     margin-top: 5px;
-    padding-top: 5px;
+    */
+    padding: 10px;
     color: var(--text-color);
     text-align: center;
+    margin: 10px;
 }
 
 .button-container button {
-    /*
+
     margin: 10px;
-    */
+
 }
 
 .button:hover,
@@ -325,7 +330,9 @@ nav a:active {
 }
 
 .button-container {
+    /*
     margin-top: 5px;
+    */
     padding-top: 5px;
     color: var(--text-color);
     text-align: center;
@@ -1054,7 +1061,9 @@ span {
 }
 
 .back-button {
+    /*
     margin-top: 20px;
+    */
     color: black;
 }
 
@@ -1350,7 +1359,8 @@ span {
     display: block;
     text-align: center;
     margin-bottom: 20px;
-    color: var(--primary-color);
+    color: var(--color-text-black);
+    background: var(--button-back);
     font-weight: bold;
 }
 
@@ -1697,11 +1707,8 @@ span {
 }
 .blur-button {
     /* Basic button styles */
-
-
     cursor: pointer;
     transition: all 0.3s ease; /* Smooth transition */
-
     /* Initial shadow effect (optional) */
     box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
@@ -1716,7 +1723,7 @@ span {
 .button-container{
     display: flex;
     justify-content: center;
-    margin-top: 15px;
+
 }
 /*charts*/
 .charts-container, .charts-container-admin {

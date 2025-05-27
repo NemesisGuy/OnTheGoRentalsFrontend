@@ -90,7 +90,7 @@ export default {
     contact() {
       this.loadingModal = true;
       api
-          .post("/api/contactUs/create", {
+          .post("/api/v1/contact-us", {
             title: this.title,
             firstName: this.firstName,
             lastName: this.lastName,

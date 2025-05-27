@@ -1,375 +1,434 @@
 <template>
   <div class="content-container">
     <div class="content-header">
-      <h1>
-        <i class="fas fa-file-contract"></i> Booking Management
-      </h1>
+      <h1><i class="fas fa-calendar-check"></i> Booking Management</h1> <!-- Changed from Rental -->
       <div class="search-bar-container">
         <div class="search-bar">
           <div class="search-input">
-            <input v-model="searchQuery" placeholder="Search..." type="text"/>
-            <button class="read-button button" @click="resetSearch">
-              <i class="fas fa-search"></i> Reset
+            <input v-model="searchQuery" @input="applyFiltersAndSort" placeholder="Search..." type="text"/> <!-- Changed to applyFiltersAndSort -->
+            <button @click="resetSearch" class="read-button button">
+              <i class="fas fa-times"></i> Reset
             </button>
           </div>
-          <router-link class="add-button button" to="/admin/bookings/create">
-            <i class="fas fa-contact-book"></i> Add Booking
+          <router-link :to="{ name: 'CreateBooking' }" class="add-button button"> <!-- Ensure this route name exists -->
+            <i class="fas fa-plus-circle"></i> Add Booking
           </router-link>
         </div>
       </div>
     </div>
-    <table>
+
+    <ShimmerAdminTable v-if="loading && allBookings.length === 0" :rows="10" :columns="10" />
+
+    <div v-if="!loading && bookingsToDisplay.length === 0 && !apiError" class="no-data-message">
+      No bookings found matching your criteria.
+    </div>
+    <div v-if="apiError && !loading" class="no-data-message error-text">
+      {{ failModal.message || "Failed to load bookings." }}
+    </div>
+
+    <table v-if="!loading && bookingsToDisplay.length > 0">
       <thead>
       <tr>
-        <th @click="sortBookings('bookingId')">Booking ID <i class="fas fa-sort"></i></th>
-<!--        <th @click="sortBookings('user.userName')">User <i class="fas fa-sort"></i></th>-->
-        <th @click="sortBookings('user.firstName')">User First Name <i class="fas fa-sort"></i></th>
-        <th @click="sortBookings('user.lastName')">User Last Name <i class="fas fa-sort"></i></th>
-        <th @click="sortBookings('car.make')">Car Make <i class="fas fa-sort"></i></th>
-        <th @click="sortBookings('car.model')">Car Model <i class="fas fa-sort"></i></th>
-        <th @click="sortBookings('dateBooked')">Date Booked</th>
-        <th @click="sortBookings('dateReturned')">Date Returned</th>
+        <th @click="sortBookings('uuid')">Booking UUID <i class="fas fa-sort"></i></th>
+        <th @click="sortBookings('user.lastName')">User <i class="fas fa-sort"></i></th>
+        <th @click="sortBookings('car.make')">Car <i class="fas fa-sort"></i></th>
+        <th @click="sortBookings('driver.lastName')">Driver <i class="fas fa-sort"></i></th>
+        <th @click="sortBookings('bookingStartDate')">Start Date <i class="fas fa-sort"></i></th> <!-- Was issuedDate -->
+        <th @click="sortBookings('bookingEndDate')">End Date <i class="fas fa-sort"></i></th> <!-- Was expectedReturnedDate -->
+        <th @click="sortBookings('returnedDate')">Actual Return <i class="fas fa-sort"></i></th>
+        <th @click="sortBookings('status')">Status <i class="fas fa-sort"></i></th>
+        <th @click="sortBookings('fine')">Fine <i class="fas fa-sort"></i></th>
         <th class="actions-column">Actions</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="booking in filteredBookings" :key="booking.uuid">
-        <td v-if="!booking.editing">{{ booking.uuid }}</td>
+      <!-- Iterate over bookingsToDisplay -->
+      <tr v-for="booking in bookingsToDisplay" :key="booking.uuid">
+        <td>{{ booking.uuid ? booking.uuid.substring(0, 8) + '...' : 'N/A' }}</td>
+
+        <!-- User -->
+        <td v-if="!booking.editing">{{ booking.user ? `${booking.user.firstName} ${booking.user.lastName}` : 'N/A' }}</td>
         <td v-else>
-          <input v-model="booking.uuid" type="text">
-        </td>
-<!--        <td v-if="!booking.editing">{{ booking.user.userName }}</td>-->
-<!--        <td v-else>-->
-<!--          <input v-model="booking.user.userName" type="text">-->
-<!--        </td>-->
-        <td v-if="!booking.editing">{{ booking.user.firstName }}</td>
-        <td v-else>
-          <input v-model="booking.user.firstName" type="text">
+          <input v-model="booking.editable.userUuidString" class="form-control-inline" placeholder="User UUID (if changing)" type="text">
         </td>
 
-        <td v-if="!booking.editing">{{ booking.user.lastName }}</td>
+        <!-- Car -->
+        <td v-if="!booking.editing">{{ booking.car ? `${booking.car.make} ${booking.car.model}` : 'N/A' }}</td>
         <td v-else>
-          <input v-model="booking.user.lastName" type="text">
+          <input v-model="booking.editable.carUuidString" class="form-control-inline" placeholder="Car UUID (if changing)" type="text">
         </td>
-        <td v-if="!booking.editing">{{ booking.car.make }}</td>
+
+        <!-- Driver -->
+        <td v-if="!booking.editing">{{ booking.driver ? `${booking.driver.firstName} ${booking.driver.lastName}` : 'N/A' }}</td>
         <td v-else>
-          <input v-model="booking.car.make" type="text">
+          <input v-model="booking.editable.driverUuidString" class="form-control-inline" placeholder="Driver UUID (or blank)" type="text">
         </td>
-        <td v-if="!booking.editing">{{ booking.car.model }}</td>
+
+        <!-- Booking Start Date -->
+        <td v-if="!booking.editing">{{ formatDisplayDateTime(booking.bookingStartDate) }}</td>
+        <td v-else><input type="datetime-local" v-model="booking.editable.bookingStartDate" class="form-control-inline"></td>
+
+        <!-- Booking End Date (Expected Return) -->
+        <td v-if="!booking.editing">{{ formatDisplayDateTime(booking.bookingEndDate) }}</td>
+        <td v-else><input type="datetime-local" v-model="booking.editable.bookingEndDate" class="form-control-inline"></td>
+
+        <!-- Actual Returned Date -->
+        <td v-if="!booking.editing">{{ formatDisplayDateTime(booking.returnedDate) }}</td>
+        <td v-else><input type="datetime-local" v-model="booking.editable.actualReturnedDate" class="form-control-inline"></td>
+
+        <!-- Status -->
+        <td v-if="!booking.editing"><span :class="['status-badge', getStatusClass(booking.status)]">{{ formatStatus(booking.status) }}</span></td>
         <td v-else>
-          <input v-model="booking.car.model" type="text">
+          <select v-model="booking.editable.status" class="form-control-inline-select">
+            <option v-for="statusOption in rentalStatusOptions" :key="statusOption" :value="statusOption">
+              {{ formatStatus(statusOption) }}
+            </option>
+          </select>
         </td>
-        <td v-if="!booking.editing">{{formatDateTime( booking.bookingStartDate) }}</td>
-        <td v-else>
-          <input v-model="booking.bookingStartDate" type="text">
-        </td>
-        <td v-if="!booking.editing">{{ formatDateTime(booking.bookingEndDate) }}</td>
-        <td v-else>
-          <input v-model="booking.bookingEndDate" type="text">
-        </td>
-        <td>
-          <div v-if="!booking.editing">
-            <button class="update-button button" @click="editBooking(booking)">
-              <i class="fas fa-edit"></i> Edit
-            </button>
-            <button class="delete-button button" @click="deleteBooking(booking.uuid)">
-              <i class="fas fa-trash-alt"></i> Delete
-            </button>
-            <button class="read-button button" @click="openBookingView(booking.uuid)">
-              <i class="fas fa-eye"></i> View
-            </button>
-          </div>
-          <div v-else>
-            <button class="accept-button button" @click="updateBooking(booking)">
-              <i class="fas fa-save"></i> Save
-            </button>
-            <button class="cancel-button button" @click="cancelEdit(booking)">
-              <i class="fas fa-times"></i> Cancel
-            </button>
-          </div>
+
+        <!-- Fine -->
+        <td v-if="!booking.editing">{{ booking.fine != null ? '$' + booking.fine.toFixed(2) : 'N/A' }}</td>
+        <td v-else><input type="number" step="0.01" v-model.number="booking.editable.fine" class="form-control-inline"></td>
+
+        <td class="actions-cell">
+          <template v-if="!booking.editing">
+            <button @click="viewBookingDetails(booking.uuid)" class="read-button button" title="View Details"><i class="fas fa-eye"></i>View</button>
+            <button @click="startEditBooking(booking)" class="button edit-button" title="Edit Booking"><i class="fas fa-edit"></i>Edit</button>
+            <button @click="initiateDeleteBooking(booking)" class="button delete-button" title="Delete Booking"><i class="fas fa-trash"></i>Delete</button>
+          </template>
+          <template v-else>
+            <button @click="confirmSaveBooking(booking)" class="button save-button" title="Save Changes"><i class="fas fa-save"></i>Save</button>
+            <button @click="cancelEditBooking(booking)" class="button cancel-button" title="Cancel Edit"><i class="fas fa-times"></i>Cancel</button>
+          </template>
         </td>
       </tr>
       </tbody>
     </table>
-    <div v-if="loading" class="loading">Loading...</div>
-    <loading-modal v-if="loading" show></loading-modal>
-    <confirmation-modal
-        :show="showConfirmationModal"
-        @cancel="cancelDeleteBooking"
-        @confirm="confirmDeleteBooking"
+  </div>
+
+  <div class="modal-body-container">
+    <ConfirmationModal
+        key="bookingDeleteConfirmModal"
+        :show="showDeleteConfirmationModal"
+    title="Confirm Booking Deletion"
+    @cancel="cancelDeleteBooking"
+    @confirm="executeDeleteBooking"
     >
-      <template v-if="bookingToDelete">
-        <div>
-          <p>Are you sure you want to delete this booking?</p>
-          <hr>
-          <h3>Booking Details:</h3>
-          <p>User: {{ bookingToDelete.user.userName }}</p>
-          <p>Car: {{ bookingToDelete.car.model }}</p>
-          <hr>
-          <p><b>Warning!!!</b> This action cannot be undone.</p>
-        </div>
-      </template>
-    </confirmation-modal>
-    <SuccessModal v-if="successModal.show" :message="successModal.message" :show="successModal.show"
-                  @cancel="closeModal"
-                  @close="closeModal"></SuccessModal>
-    <FailureModal v-if="failModal.show" :message="failModal.message" :show="failModal.show" @cancel="closeModal"
-                  @close="closeModal"></FailureModal>
+    <template #default v-if="bookingToDelete">
+      <p>Are you sure you want to soft-delete this booking?</p>
+      <hr>
+      <p><strong>Booking UUID:</strong> {{ bookingToDelete.uuid ? bookingToDelete.uuid.substring(0,8) : 'N/A' }}...</p>
+      <p><strong>User:</strong> {{ bookingToDelete.user ? `${bookingToDelete.user.firstName} ${bookingToDelete.user.lastName}` : 'N/A' }}</p>
+      <p><strong>Car:</strong> {{ bookingToDelete.car ? `${bookingToDelete.car.make} ${bookingToDelete.car.model}` : 'N/A' }}</p>
+    </template>
+    </ConfirmationModal>
+
+    <ConfirmationModal
+        key="bookingSaveConfirmModal"
+        :show="showSaveConfirmationModal"
+    title="Confirm Booking Update"
+    @cancel="cancelSaveBooking"
+    @confirm="executeUpdateBooking"
+    >
+    <template #default v-if="bookingToSave && bookingToSave.editable">
+      <p>Are you sure you want to save these changes for booking UUID {{bookingToSave.uuid ? bookingToSave.uuid.substring(0,8) : 'N/A'}}...?</p>
+      <!-- Display changed fields for confirmation if desired -->
+      <p><strong>Status:</strong> {{ formatStatus(bookingToSave.editable.status) }}</p>
+    </template>
+    </ConfirmationModal>
+
+    <SuccessModal :show="successModal.show" :message="successModal.message" @close="closeSuccessModal"/>
+    <FailureModal :show="failModal.show" :message="failModal.message" @close="closeFailModal"/>
   </div>
 </template>
 
 <script>
-import axios from "axios";
-import ConfirmationModal from "../../Main/Modals/ConfirmationModal.vue";
+// ... (script remains largely the same as the full one I provided in the previous "RentalManagement" response,
+//      just ensure method names like `confirmAndDeleteBooking` are changed to `executeDeleteBooking`
+//      and `updateBooking` is `executeUpdateBooking` if those were the final names.
+//      And ensure the data properties `showDeleteConfirmationModal` and `showSaveConfirmationModal` exist and are used.
+//      The `filteredBookings` computed property should be removed if applyFiltersAndSort directly updates `bookingsToDisplay`.)
+
+import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
-import api from "/src/api";
-import { formatDateTime } from '@/utils/dateUtils.js'
+import ShimmerAdminTable from "@/components/Main/Loaders/ShimmerAdminTable.vue";
+import api from "@/api.js";
+import { formatDateTime } from '@/utils/dateUtils.js';
 
-// Add an interceptor for every request
-axios.interceptors.request.use(
-    config => {
-      const token = localStorage.getItem('token');
-
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      return config;
-    },
-    error => {
-      return Promise.reject(error);
-    }
-);
+const RENTAL_STATUS_OPTIONS = ['PENDING_CONFIRMATION', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'OVERDUE']; // Make sure this matches your backend RentalStatus enum string values
 
 export default {
-  name: "BookingManagement",
+  name: "AdminBookingManagement",
   components: {
     ConfirmationModal,
     LoadingModal,
     SuccessModal,
     FailureModal,
+    ShimmerAdminTable,
   },
   data() {
     return {
-      bookings: [],
-      user: {
-        id: "", // Get the ID from the route params
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        roles: [{roleName: "USER"}], // Updated to match the backend structure
-      },
-      sortedBookingsList: [],
-      sortBy: null,
+      allBookings: [],
+      bookingsToDisplay: [], // Use this for v-for in template
       searchQuery: "",
-      loading: false,
-      showConfirmationModal: false,
+      loading: true,
+      apiError: false,
+      showDeleteConfirmationModal: false, // This MUST be defined
+      showSaveConfirmationModal: false,   // This MUST be defined
       bookingToDelete: null,
-      successModal: {
-        show: false,
-        message: "",
-      },
-      failModal: {
-        show: false,
-        message: "",
-      },
+      bookingToSave: null,
+      successModal: { show: false, message: "" },
+      failModal: { show: false, message: "" },
+      currentSortColumn: 'bookingStartDate', // Changed to match DTO
+      currentSortDirection: 'desc',
+      rentalStatusOptions: RENTAL_STATUS_OPTIONS,
     };
   },
   methods: {
-    formatDateTime,
-    getBookings() {
-      this.loading = true;
-      api
-          .get(`/api/admin/bookings/list/all`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          })
-          .then((response) => {
-            this.bookings = response.data;
-            this.sortedBookingsList = [...this.bookings];
-            this.loading = false;
-          })
-          .catch((error) => {
-            this.loading = false;
-            this.showFailureModal("Failed to fetch bookings. Please try again.");
-          });
+    formatDisplayDateTime(dateTimeString) {
+      return formatDateTime(dateTimeString);
     },
-    sortBookings(sortKey) {
-      if (this.sortedBookingsList.length === 0) {
-        return;
-      }
-
-      const currentSortKey = this.sortedBookingsList[0]._sortKey;
-      let sortOrder = "asc";
-
-      if (currentSortKey === sortKey && this.sortedBookingsList[0]._sortOrder === "asc") {
-        sortOrder = "desc";
-      }
-
-      this.sortedBookingsList.sort((a, b) => {
-        const valueA = this.getPropertyValue(a, sortKey);
-        const valueB = this.getPropertyValue(b, sortKey);
-
-        let comparison = 0;
-        if (valueA > valueB) {
-          comparison = 1;
-        } else if (valueA < valueB) {
-          comparison = -1;
+    formatStatus(status) {
+      if (!status) return 'N/A';
+      return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    },
+    getStatusClass(status) {
+      if (!status) return 'status-unknown';
+      return `status-${status.toLowerCase().replace(/_/g, '-')}`;
+    },
+    async fetchBookings() {
+      this.loading = true;
+      this.apiError = false;
+      this.failModal.show = false;
+      try {
+        const response = await api.get(`/api/v1/admin/bookings`);
+        if (response.data && response.data.status === "success") {
+          const rawData = response.data.data;
+          this.allBookings = Array.isArray(rawData) ? rawData.map(booking => ({
+            ...booking,
+            editing: false,
+            editable: null
+          })) : [];
+          this.applyFiltersAndSort();
+        } else {
+          this.handleApiResponseError(response.data, "Failed to fetch bookings.");
         }
-
-        return sortOrder === "asc" ? comparison : -comparison;
-      });
-
-      this.sortedBookingsList.forEach((booking) => {
-        booking._sortKey = sortKey;
-        booking._sortOrder = sortOrder;
-      });
+      } catch (error) {
+        this.handleApiCatchError(error, "Failed to fetch bookings.");
+      } finally {
+        this.loading = false;
+      }
     },
     getPropertyValue(object, key) {
-      const keys = key.split(".");
+      if (object == null || typeof key !== 'string') return '';
+      const keys = key.split('.');
       let value = object;
-      for (const k of keys) {
-        value = value[k];
+      try {
+        for (const k of keys) {
+          if (value && typeof value === 'object' && k in value) {
+            value = value[k];
+          } else { return ''; }
+        }
+      } catch (e) { return ''; }
+      return value === null || typeof value === 'undefined' ? '' : value;
+    },
+    applyFiltersAndSort() {
+      let processedList = [...this.allBookings];
+      if (this.searchQuery) {
+        const lowerQuery = this.searchQuery.toLowerCase();
+        processedList = processedList.filter(b =>
+            (b.uuid?.toLowerCase().includes(lowerQuery)) ||
+            (b.status?.toLowerCase().includes(lowerQuery)) ||
+            (this.formatDisplayDateTime(b.bookingStartDate)?.toLowerCase().includes(lowerQuery)) ||
+            (this.formatDisplayDateTime(b.bookingEndDate)?.toLowerCase().includes(lowerQuery)) ||
+            (b.user?.firstName?.toLowerCase().includes(lowerQuery)) ||
+            (b.user?.lastName?.toLowerCase().includes(lowerQuery)) ||
+            (b.car?.make?.toLowerCase().includes(lowerQuery)) ||
+            (b.car?.model?.toLowerCase().includes(lowerQuery))
+        );
       }
-      return value;
+      this.sortList(processedList);
     },
-    deleteBooking(booking) {
-      this.bookingToDelete = booking;
-      this.showConfirmationModal = true;
-    },
-    confirmDeleteBooking() {
-      if (this.bookingToDelete) {
-        const bookingId = this.bookingToDelete.id;
-        this.loading = true;
-        api
-            .delete(`/api/admin/bookings/delete/${bookingId}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                  },
-                })
-            .then(() => {
-              this.showSuccessModal("Booking deleted successfully.");
-              this.getBookings();
-            })
-            .catch((error) => {
-              this.loading = false;
-              this.showFailureModal("Failed to delete booking. Please try again.");
-            });
+    sortList(listToSort) {
+      if (this.currentSortColumn) {
+        listToSort.sort((a, b) => {
+          let valA = this.getPropertyValue(a, this.currentSortColumn);
+          let valB = this.getPropertyValue(b, this.currentSortColumn);
+          let comparison = 0;
+          if (typeof valA === 'string' && typeof valB === 'string') {
+            comparison = valA.localeCompare(valB);
+          } else if (typeof valA === 'number' && typeof valB === 'number') {
+            comparison = valA - valB;
+          } else {
+            comparison = String(valA).localeCompare(String(valB));
+          }
+          return this.currentSortDirection === 'asc' ? comparison : -comparison;
+        });
       }
-      this.bookingToDelete = null;
-      this.showConfirmationModal = false;
+      this.bookingsToDisplay = listToSort; // Update the correct display array
     },
-    cancelDeleteBooking() {
-      this.bookingToDelete = null;
-      this.showConfirmationModal = false;
-    },
-    editBooking(booking) {
-      booking.editing = true;
-    },
-    updateBooking(booking) {
-      booking.Id = booking.uud;
-      booking.bookingStartDate = booking.bookingStartDate;
-      booking.bookingEndDate = booking.bookingEndDate;
-      booking.user = {
-        id: booking.user.id,
-        userName: booking.user.userName,
-        firstName: booking.user.firstName,
-        lastName: booking.user.lastName,
-        roles: booking.user.roles,
-      };
-
-
-      api
-          .put(`/api/admin/bookings/update/${booking.uuid}`, booking,
-              {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-              })
-          .then((response) => {
-            this.loading = false;
-            this.showSuccessModal("Booking updated successfully.");
-            console.log(response);
-            /* this.getBookings();*/
-          })
-          .catch((error) => {
-            this.loading = false;
-            this.showFailureModal("Failed to update booking. Please try again.");
-          });
-    },
-    cancelEdit(booking) {
-      booking.editing = false;
-    },
-    openBookingView(id) {
-      this.$router.push(`/admin/bookings/read/${id}`);
+    sortBookings(sortKey) {
+      if (this.currentSortColumn === sortKey) {
+        this.currentSortDirection = this.currentSortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.currentSortColumn = sortKey;
+        this.currentSortDirection = 'asc';
+      }
+      this.applyFiltersAndSort();
     },
     resetSearch() {
       this.searchQuery = "";
-      this.sortedBookingsList = this.bookings;
+      this.applyFiltersAndSort();
+    },
+    initiateDeleteBooking(booking) {
+      this.bookingToDelete = { ...booking };
+      this.showDeleteConfirmationModal = true;
+    },
+    async executeDeleteBooking() { // This method is called on modal confirm
+      if (this.bookingToDelete && this.bookingToDelete.uuid) {
+        this.loading = true;
+        this.showDeleteConfirmationModal = false;
+        try {
+          await api.delete(`/api/v1/admin/bookings/${this.bookingToDelete.uuid}`);
+          this.showSuccessModal("Booking soft-deleted successfully.");
+          await this.fetchBookings();
+        } catch (error) {
+          this.handleApiCatchError(error, "Failed to delete booking.");
+        } finally {
+          this.loading = false;
+          this.bookingToDelete = null;
+        }
+      } else {
+        this.showDeleteConfirmationModal = false;
+        this.bookingToDelete = null;
+      }
+    },
+    cancelDeleteBooking() {
+      this.bookingToDelete = null;
+      this.showDeleteConfirmationModal = false;
+    },
+    startEditBooking(booking) {
+      booking.editable = {
+        userUuidString: booking.user?.uuid || '',
+        carUuidString: booking.car?.uuid || '',
+        driverUuidString: booking.driver?.uuid || '',
+        bookingStartDate: booking.bookingStartDate ? this.formatInputDateTime(booking.bookingStartDate) : '',
+        bookingEndDate: booking.bookingEndDate ? this.formatInputDateTime(booking.bookingEndDate) : '',
+        actualReturnedDate: booking.returnedDate ? this.formatInputDateTime(booking.returnedDate) : '',
+        status: booking.status,
+        issuerId: booking.issuer,
+        receiverId: booking.receiver,
+        fine: booking.fine !== null ? booking.fine : 0.0,
+      };
+      booking.editing = true;
+    },
+    formatInputDateTime(dateTimeString) {
+      if (!dateTimeString) return '';
+      const date = new Date(dateTimeString);
+      if (isNaN(date.getTime())) return '';
+      return date.toISOString().substring(0, 16);
+    },
+    confirmSaveBooking(booking) {
+      this.bookingToSave = booking;
+      this.showSaveConfirmationModal = true;
+    },
+    cancelSaveBooking() {
+      this.bookingToSave = null;
+      this.showSaveConfirmationModal = false;
+    },
+    async executeUpdateBooking() { // This method is called on modal confirm
+      if (!this.bookingToSave || !this.bookingToSave.editable) {
+        this.showSaveConfirmationModal = false;
+        return;
+      }
+      this.showSaveConfirmationModal = false;
+      this.loading = true;
+
+      const editableData = this.bookingToSave.editable;
+      const updatePayload = { // Matches BookingUpdateDTO / AdminBookingUpdateDTO
+        userUuid: editableData.userUuidString && editableData.userUuidString.trim() !== "" ? editableData.userUuidString.trim() : null,
+        carUuid: editableData.carUuidString && editableData.carUuidString.trim() !== "" ? editableData.carUuidString.trim() : null,
+        driverUuid: editableData.driverUuidString && editableData.driverUuidString.trim() !== "" ? editableData.driverUuidString.trim() : null,
+        bookingStartDate: editableData.bookingStartDate,
+        bookingEndDate: editableData.bookingEndDate, // This was expectedReturnedDate in editable setup
+        actualReturnedDate: editableData.actualReturnedDate || null,
+        status: editableData.status,
+        issuerId: editableData.issuerId,
+        receiverId: editableData.receiverId,
+        fine: editableData.fine,
+      };
+      if (!updatePayload.userUuid) delete updatePayload.userUuid;
+      if (!updatePayload.carUuid) delete updatePayload.carUuid;
+      if (!updatePayload.driverUuid) delete updatePayload.driverUuid;
+
+      try {
+        await api.put(`/api/v1/admin/bookings/${this.bookingToSave.uuid}`, updatePayload);
+        this.showSuccessModal("Booking updated successfully.");
+        this.bookingToSave.editing = false;
+        this.bookingToSave.editable = null;
+        await this.fetchBookings();
+      } catch (error) {
+        this.handleApiCatchError(error, "Failed to update booking.");
+      } finally {
+        this.loading = false;
+        this.bookingToSave = null;
+      }
+    },
+    cancelEditBooking(booking) {
+      booking.editing = false;
+      booking.editable = null;
+    },
+    viewBookingDetails(uuid) {
+      this.$router.push({ name: 'ViewBooking', params: { uuid: uuid } });
     },
     showSuccessModal(message) {
-      this.successModal = {
-        show: true,
-        message: message,
-      };
+      this.successModal.message = message;
+      this.successModal.show = true;
     },
-    showFailureModal(message) {
-      this.failModal = {
-        show: true,
-        message: message,
-      };
-    },
-    closeModal() {
+    closeSuccessModal() {
       this.successModal.show = false;
+    },
+    closeFailModal() {
       this.failModal.show = false;
     },
-    searchNestedProperty(obj, query) {
-      for (const key in obj) {
-        if (typeof obj[key] === "string" && obj[key].toLowerCase().includes(query)) {
-          return true;
-        }
+    handleApiResponseError(responseData, defaultMessage) {
+      let errorMsg = defaultMessage;
+      if (responseData && responseData.errors && responseData.errors.length > 0) {
+        errorMsg = responseData.errors.map(e => e.message || e.field).join(', ');
+      } else if (responseData && typeof responseData === 'string' && responseData.length < 200) {
+        errorMsg = responseData;
+      } else if (responseData && responseData.message) {
+        errorMsg = responseData.message;
       }
-      return false;
+      this.failModal.message = errorMsg;
+      this.failModal.show = true;
+      this.apiError = true;
     },
-    updateSortOption(option) {
-      this.sortBy = option;
-    },
-  },
-  computed: {
-    sortedBookingsList() {
-      if (this.sortBy) {
-        const sorted = [...this.bookings];
-        sorted.sort((a, b) => (a[this.sortBy] > b[this.sortBy] ? 1 : -1));
-        return sorted;
-      }
-      return this.bookings;
-    },
-    filteredBookings() {
-      const query = this.searchQuery.toLowerCase();
-      return this.sortedBookingsList.filter((booking) => {
-        for (const key in booking) {
-          if (typeof booking[key] === "string" && booking[key].toLowerCase().includes(query)) {
-            return true;
-          }
-          if (typeof booking[key] === "object" && this.searchNestedProperty(booking[key], query)) {
-            return true;
-          }
+    handleApiCatchError(error, defaultMessage) {
+      let errorMessage = defaultMessage;
+      if (error.response && error.response.data) {
+        const apiResponse = error.response.data;
+        if (apiResponse.errors && apiResponse.errors.length > 0) {
+          errorMessage = apiResponse.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join('; ');
+        } else if (typeof apiResponse === 'string' && apiResponse.length < 200) {
+          errorMessage = apiResponse;
+        } else if (apiResponse.message) {
+          errorMessage = apiResponse.message;
+        } else if (error.response.statusText && error.response.statusText !== "") {
+          errorMessage = `Error ${error.response.status}: ${error.response.statusText}`;
         }
-        return false;
-      });
+      } else if (error.request) {
+        errorMessage = "No response from server.";
+      }
+      this.failModal.message = errorMessage;
+      this.failModal.show = true;
+      this.apiError = true;
     },
   },
   created() {
-    this.getBookings();
+    this.fetchBookings();
   },
 };
 </script>
-
-<style>
-
-</style>

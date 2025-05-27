@@ -72,12 +72,23 @@
               <i class="fas fa-history"></i> My Rental History
             </button>
           </div>
+          <hr>
         </div>
       </div>
       <div v-else-if="!isLoading && !errorLoading && (!user || !user.uuid)">
         <p class="error-text">User profile data is not available.</p>
       </div>
+      <div v-else>
+        <LoadingModal :show="isLoading" message="Loading user profile..."/>
+
     </div>
+      <div class="button-container">
+        <button class="back-button button" @click="goBack()">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+      </div>
+      </div>
+
   </div>
 
   <div class="modal-body-container">
@@ -189,6 +200,9 @@ export default {
 
     closeFailModal() {
       this.failModal.show = false;
+    },
+    goBack() {
+      this.$router.go(-1); // Navigate back in history
     }
   },
 };
@@ -266,12 +280,12 @@ export default {
   display: flex;
   justify-content: center; /* Center buttons if fewer, or space-around */
   flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-  margin-top: 30px;
-  gap: 15px;
+ /* margin-top: 30px;*/
+  gap: 5px;
 }
 
 .button {
-  padding: 12px 22px;
+  padding: 10px 10px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -327,9 +341,9 @@ export default {
 }
 
 hr {
-  margin: 25px 0;
+  margin: 10px 0;
   border: 0;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid #b7b7ba;
 }
 
 .modal-body-container {

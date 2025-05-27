@@ -30,6 +30,10 @@
       </tr>
       </tbody>
     </table>
+    <div class="button-container">
+      <button class="back-button button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
+
+    </div>
   </div>
   <FailureModal v-if="failModal.show" @close="closeFailureModalAndRedirectToLogin" @cancel="closeModal" :show="failModal.show"
                 :message="failModal.message"></FailureModal>
@@ -127,6 +131,12 @@ export default {
 
 
 
+    },
+    closeModal() {
+      this.failModal.show = false;
+    },
+    goBack() {
+      this.$router.go(-1); // Go back to the previous page
     },
   },
 

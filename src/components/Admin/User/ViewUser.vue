@@ -25,10 +25,14 @@
         <!-- Rental History section -->
 <!--        <user-rental-history :user-id="user.id" />-->
 
+        <hr>
       </div>
       <div v-else>
         <loading-modal v-if="loading"/>
         Loading user profile...
+      </div>
+      <div class="button-container">
+        <button class="back-button button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
       </div>
     </div>
   </div>
@@ -80,6 +84,9 @@ export default {
             console.log(error);
             this.loading = false;
           });
+    },
+    goBack() {
+      this.$router.go(-1);
     },
   },
 };

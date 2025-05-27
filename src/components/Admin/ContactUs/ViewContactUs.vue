@@ -2,7 +2,11 @@
   <div class="card-container card-container-admin">
     <div class="form-container">
       <div class="contact-profile">
-        <h1>Query Details</h1>
+        <div class="form-header">
+          <h2><i class="fas fa-envelope"></i> Contact Us Query Details</h2>
+        </div>
+        <hr>
+
         <div v-if="contact" class="profile-details">
           <div>
             <label>Title:</label>
@@ -35,6 +39,10 @@
         </div>
 
       </div>
+
+      <div class="button-container">
+        <button class="back-button button " @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
+      </div>
     </div>
   </div>
 </template>
@@ -57,21 +65,19 @@ export default {
   methods: {
     fetchContact() {
       this.loading = true;
-      const contactId = this.$route.params.id;
-      const token = localStorage.getItem('token');
+      const uuid = this.$route.params.uuid;
 
       api
-          .get(`/api/admin/contactUs/read/${contactId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
+          .get(`/api/v1/admin/contact-us-submissions/${uuid}`)
           .then((response) => {
-            this.contact = response.data;
+            this.contact = response.data.data;
           })
           .catch((error) => {
             console.log(error);
           });
+    },
+    goBack() {
+      this.$router.go(-1);
     },
   },
   components: {
@@ -80,6 +86,7 @@ export default {
 };
 </script>
 <style>
+
 
 </style>
 

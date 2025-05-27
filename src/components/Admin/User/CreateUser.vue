@@ -3,7 +3,9 @@
     <div class="form-container-admin">
       <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"></LoadingModal>
       <form @submit.prevent="addUser">
-        <h2 class="form-header">Add User</h2>
+        <div class="form-header">
+          <h2><i class="fas fa-user-plus"></i> Add User</h2>
+        </div>
         <div class="form-group">
           <label for="firstName">First Name:</label>
           <input id="firstName" v-model="user.firstName" placeholder="Enter first name" required type="text">
@@ -30,6 +32,9 @@
         </div>
         <div class="button-container">
           <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
+          <button class="back-button button" type="button" @click="goBack">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
         </div>
       </form>
     </div>
@@ -115,14 +120,12 @@ export default {
   methods: {
     addUser() {
       this.loadingModal.show = true;
-
       console.log("Adding user:", this.user);
       // Send the user data to the backend API or perform any other necessary actions
-      const token = localStorage.getItem('token');
       const userToSend = JSON.parse(JSON.stringify(this.user)); // 👈 safe copy
 
       api
-          .post("/api/admin/users/create", userToSend)
+          .post("/api/v1/admin/users", userToSend)
           .then((response) => {
             // Handle success
             console.log(response);
@@ -157,11 +160,11 @@ export default {
         lastName: "",
         email: "",
         password: "",
-        roles: [{ roleName: "USER" }],
-
-
-      };
+        roles: [{roleName: "USER"}],};
     },
+    goBack() {
+      this.$router.go(-1);
+    }
   },
 };
 </script>

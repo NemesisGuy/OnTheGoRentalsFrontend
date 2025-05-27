@@ -11,13 +11,14 @@ const adminBookingRoutes = [
     },
     {
         path: 'bookings/create',
+        name: 'CreateBooking',
         components: {
             adminContent: CreateBooking,
         },
     },
 
     {
-        path: 'bookings/read/:id',
+        path: 'bookings/read/:uuid',
         name: 'ViewBooking',
         components: {
             adminContent: ViewBooking,

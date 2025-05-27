@@ -25,12 +25,16 @@
             <p><label>License Plate: </label>{{ car.licensePlate }}</p>
             <p><label>Available: </label>{{ car.available }}</p>
 
-
+          <hr>
           </div>
+
         </div>
         <div v-else>
           <p>Loading car profile...</p>
         </div>
+      </div>
+      <div class="button-container">
+        <button class="back-button button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
       </div>
     </div>
   </div>
@@ -81,6 +85,10 @@ export default {
           .catch((error) => {
             console.log(error);
           });
+    },
+
+    goBack() {
+      this.$router.go(-1);
     },
   },
 };

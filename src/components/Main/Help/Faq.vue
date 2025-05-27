@@ -59,9 +59,9 @@ export default {
   methods: {
     fetchFaqList() {
       api
-          .get('/api/faq/get-all')
+          .get('/api/v1/faqs')
           .then((response) => {
-            this.faqList = response.data;
+            this.faqList = response.data.data;
           })
           .catch((error) => {
             console.error(error);

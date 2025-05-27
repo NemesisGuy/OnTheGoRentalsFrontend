@@ -89,6 +89,9 @@
 
 
       </div>
+      <div class="button-container">
+        <button class="back-button button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
+      </div>
     </div>
   </div>
 </template>
@@ -211,8 +214,12 @@ export default {
       if (!priceGroup) return 'N/A';
       // Assuming priceGroup is an enum string like 'ECONOMY'
       return priceGroup.charAt(0).toUpperCase() + priceGroup.slice(1).toLowerCase();
+    },
+    goBack() {
+      this.$router.go(-1); // Go back to the previous page
     }
   },
+
 };
 </script>
 

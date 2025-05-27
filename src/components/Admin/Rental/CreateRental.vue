@@ -5,7 +5,7 @@
 
       <form ref="rentalForm" @submit.prevent="createRental">
         <div class="form-header">
-          <h2>Create Rental</h2>
+          <h2><i class="fas fa-car"></i> Create Rental</h2>
         </div>
         <div class="form-group">
           <label for="user">User:</label>
@@ -61,6 +61,9 @@
         <div class="form-group">
           <div class="button-container">
             <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
+            <button type="button" class="back-button button" @click="goBack">
+              <i class="fas fa-arrow-left"></i> Back
+            </button>
           </div>
         </div>
       </form>
@@ -140,20 +143,7 @@ import {formatDateTime} from "@/utils/dateUtils";
 // axios.defaults.baseURL = 'http://localhost:8080';
 
 // Add an interceptor for every request
-axios.interceptors.request.use(
-    config => {
-      const token = localStorage.getItem('token');
 
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      return config;
-    },
-    error => {
-      return Promise.reject(error);
-    }
-);
 export default {
   computed: {
     confirmationModal() {
@@ -206,10 +196,10 @@ export default {
       this.loadingModal.show = true;
       const token = localStorage.getItem('token');
       api
-          .get('/api/admin/users/list/all'
+          .get('/api/v1/admin/users'
           )
           .then(response => {
-            this.users = response.data;
+            this.users = response.data.data;
             this.loadingModal.show = false;
           })
           .catch(error => {
@@ -228,9 +218,9 @@ export default {
       this.loadingModal.show = true;
       const token = localStorage.getItem('token');
       api
-          .get('/api/admin/cars/all')
+          .get('/api/v1/admin/cars')
           .then(response => {
-            this.cars = response.data;
+            this.cars = response.data.data;
             this.loadingModal.show = false;
           })
           .catch(error => {
@@ -272,7 +262,7 @@ export default {
       // Fetch user details
       const token = localStorage.getItem('token');
       api
-          .get(`/api/admin/users/read/${this.selectedUser}`)
+          .get(`/api/v1/admin/users/${this.selectedUser}`)
           .then(response => {
             const userData = response.data;
             rental.user.id = userData.id;
@@ -286,9 +276,9 @@ export default {
 
             // Fetch car details
             api
-                .get(`/api/admin/cars/read/${this.selectedCar}`)
+                .get(`/api/v1/admin/cars/${this.selectedCar}`)
                 .then(response => {
-                  rental.car = response.data;
+                  rental.car = response.data.data;
 
                   // Show the confirmation modal
                   this.showConfirmationModal = true;
@@ -383,6 +373,9 @@ export default {
       this.$nextTick(() => {
         this.loadingModal.show = false;
       });
+    },
+    goBack() {
+      this.$router.go(-1);
     },
   },
 };

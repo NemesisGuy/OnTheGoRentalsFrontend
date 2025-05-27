@@ -35,9 +35,12 @@
           <button class="confirm-button button" type="submit">
             <i class="fas fa-check"></i> Save Changes
           </button>
-          <router-link :to="{ name: 'UserProfile' }" class="update-button button">
+          <button class="back-button button" @click="goBack()">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+<!--          <router-link :to="{ name: 'UserProfile' }" class="back-button button">
             <i class="fas fa-arrow-left"></i> Back to Profile
-          </router-link>
+          </router-link>-->
         </div>
       </form>
     </div>
@@ -148,6 +151,9 @@ export default {
     closeModal() {
       this.successModal.show = false;
       this.failModal.show = false;
+    },
+    goBack() {
+      this.$router.go(-1);
     }
   }
 };

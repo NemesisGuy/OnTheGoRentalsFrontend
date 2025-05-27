@@ -1,3 +1,4 @@
+
 <template>
   <div class="card-container card-container-admin">
     <div class="form-container-admin">
@@ -8,212 +9,64 @@
           <h2>Create Damage Report</h2>
         </div>
         <div class="form-group">
-          <label for="rental">Rentals:</label>
-          <select v-model="selectedRental" id="rental" name="rental">
-            <option v-for="rental in rentals" :key="rental.id" :value="rental.id">
-              Rental ID: {{ rental.id }} User Name: {{ rental.user }}
+          <label for="rental">Rental:</label>
+          <select v-model="selectedRental" id="rental" name="rental" required>
+            <option value="" disabled>Select a rental</option>
+            <option v-for="rental in rentals" :key="rental.uuid" :value="rental.uuid">
+              Rental ID: {{ rental.uuid }} | User: {{ rental.user?.email || 'N/A' }}
             </option>
           </select>
         </div>
         <div class="form-group">
           <label for="dateAndTime">Date and Time:</label>
-          <input id="dateAndTime" v-model="selectedDateAndTime" name="dataAndTime" type="datetime-local"/>
+          <input id="dateAndTime" v-model="selectedDateAndTime" name="dateAndTime" type="datetime-local" required />
         </div>
-
         <div class="form-group">
           <label for="location">Location:</label>
-          <input id="location" v-model="location" name="location" type="text"/>
+          <input id="location" v-model="location" name="location" type="text" required />
         </div>
-
         <div class="form-group">
           <label for="description">Description:</label>
-          <input id="description" v-model="description" name="description" type="text"/>
+          <input id="description" v-model="description" name="description" type="text" required />
         </div>
-
         <div class="form-group">
           <label for="repairCost">Repair Cost:</label>
-          <input id="repairCost" v-model="repairCost" name="repairCost" type="number"/>
+          <input id="repairCost" v-model.number="repairCost" name="repairCost" type="number" min="0" step="0.01" required />
         </div>
-
-        <!--<button @click="goBack" class="back-button">
+        <div class="form-group button-container">
+          <button type="submit" class="confirm-button button">
+            <i class="fas fa-check"></i> Save
+          </button>
+          <button type="button" class="back-button button" @click="goBack">
             <i class="fas fa-arrow-left"></i> Back
-        </button>-->
-        <!--<div class="form-group">
-            <div class="button-container">
-                <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
-            </div>
-        </div>-->
-
-        <div class="form-group">
-          <div class="button-container">
-            <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Save</button>
-          </div>
+          </button>
         </div>
       </form>
+      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
     </div>
-  </div>
-
-  <div class="modal-body">
-
-    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-
     <SuccessModal
         v-if="successModal.show"
-        key="successModal"
         :message="successModal.message"
         :show="successModal.show"
-        @cancel="closeModal"
         @close="closeModal"
-        @confirm="closeModal"
-        @ok="closeModal"
-    ></SuccessModal>
-
+    />
     <FailureModal
         v-if="failModal.show"
-        key="failModal"
         :message="failModal.message"
         :show="failModal.show"
-        @cancel="closeModal"
         @close="closeModal"
-    ></FailureModal>
+    />
   </div>
 </template>
 
-<!--<script>
-import axios from "axios";
-import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
-import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
-import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
-import FailureModal from "@/components/Main/Modals/FailureModal.vue";
-
-export default {
-    components: {FailureModal, SuccessModal, LoadingModal, ConfirmationModal},
-    data() {
-        return {
-            rentals: [],
-                selectedRental: '', // Initialize as an empty string for single selection
-                description: '',
-            selectedDateAndTime: '',
-                location: '',
-                repairCost: 0, // Initialize with a default value
-            loadingModal: {
-                show: false,
-            },
-            errorMessage: '',
-            successModal: {
-                show: false,
-                message: ""
-            },
-            failModal: {
-                show: false,
-                message: ""
-            }
-        };
-    },
-
-    mounted() {
-// Fetch rental options from the backend and populate rentalOptions
-        this.fetchRentalOptions();
-    },
-    methods:{
-        async fetchRentalOptions(){
-            this.loadingModal.show = true;
-            axios
-                .get('http://localhost:8080/api/admin/rentals/list/all')
-                .then(response => {
-                    this.rental = response.data;
-                    this.loadingModal.show = false;
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.failModal.message = "Failed to fetch rental list";
-                    this.failModal.show = true;
-                    this.loadingModal.show = false;
-                })
-                .finally(() => {
-                    this.loadingModal.show = false;
-                });
-    },
-         createReport() {
-             this.loadingModal.show = true;
-            this.errorMessage = '';
-
-             const report = {
-                 rental: {},
-                 rentals: this.selectedRental,
-                 dateAndTime: this.selectedDateAndTime,
-                 location: this.location,
-                 description: this.description,
-                 repairCost: this.repairCost,
-             };
-
-             axios
-                 .get(`http://localhost:8080/api/admin/rentals/read/${this.selectedRental}`)
-                 .then(response => {
-                     report.rental = response.data;
-
-             // Make an API request to create the damage report
-                axios
-                    .post('http://localhost:8080/api/admin/damageReport/create', report)
-                    .then(response =>{
-                        console.log('Damage report added successfully')
-                        console.log(response.data);
-                        console.log(response);
-                    })
-                 })
-                    .catch(error => {
-                        console.log(error);
-                        if (error.response && error.response.status === 400) {
-                            this.errorMessage = 'Invalid data. Please check the entered values.';
-                            console.log(error.response.data);
-                            console.log(error.response.status);
-                            console.log(error.response);
-                        } else {
-                            this.errorMessage = 'An error occurred while adding the Damage Report.';
-                        }
-                    });
-             this.resetForm();
-        },
-        resetForm() {
-            this.damageReport = {
-                selectedRental: '',
-                description: '',
-                dateAndTime: '',
-                location: '',
-                repairCost: ''
-            };
-        },
-        goBack() {
-            this.$router.go(-1);
-        }
-    }
-};
-</script>-->
 <script>
-import axios from "axios";
-import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import api from "@/api";
 
-axios.interceptors.request.use(
-    config => {
-      const token = localStorage.getItem('token');
-
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      return config;
-    },
-    error => {
-      return Promise.reject(error);
-    }
-);
-
 export default {
-  components: {FailureModal, SuccessModal, LoadingModal, ConfirmationModal},
+  components: { FailureModal, SuccessModal, LoadingModal },
   data() {
     return {
       rentals: [],
@@ -222,116 +75,105 @@ export default {
       selectedDateAndTime: '',
       location: '',
       repairCost: 0,
-      loadingModal: {
-        show: false,
-      },
+      loadingModal: { show: false },
       errorMessage: '',
-      successModal: {
-        show: false,
-        message: "",
-      },
-      failModal: {
-        show: false,
-        message: "",
-      },
+      successModal: { show: false, message: "" },
+      failModal: { show: false, message: "" },
     };
   },
-
   mounted() {
     this.fetchRentalOptions();
   },
-
   methods: {
     async fetchRentalOptions() {
       this.loadingModal.show = true;
       try {
-        const token = localStorage.getItem('token');
-        console.log("token", localStorage.getItem('token'))
-        const response = await api.get('/api/admin/rentals/list/all')
-        this.rentals = response.data;
+        const response = await api.get('/api/v1/admin/rentals', {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        const { data, errors, status } = response.data || {};
+        if (status !== "success" || (errors && errors.length > 0)) {
+          throw new Error(errors?.join(", ") || "Failed to fetch rentals");
+        }
+        this.rentals = data || [];
+        console.log("Fetched Rentals:", this.rentals); // Debug
       } catch (error) {
-        console.error(error);
-        this.failModal.message = 'Failed to fetch rental list';
+        console.error("Error fetching rentals:", error);
+        this.failModal.message = "Failed to fetch rental list";
         this.failModal.show = true;
       } finally {
         this.loadingModal.show = false;
       }
     },
-
     async createReport() {
+      if (!this.selectedRental || !this.selectedDateAndTime || !this.location || !this.description || this.repairCost == null) {
+        this.errorMessage = "All fields are required.";
+        return;
+      }
       this.loadingModal.show = true;
-      this.errorMessage = '';
-
+      this.errorMessage = "";
       try {
-        const token = localStorage.getItem('token');
-        const rentalResponse = await api.get(`/api/admin/rentals/read/${this.selectedRental}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-
         const formattedDate = new Date(this.selectedDateAndTime).toISOString();
-        const tempRental = {
-          rentalId: rentalResponse.data.id, // Add the rentalId
-          userId: rentalResponse.data.user.id, // Add the userId
-          carId: rentalResponse.data.car.id, // Add the carId
-          receiver: rentalResponse.data.receiver,
-          issuer: rentalResponse.data.issuer,
-          issuedDate: rentalResponse.data.issuedDate,
-          returnedDate: rentalResponse.data.returnedDate,
-
-          //fine: Math.floor(rentalResponse.fine),
-          // Add other properties as needed
-        };
         const report = {
-          rental: tempRental,
+          rentalUuid: this.selectedRental, // Use rentalUuid to match backend
           dateAndTime: formattedDate,
           location: this.location,
           description: this.description,
           repairCost: this.repairCost,
         };
-        console.log('Report:', report);  // Check if the report is formed correctly
-
-
-        await api.post('/api/admin/damageReport/create', report, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+        console.log("Request Payload:", report); // Debug
+        console.log("Request Headers:", { Authorization: `Bearer ${localStorage.getItem("token")}` }); // Debug
+        const response = await api.post("/api/v1/admin/damage-reports", report, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
-
-
-        console.log('Damage report added successfully');
-      } catch (error) {
-        console.error(error);
-        if (error.response && error.response.status === 400) {
-          this.errorMessage = 'Invalid data. Please check the entered values.';
-          console.log(error.response.data);
-        } else {
-          this.errorMessage = 'An error occurred while adding the Damage Report.';
+        const { errors, status } = response.data || {};
+        if (status !== "success" || (errors && errors.length > 0)) {
+          throw new Error(errors?.join(", ") || "Failed to create damage report");
         }
-      } finally {
+        this.successModal.message = "Damage report created successfully.";
+        this.successModal.show = true;
         this.resetForm();
+      } catch (error) {
+        console.error("Error creating damage report:", error);
+        let errorMessage = error.message || "An error occurred while creating the damage report.";
+        if (error.response) {
+          if (error.response.status === 400) {
+            errorMessage = error.response.data.errors?.join(", ") || "Invalid data. Please check the entered values.";
+          } else if (error.response.status === 404) {
+            errorMessage = "Rental not found. Please select a valid rental.";
+          } else if (error.response.status === 500) {
+            errorMessage = error.response.data.errors?.join(", ") || "Server error. Please check the backend logs.";
+          }
+        }
+        this.errorMessage = errorMessage;
+        this.failModal.message = errorMessage;
+        this.failModal.show = true;
+      } finally {
         this.loadingModal.show = false;
       }
     },
-
     resetForm() {
-      this.selectedRental = '';
-      this.description = '';
-      this.selectedDateAndTime = '';
-      this.location = '';
+      this.selectedRental = "";
+      this.description = "";
+      this.selectedDateAndTime = "";
+      this.location = "";
       this.repairCost = 0;
     },
-
     goBack() {
       this.$router.go(-1);
+    },
+    closeModal() {
+      this.successModal.show = false;
+      this.failModal.show = false;
+      this.errorMessage = "";
+      if (!this.successModal.show) {
+        this.$router.push("/admin/damage-reports");
+      }
     },
   },
 };
 </script>
 
-<style>
-/* Add styles for the component here */
+<style scoped>
+
 </style>

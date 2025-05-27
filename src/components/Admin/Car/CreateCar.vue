@@ -3,7 +3,9 @@
     <div class="form-container-admin">
       <LoadingModal v-if="loadingModal.show" :show="loadingModal.show"></LoadingModal>
       <form @submit.prevent="addCar">
-        <h2 class="form-header">Add Car</h2>
+        <div class="form-header">
+          <h2><i class="fas fa-car"></i> Add Car</h2>
+        </div>
         <div class="form-group">
           <label for="make">Make:</label>
           <input id="make" v-model="car.make" required type="text">
@@ -42,6 +44,7 @@
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
         <div class="button-container">
           <button class="confirm-button button" type="submit"><i class="fas fa-check"></i> Confirm</button>
+          <button class="back-button button" type="button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
         </div>
       </form>
     </div>
@@ -127,11 +130,12 @@ export default {
       this.errorMessage = ''; // Reset the error message
       const token = localStorage.getItem('token');
 
-      api.post('/api/admin/cars/create', this.car
+      api.post('/api/v1/admin/cars', this.car
           )
           .then(response => {
             // Handle success
-            console.log('Car added successfully');
+
+            console.log('Car added successfully ');
             console.log(response.data);
             console.log(response);
             this.loadingModal.show = false;
@@ -181,8 +185,10 @@ export default {
         priceGroup: '',
         licensePlate: ''
       };
-    }
+    },goBack() {
+    this.$router.go(-1); // Go back to the previous page
   }
+  },
 };
 </script>
 

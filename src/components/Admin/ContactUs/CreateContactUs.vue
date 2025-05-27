@@ -2,7 +2,9 @@
   <div class="card-container card-container-admin">
     <div class="form-container-admin">
       <form @submit.prevent="addQuery">
-        <h2 class="form-header">Ask Question</h2>
+        <div class="form-header">
+          <h2><i class="fas fa-envelope"></i> Contact Us</h2>
+        </div>
         <div class="form-group">
           <label for="title">Title:</label>
           <input id="title" v-model="contact.title" placeholder="Enter title" required type="text">
@@ -30,6 +32,7 @@
         <div class="button-container">
           <button class="add-button button" type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i> Submit
           </button>
+          <button class="back-button button" type="button" @click="goBack() "><i class="fas fa-arrow-left"></i> Back</button>
         </div>
 
       </form>
@@ -60,7 +63,7 @@ export default {
       console.log("token", localStorage.getItem('token'))
 
       api
-          .post("/api/admin/contactUs/create", this.contact, {
+          .post("/api/v1/admin/contact-us-submissions", this.contact, {
             headers: {
               Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',
@@ -86,6 +89,9 @@ export default {
         subject: "",
         message: ""
       };
+    },
+    goBack() {
+      this.$router.go(-1);
     },
   },
 };

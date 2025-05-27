@@ -2,7 +2,11 @@
   <div class="card-container card-container-admin">
     <div class="form-container">
       <div class="driver-profile">
-        <h1>Driver Profile</h1>
+        <div class="form-header">
+          <h2><i class="fas fa-user"></i> Driver Profile</h2>
+          <hr>
+        </div>
+
         <div v-if="driver" class="profile-details">
           <div>
             <label>First Name:</label>
@@ -16,11 +20,15 @@
             <label>License Code:</label>
             <span>{{ driver.licenseCode }}</span>
           </div>
+          <hr>
         </div>
         <div v-else>
           <loading-modal v-if="loading"/>
           <p>Loading driver profile...</p>
         </div>
+      </div>
+      <div class="button-container">
+        <button class="back-button button" @click="$router.go(-1)"><i class="fas fa-arrow-left"></i> Back</button>
       </div>
     </div>
   </div>
@@ -50,17 +58,16 @@ export default {
       const id = this.$route.params.id;
       const token = localStorage.getItem('token');
       api
-          .get(`/api/admin/drivers/read/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
+          .get(`/api/v1/admin/drivers/${id}`)
           .then((response) => {
-            this.driver = response.data;
+            this.driver = response.data.data;
           })
           .catch((error) => {
             console.log(error);
           });
+    },
+    goBack() {
+      this.$router.go(-1);
     },
   },
   components: {

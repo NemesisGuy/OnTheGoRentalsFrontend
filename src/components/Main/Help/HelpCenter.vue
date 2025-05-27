@@ -59,9 +59,9 @@ export default {
   },
   methods: {
     fetchHelpCenters() {
-      api.get('/api/help-center/get-all')
+      api.get('/api/v1/contact-us')
           .then(response => {
-            this.helpCenters = response.data;
+            this.helpCenters = response.data.data;
             this.categories = ['All', ...new Set(response.data.map(entry => entry.category))];
           })
           .catch(error => {

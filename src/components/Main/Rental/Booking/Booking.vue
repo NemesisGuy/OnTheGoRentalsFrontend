@@ -44,9 +44,11 @@
             <button class="confirm-button button" type="submit" :disabled="loadingModal.show || !currentUser.uuid || !selectedCarUuid">
               <i class="fas fa-check"></i> Create Booking
             </button>
+            <button class="back-button button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
           </div>
         </div>
       </form>
+
     </div>
   </div>
 
@@ -329,76 +331,15 @@ export default {
     closeAndRedirectToBookings() {
       this.successModal.show = false;
       this.$router.push({ name: 'MyBookings' });
-    }
+    },
+    goBack() {
+      this.$router.go(-1); // Go back to the previous page
+    },
   },
 };
 </script>
 
 <style scoped>
 /* Basic styling, adapt as needed */
-.card-container {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-}
-.form-container {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  width: 100%;
-  max-width: 600px;
-}
-.form-header {
-  text-align: center;
-  margin-bottom: 25px;
-}
-.form-group {
-  margin-bottom: 20px;
-}
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-}
-.form-control, .form-select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-.form-control-plaintext {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #e9ecef;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  box-sizing: border-box;
-  cursor: default;
-}
-.button-container {
-  text-align: center;
-  margin-top: 20px;
-}
-.button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-.confirm-button {
-  background-color: #28a745;
-  color: white;
-}
-.confirm-button:disabled {
-  background-color: #94d3a2;
-  cursor: not-allowed;
-}
-.modal-body-container {
-  position: relative;
-  z-index: 1050;
-}
+
 </style>
