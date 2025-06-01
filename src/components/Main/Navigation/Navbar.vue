@@ -151,7 +151,7 @@ export default {
 
 
     const handleLogout = () => {
-      api.post('/api/user/logout')
+      api.post('/api/v1/auth/logout')
           .catch(error => {
             console.error("Logout request failed:", error);
           })

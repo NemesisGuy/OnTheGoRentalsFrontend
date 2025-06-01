@@ -1,5 +1,6 @@
 import AdminDash from "@/components/Admin/AdminDash.vue";
 import Settings from "@/components/Admin/Settings/Settings.vue";
+import StaffDailyOperations from "@/components/Admin/StaffDailyOperations/StaffDailyOperations.vue";
 
 const adminRoutes = [
     {
@@ -12,6 +13,12 @@ const adminRoutes = [
         name: 'AdminSettings',
         component: Settings,
     },
+    {
+        path: "StaffDailyOperations",
+        name: 'StaffDailyOperations',
+        component: StaffDailyOperations,
+
+    }
 ];
 
 export default adminRoutes;

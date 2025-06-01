@@ -7,7 +7,7 @@
       <hr class="my-4">
       <p>Explore our wide range of cars and book your rental today.</p>
       <div class="button-container button-container-margin">
-        <router-link :to="{ name: 'CarList', params: { category: 'all'} }" class="custom-button">
+        <router-link :to="{ name: 'CarList', params: { pricegroup: 'all'} }" class="custom-button">
           <i class="fas fa-search"></i> View details
         </router-link>
       </div>
@@ -23,7 +23,7 @@
               <p class="card-text">Affordable cars for your everyday needs.</p>
               <p class="card-text mt-2">Starting at 550.00/day</p>
               <div class="mt-auto button-container button-container-margin">
-                <router-link :to="{ name: 'CarList', params: { category: 'economy'} }" class="custom-button">
+                <router-link :to="{ name: 'CarList', params: { pricegroup: 'economy'} }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
               </div>
@@ -38,7 +38,7 @@
               <p class="card-text">Experience the thrill of driving in style.</p>
               <p class="card-text mt-2">Starting at 800.00/day</p>
               <div class="mt-auto button-container button-container-margin">
-                <router-link :to="{ name: 'CarList', params: { category: 'luxury' } }" class="custom-button">
+                <router-link :to="{ name: 'CarList', params: { pricegroup: 'luxury' } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
               </div>
@@ -53,7 +53,7 @@
               <p class="card-text">View our current deals and discounts.</p>
               <p class="card-text mt-2">Starting at 450.00/day</p>
               <div class="mt-auto button-container button-container-margin">
-                <router-link :to="{ name: 'CarList', params: { category: 'special' } }" class="custom-button">
+                <router-link :to="{ name: 'CarList', params: { pricegroup: 'special' } }" class="custom-button">
                   <i class="fas fa-info-circle"></i> View
                 </router-link>
               </div>

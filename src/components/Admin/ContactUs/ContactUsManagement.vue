@@ -249,22 +249,42 @@ export default {
       if (this.contactToDelete) {
         this.loading = true;
         api
-            .delete(`/api/v1/admin/contact-us-submissions/${this.contactToDelete.uuid}`, {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            })
+            .delete(`/api/v1/admin/contact-us-submissions/${this.contactToDelete.uuid}`)
             .then((response) => {
-              const { errors, status } = response.data || {};
-              if (status !== "success" || (errors && errors.length > 0)) {
-                throw new Error(errors?.join(", ") || "Failed to delete contact");
+              // Check for successful HTTP status codes for DELETE (200 OK or 204 No Content)
+              if (response.status === 200 || response.status === 204) {
+                this.showSuccessModal("Contact submission deleted successfully.");
+                this.getContacts(); // Refreshes the list
+              } else {
+                // This case handles unexpected success statuses that are not 200 or 204,
+                // or if the backend was changed to send a body with status/errors for DELETE.
+                // For a strict 204, this 'else' block might not be hit if the one above catches it.
+                const responseData = response.data || {}; // Handle cases where data might be missing
+                const errors = responseData.errors || (responseData.data ? responseData.data.errors : []);
+                const status = responseData.status || (responseData.data ? responseData.data.status : null);
+
+                if (status && status !== "success" || (errors && errors.length > 0)) {
+                  throw new Error(errors?.join(", ") || `Delete operation responded with status: ${response.status}`);
+                }
+                // If status is "success" but not 204 (e.g. 200 with a body)
+                this.showSuccessModal("Contact submission deleted successfully.");
+                this.getContacts();
               }
-              this.showSuccessModal("Contact submission deleted successfully.");
-              this.getContacts();
             })
             .catch((error) => {
-              this.showFailureModal(error.message || "Failed to delete contact submission.");
-              console.error("Error deleting contact:", error);
+              // Attempt to get a more specific error message from the response if available
+              let errorMessage = "Failed to delete contact submission.";
+              if (error.response && error.response.data) {
+                if (error.response.data.errors && error.response.data.errors.length > 0) {
+                  errorMessage = error.response.data.errors.map(e => e.message || e).join(", ");
+                } else if (error.response.data.message) {
+                  errorMessage = error.response.data.message;
+                }
+              } else if (error.message) {
+                errorMessage = error.message;
+              }
+              this.showFailureModal(errorMessage);
+              console.error("Error deleting contact:", error.response || error);
             })
             .finally(() => {
               this.loading = false;

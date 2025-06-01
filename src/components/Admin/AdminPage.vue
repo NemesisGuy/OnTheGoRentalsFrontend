@@ -18,6 +18,16 @@
               <span class="menu-text" v-show="isExpanded">Dashboard</span>
             </router-link>
           </li>
+
+
+          <li>
+            <router-link to="/admin/StaffDailyOperations">
+              <i class="fas fa-chart-bar"></i>
+              <span class="menu-text" v-show="isExpanded">Daily Operations</span>
+            </router-link>
+          </li>
+
+
           <li>
             <!--            <button class="button" >-->
             <router-link to="/admin/aboutUs">

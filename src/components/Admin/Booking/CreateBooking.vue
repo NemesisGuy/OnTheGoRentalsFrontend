@@ -195,12 +195,12 @@ export default {
       const booking = {
         userUuid: this.selectedUserUuid,
         carUuid: this.selectedCarUuid,
-        issuedDate: this.selectedIssuedDate,
-        returnDate: this.selectedReturnedDate,
+        bookingStartDate: this.selectedIssuedDate,
+        bookingEndDate: this.selectedReturnedDate,
       };
 
       api
-          .post("/api/v1/bookings", booking, {
+          .post("/api/v1/admin/bookings", booking, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },

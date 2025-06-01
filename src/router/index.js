@@ -64,7 +64,7 @@ const router = createRouter({
             component: CarList,
         },*/
         {
-            path: '/cars/list/available/:category/:',
+            path: '/cars/list/available/:pricegroup/:',
             name: 'CarList',
             component: CarList,
         },
@@ -82,17 +82,27 @@ const router = createRouter({
             path: '/my-bookings', // Or /user/bookings, /profile/bookings, etc.
             name: 'MyBookings',   // This name is used in $router.push({ name: 'MyBookings' })
             component: MyBookings,
-            meta: { requiresAuth: true } // Ensure only authenticated users can access
         },
         {
             path: '/booking',
             name: 'Booking',
             component: Booking,
         },
-        {
-            path: '/booking/:carUuid?',
+      /*  {
+            path: '/booking/:uuid?',
             name: 'Booking',
             component: Booking,
+        },*/
+       /* {
+            path: '/booking/:uuid?',
+            name: 'CreateBooking',
+            component: Booking,
+        },*/
+        {
+            path: '/bookings/create/:carUuid?', // carUuid is optional
+            name: 'CreateBooking', // Or your chosen name
+            component: () => import('@/components/Main/Rental/Booking/Booking.vue'), // Adjust path
+            props: true // This is important to pass carUuid as a prop
         },
         {
             path: '/driver',

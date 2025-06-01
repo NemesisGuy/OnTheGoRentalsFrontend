@@ -8,8 +8,8 @@
           <h1><i class="fas fa-calendar-alt"></i> My Bookings</h1>
           <p v-if="!isLoading && bookings.length === 0" class="no-bookings-message">
             You currently have no bookings.
-            <router-link :to="{ name: 'CarList', params: { category: 'all', available: 'true' } }">Find a car to rent!
-            </router-link>
+            <router-link :to="{ name: 'CarList', params: { pricegroup: 'all' } }">Find a car to rent!</router-link>
+
           </p>
         </div>
 
@@ -35,10 +35,8 @@
                   {{ formatDisplayDateTime(booking.bookingStartDate) }}</p>
                 <p><i class="fas fa-calendar-times"></i> <strong>Return:</strong>
                   {{ formatDisplayDateTime(booking.bookingEndDate) }}</p>
-                <!-- Add more details as needed, e.g., total cost if available on BookingResponseDTO -->
               </div>
               <div class="booking-actions">
-                <!-- <router-link :to="{ name: 'BookingDetails', params: { bookingUuid: booking.uuid } }" class="button details-button">View Details</router-link> -->
                 <button
                     v-if="canCancelBooking(booking.status)"
                     @click="initiateCancelBooking(booking)"
@@ -48,10 +46,14 @@
                   <i class="fas fa-times-circle"></i>
                   {{ isCancelling === booking.uuid ? 'Cancelling...' : 'Cancel Booking' }}
                 </button>
-                <span v-if="!canCancelBooking(booking.status) && booking.status !== 'CANCELLED'"
+                <span v-if="!canCancelBooking(booking.status) && !isTerminalStatus(booking.status)"
                       class="action-disabled-note">
-              Cannot cancel
-            </span>
+                  Cancellation not available
+                </span>
+                <span v-if="isTerminalStatus(booking.status) && booking.status !== 'USER_CANCELLED' && booking.status !== 'ADMIN_CANCELLED'"
+                      class="action-disabled-note">
+                  Booking {{ formatStatus(booking.status).toLowerCase() }}
+                </span>
               </div>
             </div>
           </div>
@@ -87,7 +89,6 @@
           </template>
         </ConfirmationModal>
 
-
       </div>
       <div class="button-container">
         <button class="back-button button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
@@ -102,7 +103,7 @@ import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
 import FailureModal from '@/components/Main/Modals/FailureModal.vue';
 import SuccessModal from '@/components/Main/Modals/SuccessModal.vue';
 import ConfirmationModal from '@/components/Main/Modals/ConfirmationModal.vue';
-import {formatDateTime} from '@/utils/dateUtils'; // Your existing date formatter
+import {formatDateTime} from '@/utils/dateUtils';
 
 export default {
   name: 'MyBookings',
@@ -121,15 +122,25 @@ export default {
       successModal: {show: false, message: ''},
       showCancelConfirmModal: false,
       bookingToCancel: null,
+      // Define your BookingStatus enum values as strings for comparison, matching the backend
+      bookingStatuses: {
+        PENDING_CONFIRMATION: 'PENDING_CONFIRMATION',
+        CONFIRMED: 'CONFIRMED',
+        RENTAL_INITIATED: 'RENTAL_INITIATED',
+        USER_CANCELLED: 'USER_CANCELLED',
+        ADMIN_CANCELLED: 'ADMIN_CANCELLED',
+        REJECTED: 'REJECTED',
+        NO_SHOW: 'NO_SHOW',
+        FULFILLED: 'FULFILLED' // If you use this
+      }
     };
   },
   computed: {
     sortedBookings() {
-      // Sort bookings, e.g., by start date descending (newest first)
       return [...this.bookings].sort((a, b) => {
-        const dateA = new Date(a.bookingStartDate);
-        const dateB = new Date(b.bookingStartDate);
-        return dateB - dateA; // For descending order
+        const dateA = a.bookingStartDate ? new Date(a.bookingStartDate) : 0;
+        const dateB = b.bookingStartDate ? new Date(b.bookingStartDate) : 0;
+        return dateB - dateA;
       });
     }
   },
@@ -137,40 +148,71 @@ export default {
     await this.fetchUserBookings();
   },
   methods: {
-    formatDisplayDateTime(dateTimeString) { // Wrapper for template
+    formatDisplayDateTime(dateTimeString) {
+      if (!dateTimeString) return 'N/A';
       return formatDateTime(dateTimeString);
     },
     formatStatus(status) {
-      if (!status) return 'N/A';
-      return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // PENDING_CONFIRMATION -> Pending Confirmation
+      if (!status) return 'Unknown';
+      // Converts PENDING_CONFIRMATION to Pending Confirmation
+      return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     },
     getStatusClass(status) {
       if (!status) return 'status-unknown';
-      return `status-${status.toLowerCase().replace(/_/g, '-')}`; // e.g., status-pending-confirmation
+      return `status-${status.toLowerCase().replace(/_/g, '-')}`;
     },
     async fetchUserBookings() {
       this.isLoading = true;
       this.failModal.show = false;
       try {
-        // The backend controller endpoint is GET /api/bookings/my-bookings
         const response = await api.get('/api/v1/bookings/my-bookings');
-        this.bookings = response.data.data || []; // Ensure it's an array
+        if (response.data && response.data.status === 'success') {
+          this.bookings = response.data.data || [];
+        } else if (response.status === 204) {
+          this.bookings = [];
+        }
+        else {
+          // Handle cases where status is not 'success' or data is not as expected
+          const errorMsg = response.data?.errors?.map(e => e.message).join(', ') || 'Failed to fetch bookings: Unexpected response.';
+          console.warn("Fetch bookings warning:", errorMsg, response.data);
+          this.bookings = []; // Set to empty on unexpected success structure
+        }
         console.log("Fetched user bookings:", this.bookings);
       } catch (error) {
         console.error("Error fetching user bookings:", error.response ? error.response.data : error.message);
-        this.failModal.message = error.response?.data?.message || "Failed to fetch your bookings. Please try again.";
+        let msg = "Failed to fetch your bookings. Please try again.";
+        if(error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0){
+          msg = error.response.data.errors.map(e => e.message).join(", ");
+        } else if (error.response && error.response.data && error.response.data.message) {
+          msg = error.response.data.message;
+        } else if (error.message){
+          msg = error.message;
+        }
+        this.failModal.message = msg;
         this.failModal.show = true;
+
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-          this.$router.push({name: 'Login'}); // Redirect if not authorized
+          this.$router.push({name: 'Login'});
         }
       } finally {
         this.isLoading = false;
       }
     },
     canCancelBooking(status) {
-      // Define which statuses allow cancellation based on your backend enum/logic
-      // Example: RentalStatus enum might have PENDING_CONFIRMATION, CONFIRMED
-      return status === 'PENDING_CONFIRMATION' || status === 'CONFIRMED';
+      // User can cancel if booking is CONFIRMED or PENDING_CONFIRMATION
+      // (assuming your backend allows cancellation of PENDING_CONFIRMATION)
+      return status === this.bookingStatuses.CONFIRMED || status === this.bookingStatuses.PENDING_CONFIRMATION;
+    },
+    isTerminalStatus(status) {
+      // Statuses after which no user actions are typically allowed
+      return [
+        this.bookingStatuses.RENTAL_INITIATED,
+        this.bookingStatuses.USER_CANCELLED,
+        this.bookingStatuses.ADMIN_CANCELLED,
+        this.bookingStatuses.REJECTED,
+        this.bookingStatuses.NO_SHOW,
+        this.bookingStatuses.FULFILLED, // if you use this
+      ].includes(status);
     },
     initiateCancelBooking(booking) {
       this.bookingToCancel = booking;
@@ -184,23 +226,30 @@ export default {
       if (!this.bookingToCancel || !this.bookingToCancel.uuid) return;
 
       this.showCancelConfirmModal = false;
-      this.isCancelling = this.bookingToCancel.uuid; // Set loading state for this specific booking
+      this.isCancelling = this.bookingToCancel.uuid;
       this.failModal.show = false;
 
       try {
-        // Backend controller endpoint is POST /api/bookings/{bookingUuid}/cancel
-        const response = await api.post(`/api/bookings/${this.bookingToCancel.uuid}/cancel`);
-        console.log("Booking cancellation response:", response.data);
+        await api.post(`/api/v1/bookings/${this.bookingToCancel.uuid}/cancel`);
+        // No need to check response.data for DELETE-like POST action if backend returns 200/204 on success
         this.successModal.message = "Booking successfully cancelled!";
         this.successModal.show = true;
-        // The fetchUserBookings will be called when success modal closes if needed
+        // fetchUserBookings will be called when success modal is closed
       } catch (error) {
         console.error("Error cancelling booking:", error.response ? error.response.data : error.message);
-        this.failModal.message = error.response?.data?.message || "Failed to cancel booking.";
+        let msg = "Failed to cancel booking.";
+        if(error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0){
+          msg = error.response.data.errors.map(e => e.message).join(", ");
+        } else if (error.response && error.response.data && error.response.data.message) {
+          msg = error.response.data.message;
+        } else if (error.message){
+          msg = error.message;
+        }
+        this.failModal.message = msg;
         this.failModal.show = true;
       } finally {
         this.isCancelling = null;
-        this.bookingToCancel = null; // Clear after attempt
+        this.bookingToCancel = null;
       }
     },
     closeFailModal() {
@@ -208,27 +257,25 @@ export default {
     },
     closeSuccessModalAndRefresh() {
       this.successModal.show = false;
-      this.fetchUserBookings(); // Refresh the list of bookings
+      this.fetchUserBookings();
     },
     formatPriceGroup(priceGroup) {
       if (!priceGroup) return 'N/A';
-      // Assuming priceGroup is an enum string like 'ECONOMY'
       return priceGroup.charAt(0).toUpperCase() + priceGroup.slice(1).toLowerCase();
     },
     goBack() {
-      this.$router.go(-1); // Go back to the previous page
+      this.$router.go(-1);
     }
   },
-
 };
 </script>
 
 <style scoped>
 .my-bookings-container {
-  max-width: 900px;
+  max-width: 900px; /* Or use your global form-container width */
   margin: 20px auto;
   padding: 20px;
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; Inherit from global styles */
 }
 
 .page-header {
@@ -237,22 +284,22 @@ export default {
 }
 
 .page-header h1 {
-  color: #333;
+  /* color: #333; Use theme variable */
   margin-bottom: 10px;
 }
 
 .page-header h1 i {
   margin-right: 10px;
-  color: #007bff;
+  color: var(--primary-color); /* Theme color */
 }
 
 .no-bookings-message {
-  color: #777;
+  color: var(--color-text-light); /* Use theme variable */
   font-size: 1.1em;
 }
 
 .no-bookings-message a {
-  color: #007bff;
+  color: var(--primary-color); /* Theme color */
   text-decoration: none;
 }
 
@@ -266,17 +313,17 @@ export default {
 }
 
 .booking-card {
-  background-color: #fff;
+  background-color: var(--background-color); /* White or light card background */
   border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  overflow: hidden; /* To contain floated elements or absolutely positioned badges */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Softer shadow */
+  overflow: hidden;
 }
 
 .booking-card-header {
-  background-color: #f8f9fa;
-  padding: 15px 20px;
-  border-bottom: 1px solid #ddd;
+  background-color: #f8f9fa; /* Light grey header for card */
+  padding: 12px 18px;
+  border-bottom: 1px solid #e9ecef;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -284,135 +331,128 @@ export default {
 
 .booking-card-header h3 {
   margin: 0;
-  font-size: 1.2em;
-  color: #333;
+  font-size: 1.15em;
+  color: var(--color-text-dark);
+  font-weight: 500;
 }
 
 .status-badge {
   padding: 5px 12px;
   border-radius: 15px;
-  font-size: 0.85em;
+  font-size: 0.8em; /* Slightly smaller */
   font-weight: bold;
   color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: capitalize; /* Changed from uppercase */
+  letter-spacing: 0.2px;
 }
 
-/* Example status colors - align with your RentalStatus enum values */
-.status-pending-confirmation {
-  background-color: #ffc107;
-  color: #333;
-}
-
-.status-confirmed {
-  background-color: #28a745;
-}
-
-.status-in-progress {
-  background-color: #17a2b8;
-}
-
-.status-completed {
-  background-color: #6c757d;
-}
-
-.status-cancelled {
-  background-color: #dc3545;
-}
-
-.status-unknown {
-  background-color: #adb5bd;
-}
+/* NEW BookingStatus CSS classes */
+.status-pending-confirmation { background-color: #ffc107; color: #333; } /* Yellow */
+.status-confirmed { background-color: #28a745; } /* Green */
+.status-rental-initiated { background-color: #17a2b8; } /* Teal/Info */
+.status-user-cancelled, .status-admin-cancelled { background-color: #dc3545; } /* Red */
+.status-rejected { background-color: #6c757d; } /* Grey */
+.status-no-show { background-color: #fd7e14; } /* Orange */
+.status-fulfilled { background-color: #007bff; } /* Blue */
+.status-unknown { background-color: #adb5bd; }
 
 
 .booking-card-body {
-  padding: 20px;
+  padding: 18px;
 }
 
 .booking-details .car-details h4 {
   margin-top: 0;
-  margin-bottom: 10px;
-  color: #007bff;
+  margin-bottom: 8px;
+  color: var(--primary-color);
+  font-size: 1.1em;
 }
 
 .booking-details .car-details h4 i {
-  margin-right: 8px;
+  margin-right: 6px;
 }
 
-
 .booking-details p {
-  margin: 8px 0;
-  color: #555;
-  font-size: 0.95em;
+  margin: 6px 0;
+  color: var(--color-text-light);
+  font-size: 0.9em;
   display: flex;
   align-items: center;
 }
 
 .booking-details p i {
-  margin-right: 10px;
-  color: #007bff;
-  width: 20px; /* For icon alignment */
+  margin-right: 8px;
+  color: var(--primary-color);
+  width: 18px;
   text-align: center;
 }
 
 .details-divider {
-  margin: 15px 0;
+  margin: 12px 0;
   border: 0;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #f0f0f0;
 }
 
-
 .booking-actions {
-  margin-top: 20px;
+  margin-top: 18px;
   text-align: right;
 }
 
-.button {
+.button { /* Assuming this is your global button style, or define locally */
   padding: 8px 15px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 0.9em;
   margin-left: 10px;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  /* color: var(--text-color); */ /* Already in global */
+  /* background-color: ...; */ /* Set by specific button types */
+}
+.button:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.button i {
-  margin-right: 5px;
+.details-button { /* If you add it back */
+  background-color: var(--info-color); /* From your global styles */
+  color: var(--text-color);
 }
-
-.details-button {
-  background-color: #007bff;
-  color: white;
-}
-
 .details-button:hover {
-  background-color: #0056b3;
+  background-color: #1a88d1; /* Darker info */
 }
 
 .cancel-button {
-  background-color: #dc3545;
-  color: white;
+  background-color: var(--error-color); /* From your global styles */
+  color: var(--text-color);
 }
-
 .cancel-button:hover {
-  background-color: #c82333;
+  background-color: #c82333; /* Darker error */
 }
-
 .cancel-button:disabled {
-  background-color: #efa2a9;
+  background-color: #f5c6cb; /* Lighter red for disabled */
+  color: #721c24;
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .action-disabled-note {
   font-size: 0.85em;
   color: #777;
   margin-left: 10px;
+  font-style: italic;
 }
 
-.text-danger { /* For confirmation modal warning */
-  color: #dc3545 !important;
+.text-danger {
+  color: var(--error-color) !important;
   font-weight: bold;
+}
+
+.back-button { /* Your global back button style */
+  background-color: var(--button-back);
+  color: var(--color-text-black); /* Or var(--text-color) if bg is dark */
+}
+.back-button:hover {
+  background-color: #5a6268; /* Darker grey */
 }
 
 </style>

@@ -11,7 +11,7 @@ const adminBookingRoutes = [
     },
     {
         path: 'bookings/create',
-        name: 'CreateBooking',
+        name: 'AdminCreateBooking',
         components: {
             adminContent: CreateBooking,
         },
