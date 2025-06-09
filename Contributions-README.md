@@ -1,3 +1,5 @@
+**Note to Maintainers:** Please update the placeholder 'Name - Student Number' entries below with the correct information for all contributors. You may also want to add a brief, high-level summary of contributions for each team member if desired, similar to the example provided.
+
 # OnTheGoRentals Frontend
 
 **Car Rental System**
@@ -34,5 +36,3 @@
     * Created Overall Ui, Ui Design, Styling, Sturcture
     * Created Frontend Apllication
     * Created Router
-
-
