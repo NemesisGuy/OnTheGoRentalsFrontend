@@ -34,6 +34,12 @@ const adminRentalRoutes = [
         component: () => import('@/components/Admin/Rental/CreateRental.vue'), // Adjust path to your component
         props: true // This is IMPORTANT! It passes route params as props to the component
     },
+    {
+        path: '/admin/rentals/process-return/:uuid?',
+        name: 'ProcessReturn',
+
+        component: () => import('@/components/Admin/Rental/ProcessReturn.vue'), // Adjust path to your component
+    }
 
 
 

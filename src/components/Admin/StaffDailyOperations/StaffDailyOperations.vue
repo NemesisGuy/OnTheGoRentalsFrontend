@@ -5,6 +5,7 @@
     </div>
 
     <div class="tabs">
+      <!-- These tabs switch content within this component -->
       <button :class="{ active: activeTab === 'collections' }" @click="activeTab = 'collections'">
         <i class="fas fa-car-pickup"></i> Collections Due Today ({{ collectionsDue.length }})
       </button>
@@ -13,6 +14,11 @@
       </button>
       <button :class="{ active: activeTab === 'overdue' }" @click="activeTab = 'overdue'">
         <i class="fas fa-exclamation-triangle"></i> Overdue Rentals ({{ overdueRentals.length }})
+      </button>
+
+      <!-- NEW: This button navigates to a different component -->
+      <button @click="navigateToActiveRentals" class="navigation-tab">
+        <i class="fas fa-tasks"></i> Manage Active Rentals
       </button>
     </div>
 
@@ -42,7 +48,6 @@
               <p><strong>Status:</strong> <span :class="['status-badge', getStatusClass(booking.status)]">{{ formatStatus(booking.status) }}</span></p>
             </div>
             <div class="card-actions">
-              <!-- MODIFIED HERE -->
               <button @click="navigateToCreateRental(booking.uuid)" class="button process-button">
                 <i class="fas fa-play-circle"></i> Start Rental
               </button>
@@ -69,7 +74,7 @@
               <p><strong>Status:</strong> <span :class="['status-badge', getRentalStatusClass(rental.status)]">{{ formatStatus(rental.status) }}</span></p>
             </div>
             <div class="card-actions">
-              <button @click="navigateToCompleteRental(rental.uuid)" class="button process-button"> <!-- MODIFIED HERE -->
+              <button @click="navigateToCompleteRental(rental.uuid)" class="button process-button">
                 <i class="fas fa-check-circle"></i> Process Return
               </button>
             </div>
@@ -121,25 +126,24 @@ export default {
   components: { LoadingModal, SuccessModal, FailureModal },
   data() {
     return {
+      // The component no longer needs to track active rentals data
       activeTab: 'collections',
       collectionsDue: [],
       returnsDue: [],
       overdueRentals: [],
       isLoading: false,
-      // isProcessing: null, // Removed as direct API calls are removed from here for these actions
       loadingMessage: 'Loading operational data...',
       apiError: false,
       errorMessage: '',
       successModal: { show: false, message: "" },
       failModal: { show: false, message: "" },
-      bookingStatuses: { /* ... as defined before ... */ },
-      rentalStatuses: { /* ... as defined before ... */ }
     };
   },
   async created() {
     await this.fetchAllData();
   },
   methods: {
+    // ... (formatDisplayDateTime, formatStatus, getStatusClass methods are unchanged)
     formatDisplayDateTime(dateTimeString) {
       return formatDateTime(dateTimeString);
     },
@@ -158,42 +162,39 @@ export default {
     async fetchAllData() {
       this.isLoading = true;
       this.apiError = false;
-      this.errorMessage = ''; // Reset error message for new fetch attempt
+      this.errorMessage = '';
       this.loadingMessage = "Fetching all operational data...";
       try {
-        // Using Promise.allSettled to ensure all fetches complete even if some fail
+        // This component is no longer responsible for fetching active rentals
         const results = await Promise.allSettled([
           this.fetchCollectionsDueInternal(),
           this.fetchReturnsDueInternal(),
           this.fetchOverdueRentalsInternal()
         ]);
-        // Check results if specific error handling per fetch is needed beyond what individual methods do
         results.forEach((result, index) => {
           if (result.status === 'rejected') {
             const endpointNames = ["Collections Due", "Returns Due", "Overdue Rentals"];
             console.error(`Error fetching ${endpointNames[index]}:`, result.reason);
-            // Individual fetch methods already call handleFetchError
           }
         });
       } catch (error) {
-        // This catch is less likely to be hit if individual fetches handle their errors
         console.error("Unexpected error in fetchAllData:", error);
         this.handleFetchError("An unexpected error occurred while loading data.");
       } finally {
         this.isLoading = false;
       }
     },
-    async fetchCollectionsDueInternal() { // Renamed to avoid conflict if called directly
+    async fetchCollectionsDueInternal() {
       this.loadingMessage = "Fetching collections due...";
       try {
         const response = await api.get('/api/v1/admin/bookings/collections-due-today');
         this.collectionsDue = response.data.data || [];
       } catch (error) {
         this.handleFetchError("Failed to load collections due today.");
-        throw error; // Re-throw to be caught by Promise.allSettled if needed
+        throw error;
       }
     },
-    async fetchReturnsDueInternal() { // Renamed
+    async fetchReturnsDueInternal() {
       this.loadingMessage = "Fetching returns due...";
       try {
         const response = await api.get('/api/v1/admin/rentals/returns-due-today');
@@ -203,7 +204,7 @@ export default {
         throw error;
       }
     },
-    async fetchOverdueRentalsInternal() { // Renamed
+    async fetchOverdueRentalsInternal() {
       this.loadingMessage = "Fetching overdue rentals...";
       try {
         const response = await api.get('/api/v1/admin/rentals/overdue-rentals');
@@ -215,30 +216,25 @@ export default {
     },
     handleFetchError(defaultMessage) {
       this.apiError = true;
-      // Only set/append error message if not already showing a more specific one.
       if (!this.failModal.show) {
         this.errorMessage = defaultMessage;
         this.failModal.message = this.errorMessage;
         this.failModal.show = true;
       } else {
-        // If a modal is already showing, perhaps append or log additional errors
         console.warn("Additional fetch error:", defaultMessage);
       }
     },
+    // NEW: Method to navigate to the dedicated active rentals component
+    navigateToActiveRentals() {
+      this.$router.push({ name: 'ActiveRentalsManagement' }); // Or whatever you name the route
+    },
     navigateToCreateRental(bookingUuid) {
-      console.log(`StaffDailyOperations: Navigating to create rental from booking UUID: ${bookingUuid}`);
       this.$router.push({ name: 'CreateRental', params: { bookingUuid: bookingUuid } });
-      // Ensure 'AdminCreateRental' is the correct route name for your AdminCreateRentalFromBooking.vue component
-      // and that its route definition accepts a 'bookingUuid' parameter.
     },
     navigateToCompleteRental(rentalUuid) {
-      console.log(`StaffDailyOperations: Navigating to complete rental UUID: ${rentalUuid}`);
-      // You'll need a route and component for completing/processing returns.
-      // Example: AdminCompleteRental.vue
-      this.$router.push({ name: 'CompleteRental', params: { rentalUuid: rentalUuid } });
+      this.$router.push({ name: 'ProcessReturn', params: { uuid: rentalUuid } });
     },
     viewRentalDetails(rentalUuid) {
-      console.log(`StaffDailyOperations: Navigating to view rental details for UUID: ${rentalUuid}`);
       this.$router.push({ name: 'ViewRental', params: { uuid: rentalUuid } });
     },
     showSuccessModal(message) {
@@ -250,10 +246,8 @@ export default {
     closeFeedbackModal() {
       this.successModal.show = false;
       this.failModal.show = false;
-      this.errorMessage = ''; // Clear general error message when any feedback modal is closed
+      this.errorMessage = '';
       if (this.apiError && (this.collectionsDue.length > 0 || this.returnsDue.length > 0 || this.overdueRentals.length > 0) ) {
-        // If some data loaded but an error occurred for other parts, clear the main apiError flag
-        // so that the loaded data is shown. The specific error would have been in the modal.
         this.apiError = false;
       }
     }
@@ -262,11 +256,25 @@ export default {
 </script>
 
 <style scoped>
-/* Styles remain largely the same as provided in the previous response for StaffDailyOperations */
-/* Key things to ensure from your global styles or add here: */
-/* .content-container, .content-header, .tabs, .button, .status-badge, etc. */
-/* Ensure your theme variables (--primary-color, --secondary-color, etc.) are used. */
+/* ... (all previous styles remain the same) ... */
 
+/* NEW STYLE for the navigation button to make it look like other tabs */
+.navigation-tab {
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  font-size: 1.05em;
+  margin-right: 5px;
+  border-bottom: 3px solid transparent;
+  color: var(--bs-gray-400, #fff);
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.navigation-tab:hover {
+  background-color: rgba(103, 58, 183, 0.1); /* A light hover effect */
+  color: var(--primary-color, #673AB7);
+}
 .staff-operations-dashboard {
   padding: 20px;
 }
@@ -400,5 +408,4 @@ export default {
 .button.details-button { background-color: var(--info-color); color: var(--text-color); }
 .button.details-button:hover { background-color: #1c74b0; /* Darker blue */ }
 .button:disabled { opacity: 0.6; cursor: not-allowed; }
-
 </style>

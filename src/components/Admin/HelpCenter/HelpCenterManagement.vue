@@ -327,16 +327,17 @@ export default {
   },
 };
 </script>
+<!--
 
 <style scoped>
 /* Add your existing styles here if any, or new ones for responsiveness */
 
 .content-container {
   padding: 20px;
-  background-color: var(--bs-gray-100);
+  background-color: var(&#45;&#45;bs-gray-100);
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  color: var(--bs-gray-800);
+  color: var(&#45;&#45;bs-gray-800);
 }
 
 .content-header {
@@ -544,7 +545,7 @@ td textarea.answer-input {
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 0.5rem;
-    background-color: var(--bs-gray-100);
+    background-color: var(&#45;&#45;bs-gray-100);
   }
   table td {
     display: block;
@@ -596,3 +597,6 @@ td textarea.answer-input {
 }
 
 </style>
+
+          -->
+

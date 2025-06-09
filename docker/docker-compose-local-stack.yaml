@@ -3,7 +3,7 @@ version: "3.8"
 services:
   on-the-go-rentals-vue-app:
     build:
-      context: .  # Path to your Vue.js project
+      context: ..  # Path to your Vue.js project
       dockerfile: Dockerfile
     container_name: on-the-go-rentals-vue-app
     restart: always
@@ -17,7 +17,7 @@ services:
   on-the-go-rentals-spring-boot-app:
     build:
       context: C:/Users/Reign/IdeaProjects/OnTheGoRentals/
-      dockerfile: Dockerfile
+      dockerfile: ../../OnTheGoRentals/Dockerfile
     container_name: on-the-go-rentals-spring-boot-app
     restart: always
     environment:

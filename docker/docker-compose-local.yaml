@@ -3,7 +3,7 @@ version: "3.7"
 services:
   on-the-go-rentals-vue-app:
     build:
-      context: .
+      context: ..
       dockerfile: Dockerfile
     container_name: on-the-go-rentals-vue-app-1
     restart: always

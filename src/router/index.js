@@ -69,6 +69,12 @@ const router = createRouter({
             component: CarList,
         },
         {
+            path: '/cars/list/available',
+            name: 'AdminCarList',
+            component: CarList,
+
+        },
+        {
             path: '/user/profile/profile',
             name: 'UserProfile',
             component: UserProfile,

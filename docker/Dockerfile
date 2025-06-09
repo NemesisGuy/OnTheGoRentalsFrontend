@@ -11,7 +11,7 @@ COPY package*.json ./
 RUN npm install
 
 # Copy the entire Vue.js app into the container
-COPY . .
+COPY .. .
 
 # Build the Vue.js app for production
 RUN npm run build
@@ -22,14 +22,14 @@ FROM nginx:stable-alpine AS production-stage
 # Copy the built app from the previous stage to Nginx's default directory
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 # Add entrypoint for runtime env injection
-COPY entrypoint.sh /entrypoint.sh
+COPY ../entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 RUN rm -f /etc/nginx/conf.d/default.conf # Remove default
 # Copy a custom nginx configuration file (if needed)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY ../nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY ./dist /usr/share/nginx/html
+COPY ../dist /usr/share/nginx/html
 
 # Expose port 80 (the default Nginx port)
 EXPOSE 80

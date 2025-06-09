@@ -20,7 +20,7 @@ Here are the key files involved in building and running the frontend Docker cont
 ### 1. `Dockerfile` (e.g., in the Vue project root)
 
 *   **Purpose:** Defines the instructions to build the frontend Docker image.
-*   **Key Steps:**
+* **Key Steps:**
     *   Uses a base Nginx image (e.g., `nginx:stable-alpine`).
     *   Removes the default Nginx configuration to avoid conflicts.
     *   Copies your custom `nginx.conf` to `/etc/nginx/conf.d/` (e.g., as `custom_app.conf` or `default.conf`).
@@ -29,20 +29,20 @@ Here are the key files involved in building and running the frontend Docker cont
     *   Sets `entrypoint.sh` as the `ENTRYPOINT`, so it runs when the container starts.
     *   Exposes port `80` (the default Nginx port).
 
-    ```dockerfile
-    # Example Dockerfile
-    FROM nginx:stable-alpine
+  ```dockerfile
+  # Example Dockerfile
+  FROM nginx:stable-alpine
 
-    RUN rm -f /etc/nginx/conf.d/default.conf
-    COPY nginx.conf /etc/nginx/conf.d/custom_app.conf
+  RUN rm -f /etc/nginx/conf.d/default.conf
+  COPY ../nginx.conf /etc/nginx/conf.d/custom_app.conf
 
-    COPY ./dist /usr/share/nginx/html
-    COPY entrypoint.sh /entrypoint.sh
-    RUN chmod +x /entrypoint.sh
+  COPY ../dist /usr/share/nginx/html
+  COPY ../entrypoint.sh /entrypoint.sh
+  RUN chmod +x /entrypoint.sh
 
-    EXPOSE 80
-    ENTRYPOINT ["/entrypoint.sh"]
-    ```
+  EXPOSE 80
+  ENTRYPOINT ["/entrypoint.sh"]
+  ```
 
 ### 2. `nginx.conf` (e.g., in the Vue project root, copied by Dockerfile)
 

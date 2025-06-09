@@ -7,9 +7,16 @@ const carRoutes = [
 
     {
         path: '/car/var',
-        name: '',
+        name: 'CarList',
         component: CarList,
     },
+    {
+        path: '/car/detail/:uuid',
+        name: 'CarDetail',
+        component: () => import('@/components/Main/Car/CarDetail.vue'),
+        // props: true,
+    },
+
 
 ];
 

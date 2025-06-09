@@ -39,9 +39,20 @@ export default {
     }
   },
   methods: {
+    /**
+     * Emits the 'ok' event to the parent component.
+     * The parent component is responsible for closing the modal and performing any subsequent actions.
+     */
+    confirm() {
+      this.$emit('ok');
+    },
+
+    /**
+     * Emits a 'close' event. This can be used for closing via overlay click or an 'x' icon if you add one.
+     */
     close() {
       this.$emit('close');
-    }
-  }
+    },
+  },
 };
 </script>

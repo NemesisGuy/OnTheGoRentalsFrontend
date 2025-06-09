@@ -133,11 +133,7 @@ export default {
     fetchUsersList() {
       this.loadingModal = true;
       api
-          .get("/api/v1/admin/users", {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          })
+          .get("/api/v1/admin/users")
           .then((response) => {
             this.users = response.data.data;
             this.loadingModal = false;
@@ -155,11 +151,7 @@ export default {
     fetchCarsList() {
       this.loadingModal = true;
       api
-          .get("/api/v1/admin/cars", {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          })
+          .get("/api/v1/admin/cars")
           .then((response) => {
             // Filter for available cars
             this.cars = response.data.data;
@@ -200,11 +192,7 @@ export default {
       };
 
       api
-          .post("/api/v1/admin/bookings", booking, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          })
+          .post("/api/v1/admin/bookings", booking)
           .then((response) => {
             const bookingData = response.data;
             this.successModal.message = `Booking created successfully:\nUser: ${bookingData.userEmail}\nCar: ${bookingData.carMake} ${bookingData.model}\nIssued Date: ${bookingData.issuedDate}\nReturn Date: ${bookingData.returnDate}`;

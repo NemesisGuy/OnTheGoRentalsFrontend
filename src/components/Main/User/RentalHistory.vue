@@ -163,13 +163,13 @@ export default {
 </script>
 
 <style scoped>
-.rental-history {
+/*.rental-history {
   padding: 20px;
 }
 
 .form-container {
-  max-width: 800px; /* Or your preferred max-width */
-  margin: 20px auto; /* Centers the container */
+  max-width: 800px; !* Or your preferred max-width *!
+  margin: 20px auto; !* Centers the container *!
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;
@@ -177,7 +177,7 @@ export default {
 }
 
 .card-container {
-  padding: 10px; /* Add some padding around the form-container if needed */
+  padding: 10px; !* Add some padding around the form-container if needed *!
 }
 
 
@@ -216,7 +216,7 @@ li {
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 5px;
-  border-left: 5px solid #007bff; /* Accent color */
+  border-left: 5px solid #007bff; !* Accent color *!
 }
 
 li p {
@@ -236,33 +236,33 @@ li hr {
 }
 
 
-/* Optional shimmer placeholder */
+!* Optional shimmer placeholder *!
 .shimmer-card {
   background-color: #f9f9f9;
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 5px;
-  border-left: 5px solid #e0e0e0; /* Shimmer accent */
+  border-left: 5px solid #e0e0e0; !* Shimmer accent *!
 }
 
 .shimmer-line {
-  height: 20px; /* Or match your text line height */
-  margin-bottom: 8px; /* Spacing between lines */
-  background: #e0e0e0; /* Base color */
+  height: 20px; !* Or match your text line height *!
+  margin-bottom: 8px; !* Spacing between lines *!
+  background: #e0e0e0; !* Base color *!
   border-radius: 4px;
 }
 
 .shimmer {
-  /* The actual shimmer animation */
+  !* The actual shimmer animation *!
   background-image: linear-gradient(
     to right,
     #e0e0e0 0%,
-    #f0f0f0 20%, /* Lighter shimmer color */
+    #f0f0f0 20%, !* Lighter shimmer color *!
     #e0e0e0 40%,
     #e0e0e0 100%
   );
   background-repeat: no-repeat;
-  background-size: 800px 100%; /* Width of the shimmer wave, adjust as needed */
+  background-size: 800px 100%; !* Width of the shimmer wave, adjust as needed *!
   display: inline-block;
   position: relative;
   animation-duration: 1.4s;
@@ -297,7 +297,7 @@ li hr {
 }
 
 .back-button {
-  background-color: #6c757d; /* A neutral back button color */
+  background-color: #6c757d; !* A neutral back button color *!
   color: white;
 }
 
@@ -307,6 +307,6 @@ li hr {
 
 .back-button i {
   margin-right: 5px;
-}
+}*/
 
 </style>

@@ -100,12 +100,19 @@
         :message="successModal.message"
         :show="successModal.show"
         @close="closeModal"
+        @accept="closeModal"
+        @confirm="closeModal"
+
     />
     <FailureModal
         v-if="failModal.show"
         :message="failModal.message"
         :show="failModal.show"
         @close="closeModal"
+        @accept="closeModal"
+        @confirm="closeModal"
+
+
     />
   </div>
 </template>
