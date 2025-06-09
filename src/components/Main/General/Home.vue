@@ -67,7 +67,18 @@
 
 
 <script>
+/**
+ * @file Home.vue
+ * @description This component serves as the main landing page for On The Go Rentals.
+ * It displays a welcome message, highlights key service categories (Economy, Luxury, Special Offers),
+ * and provides navigation links to view car listings for these categories.
+ * @component Home
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: 'Home',
 };
 </script>
