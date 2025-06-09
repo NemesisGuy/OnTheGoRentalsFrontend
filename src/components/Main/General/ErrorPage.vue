@@ -16,4 +16,11 @@
 
 </style>
 <script setup>
+/**
+ * @file ErrorPage.vue
+ * @description A simple error page displayed when an unspecified error occurs.
+ * It shows a generic message and an image.
+ * This component uses the `<script setup>` syntax with no additional script logic.
+ * @component ErrorPage (Note: Name is inferred by Vue from filename)
+ */
 </script>

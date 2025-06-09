@@ -34,39 +34,86 @@
 <script>
 import defaultPlaceholder from '@/assets/Images/Defaults/default-car-image.png';
 
+/**
+ * @file Carousel.vue
+ * @description A reusable image carousel component.
+ * It displays a series of images with navigation controls (next/previous buttons)
+ * and an optional thumbnail strip for direct image selection.
+ * It also handles cases where no images are provided or if an image fails to load,
+ * by displaying a fallback image.
+ * @component Carousel
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: 'Carousel',
+  /**
+   * Props accepted by the component.
+   * @type {object}
+   * @property {Array<string>} images - An array of image URLs to display in the carousel. Required.
+   * @property {string} fallbackImage - URL for a fallback image. Displayed if `images` is empty or an image fails to load.
+   *                                    Defaults to a predefined placeholder image.
+   */
   props: {
-    // An array of image URLs to display
     images: {
       type: Array,
       required: true,
       default: () => []
     },
-    // A fallback image to show if the images prop is empty or if an image fails to load
     fallbackImage: {
       type: String,
       default: defaultPlaceholder
     }
   },
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {number} currentIndex - The index of the currently displayed image in the `images` array.
+   */
   data() {
     return {
       currentIndex: 0,
     };
   },
   methods: {
+    /**
+     * Navigates to the next image in the carousel.
+     * If the current image is the last one, it loops back to the first image.
+     * @returns {void}
+     */
     nextImage() {
-      // If we are at the last image, loop back to the first. Otherwise, go to the next.
+      if (!this.images || this.images.length === 0) return;
       this.currentIndex = (this.currentIndex + 1) % this.images.length;
     },
+    /**
+     * Navigates to the previous image in the carousel.
+     * If the current image is the first one, it loops to the last image.
+     * @returns {void}
+     */
     prevImage() {
-      // If we are at the first image, loop to the last. Otherwise, go to the previous.
+      if (!this.images || this.images.length === 0) return;
       this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
     },
+    /**
+     * Navigates directly to the image at the specified index.
+     * Typically called when a thumbnail is clicked.
+     * @param {number} index - The index of the image to navigate to.
+     * @returns {void}
+     */
     goToImage(index) {
-      // Directly jump to a specific image via its thumbnail
-      this.currentIndex = index;
+      if (!this.images || this.images.length === 0) return;
+      if (index >= 0 && index < this.images.length) {
+        this.currentIndex = index;
+      }
     },
+    /**
+     * Handles errors when an image fails to load.
+     * It sets the source of the failed image element to the `fallbackImage`.
+     * @param {Event} event - The error event object from the image element.
+     * @returns {void}
+     */
     onImageError(event) {
       console.warn("Carousel image failed to load, using fallback:", event.target.src);
       event.target.src = this.fallbackImage;

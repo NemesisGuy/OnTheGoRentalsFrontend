@@ -23,21 +23,49 @@
 
 
 <script>
-import axios from 'axios';
-import api from "@/api";
+import api from "@/api"; // Assuming api.js is configured for base URL and interceptors
 
+/**
+ * @file AboutUs.vue
+ * @description This component displays the "About Us" information for the company.
+ * It fetches data such as address, office hours, email, and contact numbers
+ * from the backend API and presents it to the user.
+ * @component AboutUs
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: 'AboutUs',
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {object|null} about - Stores the fetched "About Us" information.
+   *                                  Initially null until data is loaded.
+   *                                  Expected to contain properties like `address`, `officeHours`, `email`, etc.
+   */
   data() {
     return {
       about: null, // Use null or an empty object to represent a single AboutUs entity
     };
   },
+  /**
+   * Lifecycle hook that is called after the component has been mounted to the DOM.
+   * It triggers the fetching of "About Us" data.
+   */
   mounted() {
     this.fetchAboutUs();
     console.log('About Us component mounted');
   },
   methods: {
+    /**
+     * Fetches the latest "About Us" information from the backend API.
+     * On successful fetch, it updates the `about` data property.
+     * Logs an error to the console if the fetch fails.
+     * @async
+     * @returns {void}
+     */
     fetchAboutUs() {
       api
           .get('/api/v1/about-us/latest') // Fetch the latest AboutUs entry
