@@ -13,8 +13,24 @@
 <script>
 import Navbar from './components/Main/Navigation/Navbar.vue';
 
+/**
+ * @file App.vue
+ * @description The main root component for the OnTheGoRentals application.
+ * It sets up the global layout, including a navigation bar and the main content area
+ * where different views are rendered by Vue Router.
+ * @component App
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: 'App',
+  /**
+   * Components registered for use within this component.
+   * @type {Object}
+   * @property {Component} Navbar - The main navigation bar component.
+   */
   components: {
     Navbar
   }
