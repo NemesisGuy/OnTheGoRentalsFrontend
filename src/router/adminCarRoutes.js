@@ -43,6 +43,13 @@ const adminCarRoutes = [
         },
     },
     {
+        path: 'cars/read/:uuid',
+        name: 'AdminViewCar',
+        components: {
+            adminContent: ViewCar,
+        },
+    },
+    {
         path: 'dashboard',
         name: 'Dashboard',
         components: { adminContent: AdminDash,

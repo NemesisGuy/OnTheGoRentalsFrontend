@@ -31,11 +31,11 @@
               </span>
             </li>
           </ul>
-<!--          <div class="booking-action">
+          <div class="booking-action">
             <button class="accept-button button large-button clear-padding" @click="bookCar">
               <i class="fas fa-handshake"></i> Book Now
             </button>
-          </div>-->
+          </div>
         </div>
       </div>
       <div class="button-container-bottom">
@@ -123,7 +123,7 @@ export default {
 
 <style scoped>
 .car-detail-card {
-  background: #fff;
+  background: #eaeaea;
   border-radius: 12px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.1);
   overflow: hidden;
@@ -152,6 +152,7 @@ export default {
 }
 .card-body {
   display: flex;
+  color: var(--bs-black);
   flex-wrap: wrap;
   padding: 30px;
   gap: 40px; /* Add gap between image and details */
@@ -169,6 +170,8 @@ export default {
   font-size: 1.5rem;
 }
 .details-section ul {
+  color: var(--bs-black);
+
   list-style: none;
   padding: 0;
   margin: 0;
@@ -195,7 +198,6 @@ export default {
   text-align: center;
 }
 .large-button {
-  padding: 15px 40px;
   font-size: 1.2rem;
   width: 100%;
 }
