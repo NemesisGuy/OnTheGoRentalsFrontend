@@ -20,8 +20,26 @@
 </template>
 
 <script>
+/**
+ * @file ShimmerAdminTable.vue
+ * @description A component that displays a shimmer loading animation with a table-like structure.
+ * It's used as a placeholder to indicate that table data is being fetched,
+ * improving the perceived performance and user experience.
+ * The number of rows and columns in the shimmer table can be customized via props.
+ * @component ShimmerAdminTable
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: "ShimmerAdminTable",
+  /**
+   * Props accepted by the component.
+   * @type {object}
+   * @property {number} rows - The number of shimmer rows to display in the table. Defaults to 8.
+   * @property {number} columns - The number of shimmer columns to display in the table. Defaults to 4.
+   */
   props: {
     rows: {
       type: Number,

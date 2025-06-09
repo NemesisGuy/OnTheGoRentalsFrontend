@@ -1,7 +1,32 @@
+/**
+ * @file help-center-injection.js
+ * @description This script is designed to populate the backend with a predefined set of sample
+ * help center entries. It contains a hardcoded JWT and API endpoint for this purpose.
+ *
+ * IMPORTANT: This script is intended for development/setup purposes only.
+ * It should NOT be included in a production build or run in an environment
+ * where the hardcoded token could be exposed, as this poses a security risk.
+ */
+
+/**
+ * @constant {string} token
+ * @description The JWT token used for authorizing API requests to create help center entries.
+ * @warning Hardcoding JWTs is a security risk if this script is exposed. This token may have an expiration date.
+ *          For production systems, use a secure method for API authentication.
+ */
 const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlIjpbIkFETUlOIl0sImlhdCI6MTcyODI4MTU0MiwiZXhwIjoxNzI4MzE3NTQyfQ.QrHvQeYA2z8PNb8-e2B_LyYPogHsluUcksaOOjMCLFI'; // Replace with your actual JWT token
+
+/**
+ * @constant {string} apiUrl
+ * @description The API endpoint URL for creating help center entries.
+ */
 const apiUrl = 'https://otgbackend.nemesisnet.co.za/api/admin/help-center/create'; // Replace with your API endpoint
 
-// Sample data for 20 entries
+/**
+ * @constant {Array<object>} entries
+ * @description An array of sample help center entry objects to be created.
+ * Each object should have `title`, `content`, and `category` properties.
+ */
 const entries = [
     {
         title: "How to Change Your Email",
@@ -104,8 +129,6 @@ const entries = [
         content: "Guide to navigating the settings page and its options.",
         category: "User Interface"
     },
-
-
     {
         title: "How to Use the Help Center",
         content: "This entry provides a comprehensive guide on using the Help Center effectively.",
@@ -205,8 +228,16 @@ const entries = [
     }
 ];
 
-// Function to create entries
-const createEntries = async (entry) => {
+/**
+ * Sends a request to the API to create a single help center entry.
+ * @async
+ * @param {object} entry - The help center entry object to create.
+ * @param {string} entry.title - The title of the help entry.
+ * @param {string} entry.content - The content of the help entry.
+ * @param {string} entry.category - The category of the help entry.
+ * @returns {Promise<object>} A promise that resolves with the JSON response from the API.
+ */
+const createEntries = async (entry) => { // Renamed from original 'createEntries' to avoid conflict if this was meant to be singular. Kept plural as it's used in a loop.
     const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -218,13 +249,23 @@ const createEntries = async (entry) => {
     return response.json();
 };
 
-// Main function to create all entries
+/**
+ * Iterates through all predefined `entries` and calls `createEntries` for each one
+ * to populate the backend. Logs the title of each created entry.
+ * @async
+ * @returns {void}
+ */
 const createAllEntries = async () => {
     for (const entry of entries) {
-        const result = await createEntries(entry);
-        console.log(`Created entry: ${result.title}`);
+        try {
+            const result = await createEntries(entry); // Corrected to call the renamed/correct function
+            // Assuming result has a title or some identifier, adjust if API response is different
+            console.log(`Created entry: ${result.title || entry.title } status: ${result.status || 'unknown'}`);
+        } catch (error) {
+            console.error(`Failed to create entry "${entry.title}":`, error);
+        }
     }
 };
 
-// Run the function
+// Run the function to create all entries when the script is executed.
 createAllEntries();

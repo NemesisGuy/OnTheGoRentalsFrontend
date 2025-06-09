@@ -27,13 +27,35 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 
+/**
+ * @file TestPage.vue
+ * @description A component used for testing various modal dialogs (Loading, Success, Failure, Confirmation).
+ * It provides buttons to trigger each type of modal and demonstrates their basic usage and event handling.
+ * @component TestPage
+ */
 export default {
+  /**
+   * Components registered for use within this component.
+   * @type {object}
+   * @property {Component} LoadingModal - Modal for indicating loading states.
+   * @property {Component} SuccessModal - Modal for displaying success messages.
+   * @property {Component} FailureModal - Modal for displaying failure or error messages.
+   * @property {Component} ConfirmationModal - Modal for asking user confirmation for an action.
+   */
   components: {
     LoadingModal,
     SuccessModal,
     FailureModal,
     ConfirmationModal,
   },
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {boolean} loadingModalVisible - Controls the visibility of the LoadingModal.
+   * @property {boolean} successModalVisible - Controls the visibility of the SuccessModal.
+   * @property {boolean} failureModalVisible - Controls the visibility of the FailureModal.
+   * @property {boolean} confirmationModalVisible - Controls the visibility of the ConfirmationModal.
+   */
   data() {
     return {
       loadingModalVisible: false,
@@ -43,42 +65,85 @@ export default {
     };
   },
   methods: {
+    /**
+     * Shows the loading modal.
+     * It also sets a timeout to automatically hide the modal after 2 seconds.
+     * @returns {void}
+     */
     showLoadingModal() {
       this.loadingModalVisible = true;
-      // Wait for 5 seconds then hide modal
+      // Wait for 2 seconds then hide modal
       setTimeout(() => {
         this.hideLoadingModal();
       }, 2000);
     },
+    /**
+     * Hides the loading modal.
+     * @returns {void}
+     */
     hideLoadingModal() {
       this.loadingModalVisible = false;
     },
+    /**
+     * Shows the success modal.
+     * @returns {void}
+     */
     showSuccessModal() {
       this.successModalVisible = true;
     },
+    /**
+     * Hides the success modal.
+     * @returns {void}
+     */
     hideSuccessModal() {
       this.successModalVisible = false;
     },
+    /**
+     * Shows the failure modal.
+     * @returns {void}
+     */
     showFailureModal() {
       this.failureModalVisible = true;
     },
+    /**
+     * Hides the failure modal.
+     * @returns {void}
+     */
     hideFailureModal() {
       this.failureModalVisible = false;
     },
+    /**
+     * Shows the confirmation modal.
+     * @returns {void}
+     */
     showConfirmationModal() {
       this.confirmationModalVisible = true;
     },
+    /**
+     * Hides the confirmation modal.
+     * @returns {void}
+     */
     hideConfirmationModal() {
       this.confirmationModalVisible = false;
     },
+    /**
+     * Placeholder method for handling the 'confirm' action from the confirmation modal.
+     * Currently, it only hides the modal.
+     * @returns {void}
+     */
     confirmAction() {
       // Logic for confirming action
-      // ...
+      console.log("Action confirmed from TestPage.");
       this.hideConfirmationModal();
     },
+    /**
+     * Placeholder method for handling the 'cancel' action from the confirmation modal.
+     * Currently, it only hides the modal.
+     * @returns {void}
+     */
     cancelAction() {
       // Logic for canceling action
-      // ...
+      console.log("Action canceled from TestPage.");
       this.hideConfirmationModal();
     },
   },

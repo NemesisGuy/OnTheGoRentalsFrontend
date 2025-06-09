@@ -11,8 +11,29 @@
 </template>
 
 <script>
+/**
+ * @file ShimmerCard.vue
+ * @description A component that displays a shimmer loading animation with a card-like structure.
+ * It is used as a placeholder to indicate that card content (like a title, text lines, and a button)
+ * is being fetched, enhancing the user experience during loading periods.
+ * The number and width of text lines, and the width of the title can be customized via props.
+ * @component ShimmerCard
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: "ShimmerCard",
+  /**
+   * Props accepted by the component.
+   * @type {object}
+   * @property {Array<string>} lines - An array of strings, where each string defines the width
+   *                                   (e.g., '90%', '100px') of a shimmer line representing text content.
+   *                                   Defaults to `['90%', '75%', '60%']`.
+   * @property {string} titleWidth - The width (e.g., '40%', '150px') of the shimmer element
+   *                                 representing the card's title. Defaults to '40%'.
+   */
   props: {
     lines: {
       type: Array,

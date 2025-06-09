@@ -63,12 +63,46 @@
 // Script remains the same as the previous version (HelpCenterPage)
 import api from "@/api";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
-import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
+import SuccessModal from "@/components/Main/Modals/SuccessModal.vue"; // Imported but not actively used in methods
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 
+/**
+ * @file HelpCenter.vue
+ * @description A component that displays help topics categorized for user assistance.
+ * It features a sidebar for category selection and a main area to view help entries.
+ * Data is fetched from an API, and includes loading, empty, and error states.
+ * @component HelpCenterView (as named in the script)
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: 'HelpCenterView', // Renaming to avoid confusion with any previous page wrappers
+  /**
+   * Components registered for use within this component.
+   * @type {object}
+   * @property {Component} LoadingModal - Modal to indicate loading state.
+   * @property {Component} SuccessModal - Modal for success messages (imported but not actively triggered in current methods).
+   * @property {Component} FailureModal - Modal for failure/error messages.
+   */
   components: { LoadingModal, SuccessModal, FailureModal },
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {Array<object>} allHelpCenters - Stores all fetched help topic objects.
+   * @property {Array<string>} categories - Stores unique category names extracted from help topics, plus 'All'.
+   * @property {string} selectedCategory - The currently selected category for filtering help topics. Defaults to 'All'.
+   * @property {boolean} loading - Flag to indicate if help topics are currently being loaded.
+   * @property {string|null} error - Stores an error message if fetching data fails.
+   * @property {object} successModal - Object to control the success modal.
+   * @property {boolean} successModal.show - Visibility state of the success modal.
+   * @property {string} successModal.message - Message to display in the success modal.
+   * @property {object} failModal - Object to control the failure modal.
+   * @property {boolean} failModal.show - Visibility state of the failure modal.
+   * @property {string} failModal.message - Message to display in the failure modal.
+   * @property {object} categoryIcons - A mapping of category names to Font Awesome icon classes.
+   */
   data() {
     return {
       allHelpCenters: [],
@@ -79,15 +113,19 @@ export default {
       successModal: { show: false, message: "" },
       failModal: { show: false, message: "" },
       categoryIcons: {
-        'All': 'fas fa-folder', // Matching your screenshot for 'All'
+        'All': 'fas fa-folder',
         'Bookings': 'fas fa-calendar-check',
-        'Car': 'fas fa-car-side', // Slightly different car icon
+        'Car': 'fas fa-car-side',
         'Rental': 'fas fa-key',
-        'User': 'fas fa-user-shield', // Example for User/Login issues
-        // Add your actual categories and preferred icons
+        'User': 'fas fa-user-shield',
       }
     };
   },
+  /**
+   * Computed properties for the component.
+   * @type {object}
+   * @property {Array<object>} filteredHelpCenters - Returns help topics filtered by `selectedCategory`.
+   */
   computed: {
     filteredHelpCenters() {
       if (this.selectedCategory === 'All') {
@@ -96,10 +134,21 @@ export default {
       return this.allHelpCenters.filter(entry => entry.category === this.selectedCategory);
     }
   },
+  /**
+   * Lifecycle hook that is called when the component is created.
+   * It triggers the fetching of help topics.
+   */
   created() {
     this.fetchHelpCenters();
   },
   methods: {
+    /**
+     * Fetches all help topics from the API.
+     * Populates `allHelpCenters` and extracts categories.
+     * Handles loading states and potential errors, showing a failure modal if necessary.
+     * @async
+     * @returns {void}
+     */
     fetchHelpCenters() {
       this.loading = true;
       this.error = null;
@@ -108,12 +157,9 @@ export default {
             if (response.data && response.data.status === 'success' && Array.isArray(response.data.data)) {
               this.allHelpCenters = response.data.data;
               this.extractCategories();
-              if (this.allHelpCenters.length === 0) {
-                // Can show an info modal or let the template handle "no entries"
-              }
             } else if (response.status === 204 || (response.data && response.data.status === 'success' && response.data.data === null) || (response.data && Array.isArray(response.data.data) && response.data.data.length === 0) ) {
               this.allHelpCenters = [];
-              this.categories = ['All'];
+              this.categories = ['All']; // Ensure 'All' category exists even if no topics
             } else {
               const errorMsg = response.data?.errors?.map(e => e.message).join(', ') || 'Failed to fetch help topics: Invalid response structure.';
               console.warn("Help Center fetch warning:", errorMsg, response.data);
@@ -132,26 +178,61 @@ export default {
             this.loading = false;
           });
     },
+    /**
+     * Extracts unique category names from the fetched `allHelpCenters` data.
+     * Populates the `categories` data property, always including 'All'.
+     * @returns {void}
+     */
     extractCategories() {
       const uniqueCategories = [...new Set(this.allHelpCenters.map(entry => entry.category).filter(Boolean))];
       this.categories = ['All', ...uniqueCategories.sort()];
     },
+    /**
+     * Sets the `selectedCategory` data property to the chosen category.
+     * @param {string} category - The category name to select.
+     * @returns {void}
+     */
     selectCategory(category) {
       this.selectedCategory = category;
     },
+    /**
+     * Formats the content string by replacing newline characters with HTML `<br>` tags.
+     * Used with `v-html` for rendering formatted content.
+     * @param {string} content - The content string to format.
+     * @returns {string} The formatted HTML string.
+     */
     formatContent(content) {
       if (!content) return '';
       return content.replace(/\n/g, '<br>');
     },
+    /**
+     * Retrieves the Font Awesome icon class for a given category.
+     * @param {string} category - The category name.
+     * @returns {string} The corresponding icon class, or a fallback icon class if not found.
+     */
     getCategoryIcon(category) {
       return this.categoryIcons[category] || 'fas fa-info-circle'; // A fallback icon
     },
+    /**
+     * Counts the number of help entries for a specific category.
+     * @param {string} category - The category name.
+     * @returns {number} The count of help entries in that category.
+     */
     countForCategory(category) {
       return this.allHelpCenters.filter(entry => entry.category === category).length;
     },
+    /**
+     * Shows the failure modal with a specified message.
+     * @param {string} message - The message to display.
+     * @returns {void}
+     */
     showFailureModal(message) {
       this.failModal = { show: true, message: message };
     },
+    /**
+     * Closes any active feedback modals (success or failure).
+     * @returns {void}
+     */
     closeFeedbackModal() {
       this.successModal.show = false;
       this.failModal.show = false;

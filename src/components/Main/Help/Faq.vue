@@ -43,28 +43,59 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios'; // Unused, api instance is used
 import api from "@/api";
 
+/**
+ * @file Faq.vue
+ * @description This component displays a list of Frequently Asked Questions (FAQs).
+ * It fetches FAQ data from an API and presents them in an accordion-style interface,
+ * allowing users to expand each question to see its answer.
+ * @component Faq
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: 'Faq',
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {Array<object>|null} faqList - An array to store the fetched FAQ objects.
+   *                                          Each object is expected to have `id`, `question`, and `answer` properties.
+   *                                          Initially null until data is loaded.
+   */
   data() {
     return {
       faqList: null,
     };
   },
+  /**
+   * Lifecycle hook that is called after the component has been mounted to the DOM.
+   * It triggers the fetching of the FAQ list.
+   */
   mounted() {
     this.fetchFaqList();
   },
   methods: {
+    /**
+     * Fetches the list of FAQs from the backend API.
+     * On successful fetch, it updates the `faqList` data property.
+     * Logs an error to the console if the fetch fails.
+     * @async
+     * @returns {void}
+     */
     fetchFaqList() {
       api
           .get('/api/v1/faqs')
           .then((response) => {
+            // Assuming the API returns data in response.data.data structure
             this.faqList = response.data.data;
           })
           .catch((error) => {
-            console.error(error);
+            console.error('Error fetching FAQ list:', error);
+            this.faqList = []; // Set to empty array on error to stop "Loading..."
           });
     },
   },
