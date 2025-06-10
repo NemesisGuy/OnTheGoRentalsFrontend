@@ -24,6 +24,17 @@
   </div>
 </template>
 
+<script setup>
+/**
+ * @file Navbar-old.vue
+ * @description An older, simpler version of the navigation bar.
+ * It provides basic links to Login, Signup, and the Admin Dashboard.
+ * This component is likely deprecated or was used for an earlier version of the application.
+ * It is purely presentational with no script logic.
+ * @component NavbarOld (Note: Name is inferred by Vue from filename)
+ */
+</script>
+
 <style>
 
 </style>

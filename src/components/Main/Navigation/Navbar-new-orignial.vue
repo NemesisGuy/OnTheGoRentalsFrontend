@@ -53,12 +53,38 @@
 </template>
 
 <script>
+/**
+ * @file Navbar-new-orignial.vue
+ * @description A navigation bar component for the application. (Note: "orignial" in filename is likely a typo for "original").
+ * It displays different navigation links based on the user's login status, which is checked
+ * from localStorage upon component creation. Includes links to login, signup, about, booking,
+ * admin dashboard, a help dropdown, user profile, and sign out.
+ * @component NavbarNewOriginal
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
+  name: 'NavbarNewOriginal', // Derived from filename, acknowledging typo
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {boolean} isLoggedIn - Flag indicating whether the user is currently logged in.
+   *                                  Initialized based on the presence of 'jwtToken' in localStorage.
+   *                                  (Note: This initial check is not reactive to login/logout events
+   *                                  that occur after the component is created. For full reactivity,
+   *                                  consider using a global state management solution or an event bus.)
+   */
   data() {
     return {
       isLoggedIn: false
     };
   },
+  /**
+   * Lifecycle hook that is called after the component instance has been created.
+   * It checks for a 'jwtToken' in localStorage to set the initial login state.
+   */
   created() {
     // Check if the JWT token exists in localStorage or sessionStorage
     const token = localStorage.getItem('jwtToken'); // Or use sessionStorage if you prefer

@@ -73,36 +73,63 @@
 </template>
 
 <script>
-import { ref, watchEffect, onMounted, onUnmounted } from "vue"; // Added onUnmounted
+import { ref, onMounted, onUnmounted } from "vue"; // watchEffect is imported but not used in the final setup logic.
 import { useRouter } from 'vue-router';
-import api from "@/api";
-// api import is not strictly needed in this version of the navbar if logout doesn't call backend
-// but keep it if your handleLogout eventually does.
-// import api from "@/api";
+import api from "@/api"; // api import is used for logout.
 
+/**
+ * @file Navbar.vue
+ * @description The main navigation bar for the application, built using Vue 3 Composition API.
+ * It displays navigation links dynamically based on the user's authentication status and roles (e.g., admin).
+ * Features include links to common pages, a help dropdown, user profile, and logout functionality.
+ * The authentication status is reactive to changes triggered by an 'auth-change' window event.
+ * @component Navbar
+ */
 export default {
-  name: "Navbar", // Good practice to name components
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
+  name: "Navbar",
+  /**
+   * The Vue 3 Composition API setup function.
+   * Initializes reactive state, lifecycle hooks, and methods for the navbar.
+   * @returns {object} Reactive properties and methods exposed to the template.
+   * @property {import('vue').Ref<boolean>} isLoggedIn - Reactive ref indicating if the user is logged in.
+   * @property {import('vue').Ref<boolean>} isAdmin - Reactive ref indicating if the logged-in user has admin privileges.
+   * @property {Function} handleLogout - Method to handle user logout.
+   */
   setup() {
     const router = useRouter();
+    /**
+     * Reactive ref indicating if the user is currently logged in.
+     * @type {import('vue').Ref<boolean>}
+     */
     const isLoggedIn = ref(false);
+    /**
+     * Reactive ref indicating if the logged-in user has admin or superadmin roles.
+     * @type {import('vue').Ref<boolean>}
+     */
     const isAdmin = ref(false);
-    // Removed userEmail and userId refs as they are not directly used in your provided template
-    // If you decide to display user email or need ID for dynamic links, you can re-add them.
 
+    /**
+     * Updates the `isLoggedIn` and `isAdmin` reactive properties based on
+     * authentication data stored in localStorage (accessToken, user roles).
+     * Parses user data to check for 'ADMIN' or 'SUPERADMIN' roles.
+     * @returns {void}
+     */
     const updateAuthStatus = () => {
       const accessToken = localStorage.getItem('accessToken');
-      isLoggedIn.value = !!accessToken; // True if accessToken exists, false otherwise
+      isLoggedIn.value = !!accessToken;
 
       if (isLoggedIn.value) {
         try {
           const storedUser = localStorage.getItem('user');
           if (storedUser) {
             const userData = JSON.parse(storedUser);
-            const roles = userData.roles || []; // Default to empty array if not present
+            const roles = userData.roles || [];
 
-            // Corrected isAdmin check
             isAdmin.value = roles.some(role => {
-              // Check if roles are stored as simple strings or as objects with a roleName property
               if (typeof role === 'string') {
                 return role === 'ADMIN' || role === 'SUPERADMIN';
               } else if (typeof role === 'object' && role !== null && role.roleName) {
@@ -111,63 +138,63 @@ export default {
               return false;
             });
           } else {
-            // If no 'user' object in localStorage, assume not admin
             isAdmin.value = false;
           }
         } catch (e) {
           console.error("Error parsing user data from localStorage for Navbar:", e);
-          // If parsing fails, treat as not logged in or non-admin for safety
           isLoggedIn.value = false;
           isAdmin.value = false;
         }
       } else {
-        // If not logged in, not an admin
         isAdmin.value = false;
       }
-      // console.log(`Navbar auth status updated: isLoggedIn=${isLoggedIn.value}, isAdmin=${isAdmin.value}`);
     };
 
-    // Call on mount
+    /**
+     * Called when the component is mounted.
+     * Performs an initial authentication status update and sets up a window event listener
+     * for 'auth-change' to reactively update status upon login/logout elsewhere in the app.
+     */
     onMounted(() => {
       updateAuthStatus();
-      // Listen for a custom event that might be dispatched after login/logout from other components
       window.addEventListener('auth-change', updateAuthStatus);
     });
 
-    // Clean up event listener when component is unmounted
+    /**
+     * Called when the component is unmounted.
+     * Cleans up the 'auth-change' window event listener.
+     */
     onUnmounted(() => {
       window.removeEventListener('auth-change', updateAuthStatus);
     });
 
-    // watchEffect is good for reacting to changes in reactive dependencies used *within its callback*.
-    // For localStorage changes, which are outside Vue's reactivity system,
-    // relying on 'auth-change' event or onMounted/route changes is more direct.
-    // If you want to keep watchEffect, ensure it depends on something that *does* change reactively
-    // when auth status might change, or it might not re-run as expected for localStorage alone.
-    // For simplicity and to directly address localStorage, the event listener is more explicit.
-    // watchEffect(() => {
-    //   updateAuthStatus();
-    // });
-
-
+    /**
+     * Handles the user logout process.
+     * Attempts to call the backend logout endpoint. Regardless of API call success,
+     * it clears authentication-related items from localStorage, updates reactive state,
+     * dispatches an 'auth-change' event, and redirects the user to the login page,
+     * finally reloading the window.
+     * @async
+     * @returns {void}
+     */
     const handleLogout = () => {
-      api.post('/api/v1/auth/logout')
+      api.post('/api/v1/auth/logout') // Assumes API endpoint for logout
           .catch(error => {
-            console.error("Logout request failed:", error);
+            // Log error but proceed with client-side cleanup
+            console.error("Logout request failed:", error.response || error.message || error);
           })
           .finally(() => {
-            // Client-side cleanup happens regardless of backend call success
-
             localStorage.removeItem('accessToken');
-            // localStorage.removeItem('refreshToken'); // No longer needed from localStorage
             localStorage.removeItem('user');
 
             isLoggedIn.value = false;
             isAdmin.value = false;
 
+            // Dispatch event so other parts of the app can react if needed
             window.dispatchEvent(new CustomEvent('auth-change'));
 
             router.push('/nav/user/login').then(() => {
+              // Reload to ensure clean state across the application after logout
               window.location.reload();
             });
           });
