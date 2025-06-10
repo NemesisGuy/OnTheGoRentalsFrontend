@@ -202,7 +202,7 @@ export default {
 .kpi-card.available .kpi-icon { color: #28a745; }
 .kpi-card.overdue .kpi-icon { color: #dc3545; }
 .kpi-card.collections .kpi-icon { color: #ffc107; }
-.list-card { min-height: 350px; overflow-y: auto; }
+.list-card { min-height: 350px; overflow-y: auto; min-width: 360px; }
 .list-card h3 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
 .list-card ul { list-style: none; padding: 0; margin: 0; }
 .list-card li { display: flex; justify-content: space-between; align-items: center; padding: 12px 5px; border-bottom: 1px solid #f0f0f0; }
