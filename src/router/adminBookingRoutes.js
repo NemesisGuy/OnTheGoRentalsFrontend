@@ -19,7 +19,7 @@ const adminBookingRoutes = [
 
     {
         path: 'bookings/read/:uuid',
-        name: 'ViewBooking',
+        name: 'AdminViewBooking',
         components: {
             adminContent: ViewBooking,
         },

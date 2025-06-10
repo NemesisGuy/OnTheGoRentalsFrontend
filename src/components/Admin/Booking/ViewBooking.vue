@@ -16,22 +16,13 @@
             <h3><i class="fas fa-calendar-check"></i> Booking Details</h3>
             <hr class="section-hr"/>
             <div class="detail-grid">
-              <div class="detail-item"><label>Status:</label> <span>{{ formatStatus(booking.status) }}</span></div>
-              <div class="detail-item"><label>Collection Date:</label>
-                <span>{{ formatDisplayDateTime(booking.bookingStartDate) }}</span></div>
-              <div class="detail-item"><label>Expected Return:</label>
-                <span>{{ formatDisplayDateTime(booking.bookingEndDate) }}</span></div>
-              <div v-if="booking.returnedDate" class.detail-item><label>Actual Return:</label>
-                <span>{{ formatDisplayDateTime(booking.returnedDate) }}</span></div>
-              <div v-if="booking.fine > 0" class.detail-item><label>Fine:</label> <span>${{
-                  booking.fine.toFixed(2)
-                }}</span></div>
-              <div v-if="booking.issuer" class.detail-item><label>Issued By (ID):</label> <span>{{
-                  booking.issuer
-                }}</span></div>
-              <div v-if="booking.receiver" class.detail-item><label>Received By (ID):</label> <span>{{
-                  booking.receiver
-                }}</span></div>
+              <div class="detail-item"><label>Status:</label> <span :class="['status-badge', getStatusClass(booking.status)]">{{ formatStatus(booking.status) }}</span></div>
+              <div class="detail-item"><label>Collection Date:</label> <span>{{ formatDateTime(booking.bookingStartDate) }}</span></div>
+              <div class="detail-item"><label>Expected Return:</label> <span>{{ formatDateTime(booking.bookingEndDate) }}</span></div>
+              <div v-if="booking.returnedDate" class="detail-item"><label>Actual Return:</label> <span>{{ formatDateTime(booking.returnedDate) }}</span></div>
+              <div v-if="booking.fine > 0" class="detail-item"><label>Fine:</label> <span>${{ booking.fine.toFixed(2) }}</span></div>
+              <div v-if="booking.issuer" class="detail-item"><label>Issued By (ID):</label> <span>{{ booking.issuer }}</span></div>
+              <div v-if="booking.receiver" class="detail-item"><label>Received By (ID):</label> <span>{{ booking.receiver }}</span></div>
             </div>
           </div>
 
@@ -40,12 +31,10 @@
             <h3><i class="fas fa-user-tie"></i> Customer Details</h3>
             <hr class="section-hr"/>
             <div class="detail-grid">
-              <div class="detail-item"><label>Full Name:</label> <span>{{ user.firstName }} {{ user.lastName }}</span>
-              </div>
+              <div class="detail-item"><label>Full Name:</label> <span>{{ user.firstName }} {{ user.lastName }}</span></div>
               <div class="detail-item"><label>Email:</label> <span>{{ user.email }}</span></div>
               <div class="detail-item"><label>User UUID:</label> <span>{{ user.uuid }}</span></div>
-              <div v-if="user.roles && user.roles.length > 0" class="detail-item"><label>Roles:</label>
-                <span>{{ user.roles.join(', ') }}</span></div>
+              <div v-if="user.roles && user.roles.length > 0" class="detail-item"><label>Roles:</label> <span>{{ user.roles.join(', ') }}</span></div>
             </div>
           </div>
 
@@ -60,28 +49,36 @@
               <div class="detail-item"><label>Price Group:</label> <span>{{ car.priceGroup }}</span></div>
               <div class="detail-item"><label>License Plate:</label> <span>{{ car.licensePlate }}</span></div>
               <div class="detail-item"><label>Car UUID:</label> <span>{{ car.uuid }}</span></div>
-              <div class="detail-item"><label>Currently Available:</label> <span>{{
-                  car.available ? 'Yes' : 'No'
-                }}</span></div>
+              <div class="detail-item"><label>Currently Available:</label> <span>{{ car.available ? 'Yes' : 'No' }}</span></div>
             </div>
           </div>
         </div>
-        <div class="button-container" >
+
+        <!-- === THE ADDITION IS HERE === -->
+        <div class="button-container">
+          <!-- This button will only show if the booking status is 'CONFIRMED' -->
+          <button
+              v-if="booking.status === 'CONFIRMED'"
+              @click="navigateToCreateRental(booking.uuid)"
+              class="button process-button"
+          >
+            <i class="fas fa-play-circle"></i> Convert to Rental
+          </button>
           <button type="button" class="back-button button" @click="goBack">
             <i class="fas fa-arrow-left"></i> Back
           </button>
         </div>
+        <!-- === END OF ADDITION === -->
+
       </div>
 
       <div v-else-if="!isLoading && apiError" class="error-message-container">
         <p class="error-text">{{ failModal.message || "Failed to load booking details." }}</p>
         <button class="button deny-button" @click="goBack">Go Back</button>
       </div>
-
     </div>
   </div>
 
-  <!-- Modals are typically placed at the root of the component or app for global stacking context -->
   <div class="modal-teleporter">
     <FailureModal
         key="viewBookingFailureModal"
@@ -99,16 +96,16 @@ import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
 import FailureModal from '@/components/Main/Modals/FailureModal.vue';
 
 export default {
-  name: 'AdminViewBooking', // More specific name
+  name: 'AdminViewBooking',
   components: {
     LoadingModal,
     FailureModal,
   },
   data() {
     return {
-      booking: null, // Will hold BookingResponseDTO
-      user: null,    // Will hold UserResponseDTO
-      car: null,     // Will hold CarResponseDTO
+      booking: null,
+      user: null,
+      car: null,
       isLoading: true,
       apiError: false,
       failModal: {show: false, message: ""},
@@ -118,72 +115,43 @@ export default {
     await this.fetchBookingDetails();
   },
   methods: {
-    formatDisplayDateTime(dateTimeString) { // Wrapper for template
-      return formatDateTime(dateTimeString);
-    },
-    formatStatus(status) { // Helper for display
+    formatDateTime,
+    formatStatus(status) {
       if (!status) return 'N/A';
       return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     },
-    async fetchBookingDetails() { // Renamed and made primary fetch method
+    /**
+     * **NEW**: Returns a dynamic CSS class based on the booking status.
+     */
+    getStatusClass(status) {
+      if (!status) return 'status-unknown';
+      return `status-booking-${status.toLowerCase().replace(/_/g, '-')}`;
+    },
+    async fetchBookingDetails() {
       this.isLoading = true;
       this.apiError = false;
       this.failModal.show = false;
+      const bookingUuid = this.$route.params.uuid;
 
-      // Get booking UUID from route parameter
-      const bookingUuidFromRoute = this.$route.params.uuid; // <<<< ENSURE YOUR ROUTE PARAM IS 'bookingUuid'
-      if (!bookingUuidFromRoute) {
-        console.error("AdminViewBooking: No booking UUID provided in route parameters.");
-        this.failModal.message = "No booking specified to view.";
-        this.failModal.show = true;
+      if (!bookingUuid) {
+        this.failModal = { show: true, message: "No booking specified to view." };
         this.isLoading = false;
         this.apiError = true;
         return;
       }
 
       try {
-        console.log(`AdminViewBooking: Fetching booking with UUID: ${bookingUuidFromRoute}`);
-        // Fetch the main booking details
-        // Endpoint from AdminBookingController: GET /api/v1/admin/bookings/{bookingUuid}
-        const bookingResponse = await api.get(`/api/v1/admin/bookings/${bookingUuidFromRoute}`);
+        const response = await api.get(`/api/v1/admin/bookings/${bookingUuid}`);
+        if (response.data?.status === "success" && response.data.data) {
+          this.booking = response.data.data;
+          this.user = this.booking.user;
+          this.car = this.booking.car;
 
-        if (bookingResponse.data && bookingResponse.data.status === "success" && bookingResponse.data.data) {
-          this.booking = bookingResponse.data.data; // This is BookingResponseDTO
-          console.log("AdminViewBooking - Booking data:", this.booking);
-
-          // Now fetch related User and Car details using UUIDs from the booking DTO
-          // These are already DTOs within this.booking if your BookingResponseDTO nests them
-          if (this.booking.user && this.booking.user.uuid) {
-            this.user = this.booking.user; // Already have UserResponseDTO
-            console.log("AdminViewBooking - User data (from booking):", this.user);
-          } else if (this.booking.user) { // If user object present but no uuid (unlikely for response DTO)
-            console.warn("AdminViewBooking - User data in booking DTO is missing UUID.");
-            this.user = this.booking.user; // Assign it anyway for other fields
-          } else {
-            console.error("AdminViewBooking - No user details found in booking response.");
-            // You might throw an error or set a specific error message
-            this.apiError = true;
-            this.failModal.message = "User details missing in booking information.";
-            this.failModal.show = true;
+          if (!this.user || !this.car) {
+            console.log("Booking data is incomplete and is missing User or Car details.");
           }
-
-          if (this.booking.car && this.booking.car.uuid) {
-            this.car = this.booking.car; // Already have CarResponseDTO
-            console.log("AdminViewBooking - Car data (from booking):", this.car);
-          } else if (this.booking.car) {
-            console.warn("AdminViewBooking - Car data in booking DTO is missing UUID.");
-            this.car = this.booking.car;
-          } else {
-            console.error("AdminViewBooking - No car details found in booking response.");
-            this.apiError = true;
-            this.failModal.message = "Car details missing in booking information.";
-            this.failModal.show = true;
-          }
-          // If Driver is also nested DTO, handle it similarly
-          // if (this.booking.driver && this.booking.driver.uuid) this.driver = this.booking.driver;
-
         } else {
-          this.handleApiResponseError(bookingResponse.data, "Failed to load booking details.");
+          this.handleApiResponseError(response.data, "Failed to load booking details.");
           this.apiError = true;
         }
       } catch (error) {
@@ -194,164 +162,76 @@ export default {
       }
     },
 
-    // Removed separate fetchUserProfile and fetchCarProfile as BookingResponseDTO should contain nested DTOs
+    /**
+     * **NEW**: Navigates to the "Create Rental from Booking" workflow page.
+     * @param {string} bookingUuid - The UUID of the booking to convert.
+     */
+    navigateToCreateRental(bookingUuid) {
+      this.$router.push({ name: 'CreateRental', params: { bookingUuid: bookingUuid } });
+    },
 
     goBack() {
-      this.$router.go(-1); // Or navigate to the admin bookings list
+      this.$router.go(-1);
     },
     closeFailModal() {
       this.failModal.show = false;
     },
     handleApiResponseError(responseData, defaultMessage) {
-      let errorMsg = defaultMessage;
-      if (responseData && responseData.errors && responseData.errors.length > 0) {
-        errorMsg = responseData.errors.map(e => `${e.field ? e.field + ': ' : ''}${e.message}`).join('; ');
-      } else if (responseData && typeof responseData === 'string' && responseData.length < 200) {
-        errorMsg = responseData;
-      } else if (responseData && responseData.message) {
-        errorMsg = responseData.message;
-      }
-      console.error("API Response Error (AdminViewBooking):", responseData);
-      this.failModal.message = errorMsg;
-      this.failModal.show = true; // Ensure modal is shown
+      const errorMsg = responseData?.errors?.map(e => e.message).join('; ') || responseData?.message || defaultMessage;
+      this.failModal = { show: true, message: errorMsg };
     },
     handleApiCatchError(error, defaultMessage) {
-      console.error("API Catch Error (AdminViewBooking):", error);
-      let errorMessage = defaultMessage;
-      if (error.response && error.response.data) {
-        const apiResponse = error.response.data;
-        if (apiResponse.errors && apiResponse.errors.length > 0) {
-          errorMessage = apiResponse.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join('; ');
-        } else if (typeof apiResponse === 'string' && apiResponse.length < 200) {
-          errorMessage = apiResponse;
-        } else if (apiResponse.message) {
-          errorMessage = apiResponse.message;
-        } else if (error.response.statusText && error.response.statusText !== "") {
-          errorMessage = `Error ${error.response.status}: ${error.response.statusText}`;
-        }
-      } else if (error.request) {
-        errorMessage = "No response from server.";
-      }
-      this.failModal.message = errorMessage;
-      this.failModal.show = true; // Ensure modal is shown
+      const errorMsg = error.response?.data?.errors?.map(e => e.message).join('; ') || error.response?.data?.message || defaultMessage;
+      this.failModal = { show: true, message: errorMsg };
     },
   },
 };
 </script>
 
 <style scoped>
-.card-container { /* Styles from UserProfile */
+/* Assuming shared styles for .card-container, .form-container, etc. */
+.booking-profile {
+  max-width: 1200px;
+  margin: auto;
 }
-
-.form-container { /* Styles from UserProfile */
-}
-
 .form-header {
   text-align: center;
   margin-bottom: 20px;
 }
+.form-header h1 { font-size: 1.8em; margin-bottom: 5px; }
+.form-header h1 i { margin-right: 10px; color: #007bff; }
+.sub-header { font-size: 0.9em; color: #6c757d; margin-top: 0; font-family: 'Courier New', Courier, monospace; }
 
-.form-header h1 {
-  font-size: 1.8em;
-  margin-bottom: 5px;
+.profile-details { padding-top: 15px; }
+.section { margin-bottom: 25px; padding: 20px; border: 1px solid #e9ecef; border-radius: 8px; background-color: #fdfdff; }
+.section h3 { font-size: 1.3em; color: #0056b3; margin-top: 0; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #007bff30; }
+.section h3 i { margin-right: 8px; }
+
+.detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px 20px; }
+.detail-item { font-size: 0.95rem; color: #333; padding: 8px 0; display: flex; align-items: center; }
+.detail-item label { font-weight: 600; color: #555; margin-right: 8px; min-width: 140px; }
+
+/* Status Badge Styling */
+.status-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.9em; font-weight: bold; color: #fff; }
+.status-booking-confirmed { background-color: #28a745; }
+.status-booking-rental-initiated, .status-booking-fulfilled { background-color: #007bff; }
+.status-booking-user-cancelled, .status-booking-admin-cancelled { background-color: #dc3545; }
+/* Add other statuses as needed */
+.status-unknown { background-color: #6c757d; }
+
+
+.error-message-container { text-align: center; padding: 40px; }
+.error-text { color: #dc3545; font-weight: bold; }
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding: 20px 0;
+  margin-top: 20px;
+  border-top: 1px solid #e9ecef;
 }
-
-.form-header h1 i {
-  margin-right: 10px;
-  color: #007bff;
-}
-
-.sub-header {
-  font-size: 0.9em;
-  color: #6c757d;
-  margin-top: 0;
-}
-
-.profile-details {
-  padding-top: 15px;
-}
-
-.section {
-  margin-bottom: 25px;
-  padding: 15px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  background-color: var(--bs-gray-100);
-}
-
-.section h3 {
-  font-size: 1.3em;
-  color: #0056b3; /* Darker blue for section titles */
-  margin-top: 0;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #007bff30;
-}
-
-.section h3 i {
-  margin-right: 8px;
-}
-
-.section-hr {
-  display: none; /* Replaced by h3 border-bottom */
-}
-
-.detail-grid { /* Use grid for better alignment */
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive columns */
-  gap: 10px 20px; /* Row and column gap */
-}
-
-.detail-item {
-  font-size: 0.95rem;
-  color: #333;
-  padding: 5px 0;
-}
-
-.detail-item label {
-  font-weight: 600;
-  color: #555;
-  margin-right: 8px;
-  min-width: 120px; /* Align labels */
-  display: inline-block;
-}
-
-.detail-item span {
-  color: #222;
-}
-
-.loading-container, .error-message-container {
-  text-align: center;
-  padding: 40px;
-}
-
-.error-text {
-  color: #dc3545;
-  font-weight: bold;
-}
-
-.modal-teleporter {
-  /* For global modal positioning if needed */
-}
-
-.button { /* Basic button styling */
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-top: 10px;
-}
-
-.deny-button {
-  background-color: #6c757d;
-  color: white;
-}
-
-.deny-button:hover {
-  background-color: #5a6268;
-}
-
-/* Styles for card-container-admin and other shared classes should come from your global styles or UsersManagement.vue style */
+.button { padding: 10px 25px; }
+.process-button { background-color: #28a745; color: white; }
+.process-button:hover { background-color: #218838; }
 </style>
