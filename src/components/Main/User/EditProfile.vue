@@ -68,49 +68,111 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios"; // Unused, api instance is used
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import api from "@/api";
 
-
+/**
+ * @file EditProfile.vue
+ * @description This component allows the currently authenticated user to edit their profile information,
+ * including first name, last name, email, and optionally, their password.
+ * It fetches the user's current profile data to pre-fill the form and submits
+ * changes to a backend API endpoint.
+ * @component EditUserProfile
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
+  name: 'EditUserProfile',
   components: {LoadingModal, FailureModal, SuccessModal},
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {object} editedUser - Object to hold the user data being edited.
+   * @property {string|null} editedUser.id - User's ID. (Note: Initialized from route params, but API calls use '/me/profile',
+   *                                         implying current user. ID for payload should ideally come from fetched profile).
+   * @property {string} editedUser.firstName - User's first name.
+   * @property {string} editedUser.lastName - User's last name.
+   * @property {string} editedUser.email - User's email address.
+   * @property {string} editedUser.password - New password input.
+   * @property {string} editedUser.confirmPassword - Confirmation for the new password.
+   * @property {Array<object>} editedUser.roles - User's roles (initialized with a default).
+   * @property {object} loadingModal - Controls the loading modal.
+   * @property {boolean} loadingModal.show - Visibility of loading modal.
+   * @property {object} successModal - Controls the success modal.
+   * @property {boolean} successModal.show - Visibility of success modal.
+   * @property {string} successModal.message - Message for success modal.
+   * @property {object} failModal - Controls the failure modal.
+   * @property {boolean} failModal.show - Visibility of failure modal.
+   * @property {string} failModal.message - Message for failure modal.
+   */
   data() {
     return {
       editedUser: {
-        id: this.$route.params.id,
+        id: this.$route.params.id, // Typically, for '/me/profile', ID isn't needed from route.
         firstName: "",
         lastName: "",
         email: "",
         password: "",
         confirmPassword: "",
-        roles: [{roleName: "USER"}]
+        roles: [{roleName: "USER"}] // Default, will be overwritten by loaded profile if available
       },
       loadingModal: {show: false},
       successModal: {show: false, message: ""},
       failModal: {show: false, message: ""}
     };
   },
+  /**
+   * Lifecycle hook called after the component has been mounted.
+   * Fetches the current user's profile to populate the form.
+   */
   mounted() {
     this.loadUserProfile();
   },
   methods: {
+    /**
+     * Fetches the profile data of the currently authenticated user from the API.
+     * Populates the `editedUser` data object with the fetched information.
+     * @async
+     * @returns {void}
+     */
     loadUserProfile() {
-      const token = localStorage.getItem('token');
+      // const token = localStorage.getItem('token'); // Redundant if api instance handles auth
+      this.loadingModal.show = true; // Show loading modal during fetch
       api.get(`/api/v1/users/me/profile`)
           .then(response => {
-            const user = response.data;
-            this.editedUser.id = user.id;
-            this.editedUser.firstName = user.firstName;
-            this.editedUser.lastName = user.lastName;
-            this.editedUser.email = user.email;
+            // Ensure response.data.data or response.data is correctly accessed based on API structure
+            const user = response.data.data || response.data;
+            if (user) {
+              this.editedUser.id = user.id; // Set ID from fetched profile
+              this.editedUser.firstName = user.firstName;
+              this.editedUser.lastName = user.lastName;
+              this.editedUser.email = user.email;
+              this.editedUser.roles = user.roles || [{roleName: "USER"}]; // Preserve roles or default
+            } else {
+              throw new Error("User data not found in API response.");
+            }
+            this.loadingModal.show = false;
           })
           .catch(error => {
-            console.error('Error retrieving user:', error);
+            console.error('Error retrieving user profile:', error.response || error);
+            this.loadingModal.show = false;
+            this.failModal.message = "Failed to load your profile. Please try again or re-login.";
+            this.failModal.show = true;
           });
     },
+    /**
+     * Handles the submission of the user profile edit form.
+     * Validates that new passwords match (if provided).
+     * Constructs a payload and sends a PUT request to update the user's profile.
+     * Shows appropriate loading, success, or failure modals.
+     * @async
+     * @returns {void}
+     */
     editUserProfile() {
       this.loadingModal.show = true;
 
@@ -121,37 +183,53 @@ export default {
         return;
       }
 
-      const token = localStorage.getItem('token');
+      // const token = localStorage.getItem('token'); // Redundant if api instance handles auth
 
       const userPayload = {
-        id: this.editedUser.id,
+        id: this.editedUser.id, // ID should be from the loaded profile
         firstName: this.editedUser.firstName,
         lastName: this.editedUser.lastName,
         email: this.editedUser.email,
-        roles: this.editedUser.roles
+        roles: this.editedUser.roles // Send roles back, backend should handle role management appropriately
       };
 
+      // Only include password in the payload if it's being changed
       if (this.editedUser.password) {
         userPayload.password = this.editedUser.password;
       }
 
-      api.put(`/api/v1/users/me/profile`, userPayload )
+      api.put(`/api/v1/users/me/profile`, userPayload)
           .then(response => {
             this.loadingModal.show = false;
-            this.successModal.message = "Profile updated successfully";
+            this.successModal.message = "Profile updated successfully!";
             this.successModal.show = true;
+            // Optionally, re-fetch profile or update local storage if user data is stored there
+            if (response.data?.data?.user) { // If API returns updated user
+                localStorage.setItem('user', JSON.stringify(response.data.data.user));
+                window.dispatchEvent(new CustomEvent('auth-change')); // If navbar depends on this
+            } else { // Fallback to re-fetch, or just rely on next login
+                this.loadUserProfile(); // Re-fetch to show latest data if needed
+            }
           })
           .catch(error => {
-            console.error('Error updating user profile:', error);
+            console.error('Error updating user profile:', error.response || error);
             this.loadingModal.show = false;
-            this.failModal.message = "Failed to update profile. Please try again.";
+            this.failModal.message = error.response?.data?.message || "Failed to update profile. Please try again.";
             this.failModal.show = true;
           });
     },
+    /**
+     * Closes any active success or failure modals.
+     * @returns {void}
+     */
     closeModal() {
       this.successModal.show = false;
       this.failModal.show = false;
     },
+    /**
+     * Navigates the user to the previous page in the router history.
+     * @returns {void}
+     */
     goBack() {
       this.$router.go(-1);
     }

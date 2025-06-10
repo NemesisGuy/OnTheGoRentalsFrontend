@@ -103,9 +103,20 @@ import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
 import FailureModal from '@/components/Main/Modals/FailureModal.vue';
 import SuccessModal from '@/components/Main/Modals/SuccessModal.vue';
 import ConfirmationModal from '@/components/Main/Modals/ConfirmationModal.vue';
-import {formatDateTime} from '@/utils/dateUtils';
+import {formatDateTime} from '@/utils/dateUtils'; // Assuming formatDateTime is correctly imported
 
+/**
+ * @file MyBookings.vue
+ * @description This component displays a list of bookings for the currently authenticated user.
+ * Users can view details of each booking, including car information, dates, and status.
+ * It also allows users to cancel bookings that are in a cancellable state, with a confirmation step.
+ * @component MyBookings
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: 'MyBookings',
   components: {
     LoadingModal,
@@ -113,77 +124,123 @@ export default {
     SuccessModal,
     ConfirmationModal,
   },
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {Array<object>} bookings - Array to store the fetched booking objects for the user.
+   * @property {boolean} isLoading - Flag to indicate if booking data is currently being loaded.
+   * @property {string|null} isCancelling - Stores the UUID of the booking currently being cancelled to show a loading state on its button; null otherwise.
+   * @property {object} failModal - Controls the failure modal.
+   * @property {boolean} failModal.show - Visibility of failure modal.
+   * @property {string} failModal.message - Message for failure modal.
+   * @property {object} successModal - Controls the success modal.
+   * @property {boolean} successModal.show - Visibility of success modal.
+   * @property {string} successModal.message - Message for success modal.
+   * @property {boolean} showCancelConfirmModal - Controls visibility of the booking cancellation confirmation modal.
+   * @property {object|null} bookingToCancel - Stores the booking object that the user has initiated to cancel.
+   * @property {object} bookingStatuses - An object mapping booking status keys (like PENDING_CONFIRMATION) to their string values.
+   *                                      Used for consistent status comparisons.
+   */
   data() {
     return {
       bookings: [],
       isLoading: false,
-      isCancelling: null, // Stores UUID of booking being cancelled
+      isCancelling: null,
       failModal: {show: false, message: ''},
       successModal: {show: false, message: ''},
       showCancelConfirmModal: false,
       bookingToCancel: null,
-      // Define your BookingStatus enum values as strings for comparison, matching the backend
-      bookingStatuses: {
+      bookingStatuses: { // Matches backend BookingStatus enum
         PENDING_CONFIRMATION: 'PENDING_CONFIRMATION',
         CONFIRMED: 'CONFIRMED',
-        RENTAL_INITIATED: 'RENTAL_INITIATED',
+        RENTAL_INITIATED: 'RENTAL_INITIATED', // Car picked up
         USER_CANCELLED: 'USER_CANCELLED',
         ADMIN_CANCELLED: 'ADMIN_CANCELLED',
         REJECTED: 'REJECTED',
-        NO_SHOW: 'NO_SHOW',
-        FULFILLED: 'FULFILLED' // If you use this
+        NO_SHOW: 'NO_SHOW', // User did not show up
+        FULFILLED: 'FULFILLED' // Car returned, booking complete
       }
     };
   },
+  /**
+   * Computed properties for the component.
+   * @type {object}
+   * @property {Array<object>} sortedBookings - Returns the `bookings` array sorted by `bookingStartDate` in descending order (newest first).
+   */
   computed: {
     sortedBookings() {
       return [...this.bookings].sort((a, b) => {
         const dateA = a.bookingStartDate ? new Date(a.bookingStartDate) : 0;
         const dateB = b.bookingStartDate ? new Date(b.bookingStartDate) : 0;
+        // Sorts in descending order (newest bookings first)
         return dateB - dateA;
       });
     }
   },
+  /**
+   * Lifecycle hook that is called after the component has been mounted.
+   * Fetches the user's bookings.
+   */
   async mounted() {
     await this.fetchUserBookings();
   },
   methods: {
+    /**
+     * Formats a date-time string for display using `formatDateTime` utility.
+     * @param {string} dateTimeString - The ISO date-time string to format.
+     * @returns {string} Human-readable formatted date-time string, or 'N/A' if input is invalid.
+     */
     formatDisplayDateTime(dateTimeString) {
       if (!dateTimeString) return 'N/A';
       return formatDateTime(dateTimeString);
     },
+    /**
+     * Formats a booking status string (e.g., 'PENDING_CONFIRMATION') into a more readable format
+     * (e.g., 'Pending Confirmation').
+     * @param {string} status - The status string to format.
+     * @returns {string} The formatted status string, or 'Unknown'.
+     */
     formatStatus(status) {
       if (!status) return 'Unknown';
-      // Converts PENDING_CONFIRMATION to Pending Confirmation
       return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     },
+    /**
+     * Returns a CSS class string based on the booking status for styling status badges.
+     * @param {string} status - The booking status string.
+     * @returns {string} A CSS class name (e.g., 'status-confirmed').
+     */
     getStatusClass(status) {
       if (!status) return 'status-unknown';
       return `status-${status.toLowerCase().replace(/_/g, '-')}`;
     },
+    /**
+     * Fetches the current user's bookings from the API.
+     * Updates the `bookings` data property and handles loading/error states.
+     * Redirects to login if a 401 or 403 error occurs.
+     * @async
+     * @returns {void}
+     */
     async fetchUserBookings() {
       this.isLoading = true;
-      this.failModal.show = false;
+      this.failModal.show = false; // Reset failure modal
       try {
         const response = await api.get('/api/v1/bookings/my-bookings');
         if (response.data && response.data.status === 'success') {
           this.bookings = response.data.data || [];
-        } else if (response.status === 204) {
+        } else if (response.status === 204) { // No content
+          this.bookings = [];
+        } else {
+          const errorMsg = response.data?.errors?.map(e => e.message).join(', ') || 'Failed to fetch bookings: Unexpected response structure.';
+          console.warn("Fetch user bookings warning:", errorMsg, response.data);
           this.bookings = [];
         }
-        else {
-          // Handle cases where status is not 'success' or data is not as expected
-          const errorMsg = response.data?.errors?.map(e => e.message).join(', ') || 'Failed to fetch bookings: Unexpected response.';
-          console.warn("Fetch bookings warning:", errorMsg, response.data);
-          this.bookings = []; // Set to empty on unexpected success structure
-        }
-        console.log("Fetched user bookings:", this.bookings);
+        console.log("Fetched user bookings:", this.bookings.length);
       } catch (error) {
         console.error("Error fetching user bookings:", error.response ? error.response.data : error.message);
-        let msg = "Failed to fetch your bookings. Please try again.";
-        if(error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0){
+        let msg = "Failed to retrieve your bookings. Please try again later.";
+        if(error.response?.data?.errors?.length > 0){
           msg = error.response.data.errors.map(e => e.message).join(", ");
-        } else if (error.response && error.response.data && error.response.data.message) {
+        } else if (error.response?.data?.message) {
           msg = error.response.data.message;
         } else if (error.message){
           msg = error.message;
@@ -192,55 +249,80 @@ export default {
         this.failModal.show = true;
 
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-          this.$router.push({name: 'Login'});
+          this.$router.push({name: 'Login'}); // Ensure 'Login' is a valid route name
         }
       } finally {
         this.isLoading = false;
       }
     },
+    /**
+     * Determines if a booking can be cancelled by the user based on its status.
+     * @param {string} status - The current status of the booking.
+     * @returns {boolean} True if the booking is in a state that allows user cancellation (e.g., CONFIRMED, PENDING_CONFIRMATION).
+     */
     canCancelBooking(status) {
-      // User can cancel if booking is CONFIRMED or PENDING_CONFIRMATION
-      // (assuming your backend allows cancellation of PENDING_CONFIRMATION)
-      return status === this.bookingStatuses.CONFIRMED || status === this.bookingStatuses.PENDING_CONFIRMATION;
+      return status === this.bookingStatuses.CONFIRMED ||
+             status === this.bookingStatuses.PENDING_CONFIRMATION;
     },
+    /**
+     * Determines if a booking is in a terminal state (i.e., no further user actions are typically allowed).
+     * @param {string} status - The current status of the booking.
+     * @returns {boolean} True if the booking status is considered terminal.
+     */
     isTerminalStatus(status) {
-      // Statuses after which no user actions are typically allowed
       return [
         this.bookingStatuses.RENTAL_INITIATED,
         this.bookingStatuses.USER_CANCELLED,
         this.bookingStatuses.ADMIN_CANCELLED,
         this.bookingStatuses.REJECTED,
         this.bookingStatuses.NO_SHOW,
-        this.bookingStatuses.FULFILLED, // if you use this
+        this.bookingStatuses.FULFILLED,
       ].includes(status);
     },
+    /**
+     * Initiates the booking cancellation process by setting the `bookingToCancel`
+     * and showing the confirmation modal.
+     * @param {object} booking - The booking object to be cancelled.
+     * @returns {void}
+     */
     initiateCancelBooking(booking) {
       this.bookingToCancel = booking;
       this.showCancelConfirmModal = true;
     },
+    /**
+     * Closes the booking cancellation confirmation modal and resets `bookingToCancel`.
+     * @returns {void}
+     */
     closeCancelConfirmModal() {
       this.showCancelConfirmModal = false;
       this.bookingToCancel = null;
     },
+    /**
+     * Confirms and proceeds with cancelling the booking.
+     * Makes an API call to cancel the booking. Shows success or failure modal,
+     * and refreshes the booking list on success.
+     * @async
+     * @returns {void}
+     */
     async confirmCancellation() {
       if (!this.bookingToCancel || !this.bookingToCancel.uuid) return;
 
       this.showCancelConfirmModal = false;
-      this.isCancelling = this.bookingToCancel.uuid;
-      this.failModal.show = false;
+      this.isCancelling = this.bookingToCancel.uuid; // Show loading state on specific button
+      this.failModal.show = false; // Reset failure modal
 
       try {
+        // Assuming backend API expects a POST to a URL like /api/v1/bookings/{bookingUuid}/cancel
         await api.post(`/api/v1/bookings/${this.bookingToCancel.uuid}/cancel`);
-        // No need to check response.data for DELETE-like POST action if backend returns 200/204 on success
         this.successModal.message = "Booking successfully cancelled!";
         this.successModal.show = true;
-        // fetchUserBookings will be called when success modal is closed
+        // fetchUserBookings will be called when the success modal is closed via closeSuccessModalAndRefresh
       } catch (error) {
         console.error("Error cancelling booking:", error.response ? error.response.data : error.message);
-        let msg = "Failed to cancel booking.";
-        if(error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0){
+        let msg = "Failed to cancel the booking. Please try again.";
+         if(error.response?.data?.errors?.length > 0){
           msg = error.response.data.errors.map(e => e.message).join(", ");
-        } else if (error.response && error.response.data && error.response.data.message) {
+        } else if (error.response?.data?.message) {
           msg = error.response.data.message;
         } else if (error.message){
           msg = error.message;
@@ -248,21 +330,38 @@ export default {
         this.failModal.message = msg;
         this.failModal.show = true;
       } finally {
-        this.isCancelling = null;
+        this.isCancelling = null; // Reset cancelling state
         this.bookingToCancel = null;
       }
     },
+    /**
+     * Closes the failure modal.
+     * @returns {void}
+     */
     closeFailModal() {
       this.failModal.show = false;
     },
+    /**
+     * Closes the success modal and then refreshes the list of user bookings.
+     * @returns {void}
+     */
     closeSuccessModalAndRefresh() {
       this.successModal.show = false;
-      this.fetchUserBookings();
+      this.fetchUserBookings(); // Refresh the bookings list
     },
+    /**
+     * Formats a price group string (e.g., 'ECONOMY') to a more readable title case ('Economy').
+     * @param {string} priceGroup - The price group string.
+     * @returns {string} The formatted price group string, or 'N/A'.
+     */
     formatPriceGroup(priceGroup) {
       if (!priceGroup) return 'N/A';
       return priceGroup.charAt(0).toUpperCase() + priceGroup.slice(1).toLowerCase();
     },
+    /**
+     * Navigates to the previous page in the router history.
+     * @returns {void}
+     */
     goBack() {
       this.$router.go(-1);
     }

@@ -104,47 +104,88 @@
 
 <script>
 import api from '@/api';
-import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue"; // Used for action-based loading
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 
+/**
+ * @file UserProfile.vue
+ * @description Displays the profile information for the currently authenticated user.
+ * It fetches user data from an API and provides navigation to edit the profile,
+ * view bookings, and view rental history. Includes shimmer loading effects and error handling.
+ * @component UserProfile
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: "UserProfile",
   components: {
-    LoadingModal,
+    LoadingModal, // For action-based loading, not initial page load (which uses shimmer)
     FailureModal,
   },
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {object} user - Stores the fetched user profile data.
+   * @property {boolean} isLoading - True when initially fetching the user profile (triggers shimmer).
+   * @property {boolean} errorLoading - True if an error occurred during the initial profile fetch.
+   * @property {boolean} showActualLoadingModal - True to show the full-screen loading modal for subsequent actions (not used in current methods).
+   * @property {object} failModal - Controls the failure modal.
+   * @property {boolean} failModal.show - Visibility of failure modal.
+   * @property {string} failModal.message - Message for failure modal.
+   */
   data() {
     return {
-      user: {},
-      isLoading: true,
+      user: {}, // Will be populated with { uuid, email, firstName, lastName, roles, profileImageUrl }
+      isLoading: true, // For initial page load shimmer
       errorLoading: false,
-      showActualLoadingModal: false, // For actions initiated from this page, not initial load
+      showActualLoadingModal: false,
       failModal: { show: false, message: "" },
     };
   },
+  /**
+   * Computed properties for the component.
+   * @type {object}
+   * @property {boolean} isUserLoggedIn - Checks for the presence of an 'accessToken' in localStorage.
+   *                                      (Note: This is a client-side check. The component primarily relies on
+   *                                      the success of `fetchUserProfile` API call for displaying data,
+   *                                      which itself requires authentication.)
+   */
   computed: {
     isUserLoggedIn() {
       return !!localStorage.getItem('accessToken');
     }
   },
+  /**
+   * Lifecycle hook that is called after the component has been mounted.
+   * Fetches the user's profile data.
+   */
   async mounted() {
     await this.fetchUserProfile();
   },
   methods: {
+    /**
+     * Fetches the profile of the currently authenticated user from the API.
+     * Manages loading and error states. Redirects to login if no access token is found
+     * or if the API call indicates an authentication issue.
+     * @async
+     * @returns {void}
+     */
     async fetchUserProfile() {
       this.isLoading = true;
       this.errorLoading = false;
       this.failModal.show = false;
 
-      if (!localStorage.getItem('accessToken')) {
+      if (!localStorage.getItem('accessToken')) { // Client-side check before API call
         console.warn("UserProfile: No access token found. Redirecting to login.");
-        this.failModal.message = "You are not logged in. Redirecting to login...";
+        this.failModal.message = "You are not logged in. Redirecting to login page...";
         this.failModal.show = true;
         this.isLoading = false;
-        this.errorLoading = true;
+        this.errorLoading = true; // Indicate error state
         setTimeout(() => {
-          this.$router.push({ name: 'Login' });
-        }, 1500);
+          this.$router.push({ name: 'Login' }); // Ensure 'Login' is a valid route name
+        }, 1500); // Delay to allow user to see message
         return;
       }
 
@@ -152,57 +193,84 @@ export default {
         const response = await api.get('/api/v1/users/me/profile');
         if (response.data && response.data.status === "success" && response.data.data) {
           this.user = response.data.data;
-          if (!this.user.uuid) {
-            console.error("UserProfile: Fetched user data is incomplete or missing UUID.", this.user);
+          if (!this.user.uuid) { // Check for essential data
+            console.error("UserProfile: Fetched user data is incomplete (missing UUID).", this.user);
             this.errorLoading = true;
-            this.failModal.message = "Profile data loaded is incomplete.";
+            this.failModal.message = "Profile data loaded is incomplete. Please try again.";
             this.failModal.show = true;
           }
-        } else {
-          let errorMsg = "Failed to load profile: Unexpected response structure.";
-          if(response.data && response.data.errors && response.data.errors.length > 0) {
+        } else { // Handle unexpected success response structure
+          let errorMsg = "Failed to load profile: Unexpected response structure from server.";
+          if(response.data?.errors?.length > 0) {
             errorMsg = response.data.errors.map(e => e.message).join(', ');
-          } else if (response.data && response.data.message) {
+          } else if (response.data?.message) {
             errorMsg = response.data.message;
           }
-          console.error("UserProfile: Fetch successful but response format unexpected or status not success.", response.data);
+          console.error("UserProfile: API fetch successful but response format unexpected or status not 'success'.", response.data);
           this.failModal.message = errorMsg;
           this.failModal.show = true;
           this.errorLoading = true;
         }
       } catch (error) {
         console.error("Error fetching user profile:", error.response?.data || error.message, error);
-        let errorMsg = "An error occurred while fetching your profile.";
-        if (error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
+        let errorMsg = "An error occurred while fetching your profile. Please try again.";
+        if (error.response?.data?.errors?.length > 0) {
           errorMsg = error.response.data.errors.map(e => e.message).join(', ');
-        } else if (error.response && error.response.data && typeof error.response.data === 'string') {
-          errorMsg = error.response.data;
+        } else if (error.response?.data && typeof error.response.data === 'string') {
+          errorMsg = error.response.data; // Simple string error
+        } else if (error.response?.data?.message) {
+            errorMsg = error.response.data.message;
         }
         this.failModal.message = errorMsg;
         this.failModal.show = true;
         this.errorLoading = true;
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+           this.$router.push({ name: 'Login' });
+        }
       } finally {
         this.isLoading = false;
       }
     },
 
+    /**
+     * Navigates to the 'EditProfile' page for the current user.
+     * @returns {void}
+     */
     editProfile() {
-      this.$router.push({ name: 'EditProfile' }); // Ensure 'EditProfile' route exists
+      // The EditProfile component typically fetches '/me/profile', so no ID param is strictly needed
+      // if it's always for the current user.
+      this.$router.push({ name: 'EditProfile' });
     },
 
+    /**
+     * Navigates to the 'MyBookings' page for the current user.
+     * @returns {void}
+     */
     viewMyBookings() {
-      this.$router.push({ name: 'MyBookings' }); // Ensure 'MyBookings' route name is correct
+      this.$router.push({ name: 'MyBookings' });
     },
 
+    /**
+     * Navigates to the 'RentalHistory' page for the current user.
+     * @returns {void}
+     */
     viewMyRentalHistory() {
-      this.$router.push({ name: 'RentalHistory' }); // Ensure 'MyRentalHistory' route name is correct
+      this.$router.push({ name: 'RentalHistory' });
     },
 
+    /**
+     * Closes the failure modal.
+     * @returns {void}
+     */
     closeFailModal() {
       this.failModal.show = false;
     },
+    /**
+     * Navigates to the previous page in the router history.
+     * @returns {void}
+     */
     goBack() {
-      this.$router.go(-1); // Navigate back in history
+      this.$router.go(-1);
     }
   },
 };

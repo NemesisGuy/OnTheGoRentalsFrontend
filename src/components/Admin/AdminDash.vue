@@ -1,10 +1,16 @@
 <script setup>
-
+/**
+ * @file AdminDash.vue
+ * @description The main dashboard component for the admin section.
+ * It displays various analytical charts related to rentals, car usage, price groups, and rental durations.
+ * This component uses Vue 3's `<script setup>` syntax.
+ * @component AdminDash (Note: Name is inferred by Vue from filename)
+ */
 import RentalChart from './Charts/RentalChart.vue'
-import CarUseChart from './Charts/CarUseChart.vue'
+import CarUseChart from './Charts/CarUseChart.vue' // Used in template
 import PieChart from './Charts/PieChart.vue'
 import RentalDurations from "@/components/Admin/Charts/RentalDurations.vue";
-import CarPopularityChart from "@/components/Admin/Charts/CarUseChart.vue";
+// import CarPopularityChart from "@/components/Admin/Charts/CarUseChart.vue"; // Unused import, CarUseChart is used directly
 </script>
 
 <template>

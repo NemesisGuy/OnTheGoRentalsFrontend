@@ -73,88 +73,119 @@ import api from "@/api";
 import { formatDateTime } from "@/utils/dateUtils";
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 
+/**
+ * @file RentalHistory.vue
+ * @description This component displays the rental history for the currently authenticated user.
+ * It fetches the user's profile and then their rental history, showing details for each rental
+ * such as car information, dates, and status. Includes loading states with shimmer effects.
+ * @component RentalHistory
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: "RentalHistory",
   components: {
     LoadingModal,
   },
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {Array<object>} rentals - An array to store the fetched rental history objects.
+   * @property {object} user - Stores the fetched profile data of the current user.
+   *                           (Note: Currently fetched but not directly displayed in the template,
+   *                           might be used for authentication verification or future enhancements).
+   * @property {boolean} loading - Flag to indicate if rental history data is currently being loaded.
+   */
   data() {
     return {
       rentals: [],
-      user: {},
+      user: {}, // To store fetched user profile
       loading: false,
-      // showLoadingModal is removed as v-if="loading" controls the modal directly
     };
   },
+  /**
+   * Lifecycle hook that is called after the component has been mounted.
+   * Initiates fetching of the user's rental history.
+   */
   mounted() {
     this.fetchRentalHistory();
   },
   methods: {
-    formatDateTime,
+    /**
+     * Exposes the `formatDateTime` utility function to the template for formatting dates.
+     * @param {string} dateTimeString - The ISO date-time string to format.
+     * @returns {string} Formatted date-time string.
+     */
+    formatDateTime, // Directly exposing the imported function
+    /**
+     * Fetches the rental history for the currently authenticated user.
+     * It first attempts to fetch the user's profile (possibly for auth validation or future use)
+     * and then fetches the rental history records. Manages loading states and errors.
+     * @async
+     * @returns {void}
+     * @note The initial check for 'accessToken' in localStorage might be redundant if the `api`
+     *       instance's interceptors correctly handle unauthorized requests (e.g., by redirecting to login).
+     */
     fetchRentalHistory() {
       this.loading = true;
 
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        console.error("RentalHistory: Token not found");
-        this.loading = false;
-        // Potentially redirect to login or show an error message
-        return;
-      }
+      // const token = localStorage.getItem("accessToken"); // This check is likely redundant if API interceptors handle 401s.
+      // if (!token) {
+      //   console.error("RentalHistory: Token not found. User might need to log in.");
+      //   this.loading = false;
+      //   this.$router.push({ name: 'Login' }); // Redirect to login if no token
+      //   return;
+      // }
 
-      // First, fetch user profile
+      // Chain promises: fetch profile, then rental history.
       api.get(`/api/v1/users/me/profile`)
         .then(profileResponse => {
-          // Check if response.data and response.data.data exist
           if (profileResponse.data && profileResponse.data.data) {
             this.user = profileResponse.data.data;
-            // console.log("RentalHistory: User profile fetched:", this.user);
+            // console.log("RentalHistory: User profile fetched:", this.user.email);
           } else {
             console.warn("RentalHistory: User profile data not found or in unexpected format.", profileResponse);
-            this.user = {}; // Reset user or handle error appropriately
+            this.user = {}; // Reset or handle as an error state
+            // Potentially throw an error here if user profile is essential for fetching history
+            // throw new Error("User profile could not be fetched.");
           }
-          // After profile is fetched (or attempt is made), fetch rental history
+          // Proceed to fetch rental history
           return api.get(`/api/v1/users/me/rental-history`);
         })
         .then(rentalHistoryResponse => {
-          // console.log("RentalHistory: Rental history response received:", rentalHistoryResponse);
-
-          if (rentalHistoryResponse.status === 204) {
+          if (rentalHistoryResponse.status === 204) { // No Content
             console.info("RentalHistory: No rental history found (204 No Content).");
             this.rentals = [];
           } else if (rentalHistoryResponse.data && rentalHistoryResponse.data.status === "success") {
             const rawData = rentalHistoryResponse.data.data;
-            if (Array.isArray(rawData) && rawData.length > 0) {
-              this.rentals = rawData;
-              console.info(`RentalHistory: Successfully fetched ${this.rentals.length} rentals.`);
-            } else {
-              console.info("RentalHistory: Rental history is empty (API success but no data).");
-              this.rentals = [];
-            }
-          } else if (rentalHistoryResponse.data && Array.isArray(rentalHistoryResponse.data.data) && rentalHistoryResponse.data.data.length === 0) {
-            // This case handles scenarios where status might not be "success" but an empty array is still provided.
-            console.info("RentalHistory: Rental history is an empty array.");
-            this.rentals = [];
-          }
-          else {
+            this.rentals = Array.isArray(rawData) ? rawData : [];
+            console.info(`RentalHistory: Successfully fetched ${this.rentals.length} rentals.`);
+          } else { // Handles other cases like non-success status or unexpected data structure
             console.warn("RentalHistory: Fetch rental history API response indicates failure or unexpected format.", rentalHistoryResponse.data);
-            this.rentals = []; // Ensure rentals is empty on unexpected response
+            this.rentals = [];
           }
         })
         .catch(error => {
-          console.error("RentalHistory: Error during API call:", error.response || error.message || error);
-          this.rentals = []; // Reset rentals on error
-          // Optionally reset user as well if profile fetch might have failed earlier in a combined error
-           if (error.config && error.config.url.includes('/api/v1/users/me/profile')) {
-             this.user = {};
-           }
-          // You might want to display an error message to the user here
+          console.error("RentalHistory: Error during API call chain:", error.response || error.message || error);
+          this.rentals = [];
+          this.user = {}; // Clear user data on error as well
+          // Display a user-friendly error message via a modal or on-page text if desired
+          // e.g., this.showErrorModal("Failed to load rental history.");
+          if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+             this.$router.push({ name: 'Login' }); // Redirect if unauthorized
+          }
         })
         .finally(() => {
           this.loading = false;
           // console.log("RentalHistory: Fetching rental history finished. Loading state:", this.loading);
         });
     },
+    /**
+     * Navigates to the previous page in the router history.
+     * @returns {void}
+     */
     goBack() {
       this.$router.go(-1);
     },

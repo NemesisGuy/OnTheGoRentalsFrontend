@@ -1,5 +1,5 @@
 <template>
-  <loading-modal v-if="loadingModal" :show="true"/> <!-- Simplified :show binding -->
+  <loading-modal :show="loadingModal"/> <!-- Corrected binding -->
   <div class="card-container">
     <div class="form-container">
       <form @submit.prevent="register">
@@ -31,8 +31,12 @@
                  required>
         </div>
         <div class="button-container">
-          <button class="add-button button" type="submit"><i class="fas fa-user-plus"></i> Signup</button>
-          <button class="read-button button" type="button" @click="goToLogin"><i class="fas fa-sign-in-alt"></i> Login</button>
+          <button class="add-button button" type="submit" :disabled="loadingModal"> <!-- Disable button during loading -->
+            <i class="fas fa-user-plus"></i> {{ loadingModal ? 'Signing up...' : 'Signup' }}
+          </button>
+          <button class="read-button button" type="button" @click="goToLogin" :disabled="loadingModal">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </button>
         </div>
       </form>
     </div>
@@ -51,28 +55,65 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import api from "@/api";
 
+/**
+ * @file Signup.vue
+ * @description User registration component. Provides a form for users to sign up
+ * with their first name, last name, email, and password. Handles form validation,
+ * API interaction for registration, and provides user feedback via modals.
+ * Upon successful registration, it automatically logs the user in.
+ * @component SignupPage
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: "SignupPage",
   components: {
     LoadingModal,
     SuccessModal,
     FailureModal,
   },
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {string} firstName - The first name entered by the user.
+   * @property {string} lastName - The last name entered by the user.
+   * @property {string} email - The email address entered by the user.
+   * @property {string} password - The password entered by the user.
+   * @property {string} confirmPassword - The password confirmation entered by the user.
+   * @property {boolean} loadingModal - Flag to control visibility of the loading modal and disable form buttons.
+   * @property {object} successModal - Controls the success modal.
+   * @property {boolean} successModal.show - Visibility of success modal.
+   * @property {string} successModal.message - Message for success modal.
+   * @property {object} failureModal - Controls the failure modal.
+   * @property {boolean} failureModal.show - Visibility of failure modal.
+   * @property {string} failureModal.message - Message for failure modal.
+   */
   data() {
     return {
       firstName: "",
       lastName: "",
       email: "",
       password: "",
-      confirmPassword: "", // Added for v-model
+      confirmPassword: "",
       loadingModal: false,
       successModal: { show: false, message: "" },
       failureModal: { show: false, message: "" },
     };
   },
   methods: {
-    register() { // Removed async
-      if (this.loadingModal) return;
+    /**
+     * Handles the user registration process.
+     * Validates form inputs (passwords match, all fields filled).
+     * Sends registration data to the backend API.
+     * On successful registration and login (API returns token), stores auth data in localStorage,
+     * dispatches 'auth-change' event, and shows a success message before redirecting.
+     * Displays error messages for validation failures or API errors.
+     * @returns {void}
+     */
+    register() {
+      if (this.loadingModal) return; // Prevent multiple submissions
 
       if (this.password !== this.confirmPassword) {
         this.failureModal.message = "Passwords do not match!";
@@ -95,7 +136,7 @@ export default {
         password: this.password
       })
           .then(response => {
-            console.log("Signup Response Data (wrapped):", response.data);
+            console.log("Signup API Response (wrapped):", response.data);
 
             if (response.data && response.data.status === "success" && response.data.data) {
               const { accessToken, email: responseEmail, roles, tokenType } = response.data.data;
@@ -103,78 +144,90 @@ export default {
 
               if (accessToken && tokenType === "Bearer") {
                 localStorage.setItem('accessToken', accessToken);
-                // Refresh token is an HttpOnly cookie set by the backend.
+                // Refresh token is assumed to be an HttpOnly cookie set by the backend.
 
                 const user = {
-                  email: responseEmail || this.email,
-                  roles: roles || ['USER'],
+                  email: responseEmail || this.email, // Use email from response if available
+                  roles: roles || ['USER'], // Default roles if not provided
+                  // id: response.data.data.userId // If backend provides userId in AuthResponseDto
                 };
                 localStorage.setItem('user', JSON.stringify(user));
-                window.dispatchEvent(new CustomEvent('auth-change'));
+                window.dispatchEvent(new CustomEvent('auth-change')); // Notify other components
 
                 this.successModal.message = "Registration successful! You are now logged in.";
                 this.successModal.show = true;
-                // The onSuccessModalClose method (called by the modal's @close event) will handle navigation
+                // Redirection is handled by onSuccessModalClose when the modal is closed.
               } else {
                 console.error("Signup successful, but AuthResponseDto did not contain expected token data. Received:", response.data.data);
-                this.failureModal.message = "Signup successful, but received an unexpected response structure.";
+                this.failureModal.message = "Signup successful, but could not log you in automatically due to an unexpected response.";
                 this.failureModal.show = true;
               }
-            } else {
+            } else { // Handle cases where response status is not "success" or data object is missing
               let errorMsg = "Registration failed: Unexpected server response format.";
               if (response.data && response.data.errors && response.data.errors.length > 0) {
                 errorMsg = response.data.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join(', ');
               } else if (response.data && response.data.message) {
                 errorMsg = response.data.message;
               }
-              console.error("Signup response was not successful or data was missing. Full response:", response.data);
+              console.error("Signup API response status not 'success' or data missing. Full response:", response.data);
               this.failureModal.message = errorMsg;
               this.failureModal.show = true;
             }
           })
           .catch(error => {
-            console.error("Signup API Error:", error);
+            console.error("Signup API Error (catch block):", error.response || error.message || error);
             let errorMessage = "Registration failed. Please try again.";
             if (error.response && error.response.data) {
               const apiResponse = error.response.data;
               if (apiResponse.errors && apiResponse.errors.length > 0) {
                 errorMessage = apiResponse.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join('; ');
                 if (errorMessage.toLowerCase().includes("email is already taken")) {
-                  errorMessage = "An account with this email already exists. Please try logging in.";
+                  errorMessage = "An account with this email already exists. Please try logging in instead.";
                 }
               } else if (typeof apiResponse === 'string' && apiResponse.length > 0 && apiResponse.length < 250) {
                 errorMessage = apiResponse;
               } else if (apiResponse.message) {
                 errorMessage = apiResponse.message;
-              } else if (error.response.status === 303 || error.response.status === 409) {
-                errorMessage = "An account with this email already exists.";
+              } else if (error.response.status === 409) { // Conflict - typically email already exists
+                errorMessage = "An account with this email already exists. Please try logging in.";
               }
             } else if (error.request) {
-              errorMessage = "No response from server. Please check your network connection.";
+              errorMessage = "No response from the server. Please check your network connection.";
             } else {
-              errorMessage = "An unexpected error occurred during registration. Please try again.";
+              errorMessage = "An unexpected error occurred during registration.";
             }
             this.failureModal.message = errorMessage;
             this.failureModal.show = true;
           })
           .finally(() => {
-            this.loadingModal = false;
+            this.loadingModal = false; // Reset loading state
           });
     },
+    /**
+     * Handles actions after the success modal (shown after successful registration and login) is closed.
+     * Hides the success modal and navigates the user to the Home page.
+     * A page reload is commented out, relying on Vue's reactivity and 'auth-change' event.
+     * @returns {void}
+     */
     onSuccessModalClose() {
       this.successModal.show = false;
-      this.$router.push({ name: "Home" });
-      // Consider if reload is truly needed or if state can be managed reactively
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 50); // Small delay if reload is necessary
+      this.$router.push({ name: "Home" }); // Ensure "Home" is a valid route name
+      // window.location.reload(); // Usually not needed if Navbar reacts to 'auth-change'
     },
-    closeFailureModal() { // This method will be correctly called by FailureModal
+    /**
+     * Closes the failure modal.
+     * @returns {void}
+     */
+    closeFailureModal() {
       this.failureModal.show = false;
     },
+    /**
+     * Navigates the user to the Login page if not currently in a loading state.
+     * @returns {void}
+     */
     goToLogin() {
       if (this.loadingModal) return;
-      this.$router.push({ name: 'Login' });
+      this.$router.push({ name: 'Login' }); // Ensure "Login" is a valid route name
     },
   }
 };
