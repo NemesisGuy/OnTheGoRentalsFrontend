@@ -63,16 +63,18 @@
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
-import api from "@/api";
+import api from "@/api"; // Use pre-configured api instance
+import { formatInputDateTime } from '@/utils/dateUtils'; // For default date
 
 export default {
+  name: 'AdminCreateDamageReport',
   components: { FailureModal, SuccessModal, LoadingModal },
   data() {
     return {
       rentals: [],
       selectedRental: '',
       description: '',
-      selectedDateAndTime: '',
+      selectedDateAndTime: formatInputDateTime(new Date()), // Default to current date and time
       location: '',
       repairCost: 0,
       loadingModal: { show: false },
@@ -88,65 +90,68 @@ export default {
     async fetchRentalOptions() {
       this.loadingModal.show = true;
       try {
-        const response = await api.get('/api/v1/admin/rentals', {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+        // Manual Authorization header removed.
+        const response = await api.get('/api/v1/admin/rentals');
         const { data, errors, status } = response.data || {};
-        if (status !== "success" || (errors && errors.length > 0)) {
-          throw new Error(errors?.join(", ") || "Failed to fetch rentals");
+        if (status === "success" && Array.isArray(data)) {
+          this.rentals = data;
+          console.log("Fetched Rentals for dropdown:", this.rentals.length);
+        } else {
+          throw new Error(errors?.map(e=>e.message).join(", ") || "Failed to fetch rental options: Unexpected response format.");
         }
-        this.rentals = data || [];
-        console.log("Fetched Rentals:", this.rentals); // Debug
       } catch (error) {
-        console.error("Error fetching rentals:", error);
-        this.failModal.message = "Failed to fetch rental list";
+        console.error("Error fetching rental options:", error.response || error.message || error);
+        this.failModal.message = error.message || "Failed to fetch rental list for selection.";
         this.failModal.show = true;
       } finally {
         this.loadingModal.show = false;
       }
     },
     async createReport() {
-      if (!this.selectedRental || !this.selectedDateAndTime || !this.location || !this.description || this.repairCost == null) {
-        this.errorMessage = "All fields are required.";
+      if (!this.selectedRental || !this.selectedDateAndTime || !this.location || !this.description || this.repairCost == null || this.repairCost < 0) {
+        this.errorMessage = "All fields are required, and repair cost must be zero or positive.";
+        this.failModal.message = this.errorMessage; // Show in modal
+        this.failModal.show = true;
         return;
       }
       this.loadingModal.show = true;
-      this.errorMessage = "";
+      this.errorMessage = ""; // Clear previous errors
+      this.failModal.show = false;
+      this.successModal.show = false;
+
       try {
-        const formattedDate = new Date(this.selectedDateAndTime).toISOString();
-        const report = {
-          rentalUuid: this.selectedRental, // Use rentalUuid to match backend
-          dateAndTime: formattedDate,
+        const reportPayload = {
+          rentalUuid: this.selectedRental,
+          dateAndTime: new Date(this.selectedDateAndTime).toISOString(), // Ensure ISO format
           location: this.location,
           description: this.description,
-          repairCost: this.repairCost,
+          repairCost: parseFloat(this.repairCost) // Ensure it's a number
         };
-        console.log("Request Payload:", report); // Debug
-        console.log("Request Headers:", { Authorization: `Bearer ${localStorage.getItem("token")}` }); // Debug
-        const response = await api.post("/api/v1/admin/damage-reports", report, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        const { errors, status } = response.data || {};
-        if (status !== "success" || (errors && errors.length > 0)) {
-          throw new Error(errors?.join(", ") || "Failed to create damage report");
+        console.log("Submitting Damage Report Payload:", reportPayload);
+
+        // Manual Authorization header removed.
+        const response = await api.post("/api/v1/admin/damage-reports", reportPayload);
+
+        const { errors, status, data: responseData } = response.data || {}; // Destructure response data
+        if (status === "success" && responseData) {
+          this.successModal.message = "Damage report created successfully.";
+          this.successModal.show = true;
+          this.resetForm(); // Reset form only on success
+        } else {
+          throw new Error(errors?.map(e=>e.message).join(", ") || "Failed to create damage report: Server indicated an issue.");
         }
-        this.successModal.message = "Damage report created successfully.";
-        this.successModal.show = true;
-        this.resetForm();
       } catch (error) {
-        console.error("Error creating damage report:", error);
-        let errorMessage = error.message || "An error occurred while creating the damage report.";
-        if (error.response) {
-          if (error.response.status === 400) {
-            errorMessage = error.response.data.errors?.join(", ") || "Invalid data. Please check the entered values.";
-          } else if (error.response.status === 404) {
-            errorMessage = "Rental not found. Please select a valid rental.";
-          } else if (error.response.status === 500) {
-            errorMessage = error.response.data.errors?.join(", ") || "Server error. Please check the backend logs.";
+        console.error("Error creating damage report:", error.response || error.message || error);
+        let errorMessageText = error.message || "An error occurred while creating the damage report.";
+        if (error.response?.data) {
+          if (error.response.data.errors?.length > 0) {
+            errorMessageText = error.response.data.errors.map(e => e.message || e.field).join('; ');
+          } else if (error.response.data.message) {
+            errorMessageText = error.response.data.message;
           }
         }
-        this.errorMessage = errorMessage;
-        this.failModal.message = errorMessage;
+        this.errorMessage = errorMessageText;
+        this.failModal.message = errorMessageText;
         this.failModal.show = true;
       } finally {
         this.loadingModal.show = false;
@@ -155,19 +160,21 @@ export default {
     resetForm() {
       this.selectedRental = "";
       this.description = "";
-      this.selectedDateAndTime = "";
+      this.selectedDateAndTime = formatInputDateTime(new Date()); // Reset to current date/time
       this.location = "";
       this.repairCost = 0;
+      this.errorMessage = ""; // Clear form error message
     },
     goBack() {
       this.$router.go(-1);
     },
     closeModal() {
+      const wasSuccess = this.successModal.show;
       this.successModal.show = false;
       this.failModal.show = false;
       this.errorMessage = "";
-      if (!this.successModal.show) {
-        this.$router.push("/admin/damage-reports");
+      if (wasSuccess) {
+        this.$router.push({name: 'DamageReportManagement'});
       }
     },
   },

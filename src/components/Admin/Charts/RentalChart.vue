@@ -12,33 +12,51 @@
 import {Bar} from 'vue-chartjs';
 import {Chart, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale} from 'chart.js';
 import LoadingModalSection from "@/components/Main/Modals/LoadingModalSection.vue";
-import {fetchRentalsData} from './rentalsApi'; // Assuming this path is correct
+import {fetchRentalsData} from './rentalsApi'; // External data fetching
 
+// Register necessary Chart.js components. This is a side effect of importing this module.
 Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
+/**
+ * @file RentalChart.vue
+ * @description A component that displays a Bar chart representing the number of rentals per day.
+ * It fetches rental data, processes it to aggregate counts by date, and renders the chart
+ * using Chart.js and vue-chartjs. Includes loading states and detailed chart configurations.
+ * @component RentalsPerDayBarChart
+ */
 export default {
-  name: 'RentalsPerDayBarChart', // More descriptive name
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
+  name: 'RentalsPerDayBarChart',
   components: {
     Bar,
     LoadingModalSection,
   },
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {object|null} chartData - Data object for the Chart.js Bar chart. Null until data is processed.
+   * @property {object} chartOptions - Configuration options for the Bar chart, including scales, legend, title, and tooltips.
+   * @property {boolean} isLoading - Flag to control the visibility of the loading indicator.
+   */
   data() {
     return {
       chartData: null,
       chartOptions: {
         responsive: true,
-        maintainAspectRatio: false, // Often useful for better layout
-        scales: { // <-- ADDED/MODIFIED SECTION
+        maintainAspectRatio: false,
+        scales: {
           y: {
-            beginAtZero: true, // Crucial for bar charts
+            beginAtZero: true,
             title: {
               display: true,
               text: 'Number of Rentals'
             },
             ticks: {
-              // Ensure y-axis ticks are integers for counts
               stepSize: 1,
-              precision: 0, // No decimal places for counts
+              precision: 0,
             }
           },
           x: {
@@ -50,14 +68,14 @@ export default {
         },
         plugins: {
           legend: {
-            display: true, // Or false if only one dataset and title is enough
+            display: true,
             position: 'top',
           },
           title: {
             display: true,
             text: 'Number of Rentals Per Day'
           },
-          tooltip: {
+          tooltip: { // Custom tooltip formatting
             callbacks: {
               label: function (context) {
                 let label = context.dataset.label || '';
@@ -76,34 +94,38 @@ export default {
       isLoading: false,
     };
   },
+  /**
+   * Lifecycle hook that is called after the component has been mounted.
+   * Fetches and processes rental data to render the bar chart.
+   * @async
+   * @returns {void}
+   */
   async mounted() {
     try {
       this.isLoading = true;
-      const rentals = await fetchRentalsData();
+      const rentals = await fetchRentalsData(); // External API call
 
-      if (rentals && rentals.length > 0) { // Check if rentals is not null and has items
-        const rentalCountsByDate = {}; // Object to store rental counts for each date
+      if (rentals && rentals.length > 0) {
+        const rentalCountsByDate = {};
 
         rentals.forEach((rental) => {
-          if (rental && rental.issuedDate) { // Check if rental and issuedDate exist
+          if (rental && rental.issuedDate) {
             try {
-              const issuedDateOnly = rental.issuedDate.split('T')[0];
+              const issuedDateOnly = rental.issuedDate.split('T')[0]; // Extract YYYY-MM-DD
               if (rentalCountsByDate[issuedDateOnly]) {
                 rentalCountsByDate[issuedDateOnly]++;
               } else {
                 rentalCountsByDate[issuedDateOnly] = 1;
               }
             } catch (e) {
-              console.warn(`Could not parse issuedDate for a rental: ${rental.issuedDate}`, e);
-              // Optionally, you could count these under an "Invalid Date" category
+              console.warn(`RentalChart: Could not parse issuedDate for a rental: ${rental.issuedDate}`, e);
             }
           } else {
-            console.warn('Rental object or its issuedDate is undefined:', rental);
+            console.warn('RentalChart: Rental object or its issuedDate is undefined:', rental);
           }
         });
 
-        // Sort dates for chronological order on the X-axis
-        const labels = Object.keys(rentalCountsByDate).sort((a, b) => new Date(a) - new Date(b));
+        const labels = Object.keys(rentalCountsByDate).sort((a, b) => new Date(a) - new Date(b)); // Sort dates
 
         if (labels.length > 0) {
           this.chartData = {
@@ -111,7 +133,7 @@ export default {
             datasets: [
               {
                 label: 'Number of Rentals',
-                backgroundColor: '#82C0FF', // A different color for variety
+                backgroundColor: '#82C0FF',
                 borderColor: '#4A90E2',
                 borderWidth: 1,
                 data: labels.map((label) => rentalCountsByDate[label]),
@@ -119,18 +141,18 @@ export default {
             ],
           };
         } else {
-          // This case handles if all rentals had invalid dates
-          console.log('No valid rental dates found to plot.');
-          this.chartData = null; // Ensure no-data message is shown
+          console.log('RentalChart: No valid rental dates found to plot.');
+          this.chartData = { labels: [], datasets: [] }; // Ensure chart renders empty if no valid data
         }
 
       } else {
-        console.log('No rentals data found or an empty array was returned.');
-        // this.chartData remains null, and the v-if in template will show "No rental data..."
+        console.log('RentalChart: No rentals data found or an empty array was returned.');
+        this.chartData = { labels: [], datasets: [] }; // Ensure chartData is not null
       }
     } catch (error) {
-      console.error('Error fetching or processing rentals history data:', error);
-      // this.chartData remains null
+      console.error('RentalChart: Error fetching or processing rentals history data for chart:', error);
+      this.chartData = { labels: [], datasets: [] }; // Ensure chartData is not null
+      // Optionally, display an error message to the user via a modal or on-page text
     } finally {
       this.isLoading = false;
     }
