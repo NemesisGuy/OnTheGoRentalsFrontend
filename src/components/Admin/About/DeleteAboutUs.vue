@@ -1,98 +1,165 @@
 <template>
   <div class="card-container">
-    <h1>List All Details</h1>
+    <h1>List All Details</h1> <!-- Consider more specific title like "Manage About Us Entries" -->
     <table>
       <thead>
       <tr>
-        <th @click="sortAboutUs('id')">ID</th>
-        <th @click="sortAboutUs('address')">Address</th>
-        <th @click="sortAboutUs('officeHours')">Office Hours</th>
-        <th @click="sortAboutUs('email')">Email</th>
-        <th @click="sortAboutUs('telephone')">Telephone Number</th>
-        <th @click="sortAboutUs('whatsapp')">WhatsApp Number</th>
+        <!-- Assuming 'id' from backend is comparable; if it's UUID, string sort is fine -->
+        <th @click="sortAboutUs('id')">ID <i class="fas fa-sort"></i></th>
+        <th @click="sortAboutUs('address')">Address <i class="fas fa-sort"></i></th>
+        <th @click="sortAboutUs('officeHours')">Office Hours <i class="fas fa-sort"></i></th>
+        <th @click="sortAboutUs('email')">Email <i class="fas fa-sort"></i></th>
+        <th @click="sortAboutUs('telephone')">Telephone Number <i class="fas fa-sort"></i></th>
+        <th @click="sortAboutUs('whatsapp')">WhatsApp Number <i class="fas fa-sort"></i></th>
         <th>Delete</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="about in sortAboutUs" :key="about.id">
-        <td>{{ about.id }}</td>
-        <td>{{ about.address }}</td>
-        <td>{{ about.officeHours }}</td>
-        <td>{{ about.email }}</td>
-        <td>{{ about.telephone }}</td>
-        <td>{{ about.whatsapp }}</td>
+      <!-- Corrected v-for to use the computed property 'sortedAbout' -->
+      <tr v-for="entry in sortedAbout" :key="entry.id"> <!-- Assuming 'id' is the unique key -->
+        <td>{{ entry.id }}</td>
+        <td>{{ entry.address }}</td>
+        <td>{{ entry.officeHours }}</td>
+        <td>{{ entry.email }}</td>
+        <td>{{ entry.telephone }}</td>
+        <td>{{ entry.whatsapp }}</td> <!-- Ensure backend property name matches if it's whatsApp vs whatsapp -->
         <td>
-          <button @click="deleteAbout(about.id)">Delete</button>
+          <button @click="deleteAboutEntry(entry.id)">Delete</button> <!-- Renamed method for clarity -->
         </td>
       </tr>
       </tbody>
     </table>
   </div>
 </template>
+
 <script>
-import axios from 'axios';
+// import axios from 'axios'; // Unused
 import api from "@/api";
 
+/**
+ * @file DeleteAboutUs.vue
+ * @description Admin component to list and delete "About Us" entries.
+ * Displays entries in a sortable table and provides a delete action for each.
+ * @component DeleteAboutUs
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: 'DeleteAboutUs',
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {Array<object>} aboutEntries - Stores the list of "About Us" entries fetched from the API.
+   * @property {string} sortColumn - The key of the entry property currently used for sorting.
+   * @property {string} sortDirection - The current direction of sorting ('asc' or 'desc').
+   */
   data() {
     return {
-      about: [],
-      sortColumn: '',
-      sortDirection: '',
+      aboutEntries: [], // Renamed from 'about'
+      sortColumn: 'id',   // Default sort column
+      sortDirection: 'asc', // Default sort direction
     };
   },
+  /**
+   * Lifecycle hook that is called after the component has been mounted.
+   * Fetches the initial list of "About Us" entries.
+   */
   mounted() {
-    this.fetchAbout();
+    this.fetchAboutEntries(); // Renamed for clarity
   },
   methods: {
-    fetchAbout() {
-      api()
-          .get('/api/admin/aboutUs/all')
+    /**
+     * Fetches the list of "About Us" entries from the API.
+     * Populates the `aboutEntries` data property.
+     * @async
+     * @returns {void}
+     */
+    fetchAboutEntries() { // Renamed for clarity
+      // Corrected api().get to api.get
+      api.get('/api/admin/aboutUs/all')
           .then((response) => {
-            this.about = response.data;
+            // Assuming API returns an array directly, or adjust if it's nested (e.g., response.data.data)
+            this.aboutEntries = Array.isArray(response.data) ? response.data : (response.data?.data && Array.isArray(response.data.data) ? response.data.data : []);
+             if (!Array.isArray(this.aboutEntries) && !(response.data?.data && Array.isArray(response.data.data))) {
+               console.warn("DeleteAboutUs - fetchAboutEntries: API response was not in expected array format. Data:", response.data);
+            }
           })
           .catch((error) => {
-            console.log(error);
+            console.error('Error fetching About Us entries:', error.response || error);
+            this.aboutEntries = []; // Clear on error
+            // Optionally show a user-facing error message
           });
     },
-    sortAboutUs(column) {
+    /**
+     * Sets the sort column and toggles the sort direction for the table.
+     * The actual sorting is handled by the `sortedAbout` computed property.
+     * @param {string} column - The key of the entry property to sort by.
+     * @returns {void}
+     */
+    sortAboutUs(column) { // This method name matches the template @click handler
       if (this.sortColumn === column) {
         this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
       } else {
         this.sortColumn = column;
         this.sortDirection = 'asc';
       }
+      // Computed property `sortedAbout` will react to these changes.
     },
-    deleteAbout(aboutId) {
-      api
-          .delete(`/api/admin/aboutUs/delete/${aboutId}`)
+    /**
+     * Deletes an "About Us" entry by its ID.
+     * Makes an API call to delete the entry and then re-fetches the list to update the UI.
+     * @param {string|number} entryId - The ID of the "About Us" entry to delete.
+     * @async
+     * @returns {void}
+     */
+    deleteAboutEntry(entryId) { // Renamed for clarity
+      // Optional: Add a confirmation modal here before deleting.
+      api.delete(`/api/admin/aboutUs/delete/${entryId}`)
           .then((response) => {
-            this.fetchAbout();
-            console.log(response);
-            console.log('About details deleted');
+            console.log('About Us entry deleted successfully:', response);
+            this.fetchAboutEntries(); // Refresh the list
+            // Optionally show a success message
           })
           .catch((error) => {
-            console.log(error);
-            console.log('Details not deleted');
+            console.error('Error deleting About Us entry:', error.response || error);
+            // Optionally show a user-facing error message
           });
     },
   },
   computed: {
+    /**
+     * Returns a sorted version of the `aboutEntries` array based on `sortColumn` and `sortDirection`.
+     * Handles both string and numeric comparisons.
+     * @returns {Array<object>} The sorted array of "About Us" entries.
+     */
     sortedAbout() {
-      if (this.sortColumn && this.sortDirection) {
-        return this.about.sort((a, b) => {
-          const aValue = a[this.sortColumn];
-          const bValue = b[this.sortColumn];
+      let sorted = [...this.aboutEntries];
+      if (this.sortColumn) {
+        sorted.sort((a, b) => {
+          let valA = a[this.sortColumn];
+          let valB = b[this.sortColumn];
 
-          if (typeof aValue === 'string' && typeof bValue === 'string') {
-            return this.sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-          } else {
-            return this.sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+          // Handle null/undefined gracefully for comparison
+          valA = (valA === null || valA === undefined) ? "" : valA;
+          valB = (valB === null || valB === undefined) ? "" : valB;
+
+          let comparison = 0;
+          // Note: The template uses 'whatsapp' (lowercase w). If data property is 'whatsApp' (camelCase),
+          // ensure this.sortColumn matches the actual data property key.
+          // For this example, assuming sortColumn string exactly matches data property keys.
+          if (typeof valA === 'string' && typeof valB === 'string') {
+            comparison = valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' });
+          } else if (typeof valA === 'number' && typeof valB === 'number') {
+            comparison = valA - valB;
+          } else { // Fallback for mixed types or other types - convert to string
+            comparison = String(valA).localeCompare(String(valB), undefined, { numeric: true, sensitivity: 'base' });
           }
+          return this.sortDirection === 'asc' ? comparison : -comparison;
         });
       }
-      return this.about;
+      return sorted;
     },
   },
 };

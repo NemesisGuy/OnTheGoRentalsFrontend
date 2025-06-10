@@ -28,13 +28,38 @@
 </template>
 
 <script>
+/**
+ * @file AdminView.vue
+ * @description Provides a layout for an admin panel with a collapsible fixed sidebar
+ * and a main content area.
+ * (Note: The navigation links in the sidebar are currently static and do not use Vue Router.
+ * The content area does not contain a <router-view> for dynamic content rendering.
+ * Styles in this component are not scoped, which may have global side effects.)
+ * @component AdminView
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
+  name: 'AdminView',
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {boolean} isExpanded - Controls the expanded/collapsed state of the sidebar.
+   *                                  `false` for collapsed (default), `true` for expanded.
+   */
   data() {
     return {
       isExpanded: false, // Controls the sidebar state
     };
   },
   methods: {
+    /**
+     * Toggles the `isExpanded` data property, which controls the visibility
+     * state (expanded or collapsed) of the admin sidebar.
+     * @returns {void}
+     */
     toggleSidebar() {
       this.isExpanded = !this.isExpanded;
     }

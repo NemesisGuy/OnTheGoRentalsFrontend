@@ -98,43 +98,86 @@ import {formatDateTime} from '@/utils/dateUtils.js';
 import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
 import FailureModal from '@/components/Main/Modals/FailureModal.vue';
 
+/**
+ * @file ViewBooking.vue
+ * @description Admin component for viewing the detailed information of a specific booking.
+ * It fetches the booking data, including nested user and car details, based on a UUID
+ * from the route parameters and displays it in a structured format.
+ * @component AdminViewBooking
+ */
 export default {
-  name: 'AdminViewBooking', // More specific name
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
+  name: 'AdminViewBooking',
   components: {
     LoadingModal,
     FailureModal,
   },
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {object|null} booking - Stores the main booking object (BookingResponseDTO) fetched from the API.
+   *                                   Expected to contain nested `user` and `car` objects.
+   * @property {object|null} user - Stores the user details, extracted from the nested `booking.user` object.
+   * @property {object|null} car - Stores the car details, extracted from the nested `booking.car` object.
+   * @property {boolean} isLoading - Flag to indicate if booking details are currently being loaded.
+   * @property {boolean} apiError - Flag to indicate if an error occurred during API fetch.
+   * @property {object} failModal - Controls the failure modal state ({show: boolean, message: string}).
+   */
   data() {
     return {
-      booking: null, // Will hold BookingResponseDTO
-      user: null,    // Will hold UserResponseDTO
-      car: null,     // Will hold CarResponseDTO
+      booking: null,
+      user: null,
+      car: null,
       isLoading: true,
       apiError: false,
       failModal: {show: false, message: ""},
     };
   },
+  /**
+   * Lifecycle hook that is called after the component has been mounted.
+   * Fetches the detailed booking information.
+   */
   async mounted() {
     await this.fetchBookingDetails();
   },
   methods: {
-    formatDisplayDateTime(dateTimeString) { // Wrapper for template
+    /**
+     * Formats a date-time string for display using a utility function.
+     * @param {string} dateTimeString - The ISO date-time string.
+     * @returns {string} Human-readable formatted date-time string or 'N/A'.
+     */
+    formatDisplayDateTime(dateTimeString) {
       return formatDateTime(dateTimeString);
     },
-    formatStatus(status) { // Helper for display
+    /**
+     * Formats a booking status string (e.g., 'PENDING_CONFIRMATION') into a more readable title case format.
+     * @param {string} status - The status string from the backend.
+     * @returns {string} Formatted status string (e.g., 'Pending Confirmation') or 'N/A'.
+     */
+    formatStatus(status) {
       if (!status) return 'N/A';
       return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     },
-    async fetchBookingDetails() { // Renamed and made primary fetch method
+    /**
+     * Fetches detailed information for a specific booking from the API,
+     * using the booking UUID from the current route parameters.
+     * The booking data is expected to contain nested user and car details.
+     * Manages loading and error states.
+     * @async
+     * @returns {void}
+     */
+    async fetchBookingDetails() {
       this.isLoading = true;
       this.apiError = false;
       this.failModal.show = false;
 
-      // Get booking UUID from route parameter
-      const bookingUuidFromRoute = this.$route.params.uuid; // <<<< ENSURE YOUR ROUTE PARAM IS 'bookingUuid'
+      const bookingUuidFromRoute = this.$route.params.uuid;
       if (!bookingUuidFromRoute) {
         console.error("AdminViewBooking: No booking UUID provided in route parameters.");
-        this.failModal.message = "No booking specified to view.";
+        this.failModal.message = "No booking specified to view. Please check the URL.";
         this.failModal.show = true;
         this.isLoading = false;
         this.apiError = true;
@@ -143,97 +186,103 @@ export default {
 
       try {
         console.log(`AdminViewBooking: Fetching booking with UUID: ${bookingUuidFromRoute}`);
-        // Fetch the main booking details
-        // Endpoint from AdminBookingController: GET /api/v1/admin/bookings/{bookingUuid}
-        const bookingResponse = await api.get(`/api/v1/admin/bookings/${bookingUuidFromRoute}`);
+        const response = await api.get(`/api/v1/admin/bookings/${bookingUuidFromRoute}`);
 
-        if (bookingResponse.data && bookingResponse.data.status === "success" && bookingResponse.data.data) {
-          this.booking = bookingResponse.data.data; // This is BookingResponseDTO
+        if (response.data && response.data.status === "success" && response.data.data) {
+          this.booking = response.data.data;
           console.log("AdminViewBooking - Booking data:", this.booking);
 
-          // Now fetch related User and Car details using UUIDs from the booking DTO
-          // These are already DTOs within this.booking if your BookingResponseDTO nests them
-          if (this.booking.user && this.booking.user.uuid) {
-            this.user = this.booking.user; // Already have UserResponseDTO
+          // Extract nested user and car details if present in the booking object
+          if (this.booking.user) { // Assuming 'user' is a nested object in booking DTO
+            this.user = this.booking.user;
             console.log("AdminViewBooking - User data (from booking):", this.user);
-          } else if (this.booking.user) { // If user object present but no uuid (unlikely for response DTO)
-            console.warn("AdminViewBooking - User data in booking DTO is missing UUID.");
-            this.user = this.booking.user; // Assign it anyway for other fields
           } else {
-            console.error("AdminViewBooking - No user details found in booking response.");
-            // You might throw an error or set a specific error message
-            this.apiError = true;
-            this.failModal.message = "User details missing in booking information.";
-            this.failModal.show = true;
+            console.warn("AdminViewBooking - User details missing in booking response.");
+            // Set user to an empty object or handle as an error if user is critical
+            this.user = {};
           }
 
-          if (this.booking.car && this.booking.car.uuid) {
-            this.car = this.booking.car; // Already have CarResponseDTO
-            console.log("AdminViewBooking - Car data (from booking):", this.car);
-          } else if (this.booking.car) {
-            console.warn("AdminViewBooking - Car data in booking DTO is missing UUID.");
+          if (this.booking.car) { // Assuming 'car' is a nested object in booking DTO
             this.car = this.booking.car;
+            console.log("AdminViewBooking - Car data (from booking):", this.car);
           } else {
-            console.error("AdminViewBooking - No car details found in booking response.");
-            this.apiError = true;
-            this.failModal.message = "Car details missing in booking information.";
-            this.failModal.show = true;
+            console.warn("AdminViewBooking - Car details missing in booking response.");
+            this.car = {};
           }
-          // If Driver is also nested DTO, handle it similarly
-          // if (this.booking.driver && this.booking.driver.uuid) this.driver = this.booking.driver;
+          // Handle driver similarly if it's part of the booking DTO and needed
+          // if (this.booking.driver) this.driver = this.booking.driver;
 
-        } else {
-          this.handleApiResponseError(bookingResponse.data, "Failed to load booking details.");
+        } else { // Handle non-success status or unexpected response structure
+          this.handleApiResponseError(response.data, "Failed to load booking details: Unexpected server response.");
           this.apiError = true;
         }
-      } catch (error) {
-        this.handleApiCatchError(error, "An error occurred while fetching booking details.");
+      } catch (error) { // Handle HTTP errors or network issues
+        this.handleApiCatchError(error, "An error occurred while fetching the booking details.");
         this.apiError = true;
       } finally {
         this.isLoading = false;
       }
     },
-
-    // Removed separate fetchUserProfile and fetchCarProfile as BookingResponseDTO should contain nested DTOs
-
+    /**
+     * Navigates to the previous page in the router history.
+     * @returns {void}
+     */
     goBack() {
-      this.$router.go(-1); // Or navigate to the admin bookings list
+      this.$router.go(-1);
     },
+    /**
+     * Closes the failure modal.
+     * @returns {void}
+     */
     closeFailModal() {
       this.failModal.show = false;
     },
+    /**
+     * General error handler for API responses that return success HTTP status but indicate an error in the body.
+     * @param {object|null} responseData - The `data` part of the Axios API response.
+     * @param {string} defaultMessage - A default error message to use.
+     * @returns {void}
+     */
     handleApiResponseError(responseData, defaultMessage) {
       let errorMsg = defaultMessage;
-      if (responseData && responseData.errors && responseData.errors.length > 0) {
+      if (responseData?.errors?.length > 0) {
         errorMsg = responseData.errors.map(e => `${e.field ? e.field + ': ' : ''}${e.message}`).join('; ');
-      } else if (responseData && typeof responseData === 'string' && responseData.length < 200) {
-        errorMsg = responseData;
-      } else if (responseData && responseData.message) {
+      } else if (responseData?.message) {
         errorMsg = responseData.message;
+      } else if (typeof responseData === 'string' && responseData.length < 200 && responseData.length > 0) {
+        errorMsg = responseData;
       }
       console.error("API Response Error (AdminViewBooking):", responseData);
       this.failModal.message = errorMsg;
-      this.failModal.show = true; // Ensure modal is shown
+      this.failModal.show = true;
     },
+    /**
+     * General error handler for API calls that fail (e.g., network error, HTTP 4xx/5xx status).
+     * @param {Error} error - The error object from the `catch` block.
+     * @param {string} defaultMessage - A default error message to use.
+     * @returns {void}
+     */
     handleApiCatchError(error, defaultMessage) {
-      console.error("API Catch Error (AdminViewBooking):", error);
+      console.error("API Catch Error (AdminViewBooking):", error.response || error.message || error);
       let errorMessage = defaultMessage;
-      if (error.response && error.response.data) {
+      if (error.response?.data) {
         const apiResponse = error.response.data;
-        if (apiResponse.errors && apiResponse.errors.length > 0) {
+        if (apiResponse.errors?.length > 0) {
           errorMessage = apiResponse.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join('; ');
-        } else if (typeof apiResponse === 'string' && apiResponse.length < 200) {
+        } else if (typeof apiResponse === 'string' && apiResponse.length < 200 && apiResponse.length > 0) {
           errorMessage = apiResponse;
         } else if (apiResponse.message) {
           errorMessage = apiResponse.message;
-        } else if (error.response.statusText && error.response.statusText !== "") {
+        } else if (error.response.statusText) {
           errorMessage = `Error ${error.response.status}: ${error.response.statusText}`;
         }
       } else if (error.request) {
-        errorMessage = "No response from server.";
+        errorMessage = "No response from server. Please check network connection.";
+      } else if (error.message) {
+        errorMessage = error.message;
       }
       this.failModal.message = errorMessage;
-      this.failModal.show = true; // Ensure modal is shown
+      this.failModal.show = true;
     },
   },
 };

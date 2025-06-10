@@ -123,17 +123,48 @@
 </template>
 
 <script>
-import AdminDash from "@/components/Admin/AdminDash.vue";
+import AdminDash from "@/components/Admin/AdminDash.vue"; // Note: Likely routed, direct import might be unused here.
 
+/**
+ * @file AdminPage.vue
+ * @description Provides the main layout structure for the admin section of the application.
+ * It features an expandable/collapsible sidebar for navigation to various admin modules
+ * and a main content area where admin-specific views are rendered via Vue Router.
+ * (Note: The template contains two router-view elements, one default and one named "adminContent",
+ * which might imply complex routing scenarios or a potential area for review/simplification.)
+ * @component AdminPage
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
   name: "AdminPage",
-  components: {AdminDash},
+  /**
+   * Components registered for use within this component.
+   * @type {object}
+   * @property {Component} AdminDash - The main admin dashboard component.
+   *                                   (Note: This component is registered but likely loaded via
+   *                                   the router-view rather than being directly used in this template.)
+   */
+  components: { AdminDash },
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {boolean} isExpanded - Controls the expanded/collapsed state of the sidebar.
+   *                                  `false` for collapsed (default), `true` for expanded.
+   */
   data() {
     return {
-      isExpanded: false
+      isExpanded: false // Sidebar starts collapsed
     };
   },
   methods: {
+    /**
+     * Toggles the `isExpanded` data property, which controls the visibility
+     * state (expanded or collapsed) of the admin sidebar.
+     * @returns {void}
+     */
     toggleSidebar() {
       this.isExpanded = !this.isExpanded;
     }

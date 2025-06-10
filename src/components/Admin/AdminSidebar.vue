@@ -64,20 +64,21 @@
 </template>
 
 <script>
+/**
+ * @file AdminSidebar.vue
+ * @description Provides a sidebar navigation menu for the admin section of the application.
+ * It contains links to various admin modules like Dashboard, Car Management, User Management, etc.
+ * (Note: The template currently contains a duplicated list of navigation links, which should likely be consolidated.)
+ * @component AdminSidebar
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
+  name: 'AdminSidebar',
   methods: {
-    menuItem7() {
-      // Handle logic for the "Item 7" menu item
-    },
-    menuItem8() {
-      // Handle logic for the "Item 8" menu item
-    },
-    menuItem9() {
-      // Handle logic for the "Item 9" menu item
-    },
-    menuItem10() {
-      // Handle logic for the "Item 10" menu item
-    },
+    // Unused methods menuItem7, menuItem8, menuItem9, menuItem10 have been removed.
   },
 };
 </script>

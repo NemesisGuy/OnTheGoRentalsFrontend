@@ -97,15 +97,49 @@ import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
 import api from "@/api";
 
+/**
+ * @file CreateBooking.vue
+ * @description Admin component for creating new bookings.
+ * It allows administrators to select a user, a car, and specify booking start and end dates.
+ * Includes data fetching for users and cars, form validation, and a confirmation step.
+ * (Note: The template contains a <router-view>, which might be unexpected for a creation form page.)
+ * @component AdminCreateBooking
+ */
 export default {
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
+  name: 'AdminCreateBooking', // Explicit name
+  components: {
+    ConfirmationModal,
+    SuccessModal,
+    FailureModal,
+    LoadingModal,
+  },
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {Array<object>} users - List of users fetched for the user selection dropdown.
+   * @property {Array<object>} cars - List of cars fetched for the car selection dropdown.
+   * @property {string} selectedUserUuid - UUID of the user selected for the booking.
+   * @property {string} selectedCarUuid - UUID of the car selected for the booking.
+   * @property {string} selectedIssuedDate - ISO8601 date-time string for the booking start date (collection date).
+   * @property {string} selectedReturnedDate - ISO8601 date-time string for the booking end date (return date).
+   * @property {boolean} loadingModal - Controls visibility of the loading modal.
+   * @property {string} errorMessage - Stores form-level validation or error messages.
+   * @property {boolean} showConfirmationModal - Controls visibility of the booking confirmation modal.
+   * @property {object} successModal - Controls the success modal state.
+   * @property {object} failModal - Controls the failure modal state.
+   */
   data() {
     return {
       users: [],
       cars: [],
       selectedUserUuid: "",
       selectedCarUuid: "",
-      selectedIssuedDate: "",
-      selectedReturnedDate: "",
+      selectedIssuedDate: "", // Corresponds to bookingStartDate in payload
+      selectedReturnedDate: "", // Corresponds to bookingEndDate in payload
       loadingModal: false,
       errorMessage: "",
       showConfirmationModal: false,
@@ -119,32 +153,32 @@ export default {
       },
     };
   },
-  components: {
-    ConfirmationModal,
-    SuccessModal,
-    FailureModal,
-    LoadingModal,
-  },
+  /**
+   * Lifecycle hook that is called after the component has been mounted.
+   * Fetches initial lists of users and cars.
+   */
   mounted() {
     this.fetchUsersList();
     this.fetchCarsList();
   },
   methods: {
+    /**
+     * Fetches the list of users from the admin API endpoint.
+     * Populates the `users` data property. Manages loading state and shows failure modal on error.
+     * @async
+     * @returns {void}
+     */
     fetchUsersList() {
       this.loadingModal = true;
-      api
-          .get("/api/v1/admin/users", {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          })
+      api.get("/api/v1/admin/users") // Removed manual Authorization header
           .then((response) => {
-            this.users = response.data.data;
-            this.loadingModal = false;
+            // Assuming response.data.data contains the array of users
+            this.users = response.data?.data || [];
+            if (!response.data?.data) console.warn("CreateBooking (Admin): User list not found in expected response structure", response.data);
           })
           .catch((error) => {
-            console.error("Error fetching users:", error);
-            this.failModal.message = "Failed to fetch user list";
+            console.error("Error fetching users:", error.response || error);
+            this.failModal.message = "Failed to fetch user list. Please ensure you are authorized.";
             this.failModal.show = true;
           })
           .finally(() => {
@@ -152,22 +186,23 @@ export default {
           });
     },
 
+    /**
+     * Fetches the list of cars from the admin API endpoint.
+     * Populates the `cars` data property. Manages loading state and shows failure modal on error.
+     * @async
+     * @returns {void}
+     */
     fetchCarsList() {
       this.loadingModal = true;
-      api
-          .get("/api/v1/admin/cars", {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          })
+      api.get("/api/v1/admin/cars") // Removed manual Authorization header
           .then((response) => {
-            // Filter for available cars
-            this.cars = response.data.data;
-            this.loadingModal = false;
+            // Assuming response.data.data contains the array of cars
+            this.cars = response.data?.data || [];
+            if (!response.data?.data) console.warn("CreateBooking (Admin): Car list not found in expected response structure", response.data);
           })
           .catch((error) => {
-            console.error("Error fetching cars:", error);
-            this.failModal.message = "Failed to fetch car list";
+            console.error("Error fetching cars:", error.response || error);
+            this.failModal.message = "Failed to fetch car list. Please ensure you are authorized.";
             this.failModal.show = true;
           })
           .finally(() => {
@@ -175,45 +210,67 @@ export default {
           });
     },
 
+    /**
+     * Handles the initial submission of the booking form.
+     * Performs basic validation and, if valid, shows the confirmation modal.
+     * @returns {void}
+     */
     handleSubmit() {
-      this.errorMessage = "";
-
-      // Basic validation
+      this.errorMessage = ""; // Reset error message
       if (!this.selectedUserUuid || !this.selectedCarUuid || !this.selectedIssuedDate || !this.selectedReturnedDate) {
         this.errorMessage = "Please fill in all required fields.";
+        this.failModal.message = "All fields are required to create a booking."; // Show in modal too
+        this.failModal.show = true;
         return;
       }
-
-      // Show confirmation modal
+      // Add more specific date validation if needed (e.g., end date after start date)
       this.showConfirmationModal = true;
     },
 
+    /**
+     * Confirms and creates the booking after user approval from the confirmation modal.
+     * Sends a POST request to the backend API with the booking details.
+     * Shows success or failure modals based on the API response. Resets form on success.
+     * @async
+     * @returns {void}
+     * @note Assumes the API response on successful creation (`response.data`) directly contains
+     *       properties like `userEmail`, `carMake`, `model`, `issuedDate`, `returnDate` for the success message.
+     *       If the actual created booking object is nested (e.g., in `response.data.data`), this needs adjustment.
+     */
     confirmBooking() {
       this.loadingModal = true;
       this.showConfirmationModal = false;
 
-      const booking = {
+      const bookingPayload = {
         userUuid: this.selectedUserUuid,
         carUuid: this.selectedCarUuid,
-        bookingStartDate: this.selectedIssuedDate,
-        bookingEndDate: this.selectedReturnedDate,
+        bookingStartDate: this.selectedIssuedDate, // Maps to bookingStartDate
+        bookingEndDate: this.selectedReturnedDate,   // Maps to bookingEndDate
       };
 
-      api
-          .post("/api/v1/admin/bookings", booking, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          })
+      api.post("/api/v1/admin/bookings", bookingPayload) // Removed manual Authorization header
           .then((response) => {
-            const bookingData = response.data;
-            this.successModal.message = `Booking created successfully:\nUser: ${bookingData.userEmail}\nCar: ${bookingData.carMake} ${bookingData.model}\nIssued Date: ${bookingData.issuedDate}\nReturn Date: ${bookingData.returnDate}`;
-            this.successModal.show = true;
-            // Reset form
-            this.resetForm();
+            // It's safer to assume the created object is in response.data.data if that's the general API pattern
+            const bookingData = response.data?.data || response.data;
+
+            if (response.data?.status === "success" && bookingData) {
+              // Construct message carefully based on guaranteed fields in bookingData
+              let carInfo = "Selected Car";
+              if (bookingData.car) { // If car object is nested in bookingData
+                 carInfo = `${bookingData.car.make || ''} ${bookingData.car.model || ''}`;
+              } else if (bookingData.carMake && bookingData.model) { // If fields are flat
+                 carInfo = `${bookingData.carMake} ${bookingData.model}`;
+              }
+              this.successModal.message = `Booking created successfully for ${carInfo}.`;
+              this.successModal.show = true;
+              this.resetForm();
+            } else {
+              this.failModal.message = response.data?.message || response.data?.errors?.map(e=>e.message).join(', ') || "Failed to create booking: Unexpected server response.";
+              this.failModal.show = true;
+            }
           })
           .catch((error) => {
-            this.failModal.message = error.response?.data?.message || "Failed to create booking.";
+            this.failModal.message = error.response?.data?.message || error.response?.data?.errors?.map(e=>e.message).join(', ') || "An error occurred while creating the booking.";
             this.failModal.show = true;
           })
           .finally(() => {
@@ -221,24 +278,42 @@ export default {
           });
     },
 
+    /**
+     * Cancels the booking creation process from the confirmation modal.
+     * Hides the confirmation modal and clears any form error messages.
+     * @returns {void}
+     */
     cancelBooking() {
       this.showConfirmationModal = false;
-      this.errorMessage = "";
+      this.errorMessage = ""; // Clear form error message
     },
 
+    /**
+     * Closes any active success, failure, or confirmation modals and clears form error messages.
+     * @returns {void}
+     */
     closeModal() {
       this.successModal.show = false;
       this.failModal.show = false;
-      this.showConfirmationModal = false;
+      this.showConfirmationModal = false; // Ensure confirmation modal is also closed
       this.errorMessage = "";
     },
 
+    /**
+     * Resets all form fields to their initial empty states.
+     * @returns {void}
+     */
     resetForm() {
       this.selectedUserUuid = "";
       this.selectedCarUuid = "";
       this.selectedIssuedDate = "";
       this.selectedReturnedDate = "";
+      this.errorMessage = ""; // Also clear any displayed error message
     },
+    /**
+     * Navigates to the previous page in the router history.
+     * @returns {void}
+     */
     goBack() {
       this.$router.go(-1);
     },

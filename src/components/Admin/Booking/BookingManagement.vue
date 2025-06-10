@@ -143,65 +143,127 @@
 </template>
 
 <script>
-// ... (script remains largely the same as the full one I provided in the previous "RentalManagement" response,
-//      just ensure method names like `confirmAndDeleteBooking` are changed to `executeDeleteBooking`
-//      and `updateBooking` is `executeUpdateBooking` if those were the final names.
-//      And ensure the data properties `showDeleteConfirmationModal` and `showSaveConfirmationModal` exist and are used.
-//      The `filteredBookings` computed property should be removed if applyFiltersAndSort directly updates `bookingsToDisplay`.)
-
+<script>
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
-import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
+import LoadingModal from "@/components/Main/Modals/LoadingModal.vue"; // Not used in template, Shimmer is used
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import ShimmerAdminTable from "@/components/Main/Loaders/ShimmerAdminTable.vue";
 import api from "@/api.js";
-import { formatDateTime } from '@/utils/dateUtils.js';
+import { formatDateTime, formatInputDateTime as formatInputDateTimeUtil } from '@/utils/dateUtils.js'; // Aliased for clarity
 
-const RENTAL_STATUS_OPTIONS = ['PENDING_CONFIRMATION', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'OVERDUE']; // Make sure this matches your backend RentalStatus enum string values
+/**
+ * @constant {Array<string>} RENTAL_STATUS_OPTIONS
+ * @description Defines the possible string values for booking statuses,
+ * aligning with backend enum or defined states. Used for status selection in edit mode.
+ */
+const RENTAL_STATUS_OPTIONS = ['PENDING_CONFIRMATION', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'USER_CANCELLED', 'ADMIN_CANCELLED', 'REJECTED', 'NO_SHOW', 'FULFILLED'];
 
+/**
+ * @file BookingManagement.vue
+ * @description Admin component for managing all bookings.
+ * Provides functionalities for viewing, searching, sorting, inline editing, and deleting bookings.
+ * It uses modals for confirmations and feedback.
+ * @component AdminBookingManagement
+ */
 export default {
   name: "AdminBookingManagement",
   components: {
     ConfirmationModal,
-    LoadingModal,
+    // LoadingModal, // Not directly used in template; ShimmerAdminTable and data.loading are used.
     SuccessModal,
     FailureModal,
     ShimmerAdminTable,
   },
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {Array<object>} allBookings - Stores all fetched booking entries, each augmented with `editing` and `editable` fields.
+   * @property {Array<object>} bookingsToDisplay - Filtered and sorted list of bookings for table display.
+   * @property {string} searchQuery - Current search query for filtering bookings.
+   * @property {boolean} loading - Indicates if data is being fetched or an operation is in progress. Controls Shimmer and general loading states.
+   * @property {boolean} apiError - Flag indicating if a generic API error occurred, used to display error messages.
+   * @property {boolean} showDeleteConfirmationModal - Controls visibility of the delete confirmation modal.
+   * @property {boolean} showSaveConfirmationModal - Controls visibility of the save/update confirmation modal.
+   * @property {object|null} bookingToDelete - Stores the booking object marked for deletion.
+   * @property {object|null} bookingToSave - Stores the booking object marked for saving (contains `editable` data).
+   * @property {object} successModal - Controls the success modal state ({show: boolean, message: string}).
+   * @property {object} failModal - Controls the failure modal state ({show: boolean, message: string}).
+   * @property {string} currentSortColumn - The key (can be a dot-separated nested path) for the property to sort by.
+   * @property {string} currentSortDirection - The direction of sorting ('asc' or 'desc').
+   * @property {Array<string>} rentalStatusOptions - List of available booking statuses for the edit mode select dropdown.
+   */
   data() {
     return {
       allBookings: [],
-      bookingsToDisplay: [], // Use this for v-for in template
+      bookingsToDisplay: [],
       searchQuery: "",
-      loading: true,
+      loading: true, // Start with loading true as data is fetched on created/mounted
       apiError: false,
-      showDeleteConfirmationModal: false, // This MUST be defined
-      showSaveConfirmationModal: false,   // This MUST be defined
+      showDeleteConfirmationModal: false,
+      showSaveConfirmationModal: false,
       bookingToDelete: null,
       bookingToSave: null,
       successModal: { show: false, message: "" },
       failModal: { show: false, message: "" },
-      currentSortColumn: 'bookingStartDate', // Changed to match DTO
-      currentSortDirection: 'desc',
+      currentSortColumn: 'bookingStartDate',
+      currentSortDirection: 'desc', // Default to newest bookings first
       rentalStatusOptions: RENTAL_STATUS_OPTIONS,
     };
   },
+  /**
+   * Lifecycle hook called when the component is created.
+   * Fetches the initial list of bookings.
+   */
+  created() {
+    this.fetchBookings();
+  },
   methods: {
+    /**
+     * Formats a date-time string for display using a utility function.
+     * @param {string} dateTimeString - The ISO date-time string.
+     * @returns {string} Human-readable formatted date-time string or 'N/A'.
+     */
     formatDisplayDateTime(dateTimeString) {
       return formatDateTime(dateTimeString);
     },
+    /**
+     * Formats a date-time string into a format suitable for `datetime-local` input fields.
+     * @param {string} dateTimeString - The ISO date-time string.
+     * @returns {string} Formatted date-time string (YYYY-MM-DDTHH:mm) or empty string if input is invalid.
+     */
+    formatInputDateTime(dateTimeString) {
+        return formatInputDateTimeUtil(dateTimeString);
+    },
+    /**
+     * Formats a booking status string (e.g., 'PENDING_CONFIRMATION') into a more readable title case format.
+     * @param {string} status - The status string from the backend.
+     * @returns {string} Formatted status string (e.g., 'Pending Confirmation') or 'N/A'.
+     */
     formatStatus(status) {
       if (!status) return 'N/A';
       return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     },
+    /**
+     * Returns a CSS class string based on the booking status for styling status badges in the table.
+     * @param {string} status - The booking status string.
+     * @returns {string} CSS class (e.g., 'status-confirmed') or 'status-unknown'.
+     */
     getStatusClass(status) {
       if (!status) return 'status-unknown';
       return `status-${status.toLowerCase().replace(/_/g, '-')}`;
     },
+    /**
+     * Fetches all bookings from the admin API endpoint.
+     * Augments each booking with `editing` (boolean) and `editable` (null or object for temp edits) properties for UI state.
+     * Calls `applyFiltersAndSort` after fetching. Manages loading and error states.
+     * @async
+     * @returns {void}
+     */
     async fetchBookings() {
       this.loading = true;
-      this.apiError = false;
-      this.failModal.show = false;
+      this.apiError = false; // Reset API error state
+      this.failModal.show = false; // Hide any previous failure modals
       try {
         const response = await api.get(`/api/v1/admin/bookings`);
         if (response.data && response.data.status === "success") {
@@ -211,64 +273,97 @@ export default {
             editing: false,
             editable: null
           })) : [];
-          this.applyFiltersAndSort();
-        } else {
-          this.handleApiResponseError(response.data, "Failed to fetch bookings.");
+        } else { // Handle non-success status in response body
+          this.handleApiResponseError(response.data, "Failed to fetch bookings: Server indicated an issue.");
+          this.allBookings = []; // Ensure list is empty on error
         }
-      } catch (error) {
-        this.handleApiCatchError(error, "Failed to fetch bookings.");
+      } catch (error) { // Handle HTTP errors (4xx, 5xx, network issues)
+        this.handleApiCatchError(error, "An error occurred while fetching bookings from the server.");
+        this.allBookings = []; // Ensure list is empty on error
       } finally {
+        this.applyFiltersAndSort();
         this.loading = false;
       }
     },
+    /**
+     * Safely gets a property value from an object, supporting dot-separated nested paths (e.g., 'user.lastName').
+     * Returns an empty string if the path is invalid or the value at any point in the path is null or undefined.
+     * @param {object|null} object - The object to retrieve the property from.
+     * @param {string} key - The key or dot-separated path of the property.
+     * @returns {any} The property value if found, otherwise an empty string.
+     */
     getPropertyValue(object, key) {
-      if (object == null || typeof key !== 'string') return '';
+      if (object == null || typeof key !== 'string' || key.trim() === '') return '';
       const keys = key.split('.');
       let value = object;
       try {
         for (const k of keys) {
           if (value && typeof value === 'object' && k in value) {
             value = value[k];
-          } else { return ''; }
+          } else {
+            return ''; // Path broken or property doesn't exist at this level
+          }
         }
-      } catch (e) { return ''; }
+      } catch (e) {
+        console.warn(`Error accessing property "${key}" in getPropertyValue:`, e);
+        return '';
+      }
       return value === null || typeof value === 'undefined' ? '' : value;
     },
+    /**
+     * Applies current search filters to the `allBookings` list and then sorts the resulting list.
+     * Updates the `bookingsToDisplay` property which is used by the template's v-for.
+     * @returns {void}
+     */
     applyFiltersAndSort() {
       let processedList = [...this.allBookings];
-      if (this.searchQuery) {
-        const lowerQuery = this.searchQuery.toLowerCase();
+      if (this.searchQuery && this.searchQuery.trim() !== "") {
+        const lowerQuery = this.searchQuery.toLowerCase().trim();
         processedList = processedList.filter(b =>
-            (b.uuid?.toLowerCase().includes(lowerQuery)) ||
-            (b.status?.toLowerCase().includes(lowerQuery)) ||
+            (this.getPropertyValue(b, 'uuid')?.toLowerCase().includes(lowerQuery)) ||
+            (this.getPropertyValue(b, 'status')?.toLowerCase().includes(lowerQuery)) ||
             (this.formatDisplayDateTime(b.bookingStartDate)?.toLowerCase().includes(lowerQuery)) ||
             (this.formatDisplayDateTime(b.bookingEndDate)?.toLowerCase().includes(lowerQuery)) ||
-            (b.user?.firstName?.toLowerCase().includes(lowerQuery)) ||
-            (b.user?.lastName?.toLowerCase().includes(lowerQuery)) ||
-            (b.car?.make?.toLowerCase().includes(lowerQuery)) ||
-            (b.car?.model?.toLowerCase().includes(lowerQuery))
+            (this.getPropertyValue(b, 'user.firstName')?.toLowerCase().includes(lowerQuery)) ||
+            (this.getPropertyValue(b, 'user.lastName')?.toLowerCase().includes(lowerQuery)) ||
+            (this.getPropertyValue(b, 'car.make')?.toLowerCase().includes(lowerQuery)) ||
+            (this.getPropertyValue(b, 'car.model')?.toLowerCase().includes(lowerQuery))
         );
       }
-      this.sortList(processedList);
+      this.sortList(processedList); // Pass the filtered list to be sorted
     },
+    /**
+     * Sorts a given list of booking entries based on `currentSortColumn` and `currentSortDirection`.
+     * Updates `bookingsToDisplay`. Handles sorting for strings, numbers, and dates.
+     * @param {Array<object>} listToSort - The list of booking entries to sort.
+     * @returns {void}
+     */
     sortList(listToSort) {
       if (this.currentSortColumn) {
         listToSort.sort((a, b) => {
           let valA = this.getPropertyValue(a, this.currentSortColumn);
           let valB = this.getPropertyValue(b, this.currentSortColumn);
+
           let comparison = 0;
-          if (typeof valA === 'string' && typeof valB === 'string') {
-            comparison = valA.localeCompare(valB);
-          } else if (typeof valA === 'number' && typeof valB === 'number') {
-            comparison = valA - valB;
-          } else {
-            comparison = String(valA).localeCompare(String(valB));
+          if (this.currentSortColumn.toLowerCase().includes('date')) { // Date sorting
+             valA = valA ? new Date(valA).getTime() : 0; // Convert valid date strings to timestamps
+             valB = valB ? new Date(valB).getTime() : 0;
+             comparison = valA - valB;
+          } else if (!isNaN(parseFloat(valA)) && !isNaN(parseFloat(valB)) && isFinite(valA) && isFinite(valB) && (typeof valA !== 'string' || typeof valB !== 'string')) { // Numeric sort
+             comparison = Number(valA) - Number(valB);
+          } else { // Default to locale-aware string comparison
+            comparison = String(valA).localeCompare(String(valB), undefined, { numeric: true, sensitivity: 'base' });
           }
           return this.currentSortDirection === 'asc' ? comparison : -comparison;
         });
       }
-      this.bookingsToDisplay = listToSort; // Update the correct display array
+      this.bookingsToDisplay = listToSort;
     },
+    /**
+     * Sets the sort column and direction for the bookings table, then re-applies filtering and sorting.
+     * @param {string} sortKey - The key (can be a dot-separated nested path) of the booking property to sort by.
+     * @returns {void}
+     */
     sortBookings(sortKey) {
       if (this.currentSortColumn === sortKey) {
         this.currentSortDirection = this.currentSortDirection === 'asc' ? 'desc' : 'asc';
@@ -278,157 +373,206 @@ export default {
       }
       this.applyFiltersAndSort();
     },
+    /**
+     * Resets the search query input and re-applies filters and sorting to display all bookings.
+     * @returns {void}
+     */
     resetSearch() {
       this.searchQuery = "";
       this.applyFiltersAndSort();
     },
+    /**
+     * Initiates the deletion process for a booking. Clones the booking data to `bookingToDelete`
+     * and shows the delete confirmation modal.
+     * @param {object} booking - The booking object intended for deletion.
+     * @returns {void}
+     */
     initiateDeleteBooking(booking) {
       this.bookingToDelete = { ...booking };
       this.showDeleteConfirmationModal = true;
     },
-    async executeDeleteBooking() { // This method is called on modal confirm
-      if (this.bookingToDelete && this.bookingToDelete.uuid) {
-        this.loading = true;
+    /**
+     * Executes the deletion of the booking (identified by `bookingToDelete.uuid`) after user confirmation.
+     * Makes an API call to delete (soft-delete) the booking. Refreshes the bookings list on success.
+     * Manages loading states and shows success/failure modals.
+     * @async
+     * @returns {void}
+     */
+    async executeDeleteBooking() {
+      if (!this.bookingToDelete?.uuid) {
+        console.warn("ExecuteDeleteBooking called without a valid bookingToDelete object or UUID.");
         this.showDeleteConfirmationModal = false;
-        try {
-          await api.delete(`/api/v1/admin/bookings/${this.bookingToDelete.uuid}`);
-          this.showSuccessModal("Booking soft-deleted successfully.");
-          await this.fetchBookings();
-        } catch (error) {
-          this.handleApiCatchError(error, "Failed to delete booking.");
-        } finally {
-          this.loading = false;
-          this.bookingToDelete = null;
-        }
-      } else {
-        this.showDeleteConfirmationModal = false;
-        this.bookingToDelete = null;
+        this.bookingToDelete = null; // Reset
+        return;
+      }
+      // Consider a specific loading state for this action if it can take time, e.g., this.isDeletingBooking = true
+      this.loading = true;
+      this.showDeleteConfirmationModal = false;
+      try {
+        await api.delete(`/api/v1/admin/bookings/${this.bookingToDelete.uuid}`);
+        this.showSuccessModal("Booking successfully deleted.");
+        await this.fetchBookings();
+      } catch (error) {
+        this.handleApiCatchError(error, "Failed to delete the booking.");
+      } finally {
+        this.loading = false;
+        this.bookingToDelete = null; // Reset after attempt
       }
     },
+    /**
+     * Cancels the booking deletion process. Hides the confirmation modal and resets `bookingToDelete`.
+     * @returns {void}
+     */
     cancelDeleteBooking() {
       this.bookingToDelete = null;
       this.showDeleteConfirmationModal = false;
     },
+    /**
+     * Enables inline editing mode for a specific booking.
+     * Initializes `booking.editable` with current values from the booking,
+     * formatting dates appropriately for `datetime-local` input fields.
+     * @param {object} booking - The booking object to be edited.
+     * @returns {void}
+     */
     startEditBooking(booking) {
-      booking.editable = {
-        userUuidString: booking.user?.uuid || '',
-        carUuidString: booking.car?.uuid || '',
-        driverUuidString: booking.driver?.uuid || '',
-        bookingStartDate: booking.bookingStartDate ? this.formatInputDateTime(booking.bookingStartDate) : '',
-        bookingEndDate: booking.bookingEndDate ? this.formatInputDateTime(booking.bookingEndDate) : '',
-        actualReturnedDate: booking.returnedDate ? this.formatInputDateTime(booking.returnedDate) : '',
+      booking.editable = { // Populate with all fields expected by AdminBookingUpdateDTO
+        userUuidString: this.getPropertyValue(booking, 'user.uuid'),
+        carUuidString: this.getPropertyValue(booking, 'car.uuid'),
+        driverUuidString: this.getPropertyValue(booking, 'driver.uuid'),
+        bookingStartDate: this.formatInputDateTime(booking.bookingStartDate),
+        bookingEndDate: this.formatInputDateTime(booking.bookingEndDate),
+        actualReturnedDate: this.formatInputDateTime(booking.returnedDate),
         status: booking.status,
-        issuerId: booking.issuer,
-        receiverId: booking.receiver,
-        fine: booking.fine !== null ? booking.fine : 0.0,
+        issuerId: this.getPropertyValue(booking, 'issuer.uuid') || this.getPropertyValue(booking, 'issuer'), // Handle if issuer is object or just ID string
+        receiverId: this.getPropertyValue(booking, 'receiver.uuid') || this.getPropertyValue(booking, 'receiver'),
+        fine: booking.fine !== null && booking.fine !== undefined ? parseFloat(booking.fine) : 0.0,
       };
       booking.editing = true;
     },
-    formatInputDateTime(dateTimeString) {
-      if (!dateTimeString) return '';
-      const date = new Date(dateTimeString);
-      if (isNaN(date.getTime())) return '';
-      return date.toISOString().substring(0, 16);
-    },
+    /**
+     * Initiates the save process for an edited booking by setting `bookingToSave`
+     * and showing the save confirmation modal.
+     * @param {object} booking - The booking object (which includes the `editable` property with changes).
+     * @returns {void}
+     */
     confirmSaveBooking(booking) {
       this.bookingToSave = booking;
       this.showSaveConfirmationModal = true;
     },
+    /**
+     * Cancels the booking save process from the confirmation modal. Resets `bookingToSave`.
+     * @returns {void}
+     */
     cancelSaveBooking() {
       this.bookingToSave = null;
       this.showSaveConfirmationModal = false;
     },
-    async executeUpdateBooking() { // This method is called on modal confirm
-      if (!this.bookingToSave || !this.bookingToSave.editable) {
+    /**
+     * Executes the update of the booking after user confirmation from the modal.
+     * Constructs a payload from `bookingToSave.editable` data and PUTs it to the API.
+     * Refreshes the bookings list on success. Manages loading and shows feedback modals.
+     * @async
+     * @returns {void}
+     */
+    async executeUpdateBooking() {
+      if (!this.bookingToSave?.editable || !this.bookingToSave?.uuid) {
+        console.warn("ExecuteUpdateBooking called without valid bookingToSave or editable data.");
         this.showSaveConfirmationModal = false;
+        this.bookingToSave = null;
+        this.showFailureModal("Cannot save booking: Essential data for update is missing.");
         return;
       }
       this.showSaveConfirmationModal = false;
       this.loading = true;
 
       const editableData = this.bookingToSave.editable;
-      const updatePayload = { // Matches BookingUpdateDTO / AdminBookingUpdateDTO
-        userUuid: editableData.userUuidString && editableData.userUuidString.trim() !== "" ? editableData.userUuidString.trim() : null,
-        carUuid: editableData.carUuidString && editableData.carUuidString.trim() !== "" ? editableData.carUuidString.trim() : null,
-        driverUuid: editableData.driverUuidString && editableData.driverUuidString.trim() !== "" ? editableData.driverUuidString.trim() : null,
+      const updatePayload = {
+        userUuid: editableData.userUuidString?.trim() || null,
+        carUuid: editableData.carUuidString?.trim() || null,
+        driverUuid: editableData.driverUuidString?.trim() || null,
         bookingStartDate: editableData.bookingStartDate,
-        bookingEndDate: editableData.bookingEndDate, // This was expectedReturnedDate in editable setup
+        bookingEndDate: editableData.bookingEndDate,
         actualReturnedDate: editableData.actualReturnedDate || null,
         status: editableData.status,
-        issuerId: editableData.issuerId,
-        receiverId: editableData.receiverId,
-        fine: editableData.fine,
+        issuerId: editableData.issuerId || null,
+        receiverId: editableData.receiverId || null,
+        fine: editableData.fine !== null && editableData.fine !== undefined ? parseFloat(editableData.fine) : null,
       };
-      if (!updatePayload.userUuid) delete updatePayload.userUuid;
-      if (!updatePayload.carUuid) delete updatePayload.carUuid;
-      if (!updatePayload.driverUuid) delete updatePayload.driverUuid;
+
+      // Clean payload: remove null UUIDs if backend expects them to be absent vs. null
+      if (updatePayload.userUuid === null) delete updatePayload.userUuid;
+      if (updatePayload.carUuid === null) delete updatePayload.carUuid;
+      if (updatePayload.driverUuid === null) delete updatePayload.driverUuid;
 
       try {
         await api.put(`/api/v1/admin/bookings/${this.bookingToSave.uuid}`, updatePayload);
         this.showSuccessModal("Booking updated successfully.");
-        this.bookingToSave.editing = false;
-        this.bookingToSave.editable = null;
-        await this.fetchBookings();
+        await this.fetchBookings(); // Refresh list which also resets editing states
       } catch (error) {
-        this.handleApiCatchError(error, "Failed to update booking.");
+        this.handleApiCatchError(error, "Failed to update the booking.");
+        // Optionally, keep editing mode active on failure by not calling fetchBookings or by resetting `editing` flag manually
+        // if (this.bookingToSave) this.bookingToSave.editing = true;
       } finally {
         this.loading = false;
         this.bookingToSave = null;
       }
     },
+    /**
+     * Cancels inline editing mode for a booking, discarding any changes made in `booking.editable`.
+     * @param {object} booking - The booking object.
+     * @returns {void}
+     */
     cancelEditBooking(booking) {
       booking.editing = false;
       booking.editable = null;
     },
+    /**
+     * Navigates to a detailed view page for a specific booking.
+     * @param {string} uuid - The UUID of the booking to view.
+     * @returns {void}
+     */
     viewBookingDetails(uuid) {
-      this.$router.push({ name: 'ViewBooking', params: { uuid: uuid } });
+      this.$router.push({ name: 'ViewBooking', params: { uuid: uuid } }); // Ensure 'ViewBooking' is a valid admin route name
     },
-    showSuccessModal(message) {
-      this.successModal.message = message;
-      this.successModal.show = true;
-    },
-    closeSuccessModal() {
-      this.successModal.show = false;
-    },
-    closeFailModal() {
-      this.failModal.show = false;
-    },
+    /** Helper method to show the success modal with a custom message. */
+    showSuccessModal(message) { this.successModal = { show: true, message }; },
+    /** Closes the success modal. */
+    closeSuccessModal() { this.successModal.show = false; },
+    /** Closes the failure modal. */
+    closeFailModal() { this.failModal.show = false; },
+    /**
+     * General error handler for API responses that return success HTTP status but indicate an error in the body.
+     * @param {object|null} responseData - The `data` part of the Axios API response.
+     * @param {string} defaultMessage - A default error message to use.
+     * @returns {void}
+     */
     handleApiResponseError(responseData, defaultMessage) {
-      let errorMsg = defaultMessage;
-      if (responseData && responseData.errors && responseData.errors.length > 0) {
-        errorMsg = responseData.errors.map(e => e.message || e.field).join(', ');
-      } else if (responseData && typeof responseData === 'string' && responseData.length < 200) {
-        errorMsg = responseData;
-      } else if (responseData && responseData.message) {
-        errorMsg = responseData.message;
-      }
-      this.failModal.message = errorMsg;
-      this.failModal.show = true;
-      this.apiError = true;
+        let errorMsg = defaultMessage;
+        if (responseData?.errors?.length > 0) { errorMsg = responseData.errors.map(e => e.message || e.field).join(', '); }
+        else if (responseData?.message) { errorMsg = responseData.message; }
+        else if (typeof responseData === 'string' && responseData.length < 200 && responseData.length > 0) { errorMsg = responseData; }
+        this.failModal = { show: true, message: errorMsg }; this.apiError = true;
+        console.error("API Response Error (AdminBookingManagement):", errorMsg, responseData);
     },
+    /**
+     * General error handler for API calls that fail (e.g., network error, HTTP 4xx/5xx status).
+     * @param {Error} error - The error object from the `catch` block.
+     * @param {string} defaultMessage - A default error message to use.
+     * @returns {void}
+     */
     handleApiCatchError(error, defaultMessage) {
-      let errorMessage = defaultMessage;
-      if (error.response && error.response.data) {
-        const apiResponse = error.response.data;
-        if (apiResponse.errors && apiResponse.errors.length > 0) {
-          errorMessage = apiResponse.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join('; ');
-        } else if (typeof apiResponse === 'string' && apiResponse.length < 200) {
-          errorMessage = apiResponse;
-        } else if (apiResponse.message) {
-          errorMessage = apiResponse.message;
-        } else if (error.response.statusText && error.response.statusText !== "") {
-          errorMessage = `Error ${error.response.status}: ${error.response.statusText}`;
-        }
-      } else if (error.request) {
-        errorMessage = "No response from server.";
-      }
-      this.failModal.message = errorMessage;
-      this.failModal.show = true;
-      this.apiError = true;
-    },
-  },
-  created() {
-    this.fetchBookings();
+        let errorMessage = defaultMessage;
+        if (error.response?.data) {
+            const apiResponse = error.response.data;
+            if (apiResponse.errors?.length > 0) { errorMessage = apiResponse.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join('; '); }
+            else if (typeof apiResponse === 'string' && apiResponse.length < 200 && apiResponse.length > 0) { errorMessage = apiResponse; }
+            else if (apiResponse.message) { errorMessage = apiResponse.message; }
+            else if (error.response.statusText) { errorMessage = `Error ${error.response.status}: ${error.response.statusText}`; }
+        } else if (error.request) { errorMessage = "No response from server. Please check network connection."; }
+        else if (error.message) { errorMessage = error.message; }
+        this.failModal = { show: true, message: errorMessage }; this.apiError = true;
+        console.error("API Catch Error (AdminBookingManagement):", errorMessage, error.response || error.message || error); // Log full error object for more details
+     },
   },
 };
 </script>

@@ -39,54 +39,95 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+// import axios from 'axios'; // Unused
 import api from "@/api";
 
+/**
+ * @file ViewAboutUs.vue
+ * @description Admin component to display the details of a single "About Us" entry.
+ * Fetches the entry data based on a UUID from the route parameters.
+ * @component ViewAboutUs
+ */
 export default {
-  name: 'viewAboutUs',
+  /**
+   * The registered name of the component.
+   * @type {string}
+   */
+  name: 'ViewAboutUs', // Changed to PascalCase
+  /**
+   * The reactive data properties for the component.
+   * @returns {object}
+   * @property {object|null} about - Stores the fetched "About Us" entry object.
+   * @property {boolean} loading - Flag to indicate if data is currently being fetched.
+   */
   data() {
     return {
-      about: null
+      about: null,
+      loading: false, // Added loading state
     };
   },
+  /**
+   * Lifecycle hook that is called after the component has been mounted.
+   * Fetches the details of the "About Us" entry.
+   */
   mounted() {
     this.fetchAboutUsDetails();
   },
   methods: {
+    /**
+     * Fetches the details of a specific "About Us" entry from the API
+     * using the UUID from the current route parameters.
+     * Updates the `about` data property and manages loading state.
+     * @async
+     * @returns {void}
+     */
     fetchAboutUsDetails() {
       const uuid = this.$route.params.uuid;
-      const token = localStorage.getItem('token');
+      if (!uuid) {
+        console.error("ViewAboutUs: No UUID provided in route parameters.");
+        this.about = null; // Ensure about is null if no uuid
+        // Optionally show an error message to the user
+        return;
+      }
+      this.loading = true;
+      // const token = localStorage.getItem('token'); // Redundant if api instance handles auth
 
-      api
-          .get(`/api/v1/admin/about-us/${uuid}`)
+      api.get(`/api/v1/admin/about-us/${uuid}`)
           .then((response) => {
-            this.about = response.data.data;
+            // Assuming API returns entry in response.data.data or response.data
+            this.about = response.data?.data || response.data;
+            if (!this.about) {
+              console.warn("ViewAboutUs: 'About Us' entry not found or unexpected response structure.", response.data);
+            }
           })
           .catch((error) => {
-            console.log(error);
+            console.error('Error fetching About Us details:', error.response || error);
+            this.about = null; // Clear on error
+            // Optionally show a user-facing error message
+          })
+          .finally(() => {
+            this.loading = false;
           });
     },
-    showSuccessModal(message) {
-      this.successModal = {
-        show: true,
-        message: message,
-      };
-    },
-    showFailureModal(message) {
-      this.failModal = {
-        show: true,
-        message: message,
-      };
-    },
-    closeModal() {
-      this.successModal.show = false;
-      this.failModal.show = false;
-    },
+    /**
+     * Navigates to the previous page in the router history.
+     * @returns {void}
+     */
     goBack() {
       this.$router.go(-1);
     },
+    // Unused modal helper methods (showSuccessModal, showFailureModal, closeModal) were removed.
   },
 };
 </script>
 <style>
+/* Styles are not scoped, consider adding 'scoped' attribute if they are component-specific */
+/* Minimal styling for label/span display */
+.aboutUs-details div {
+  margin-bottom: 10px;
+}
+.aboutUs-details label {
+  font-weight: bold;
+  margin-right: 8px;
+}
 </style>
