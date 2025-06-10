@@ -29,7 +29,7 @@
     <div class="tab-content" v-if="!isLoading && !apiError">
       <!-- Collections Due Today -->
       <div v-if="activeTab === 'collections'" class="operation-section">
-        <h2>Pickups Scheduled for Today</h2>
+        <h2 class="text-white">Pickups Scheduled for Today</h2>
         <div v-if="collectionsDue.length === 0" class="no-data-subsection">No collections due today.</div>
         <div v-else class="cards-grid">
           <div v-for="booking in collectionsDue" :key="booking.uuid" class="operation-card collection-card">
@@ -61,7 +61,7 @@
 
       <!-- Returns Due Today (Unchanged) -->
       <div v-if="activeTab === 'returns'" class="operation-section">
-        <h2>Returns Expected Today</h2>
+        <h2 class="text-white">Returns Expected Today</h2>
         <div v-if="returnsDue.length === 0" class="no-data-subsection">No returns due today.</div>
         <div v-else class="cards-grid">
           <div v-for="rental in returnsDue" :key="rental.uuid" class="operation-card return-card">
@@ -83,7 +83,7 @@
 
       <!-- Overdue Rentals (Unchanged) -->
       <div v-if="activeTab === 'overdue'" class="operation-section">
-        <h2>Overdue Rentals</h2>
+        <h2 class="text-white">Overdue Rentals</h2>
         <div v-if="overdueRentals.length === 0" class="no-data-subsection">No overdue rentals. Well done!</div>
         <div v-else class="cards-grid">
           <div v-for="rental in overdueRentals" :key="rental.uuid" class="operation-card overdue-card">
@@ -215,8 +215,8 @@ export default {
 /* All styles remain the same. The change is purely logical. */
 .staff-operations-dashboard { padding: 20px; }
 .tabs { margin-bottom: 20px; border-bottom: 2px solid #673AB7; }
-.tabs button { padding: 10px 15px; cursor: pointer; border: none; background-color: transparent; font-size: 1.05em; margin-right: 5px; border-bottom: 3px solid transparent; color: #333; }
-.tabs button.active { border-bottom-color: #E91E63; font-weight: bold; color: #673AB7; }
+.tabs button { padding: 10px 15px; cursor: pointer; border: none; background-color: transparent; font-size: 1.05em; margin-right: 5px; border-bottom: 3px solid transparent; color: var(--bs-gray-400); }
+.tabs button.active { border-bottom-color: #E91E63; font-weight: bold; color: var(--bs-white); }
 .tabs button i { margin-right: 8px; }
 .navigation-tab { padding: 10px 15px; cursor: pointer; border: none; background-color: transparent; font-size: 1.05em; margin-right: 5px; border-bottom: 3px solid transparent; color: #333; transition: color 0.2s ease, background-color 0.2s ease; }
 .navigation-tab:hover { background-color: rgba(103, 58, 183, 0.1); color: #673AB7; }

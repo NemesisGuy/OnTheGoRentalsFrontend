@@ -3,49 +3,40 @@
     <div class="form-container-admin">
       <LoadingModal v-if="loadingModal.show" :show="loadingModal.show" :message="loadingModal.message"/>
 
-      <form ref="rentalForm" @submit.prevent="triggerConfirmation">
+      <form v-if="!loadingModal.show && !errorMessage" ref="rentalForm" @submit.prevent="triggerConfirmation">
         <div class="form-header">
           <h2><i class="fas fa-file-signature"></i> Create Rental from Booking</h2>
           <p v-if="bookingDetails.uuid">Converting Booking: {{ bookingDetails.uuid?.substring(0,8) }}...</p>
         </div>
 
-        <div class="form-group">
-          <label for="userDisplay">Customer:</label>
-          <input id="userDisplay" :value="selectedUserName" type="text" disabled>
-        </div>
-        <div class="form-group">
-          <label for="carDisplay">Car:</label>
-          <input id="carDisplay" :value="selectedCarName" type="text" disabled>
-        </div>
-        <div class="form-group">
-          <label for="expectedReturnDate">Expected Return Date & Time:</label>
-          <input id="expectedReturnDate" v-model="rental.expectedReturnDate" type="datetime-local" required>
+        <div class="display-section">
+          <p><strong>Customer:</strong> {{ bookingDetails.user?.firstName }} {{ bookingDetails.user?.lastName }}</p>
+          <p><strong>Car:</strong> {{ bookingDetails.car?.make }} {{ bookingDetails.car?.model }}</p>
+          <p><strong>Original Booking Return:</strong> {{ formatDateTime(bookingDetails.bookingEndDate) }}</p>
         </div>
         <hr>
 
         <div class="form-group">
           <label for="issuer">Issuing Staff Member:</label>
-          <select id="issuer" v-model="rental.issuer" required>
+          <select id="issuer" v-model="rentalData.issuerId" required>
             <option :value="null" disabled>-- Select Staff --</option>
             <option v-if="currentStaffUser" :value="currentStaffUser.uuid">Me: {{ currentStaffUser.firstName }}</option>
           </select>
         </div>
+
         <div class="form-group">
           <label for="driver">Assign Driver (Optional):</label>
-          <select id="driver" v-model="rental.driverUuid">
+          <select id="driver" v-model="rentalData.driverUuid">
             <option :value="null">-- No Driver --</option>
             <option v-for="driver in availableDrivers" :key="driver.uuid" :value="driver.uuid">
               {{ driver.firstName }} {{ driver.lastName }}
             </option>
           </select>
         </div>
+
         <div class="form-group">
-          <label for="issuedDate">Issued Date & Time (Pickup):</label>
-          <input id="issuedDate" v-model="rental.issuedDate" type="datetime-local" required>
-        </div>
-        <div class="form-group">
-          <label for="fine">Initial Fine (if any):</label>
-          <input id="fine" v-model.number="rental.fine" type="number" step="0.01" min="0">
+          <label for="actualPickupTime">Actual Pickup Time:</label>
+          <input id="actualPickupTime" v-model="rentalData.actualPickupTime" type="datetime-local" required>
         </div>
 
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
@@ -59,16 +50,20 @@
           </button>
         </div>
       </form>
+
+      <div v-if="errorMessage && !loadingModal.show" class="error-container">
+        <p>{{ errorMessage }}</p>
+        <button class="button back-button" @click="goBack">Go Back</button>
+      </div>
     </div>
 
     <ConfirmationModal :show="showConfirmationModal" title="Confirm Rental Creation" @cancel="cancelCreation" @confirm="executeCreateRental">
       <template #default>
         <div>
-          <p>This will create a new rental record and update the original booking.</p><hr>
-          <p><strong>Customer:</strong> {{ selectedUserName }}</p>
-          <p><strong>Car:</strong> {{ selectedCarName }}</p>
-          <p><strong>Pickup Time:</strong> {{ formatDateTime(rental.issuedDate) }}</p>
-          <p><strong>Return Due:</strong> {{ formatDateTime(rental.expectedReturnDate) }}</p>
+          <p>This will create a new rental and update the original booking.</p><hr>
+          <p><strong>Customer:</strong> {{ bookingDetails.user?.firstName }} {{ bookingDetails.user?.lastName }}</p>
+          <p><strong>Car:</strong> {{ bookingDetails.car?.make }} {{ bookingDetails.car?.model }}</p>
+          <p><strong>Pickup Time:</strong> {{ formatDateTime(rentalData.actualPickupTime) }}</p>
         </div>
       </template>
     </ConfirmationModal>
@@ -80,7 +75,6 @@
 
 <script>
 import api from "@/api";
-// *** THE FIX IS HERE: Correctly importing the utility functions ***
 import { formatDateTime, formatInputDateTime } from '@/utils/dateUtils';
 import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import ConfirmationModal from "@/components/Main/Modals/ConfirmationModal.vue";
@@ -96,17 +90,11 @@ export default {
   data() {
     return {
       bookingDetails: {},
-      rental: {
-        userUuid: null,
-        carUuid: null,
+      // Data object matches the simple RentalFromBookingRequestDTO
+      rentalData: {
+        issuerId: null,
         driverUuid: null,
-        issuer: null,
-        receiver: null,
-        fine: 0.0,
-        issuedDate: formatInputDateTime(new Date()),
-        expectedReturnDate: '',
-        returnedDate: null,
-        status: 'ACTIVE',
+        actualPickupTime: formatInputDateTime(new Date()),
       },
       availableDrivers: [],
       currentStaffUser: null,
@@ -118,23 +106,11 @@ export default {
       failModal: { show: false, message: "" }
     };
   },
-  computed: {
-    selectedUserName() {
-      return this.bookingDetails.user ? `${this.bookingDetails.user.firstName} ${this.bookingDetails.user.lastName}` : 'N/A';
-    },
-    selectedCarName() {
-      return this.bookingDetails.car ? `${this.bookingDetails.car.make} ${this.bookingDetails.car.model}` : 'N/A';
-    },
-  },
   async created() {
     await this.fetchInitialData();
   },
   methods: {
-    // *** THE FIX IS HERE: Directly using the imported function in the template ***
-    // This makes the `formatDisplayDateTime` method unnecessary in this component.
-    // We can call `formatDateTime()` directly in the template.
-    formatDateTime, // Exposing the function to the template
-
+    formatDateTime,
     async fetchInitialData() {
       this.loadingModal = { show: true, message: "Loading booking and user data..." };
       try {
@@ -145,27 +121,24 @@ export default {
         ]);
 
         this.currentStaffUser = staffProfileResponse.data.data;
-        this.rental.issuer = this.currentStaffUser?.uuid;
+        this.rentalData.issuerId = this.currentStaffUser?.uuid;
 
         this.availableDrivers = driversResponse.data.data || [];
         this.bookingDetails = bookingResponse.data.data;
 
-        this.rental.userUuid = this.bookingDetails.user?.uuid;
-        this.rental.carUuid = this.bookingDetails.car?.uuid;
-        this.rental.driverUuid = this.bookingDetails.driver?.uuid || null;
-        this.rental.expectedReturnDate = this.bookingDetails.bookingEndDate ? formatInputDateTime(this.bookingDetails.bookingEndDate) : '';
+        this.rentalData.driverUuid = this.bookingDetails.driver?.uuid || null;
 
       } catch (error) {
-        this.failModal.message = "Failed to load initial data: " + (error.response?.data?.errors?.[0]?.message || error.message);
+        this.errorMessage = "Failed to load initial data: " + (error.response?.data?.message || error.message);
+        this.failModal.message = this.errorMessage;
         this.failModal.show = true;
       } finally {
         this.loadingModal.show = false;
       }
     },
     triggerConfirmation() {
-      if (!this.rental.userUuid || !this.rental.carUuid || !this.rental.issuer) {
-        this.failModal.message = "Required fields are missing. Cannot create rental.";
-        this.failModal.show = true;
+      if (!this.rentalData.issuerId || !this.rentalData.actualPickupTime) {
+        this.failModal = { show: true, message: "Please select an issuing staff member and confirm the pickup time." };
         return;
       }
       this.showConfirmationModal = true;
@@ -176,22 +149,22 @@ export default {
     async executeCreateRental() {
       this.showConfirmationModal = false;
       this.isSubmitting = true;
-      this.loadingModal = { show: true, message: "Creating rental and updating booking..." };
+      this.loadingModal = { show: true, message: "Converting booking to rental..." };
 
-      const payload = { ...this.rental };
+      // Payload now correctly matches the simple RentalFromBookingRequestDTO
+      const payload = { ...this.rentalData };
 
       try {
-        await api.post('/api/v1/admin/rentals', payload);
+        // **THE FIX**: Call the single, correct, transactional endpoint.
+        // It should be `/api/v1/admin/rentals/from-booking/{uuid}` as we designed.
+        const response = await api.post(`/api/v1/rentals/from-booking/${this.bookingUuid}`, payload);
 
-        const newBookingStatus = 'RENTAL_INITIATED';
-        await api.put(`/api/v1/admin/bookings/${this.bookingUuid}/update-status`, { status: newBookingStatus });
-
-        this.successModal.message = `Rental created and booking updated successfully!`;
+        this.successModal.message = `Rental created and booking updated successfully! New Rental UUID: ${response.data.data.uuid?.substring(0,8)}...`;
         this.successModal.show = true;
 
       } catch (error) {
         const apiErrors = error.response?.data?.errors;
-        this.failModal.message = apiErrors ? apiErrors.map(e => e.message).join(', ') : (error.response?.data?.message || "An error occurred during the process.");
+        this.failModal.message = apiErrors ? apiErrors.map(e => e.message).join('; ') : (error.response?.data?.message || "An error occurred during conversion.");
         this.failModal.show = true;
       } finally {
         this.isSubmitting = false;
@@ -199,11 +172,10 @@ export default {
       }
     },
     closeModal() {
-      this.successModal.show = false;
       this.failModal.show = false;
     },
     closeModalAndGoBack() {
-      this.closeModal();
+      this.successModal.show = false;
       this.$router.push({ name: 'StaffDailyOperations' });
     },
     goBack() {
@@ -214,6 +186,8 @@ export default {
 </script>
 
 <style scoped>
-.form-group input[disabled] { background-color: #e9ecef; opacity: 0.9; cursor: not-allowed; color: #495057; font-weight: 500; }
-.error-message { color: #dc3545; margin-bottom: 15px; font-weight: bold; text-align: center; }
+.display-section { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+.display-section p { margin: 8px 0; font-size: 1rem; }
+.display-section strong { color: #495057; }
+.error-message, .error-container { color: #dc3545; font-weight: bold; text-align: center; margin: 15px 0; }
 </style>

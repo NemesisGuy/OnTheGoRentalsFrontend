@@ -19,7 +19,7 @@
           <p><strong>Car:</strong> {{ rental.car?.make }} {{ rental.car?.model }} ({{ rental.car?.licensePlate }})</p>
           <p><strong>Rental Started:</strong> {{ formatInputDateTime(rental.issuedDate) }}</p>
           <!-- Displaying the issuer's name for clarity -->
-          <p><strong>Original Issuer:</strong> {{ rental.issuer?.firstName || 'N/A' }}</p>
+          <p><strong>Original Issuer:</strong> {{ rental.issuer }}</p>
         </div>
         <hr>
 
@@ -163,6 +163,7 @@ export default {
       // We will defensively check the structure of `this.rental.issuer`
       // before trying to access its `uuid` property.
       let issuerUuid = null;
+      console.log("Original rental issuer data:", this.rental.issuer);
       if (this.rental && this.rental.issuer) {
         // Check if issuer is an object with a uuid, otherwise assume it's the uuid string itself.
         issuerUuid = typeof this.rental.issuer === 'object'
@@ -182,7 +183,7 @@ export default {
         userUuid: this.rental.user.uuid,
         carUuid: this.rental.car.uuid,
         driverUuid: this.rental.driver?.uuid || null,
-        issuer: issuerUuid, // <-- Using the failsafe variable
+        issuer: this.rental.issuer, // <-- Using the failsafe variable
         issuedDate: this.rental.issuedDate,
 
         // Pass updated data from the form

@@ -71,7 +71,7 @@
     </div>
 
     <!-- Modals for feedback -->
-    <SuccessModal :show="successModal.show" :message="successModal.message" @ok="closeModalAndGoBack" />
+    <SuccessModal :show="successModal.show" :message="successModal.message" @close="closeModalAndGoBack" />
     <FailureModal :show="failModal.show" :message="failModal.message" @close="closeModal" />
   </div>
 </template>

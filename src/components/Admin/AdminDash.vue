@@ -185,7 +185,7 @@ export default {
 .dashboard-header h1 { color: #333; font-size: 1.8rem; }
 .header-actions { display: flex; align-items: center; gap: 15px; }
 .last-updated { color: #666; font-style: italic; font-size: 0.9rem; }
-.refresh-button { background: #fff; border: 1px solid #ccc; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+.refresh-button { background: var(--bs-gray-600); border: 1px solid #ccc; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
 .refresh-button:hover { background: #007bff; color: white; border-color: #007bff; }
 .refresh-button:disabled { cursor: not-allowed; opacity: 0.7; }
 .fa-spin { animation: fa-spin 1.5s linear infinite; }
