@@ -157,7 +157,7 @@ import ShimmerAdminTable from "@/components/Main/Loaders/ShimmerAdminTable.vue";
 import api from "@/api.js";
 import { formatDateTime } from '@/utils/dateUtils.js';
 
-const RENTAL_STATUS_OPTIONS = ['PENDING_CONFIRMATION', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'OVERDUE']; // Make sure this matches your backend RentalStatus enum string values
+const RENTAL_STATUS_OPTIONS = ['RENTAL_INITIATED', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'OVERDUE']; // Make sure this matches your backend RentalStatus enum string values
 
 export default {
   name: "AdminBookingManagement",
