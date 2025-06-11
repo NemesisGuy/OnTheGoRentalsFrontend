@@ -29,7 +29,6 @@ RUN rm -f /etc/nginx/conf.d/default.conf # Remove default
 # Copy a custom nginx configuration file (if needed)
 COPY ../nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY ../dist /usr/share/nginx/html
 
 # Expose port 80 (the default Nginx port)
 EXPOSE 80

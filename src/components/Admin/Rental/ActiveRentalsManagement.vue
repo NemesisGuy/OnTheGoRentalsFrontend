@@ -1,7 +1,7 @@
 <template>
   <div class="active-rentals-container">
-    <div class="content-header">
-      <h1><i class="fas fa-tasks"></i> Active Rentals Management</h1>
+    <div class="content-header form-header" >
+      <h1 class="text-black"><i class="fas fa-tasks"></i> Active Rentals Management</h1>
       <p>View and manage all rentals that are currently in progress.</p>
     </div>
 
@@ -13,7 +13,7 @@
             type="text"
             v-model="searchQuery"
             placeholder="Search by user, car, email, license plate..."
-            class="search-input"
+            class="search-input text-bg-light"
         />
       </div>
       <button @click="fetchActiveRentals" class="button refresh-button text-bg-light" :disabled="isLoading" title="Refresh Data">
