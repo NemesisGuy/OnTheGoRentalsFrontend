@@ -85,7 +85,7 @@ export default {
   name: "AdminCreateRentalFromBooking",
   components: { ConfirmationModal, LoadingModal, SuccessModal, FailureModal },
   props: {
-    bookingUuid: { type: String, required: true }
+    uuid: { type: String, required: true }
   },
   data() {
     return {
@@ -117,7 +117,7 @@ export default {
         const [staffProfileResponse, driversResponse, bookingResponse] = await Promise.all([
           api.get('/api/v1/users/me/profile'),
           api.get('/api/v1/admin/drivers'),
-          api.get(`/api/v1/admin/bookings/${this.bookingUuid}`)
+          api.get(`/api/v1/admin/bookings/${this.uuid}`)
         ]);
 
         this.currentStaffUser = staffProfileResponse.data.data;
@@ -157,7 +157,7 @@ export default {
       try {
         // **THE FIX**: Call the single, correct, transactional endpoint.
         // It should be `/api/v1/admin/rentals/from-booking/{uuid}` as we designed.
-        const response = await api.post(`/api/v1/rentals/from-booking/${this.bookingUuid}`, payload);
+        const response = await api.post(`/api/v1/rentals/from-booking/${this.uuid}`, payload);
 
         this.successModal.message = `Rental created and booking updated successfully! New Rental UUID: ${response.data.data.uuid?.substring(0,8)}...`;
         this.successModal.show = true;

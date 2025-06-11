@@ -381,7 +381,7 @@ export default {
       booking.editable = null;
     },
     viewBookingDetails(uuid) {
-      this.$router.push({ name: 'ViewBooking', params: { uuid: uuid } });
+      this.$router.push({ name: 'AdminViewBooking', params: { uuid: uuid } });
     },
     showSuccessModal(message) {
       this.successModal.message = message;

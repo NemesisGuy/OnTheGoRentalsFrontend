@@ -29,7 +29,7 @@ const adminRentalRoutes = [
 
     },
     {
-        path: '/admin/rentals/create/from-booking/:bookingUuid?', // Or your desired path structure
+        path: '/admin/rentals/create/from-booking/:uuid?', // Or your desired path structure
         name: 'CreateRental',
         component: () => import('@/components/Admin/Rental/CreateRental.vue'), // Adjust path to your component
         props: true // This is IMPORTANT! It passes route params as props to the component

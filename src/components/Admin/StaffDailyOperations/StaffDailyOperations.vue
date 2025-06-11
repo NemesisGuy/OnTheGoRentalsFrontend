@@ -194,10 +194,10 @@ export default {
       // This is the key to your workflow.
       // It navigates to the component responsible for creating a rental from a booking.
       // It passes the bookingUuid as a parameter so the next page knows which booking to load.
-      this.$router.push({ name: 'CreateRental', params: { bookingUuid: bookingUuid } });
+      this.$router.push({ name: 'CreateRental', params: { uuid: bookingUuid } });
     },
     navigateToCompleteRental(rentalUuid) {
-      this.$router.push({ name: 'ProcessReturn', params: { rentalUuid: rentalUuid } });
+      this.$router.push({ name: 'ProcessReturn', params: { uuid: rentalUuid } });
     },
     viewRentalDetails(rentalUuid) {
       this.$router.push({ name: 'AdminRentalDetails', params: { uuid: rentalUuid } });

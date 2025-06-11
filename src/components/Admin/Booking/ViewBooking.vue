@@ -167,7 +167,7 @@ export default {
      * @param {string} bookingUuid - The UUID of the booking to convert.
      */
     navigateToCreateRental(bookingUuid) {
-      this.$router.push({ name: 'CreateRental', params: { bookingUuid: bookingUuid } });
+      this.$router.push({ name: 'CreateRental', params: { uuid: bookingUuid } });
     },
 
     goBack() {
