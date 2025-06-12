@@ -207,6 +207,12 @@ select {
     margin: 10px;
 
 }
+.button-secondary { /* Edit Profile (Secondary) */
+    background-color: #f8f9fa;
+    color: #343a40;
+    border-color: #ced4da;
+}
+.button-secondary:hover { background-color: #e2e6ea; }
 
 .button:hover,
 .custom-button:hover {

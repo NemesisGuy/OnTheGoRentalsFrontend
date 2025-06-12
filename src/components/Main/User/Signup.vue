@@ -1,48 +1,102 @@
 <template>
-  <loading-modal v-if="loadingModal" :show="true"/> <!-- Simplified :show binding -->
   <div class="card-container">
     <div class="form-container">
-      <form @submit.prevent="register">
-        <h2 class="form-header"><i class="fas fa-user-plus"></i> Signup</h2>
+      <form @submit.prevent="register" novalidate>
+        <h2 class="form-header"><i class="fas fa-user-plus"></i> Create Your Account</h2>
 
+        <!-- First Name Input -->
         <div class="form-group">
           <label for="firstName"><i class="fas fa-user"></i> First Name:</label>
-          <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" v-model="firstName"
-                 required>
-        </div>
-        <div class="form-group">
-          <label for="lastName"><i class="fas fa-user"></i> Last Name:</label>
-          <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" v-model="lastName"
-                 required>
+          <input
+              type="text"
+              id="firstName"
+              placeholder="Enter your first name"
+              v-model.trim="firstName"
+              required
+              autocomplete="given-name"
+              :class="{ 'is-invalid': validationErrors.firstName }"
+          >
+          <small v-if="validationErrors.firstName" class="form-text text-danger">{{ validationErrors.firstName }}</small>
         </div>
 
+        <!-- Last Name Input -->
+        <div class="form-group">
+          <label for="lastName"><i class="fas fa-user"></i> Last Name:</label>
+          <input
+              type="text"
+              id="lastName"
+              placeholder="Enter your last name"
+              v-model.trim="lastName"
+              required
+              autocomplete="family-name"
+              :class="{ 'is-invalid': validationErrors.lastName }"
+          >
+          <small v-if="validationErrors.lastName" class="form-text text-danger">{{ validationErrors.lastName }}</small>
+        </div>
+
+        <!-- Email Input -->
         <div class="form-group">
           <label for="email"><i class="fas fa-envelope"></i> Email:</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email" v-model="email" required>
+          <input
+              type="email"
+              id="email"
+              placeholder="Enter your email"
+              v-model.trim="email"
+              required
+              autocomplete="email"
+              :class="{ 'is-invalid': validationErrors.email }"
+          >
+          <small v-if="validationErrors.email" class="form-text text-danger">{{ validationErrors.email }}</small>
         </div>
+
+        <!-- Password Input -->
         <div class="form-group">
           <label for="password"><i class="fas fa-lock"></i> Password:</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" v-model="password"
-                 required>
+          <input
+              type="password"
+              id="password"
+              placeholder="Enter your password"
+              v-model="password"
+              required
+              autocomplete="new-password"
+              :class="{ 'is-invalid': validationErrors.password }"
+          >
+          <small v-if="validationErrors.password" class="form-text text-danger">{{ validationErrors.password }}</small>
         </div>
+
+        <!-- Confirm Password Input -->
         <div class="form-group">
           <label for="confirm-password"><i class="fas fa-lock"></i> Confirm Password:</label>
-          <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" v-model="confirmPassword"
-                 required>
+          <input
+              type="password"
+              id="confirm-password"
+              placeholder="Confirm your password"
+              v-model="confirmPassword"
+              required
+              autocomplete="new-password"
+              :class="{ 'is-invalid': validationErrors.confirmPassword }"
+          >
+          <small v-if="validationErrors.confirmPassword" class="form-text text-danger">{{ validationErrors.confirmPassword }}</small>
         </div>
+
+        <!-- Action Buttons -->
         <div class="button-container">
-          <button class="add-button button" type="submit"><i class="fas fa-user-plus"></i> Signup</button>
-          <button class="read-button button" type="button" @click="goToLogin"><i class="fas fa-sign-in-alt"></i> Login</button>
+          <button class="add-button button" type="submit" :disabled="isLoading">
+            <i class="fas fa-user-plus"></i> {{ isLoading ? 'Creating Account...' : 'Signup' }}
+          </button>
+          <button class="read-button button" type="button" @click="goToLogin" :disabled="isLoading">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </button>
         </div>
       </form>
     </div>
   </div>
 
   <div class="modal-body">
-    <success-modal :show="successModal.show" @close="onSuccessModalClose" :message="successModal.message"/>
-    <failure-modal :show="failureModal.show" @close="closeFailureModal" :message="failureModal.message"/>
+    <LoadingModal :show="isLoading" message="Creating your account..."/>
+    <SuccessModal :show="successModal.show" @close="onSuccessModalClose" :message="successModal.message"/>
+    <FailureModal :show="failureModal.show" @close="closeFailureModal" :message="failureModal.message"/>
   </div>
-
 </template>
 
 <script>
@@ -51,129 +105,140 @@ import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import api from "@/api";
 
+/**
+ * @file SignupPage.vue
+ * @description A component for new user registration. It includes a form for user details,
+ * client-side validation, and handles the API call to the registration endpoint.
+ * On successful registration, it automatically logs the user in.
+ *
+ * @author Peter Buckingham (220165289)
+ * @date 2025-06-11 (Updated)
+ */
 export default {
   name: "SignupPage",
-  components: {
-    LoadingModal,
-    SuccessModal,
-    FailureModal,
-  },
+  components: { LoadingModal, SuccessModal, FailureModal },
   data() {
     return {
+      /** @type {string} The user's first name. */
       firstName: "",
+      /** @type {string} The user's last name. */
       lastName: "",
+      /** @type {string} The user's email address. */
       email: "",
+      /** @type {string} The user's chosen password. */
       password: "",
-      confirmPassword: "", // Added for v-model
-      loadingModal: false,
+      /** @type {string} The password confirmation field. */
+      confirmPassword: "",
+      /** @type {boolean} Controls the loading state. */
+      isLoading: false,
+      /** @type {Object} State for the success feedback modal. */
       successModal: { show: false, message: "" },
+      /** @type {Object} State for the failure feedback modal. */
       failureModal: { show: false, message: "" },
+      /** @type {Object} Holds client-side validation errors. */
+      validationErrors: {},
     };
   },
   methods: {
-    register() { // Removed async
-      if (this.loadingModal) return;
-
+    /**
+     * Validates the entire signup form before submission.
+     * @returns {boolean} True if all fields are valid, otherwise false.
+     */
+    validateForm() {
+      this.validationErrors = {};
+      if (!this.firstName) this.validationErrors.firstName = "First name is required.";
+      if (!this.lastName) this.validationErrors.lastName = "Last name is required.";
+      if (!this.email) {
+        this.validationErrors.email = "Email is required.";
+      } else if (!/\S+@\S+\.\S+/.test(this.email)) {
+        this.validationErrors.email = "Please enter a valid email address.";
+      }
+      if (!this.password) {
+        this.validationErrors.password = "Password is required.";
+      } else if (this.password.length < 6) {
+        this.validationErrors.password = "Password must be at least 6 characters long.";
+      }
       if (this.password !== this.confirmPassword) {
-        this.failureModal.message = "Passwords do not match!";
-        this.failureModal.show = true;
+        this.validationErrors.confirmPassword = "Passwords do not match.";
+      }
+      return Object.keys(this.validationErrors).length === 0;
+    },
+
+    /**
+     * Handles the signup form submission. Validates inputs and calls the registration API.
+     * @returns {Promise<void>}
+     */
+    async register() {
+      if (!this.validateForm()) {
+        const firstError = Object.values(this.validationErrors)[0];
+        this.showFailureModal(firstError || "Please correct the errors and try again.");
         return;
       }
-      if (!this.firstName || !this.lastName || !this.email || !this.password) {
-        this.failureModal.message = "Please fill in all required fields.";
-        this.failureModal.show = true;
-        return;
+      if (this.isLoading) return;
+      this.isLoading = true;
+
+      try {
+        const response = await api.post("/api/v1/auth/register", {
+          firstName: this.firstName,
+          lastName: this.lastName,
+          email: this.email,
+          password: this.password
+        });
+
+        if (response.data?.status === "success" && response.data.data?.accessToken) {
+          this.handleRegistrationSuccess(response.data.data);
+        } else {
+          throw new Error(response.data?.errors?.[0]?.message || "Registration failed: Unexpected server response.");
+        }
+      } catch (error) {
+        this.handleRegistrationFailure(error);
+      } finally {
+        this.isLoading = false;
       }
+    },
 
-      this.loadingModal = true;
-      this.failureModal.show = false; // Reset failure modal
+    /**
+     * Processes a successful registration response, automatically logging the user in.
+     * @param {object} authData - The 'data' object from a successful API response (AuthResponseDto).
+     */
+    handleRegistrationSuccess(authData) {
+      localStorage.setItem('accessToken', authData.accessToken);
+      const user = { email: authData.email, roles: authData.roles || ['USER'] };
+      localStorage.setItem('user', JSON.stringify(user));
+      window.dispatchEvent(new CustomEvent('auth-change'));
+      this.showSuccessModal("Registration successful! You are now logged in.");
+    },
 
-      api.post("/api/v1/auth/register", {
-        firstName: this.firstName,
-        lastName: this.lastName,
-        email: this.email,
-        password: this.password
-      })
-          .then(response => {
-            console.log("Signup Response Data (wrapped):", response.data);
+    /**
+     * Processes a failed registration attempt and displays a user-friendly error.
+     * @param {Error} error - The error object from the Axios catch block.
+     */
+    handleRegistrationFailure(error) {
+      console.error("Signup API Error:", error.response || error);
+      let errorMessage = "An unexpected error occurred during registration.";
+      if (error.response?.data?.errors?.[0]?.message.toLowerCase().includes("email")) {
+        errorMessage = "An account with this email already exists. Please try logging in.";
+      } else {
+        errorMessage = error.response?.data?.errors?.[0]?.message || error.response?.data?.message || "Registration failed. Please try again.";
+      }
+      this.showFailureModal(errorMessage);
+    },
 
-            if (response.data && response.data.status === "success" && response.data.data) {
-              const { accessToken, email: responseEmail, roles, tokenType } = response.data.data;
-              console.log("Unwrapped AuthResponseDto Data from Signup:", response.data.data);
-
-              if (accessToken && tokenType === "Bearer") {
-                localStorage.setItem('accessToken', accessToken);
-                // Refresh token is an HttpOnly cookie set by the backend.
-
-                const user = {
-                  email: responseEmail || this.email,
-                  roles: roles || ['USER'],
-                };
-                localStorage.setItem('user', JSON.stringify(user));
-                window.dispatchEvent(new CustomEvent('auth-change'));
-
-                this.successModal.message = "Registration successful! You are now logged in.";
-                this.successModal.show = true;
-                // The onSuccessModalClose method (called by the modal's @close event) will handle navigation
-              } else {
-                console.error("Signup successful, but AuthResponseDto did not contain expected token data. Received:", response.data.data);
-                this.failureModal.message = "Signup successful, but received an unexpected response structure.";
-                this.failureModal.show = true;
-              }
-            } else {
-              let errorMsg = "Registration failed: Unexpected server response format.";
-              if (response.data && response.data.errors && response.data.errors.length > 0) {
-                errorMsg = response.data.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join(', ');
-              } else if (response.data && response.data.message) {
-                errorMsg = response.data.message;
-              }
-              console.error("Signup response was not successful or data was missing. Full response:", response.data);
-              this.failureModal.message = errorMsg;
-              this.failureModal.show = true;
-            }
-          })
-          .catch(error => {
-            console.error("Signup API Error:", error);
-            let errorMessage = "Registration failed. Please try again.";
-            if (error.response && error.response.data) {
-              const apiResponse = error.response.data;
-              if (apiResponse.errors && apiResponse.errors.length > 0) {
-                errorMessage = apiResponse.errors.map(err => `${err.field ? err.field + ': ' : ''}${err.message}`).join('; ');
-                if (errorMessage.toLowerCase().includes("email is already taken")) {
-                  errorMessage = "An account with this email already exists. Please try logging in.";
-                }
-              } else if (typeof apiResponse === 'string' && apiResponse.length > 0 && apiResponse.length < 250) {
-                errorMessage = apiResponse;
-              } else if (apiResponse.message) {
-                errorMessage = apiResponse.message;
-              } else if (error.response.status === 303 || error.response.status === 409) {
-                errorMessage = "An account with this email already exists.";
-              }
-            } else if (error.request) {
-              errorMessage = "No response from server. Please check your network connection.";
-            } else {
-              errorMessage = "An unexpected error occurred during registration. Please try again.";
-            }
-            this.failureModal.message = errorMessage;
-            this.failureModal.show = true;
-          })
-          .finally(() => {
-            this.loadingModal = false;
-          });
+    showSuccessModal(message) {
+      this.successModal = { show: true, message };
+    },
+    showFailureModal(message) {
+      this.failureModal = { show: true, message };
     },
     onSuccessModalClose() {
       this.successModal.show = false;
       this.$router.push({ name: "Home" });
-      // Consider if reload is truly needed or if state can be managed reactively
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 50); // Small delay if reload is necessary
     },
-    closeFailureModal() { // This method will be correctly called by FailureModal
+    closeFailureModal() {
       this.failureModal.show = false;
     },
     goToLogin() {
-      if (this.loadingModal) return;
+      if (this.isLoading) return;
       this.$router.push({ name: 'Login' });
     },
   }
@@ -181,120 +246,7 @@ export default {
 </script>
 
 <style scoped>
-/* Basic styling for demonstration - adapt to your project's design system */
-.card-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh; /* Adjust as needed */
-  padding: 20px;
-  background-color: #f4f7f6; /* Light background for the page */
-}
-
-.form-container {
-  background-color: #ffffff;
-  padding: 30px 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 450px; /* Max width for the form */
-}
-
-.form-header {
-  text-align: center;
-  margin-bottom: 25px;
-  color: #333;
-  font-size: 1.8em;
-}
-.form-header .fas {
-  margin-right: 10px;
-  color: #007bff; /* Or your theme color */
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #555;
-}
-.form-group label .fas {
-  margin-right: 8px;
-  color: #007bff; /* Or your theme color */
-  width: 16px; /* Ensure consistent icon spacing */
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"] {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-  font-size: 1em;
-  transition: border-color 0.3s;
-}
-
-.form-group input[type="text"]:focus,
-.form-group input[type="email"]:focus,
-.form-group input[type="password"]:focus {
-  border-color: #007bff; /* Highlight on focus */
-  outline: none;
-}
-
-.button-container {
-  display: flex;
-  gap: 15px; /* Space between buttons */
-  margin-top: 25px;
-}
-
-.button {
-  flex-grow: 1; /* Make buttons share space equally */
-  padding: 12px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  font-weight: 500; /* Adjusted font weight */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: background-color 0.2s ease-in-out, transform 0.1s ease;
-  text-decoration: none;
-  color: white;
-}
-.button:hover {
-  opacity: 0.9;
-}
-.button:active {
-  transform: translateY(1px);
-}
-
-.add-button { /* Signup button */
-  background-color: #28a745; /* Green */
-}
-
-.read-button { /* Login button */
-  background-color: #007bff; /* Blue */
-}
-
-.modal-body {
-  /* This div is just a wrapper for modals, usually doesn't need direct styling
-     unless it's part of a specific layout for how modals are presented globally. */
-}
-
-/* Responsive adjustments if needed */
-@media (max-width: 480px) {
-  .form-container {
-    padding: 20px;
-  }
-  .button-container {
-    flex-direction: column; /* Stack buttons on very small screens */
-  }
+.is-invalid {
+  border-color: #dc3545;
 }
 </style>
