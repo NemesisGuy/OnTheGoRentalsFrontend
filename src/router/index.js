@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import {createRouter, createWebHistory} from 'vue-router';
 import AdminPage from "@/components/Admin/AdminPage.vue";
 import adminCarRoutes from './adminCarRoutes';
 import adminUserRoutes from './adminUserRoutes';
@@ -58,11 +58,11 @@ const router = createRouter({
             name: 'ReturnRental',
             component: ReturnRental,
         },
-      /*  {
-            path: '/cars/list/:category/:available',
-            name: 'CarList',
-            component: CarList,
-        },*/
+        /*  {
+              path: '/cars/list/:category/:available',
+              name: 'CarList',
+              component: CarList,
+          },*/
         {
             path: '/cars/list/available/:pricegroup/:',
             name: 'CarList',
@@ -94,16 +94,16 @@ const router = createRouter({
             name: 'Booking',
             component: Booking,
         },
-      /*  {
-            path: '/booking/:uuid?',
-            name: 'Booking',
-            component: Booking,
-        },*/
-       /* {
-            path: '/booking/:uuid?',
-            name: 'CreateBooking',
-            component: Booking,
-        },*/
+        /*  {
+              path: '/booking/:uuid?',
+              name: 'Booking',
+              component: Booking,
+          },*/
+        /* {
+             path: '/booking/:uuid?',
+             name: 'CreateBooking',
+             component: Booking,
+         },*/
         {
             path: '/bookings/create/:carUuid?', // carUuid is optional
             name: 'CreateBooking', // Or your chosen name

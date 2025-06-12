@@ -24,6 +24,9 @@
         <router-link to="/admin/settings">Settings</router-link>
       </li>
       <li>
+        <router-link to="/admin/file-management">File Management</router-link>
+      </li>
+      <li>
         <router-link to="/admin/test">Test</router-link>
       </li>
       <li>

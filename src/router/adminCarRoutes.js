@@ -52,12 +52,14 @@ const adminCarRoutes = [
     {
         path: 'dashboard',
         name: 'Dashboard',
-        components: { adminContent: AdminDash,
+        components: {
+            adminContent: AdminDash,
         },
     },
-    {   path: '/admin/:pathMatch(.*)*',
+    {
+        path: '/admin/:pathMatch(.*)*',
         name: 'AdminErrorPage',
-        components: { adminContent: ErrorPage }
+        components: {adminContent: ErrorPage}
     },
 
 ];

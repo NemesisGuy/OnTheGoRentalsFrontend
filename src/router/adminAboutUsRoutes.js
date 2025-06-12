@@ -5,11 +5,11 @@ import DeleteAboutUs from "@/components/Admin/About/DeleteAboutUs.vue";
 import ViewAboutUs from "@/components/Admin/About/ViewAboutUs.vue";
 
 
-const adminAboutUsRoutes =[
+const adminAboutUsRoutes = [
     {
-      path: 'aboutUs',
+        path: 'aboutUs',
         components: {
-          adminContent: AboutUsManagement
+            adminContent: AboutUsManagement
         },
     },
     {

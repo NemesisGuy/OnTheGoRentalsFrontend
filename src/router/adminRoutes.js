@@ -25,6 +25,12 @@ const adminRoutes = [
         name: 'ActiveRentalsManagement',
         component: ActiveRentalsManagement,
     },
+    // Add file-management routes here
+    {
+        path: 'file-management',
+        name: 'FileManagement',
+        component: () => import('@/components/Admin/FileManagement/FileManagement.vue'), // Lazy load the component
+    }
 
 ];
 

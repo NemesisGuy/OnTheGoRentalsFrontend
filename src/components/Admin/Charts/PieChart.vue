@@ -1,36 +1,34 @@
 <template>
   <div class="chart-container">
-    <LoadingModalSection :show="isLoading" show>Analyzing price groups...</LoadingModalSection>
+    <!-- The Pie component from vue-chartjs -->
     <Pie v-if="!isLoading && chartData" :data="chartData" :options="chartOptions"/>
+
+    <!-- A more informative message to display if there's no data -->
     <div v-if="!isLoading && !chartData" class="no-data">
-      No rental data available to display price group distribution.
+      <i class="fas fa-dollar-sign"></i>
+      <p>No rental data available for price group analysis.</p>
     </div>
   </div>
 </template>
 
 <script>
 import { Pie } from 'vue-chartjs';
-import { Chart, ArcElement, Title, Tooltip, Legend } from 'chart.js';
-import LoadingModalSection from "@/components/Main/Modals/LoadingModalSection.vue";
+import { Chart as ChartJS, ArcElement, Title, Tooltip, Legend } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-Chart.register(ArcElement, Title, Tooltip, Legend);
+// Register the necessary Chart.js components and the datalabels plugin
+ChartJS.register(ArcElement, Title, Tooltip, Legend, ChartDataLabels);
 
 /**
  * PieChart.vue
  * Displays a pie chart showing the distribution of rentals across different price groups.
- * This component receives its data via props and does not perform its own API calls.
  */
 export default {
-  name: 'PieChart', // Renamed from RentalsDistributionChart for simplicity
+  name: 'PieChart',
   components: {
     Pie,
-    LoadingModalSection,
   },
   props: {
-    /**
-     * The raw array of rental objects passed from the parent dashboard component.
-     * @type {Array}
-     */
     rentalsData: {
       type: Array,
       required: true,
@@ -40,90 +38,128 @@ export default {
   data() {
     return {
       chartData: null,
-      chartOptions: {
+      isLoading: true,
+    };
+  },
+  computed: {
+    /**
+     * Configuration options for the Chart.js chart.
+     * @returns {Object}
+     */
+    chartOptions() {
+      return {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            position: 'top',
+            position: 'top', // Position legend at the top
           },
           title: {
             display: true,
-            text: 'Rental Distribution by Price Group'
+            text: 'Rental Distribution by Price Group',
+            font: { size: 18 }
+          },
+          // Configure datalabels to show percentages
+          datalabels: {
+            color: '#fff', // White text for better contrast on colored backgrounds
+            font: {
+              weight: 'bold',
+            },
+            // Calculate and format the percentage
+            formatter: (value, ctx) => {
+              const sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+              const percentage = (value * 100 / sum).toFixed(0) + '%';
+              // Only show the percentage if it's large enough to be readable
+              return sum > 0 && (value * 100 / sum) > 5 ? percentage : '';
+            },
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw;
+                const sum = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                const percentage = (value * 100 / sum).toFixed(1) + '%';
+                return `${label}: ${value} rentals (${percentage})`;
+              }
+            }
           }
         }
-      },
-      isLoading: false,
-    };
-  },
-  mounted() {
-    this.processChartData();
+      };
+    },
   },
   watch: {
     rentalsData: {
       handler() {
         this.processChartData();
       },
-      deep: true
+      deep: true,
+      immediate: true
     }
   },
   methods: {
+    /**
+     * Defines a consistent color for each price group.
+     * @param {string} groupName The name of the price group.
+     * @returns {string} A hex color code.
+     */
+    getColorForGroup(groupName) {
+      const colorMap = {
+        'ECONOMY': '#4CAF50',
+        'STANDARD': '#2196F3',
+        'LUXURY': '#FFC107',
+        'PREMIUM': '#9C27B0',
+        'EXOTIC': '#E91E63',
+        'SPECIAL': '#FF5722',
+        'default': '#9E9E9E'
+      };
+      return colorMap[groupName.toUpperCase()] || colorMap['default'];
+    },
+
     /**
      * Processes the raw rentalsData prop to count rentals per price group.
      */
     processChartData() {
       this.isLoading = true;
-      setTimeout(() => {
-        try {
-          const rentals = this.rentalsData;
-
-          if (!rentals || rentals.length === 0) {
-            this.chartData = null;
-            return;
-          }
-
-          const priceGroupDistribution = {};
-          rentals.forEach((rental) => {
-            if (rental && rental.car && rental.car.priceGroup) {
-              const priceGroup = rental.car.priceGroup;
-              priceGroupDistribution[priceGroup] = (priceGroupDistribution[priceGroup] || 0) + 1;
-            }
-          });
-
-          const labels = Object.keys(priceGroupDistribution);
-          const data = Object.values(priceGroupDistribution);
-
-          if (labels.length > 0) {
-            this.chartData = {
-              labels: labels,
-              datasets: [
-                {
-                  label: 'Number of Rentals',
-                  data: data,
-                  backgroundColor: [ // A consistent color palette for price groups
-                    'rgba(75, 192, 192, 0.7)',  // ECONOMY
-                    'rgba(54, 162, 235, 0.7)',  // STANDARD
-                    'rgba(255, 206, 86, 0.7)', // LUXURY
-                    'rgba(153, 102, 255, 0.7)',// PREMIUM
-                    'rgba(255, 99, 132, 0.7)',  // EXOTIC
-                    'rgba(255, 159, 64, 0.7)', // SPECIAL
-                    'rgba(201, 203, 207, 0.7)',// OTHER/NONE
-                  ],
-                  borderColor: '#fff',
-                  borderWidth: 1,
-                },
-              ],
-            };
-          } else {
-            this.chartData = null;
-          }
-        } catch (error) {
-          console.error('PieChart: Error processing chart data:', error);
+      try {
+        const rentals = this.rentalsData;
+        if (!rentals || rentals.length === 0) {
           this.chartData = null;
-        } finally {
-          this.isLoading = false;
+          return;
         }
-      }, 250);
+
+        const distribution = rentals.reduce((acc, rental) => {
+          if (rental?.car?.priceGroup) {
+            const group = rental.car.priceGroup;
+            acc[group] = (acc[group] || 0) + 1;
+          }
+          return acc;
+        }, {});
+
+        const labels = Object.keys(distribution);
+        const data = Object.values(distribution);
+
+        if (labels.length > 0) {
+          this.chartData = {
+            labels,
+            datasets: [{
+              label: 'Rentals',
+              data,
+              backgroundColor: labels.map(label => this.getColorForGroup(label)),
+              borderColor: '#fff',
+              borderWidth: 2,
+              hoverOffset: 8,
+            }],
+          };
+        } else {
+          this.chartData = null;
+        }
+      } catch (error) {
+        console.error('PieChart: Error processing chart data:', error);
+        this.chartData = null;
+      } finally {
+        this.isLoading = false;
+      }
     },
   },
 };
@@ -132,15 +168,25 @@ export default {
 <style scoped>
 .chart-container {
   position: relative;
-  height: 400px;
+  height: 350px;
   width: 100%;
 }
 .no-data {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
   color: #888;
+  text-align: center;
+}
+.no-data i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+.no-data p {
   font-style: italic;
+  font-size: 1.1rem;
+  margin: 0;
 }
 </style>

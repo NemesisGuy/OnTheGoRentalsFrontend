@@ -1,44 +1,36 @@
 <template>
   <div class="chart-container">
-    <LoadingModalSection v-if="isLoading" show>Loading chart data...</LoadingModalSection>
-
     <!-- The Bar chart component from vue-chartjs -->
     <Bar v-if="!isLoading && chartData" :data="chartData" :options="chartOptions"/>
 
-    <!-- A message to display if there's no data to show -->
+    <!-- A more informative message to display if there's no data to show -->
     <div v-if="!isLoading && !chartData" class="no-data">
-      No rental data available to display for this period.
+      <i class="fas fa-car-side"></i>
+      <p>No rental data available to determine car popularity.</p>
     </div>
   </div>
 </template>
 
 <script>
 import { Bar } from 'vue-chartjs';
-import { Chart, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
-import LoadingModalSection from "@/components/Main/Modals/LoadingModalSection.vue";
-// The 'fetchRentalsData' import is no longer needed here as data is passed via props.
-// import { fetchRentalsData } from './rentalsApi';
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
+// 1. Import the new datalabels plugin
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-// Register the necessary components for Chart.js
-Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+// 2. Register the datalabels plugin with Chart.js
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ChartDataLabels);
 
 /**
- * RentalChart.vue
- * A component that displays a bar chart of the number of rentals per day.
- * This component is now 'dumb' - it receives its data via props from a parent component
- * (like AdminDashboard) and is only responsible for processing and displaying that data.
+ * CarPopularityChart.vue
+ * An improved component that displays a visually-engaging horizontal bar chart
+ * of the most rented car models, featuring data labels and dynamic colors.
  */
 export default {
-  name: 'RentalChart', // Renamed from RentalsPerDayBarChart for consistency with dashboard
+  name: 'CarPopularityChart',
   components: {
     Bar,
-    LoadingModalSection,
   },
   props: {
-    /**
-     * The raw array of rental objects fetched from the API.
-     * @type {Array}
-     */
     rentalsData: {
       type: Array,
       required: true,
@@ -47,133 +39,148 @@ export default {
   },
   data() {
     return {
-      /**
-       * The processed data object formatted for Chart.js.
-       * @type {Object|null}
-       */
       chartData: null,
-      /**
-       * Configuration options for the Chart.js chart.
-       * @type {Object}
-       */
-      chartOptions: {
+      isLoading: true,
+    };
+  },
+  computed: {
+    /**
+     * Configuration options for the Chart.js chart.
+     * @returns {Object}
+     */
+    chartOptions() {
+      return {
+        indexAxis: 'y', // This makes the bar chart horizontal
         responsive: true,
         maintainAspectRatio: false,
+        layout: {
+          padding: {
+            right: 40 // Add padding to the right to ensure data labels are not cut off
+          }
+        },
         scales: {
-          y: {
+          x: {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Number of Rentals'
+              text: 'Number of Times Rented',
+              font: { size: 14 }
             },
             ticks: {
-              stepSize: 1, // Ensure y-axis only shows whole numbers for counts
+              stepSize: 1,
               precision: 0,
-            }
-          },
-          x: {
-            title: {
-              display: true,
-              text: 'Date'
             }
           }
         },
         plugins: {
           legend: {
-            display: false, // Hide legend as there's only one dataset
+            display: false,
           },
           title: {
             display: true,
-            text: 'Daily Rental Volume'
+            text: 'Top 10 Most Popular Car Models',
+            font: { size: 18 }
           },
+          // 3. Configure the datalabels plugin
+          datalabels: {
+            anchor: 'end',
+            align: 'right',
+            color: '#444',
+            font: {
+              weight: 'bold',
+            },
+            formatter: (value) => value, // Display the raw count
+          },
+          // 4. Improve the tooltips
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Rented: ${context.raw} times`;
+              }
+            }
+          }
         }
-      },
-      /**
-       * Controls the visibility of the loading overlay.
-       * @type {Boolean}
-       */
-      isLoading: false,
-    };
+      };
+    },
   },
-  /**
-   * Lifecycle hook that runs when the component is first mounted.
-   * Kicks off the initial data processing.
-   */
-  mounted() {
-    this.processChartData();
-  },
-  /**
-   * Watches the 'rentalsData' prop for changes. If the parent component
-   * fetches new data, this watcher will trigger a re-processing of the chart.
-   */
   watch: {
     rentalsData: {
       handler() {
         this.processChartData();
       },
-      deep: true // Watch for changes inside the array
+      deep: true,
+      immediate: true, // Process data immediately when the component is created
     }
   },
   methods: {
     /**
-     * Processes the raw rentalsData prop into a format suitable for the bar chart.
-     * It counts the number of rentals for each day.
+     * Generates a palette of visually distinct colors for the chart bars.
+     * @param {number} count The number of colors to generate.
+     * @returns {string[]} An array of color strings in hex format.
+     */
+    generateColorPalette(count) {
+      const baseColors = [
+        '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107',
+        '#FF9800', '#FF5722', '#795548', '#607D8B', '#9E9E9E'
+      ];
+      const palette = [];
+      for (let i = 0; i < count; i++) {
+        palette.push(baseColors[i % baseColors.length]);
+      }
+      return palette;
+    },
+
+    /**
+     * Processes the raw rentalsData prop to count the usage of each car model.
      */
     processChartData() {
       this.isLoading = true;
 
-      // Use a timeout to ensure the loading animation is visible and UI feels responsive
-      setTimeout(() => {
-        try {
-          const rentals = this.rentalsData;
-
-          if (!rentals || rentals.length === 0) {
-            console.log('RentalChart: No data provided to process.');
-            this.chartData = null; // Clear chart if no data
-            return;
-          }
-
-          const rentalCountsByDate = {};
-
-          rentals.forEach((rental) => {
-            if (rental && rental.issuedDate) {
-              // Extract just the date part (YYYY-MM-DD) from the timestamp
-              const issuedDateOnly = rental.issuedDate.split('T')[0];
-              if (rentalCountsByDate[issuedDateOnly]) {
-                rentalCountsByDate[issuedDateOnly]++;
-              } else {
-                rentalCountsByDate[issuedDateOnly] = 1;
-              }
-            }
-          });
-
-          // Sort dates chronologically for the X-axis
-          const labels = Object.keys(rentalCountsByDate).sort((a, b) => new Date(a) - new Date(b));
-
-          if (labels.length > 0) {
-            this.chartData = {
-              labels: labels,
-              datasets: [
-                {
-                  label: 'Number of Rentals',
-                  backgroundColor: '#82C0FF',
-                  borderColor: '#4A90E2',
-                  borderWidth: 1,
-                  borderRadius: 4,
-                  data: labels.map((label) => rentalCountsByDate[label]),
-                },
-              ],
-            };
-          } else {
-            this.chartData = null;
-          }
-        } catch (error) {
-          console.error('RentalChart: Error processing chart data:', error);
+      try {
+        const rentals = this.rentalsData;
+        if (!rentals || rentals.length === 0) {
           this.chartData = null;
-        } finally {
-          this.isLoading = false;
+          return;
         }
-      }, 250); // A small delay for UX
+
+        // Use reduce for a more concise way to count occurrences
+        const popularityCounts = rentals.reduce((acc, rental) => {
+          if (rental?.car?.make && rental.car.model) {
+            const carName = `${rental.car.make} ${rental.car.model}`;
+            acc[carName] = (acc[carName] || 0) + 1;
+          }
+          return acc;
+        }, {});
+
+        // Convert to array, sort by count, and take the top 10
+        const sortedPopularity = Object.entries(popularityCounts)
+            .sort(([, countA], [, countB]) => countB - countA)
+            .slice(0, 10);
+
+        if (sortedPopularity.length > 0) {
+          const labels = sortedPopularity.map(([name]) => name);
+          const data = sortedPopularity.map(([, count]) => count);
+          const colors = this.generateColorPalette(labels.length);
+
+          this.chartData = {
+            labels,
+            datasets: [{
+              label: 'Number of Rentals',
+              backgroundColor: colors,
+              borderWidth: 0,
+              borderRadius: 4,
+              data,
+            }],
+          };
+        } else {
+          this.chartData = null;
+        }
+      } catch (error) {
+        console.error('CarPopularityChart: Error processing chart data:', error);
+        this.chartData = null;
+      } finally {
+        this.isLoading = false;
+      }
     },
   },
 };
@@ -182,17 +189,28 @@ export default {
 <style scoped>
 .chart-container {
   position: relative;
-  height: 400px;
+  height: 350px;
   width: 100%;
 }
 
 .no-data {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
   color: #888;
+  text-align: center;
+}
+
+.no-data i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.no-data p {
   font-style: italic;
   font-size: 1.1rem;
+  margin: 0;
 }
 </style>

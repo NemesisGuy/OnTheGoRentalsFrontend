@@ -23,8 +23,8 @@ const adminRentalRoutes = [
     {
         path: '/admin/rentals/read/:uuid',
         name: 'ViewRental',
-        components:{
-            adminContent : ReadRental,
+        components: {
+            adminContent: ReadRental,
         },
 
     },
@@ -40,9 +40,6 @@ const adminRentalRoutes = [
 
         component: () => import('@/components/Admin/Rental/ProcessReturn.vue'), // Adjust path to your component
     }
-
-
-
 
 
 ];

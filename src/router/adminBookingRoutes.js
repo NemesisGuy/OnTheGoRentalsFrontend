@@ -3,7 +3,7 @@ import CreateBooking from "@/components/Admin/Booking/CreateBooking.vue";
 import ViewBooking from "@/components/Admin/Booking/ViewBooking.vue";
 
 const adminBookingRoutes = [
-      {
+    {
         path: 'bookings',
         components: {
             adminContent: BookingManagement,
@@ -27,7 +27,6 @@ const adminBookingRoutes = [
 ];
 
 
- 
 export default adminBookingRoutes;
 
   

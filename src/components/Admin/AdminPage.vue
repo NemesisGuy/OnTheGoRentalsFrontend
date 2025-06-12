@@ -89,8 +89,12 @@
               <i class="fas fa-calendar"></i>
               <span class="menu-text" v-show="isExpanded">Booking Management</span>
             </router-link>
-
-
+          </li>
+          <li>
+            <router-link to="/admin/file-management">
+              <i class="fas fa-file"></i>
+              <span class="menu-text" v-show="isExpanded">File Management</span>
+            </router-link>
           </li>
           <li>
             <router-link to="/admin/settings">

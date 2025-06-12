@@ -4,7 +4,7 @@ import UpdateContactUs from "@/components/Admin/ContactUs/UpdateContactUs.vue";
 import DeleteContactUs from "@/components/Admin/ContactUs/DeleteContactUs.vue";
 import ViewContactUs from "@/components/Admin/ContactUs/ViewContactUs.vue";
 
-const adminContactUsRoutes =[
+const adminContactUsRoutes = [
     {
         path: 'contactUs',
         components: {
@@ -13,7 +13,7 @@ const adminContactUsRoutes =[
     },
     {
         path: 'contactUs/create',
-        name:"CreateContactUs",
+        name: "CreateContactUs",
         components: {
             adminContent: CreateContactUs
         },

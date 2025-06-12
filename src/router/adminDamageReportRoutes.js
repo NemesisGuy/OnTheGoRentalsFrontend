@@ -1,4 +1,3 @@
-
 import DamageReportManagement from "@/components/Admin/DamageReport/DamageReportManagement.vue";
 import CreateDamageReport from "@/components/Admin/DamageReport/CreateDamageReport.vue";
 import ViewDamageReport from "@/components/Admin/DamageReport/ViewDamageReport.vue";

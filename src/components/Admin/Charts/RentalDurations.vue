@@ -1,189 +1,181 @@
+<template>
+  <div class="chart-container">
+    <!-- The Line chart component from vue-chartjs -->
+    <Line v-if="!isLoading && chartData" :data="chartData" :options="chartOptions" />
 
-    <template>
-      <div class="chart-container">
-        <LoadingModalSection v-if="isLoading" show>Calculating durations...</LoadingModalSection>
-        <Line v-if="!isLoading && chartData" :data="chartData" :options="chartOptions"/>
-        <div v-if="!isLoading && !chartData" class="no-data">
-          No completed rentals with valid dates to display.
-        </div>
-      </div>
-    </template>
+    <!-- A more informative message to display if there's no data -->
+    <div v-if="!isLoading && !chartData" class="no-data">
+      <i class="fas fa-calendar-alt"></i>
+      <p>Not enough data to analyze rental durations.</p>
+    </div>
+  </div>
+</template>
 
-    <script>
-      import { Line } from 'vue-chartjs';
-      import { Chart, Title, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js';
-      import LoadingModalSection from "@/components/Main/Modals/LoadingModalSection.vue";
-      // The 'fetchRentalsData' import is no longer needed.
+<script>
+import { Line } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement, Filler } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-      Chart.register(Title, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement);
+// Register the necessary Chart.js components, including the 'Filler' plugin for gradient fills
+ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale, Filler, ChartDataLabels);
 
-      /**
-       * RentalDurations.vue
-       * A line chart that calculates and displays the average rental duration in days over time.
-       * This component receives its data via props and does not perform its own API calls.
-       */
-      export default {
-        name: 'RentalDurations',
-        components: {
-          Line,
-          LoadingModalSection,
-        },
-        props: {
-          /**
-           * The raw array of rental objects passed from the parent dashboard component.
-           * @type {Array}
-           */
-          rentalsData: {
-            type: Array,
-            required: true,
-            default: () => []
+/**
+ * RentalDurations.vue
+ * Displays a line chart showing the average rental duration by month.
+ */
+export default {
+  name: 'RentalDurations',
+  components: { Line },
+  props: {
+    rentalsData: {
+      type: Array,
+      required: true,
+      default: () => []
+    }
+  },
+  data() {
+    return {
+      chartData: null,
+      isLoading: true,
+    };
+  },
+  computed: {
+    chartOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Average Duration (Days)',
+              font: { size: 14 }
+            }
           }
         },
-        data() {
-          return {
-            chartData: null,
-            chartOptions: {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  title: {
-                    display: true,
-                    text: 'Average Rental Duration (Days)'
-                  }
-                },
-                x: {
-                  title: {
-                    display: true,
-                    text: 'Date of Rental Issue'
-                  }
-                }
-              },
-              plugins: {
-                legend: {
-                  position: 'top',
-                },
-                title: {
-                  display: true,
-                  text: 'Average Rental Durations Over Time'
-                },
-                tooltip: {
-                  callbacks: {
-                    label: function (context) {
-                      let label = context.dataset.label || '';
-                      if (label) {
-                        label += ': ';
-                      }
-                      if (context.parsed.y !== null) {
-                        label += context.parsed.y.toFixed(1) + ' days'; // Show one decimal place for average
-                      }
-                      return label;
-                    }
-                  }
-                }
-              }
-            },
-            isLoading: false,
-          };
-        },
-        mounted() {
-          this.processChartData();
-        },
-        watch: {
-          rentalsData: {
-            handler() {
-              this.processChartData();
-            },
-            deep: true
-          }
-        },
-        methods: {
-          /**
-           * Processes the raw rentalsData prop to calculate average durations.
-           */
-          processChartData() {
-            this.isLoading = true;
-            setTimeout(() => {
-              try {
-                const rentals = this.rentalsData;
-
-                if (!rentals || rentals.length === 0) {
-                  this.chartData = null;
-                  return;
-                }
-
-                const rentalDurationsByDate = {};
-
-                rentals.forEach((rental) => {
-                  // Only consider COMPLETED rentals to calculate duration
-                  if (rental && rental.status === 'COMPLETED' && rental.issuedDate && rental.returnedDate) {
-                    const issuedDateOnly = rental.issuedDate.split('T')[0];
-
-                    const issuedTimestamp = new Date(rental.issuedDate).getTime();
-                    const returnedTimestamp = new Date(rental.returnedDate).getTime();
-
-                    if (!isNaN(issuedTimestamp) && !isNaN(returnedTimestamp) && returnedTimestamp >= issuedTimestamp) {
-                      // Calculate duration in days, allowing for fractions of a day
-                      const duration = (returnedTimestamp - issuedTimestamp) / (1000 * 60 * 60 * 24);
-                      if (!rentalDurationsByDate[issuedDateOnly]) {
-                        rentalDurationsByDate[issuedDateOnly] = [];
-                      }
-                      rentalDurationsByDate[issuedDateOnly].push(duration);
-                    }
-                  }
-                });
-
-                const labels = Object.keys(rentalDurationsByDate).sort((a, b) => new Date(a) - new Date(b));
-
-                if (labels.length === 0) {
-                  this.chartData = null; // No completed rentals found
-                  return;
-                }
-
-                const dataset = labels.map((label) => {
-                  const durations = rentalDurationsByDate[label];
-                  const sum = durations.reduce((total, d) => total + d, 0);
-                  return sum / durations.length; // Calculate the average
-                });
-
-                this.chartData = {
-                  labels: labels,
-                  datasets: [
-                    {
-                      label: 'Avg. Rental Duration (Days)',
-                      backgroundColor: 'rgba(248, 121, 121, 0.2)',
-                      borderColor: '#f87979',
-                      data: dataset,
-                      fill: true,
-                      tension: 0.2
-                    },
-                  ],
-                };
-              } catch (error) {
-                console.error('RentalDurations: Error processing chart data:', error);
-                this.chartData = null;
-              } finally {
-                this.isLoading = false;
-              }
-            }, 250);
+        plugins: {
+          legend: {
+            display: false,
           },
-        },
+          title: {
+            display: true,
+            text: 'Average Rental Duration by Month',
+            font: { size: 18 }
+          },
+          // Display the average duration above each point on the line
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            color: '#555',
+            font: {
+              weight: 'bold',
+            },
+            formatter: (value) => value.toFixed(1), // Format to one decimal place
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Avg. Duration: ${context.raw.toFixed(1)} days`;
+              }
+            }
+          }
+        }
       };
-    </script>
+    },
+  },
+  watch: {
+    rentalsData: {
+      handler() {
+        this.processChartData();
+      },
+      deep: true,
+      immediate: true
+    }
+  },
+  methods: {
+    processChartData() {
+      this.isLoading = true;
+      try {
+        if (!this.rentalsData || this.rentalsData.length === 0) {
+          this.chartData = null;
+          return;
+        }
 
-    <style scoped>
-      .chart-container { /* Renamed for clarity and consistency */
-        position: relative;
-        height: 400px;
-        width: 100%;
+        // Group rental durations by month (e.g., "2023-01")
+        const monthlyDurations = this.rentalsData.reduce((acc, rental) => {
+          if (rental.issuedDate && rental.returnDate) {
+            const startDate = new Date(rental.issuedDate);
+            const returnDate = new Date(rental.returnDate);
+            const duration = (returnDate - startDate) / (1000 * 60 * 60 * 24);
+
+            if (duration >= 0) {
+              const month = startDate.toISOString().slice(0, 7);
+              if (!acc[month]) acc[month] = [];
+              acc[month].push(duration);
+            }
+          }
+          return acc;
+        }, {});
+
+        const labels = Object.keys(monthlyDurations).sort();
+        if (labels.length === 0) {
+          this.chartData = null;
+          return;
+        }
+
+        // Calculate the average duration for each month
+        const averageDurations = labels.map(month => {
+          const durations = monthlyDurations[month];
+          const sum = durations.reduce((a, b) => a + b, 0);
+          return sum / durations.length;
+        });
+
+        this.chartData = {
+          labels,
+          datasets: [{
+            label: 'Average Rental Duration',
+            data: averageDurations,
+            borderColor: '#36A2EB',
+            pointBackgroundColor: '#36A2EB',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)', // Light blue gradient fill
+            tension: 0.2,
+            fill: true, // Enable the gradient fill
+          }]
+        };
+      } catch (error) {
+        console.error('RentalDurations: Error processing chart data:', error);
+        this.chartData = null;
+      } finally {
+        this.isLoading = false;
       }
-      .no-data {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        color: #888;
-        font-style: italic;
-      }
-    </style>
+    }
+  }
+};
+</script>
+
+<style scoped>
+.chart-container {
+  position: relative;
+  height: 350px;
+  width: 100%;
+}
+.no-data {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #888;
+  text-align: center;
+}
+.no-data i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+.no-data p {
+  font-style: italic;
+  font-size: 1.1rem;
+  margin: 0;
+}
+</style>

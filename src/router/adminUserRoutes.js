@@ -1,9 +1,7 @@
-import UserList from "@/components/Admin/User/UserList.vue";
 import UpdateUser from "@/components/Admin/User/UpdateUser.vue";
 import CreateUser from "@/components/Admin/User/CreateUser.vue";
 import DeleteUser from "@/components/Admin/User/DeleteUser.vue";
 import ViewUser from "@/components/Admin/User/ViewUser.vue";
-import Users from "@/components/Admin/User/UserManagement.vue";
 import UserManagement from "@/components/Admin/User/UserManagement.vue";
 
 const adminUserRoutes = [

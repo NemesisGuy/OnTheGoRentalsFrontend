@@ -37,13 +37,46 @@
     --color-error: #ffdddd; /* Error message background color */
     --color-error-dark: #cc0000; /* Darker shade for error messages */
     --color-background: #fff; /* Background color */
-    --color-text-light: #555; /* Light text color */
-    --color-text-dark: #333; /* Dark text color */
+    /*--color-text-light: #555; !* Light text color *!*/
+    /*--color-text-dark: #333; !* Dark text color *!*/
     --color-text-black : #000; /* Black text color */
     --color-border: #ccc; /* Border color */
     --color-border-dark: #2b3d20; /* Darker border color for modals */
     --button-back: #6c757d; /* Button Background Color */
+
+    /* Just For Gemmie */
+    /* Text Colors */
+    --color-text-dark: #343a40;      /* For use on light backgrounds */
+    --color-text-light: #f8f9fa;     /* For use on dark backgrounds */
+
+    /* KPI Card Theme Colors */
+    /* Blue for Rentals */
+    --color-rentals-bg: #007bff;
+    --color-rentals-icon: #ffffff;
+
+    /* Green for Available */
+    --color-available-bg: #28a745;
+    --color-available-icon: #ffffff;
+
+    /* Red for Overdue */
+    --color-overdue-bg: #dc3545;
+    --color-overdue-icon: #ffffff;
+
+    /* Yellow for Collections */
+    --color-collections-bg: #ffc107;
+    --color-collections-icon: #212529; /* Dark icon for light background */
+
+    /* Purple for File Management */
+    --color-files-bg: #6f42c1;
+    --color-files-icon: #ffffff;
+
+    /* Generic UI Colors */
+    --color-background-light: #f4f7f6;
+    --color-card-background: #ffffff;
+    --color-border-light: #e9ecef;
 }
+
+
 /* Global Styles */
 html, body, #app {
   /*  height: 100%;*/
