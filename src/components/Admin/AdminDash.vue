@@ -262,6 +262,7 @@ export default {
   font-style: italic;
 }
 .refresh-button {
+  color: var(--color-text-black);
   background: white;
   border: 1px solid #ccc;
   border-radius: 50%;
@@ -325,7 +326,7 @@ export default {
 .kpi-card.rentals { background-color: var(--color-rentals-bg, #007bff); color: white; }
 .kpi-card.available { background-color: var(--color-available-bg, #28a745); color: white; }
 .kpi-card.overdue { background-color: var(--color-overdue-bg, #dc3545); color: white; }
-.kpi-card.collections { background-color: var(--color-collections-bg, #ffc107); color: #212529; }
+.kpi-card.collections { background-color: var(--color-collections-bg, #ffc107); color: var(--bs-white); }
 .kpi-card.files { background-color: var(--color-files-bg, #6f42c1); color: white; }
 
 .overdue-list { grid-area: overdue; }

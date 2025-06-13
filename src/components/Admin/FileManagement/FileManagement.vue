@@ -137,7 +137,7 @@ export default {
     },
     getOrphanedFileUrl(folder, filename) {
       // Use the existing public file endpoint to create a preview URL
-      return `${api.defaults.baseURL}api/v1/files/${folder}/${filename}`;
+      return `${api.defaults.baseURL}/api/v1/files/${folder}/${filename}`;
     },
     onImageError(event) {
       event.target.src = defaultImage; // Fallback for broken image previews
