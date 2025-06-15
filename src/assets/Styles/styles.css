@@ -3,10 +3,19 @@
     --sidebar-container-width: 300px; /*!* Change this to the width of sidebar-container *!*/
 
     /* Colors */
-    --primary-color: #6610f2;
+    /*--primary-color: #6610f2;*/
+    --primary-color: #f0f0f5;
     --secondary-color: #f2105e;
     --active-color: #10f2f2;
-    --text-color: floralwhite;
+    /*--text-color: floralwhite;*/
+    --text-color: #343a40;
+    --text-color-dark: #343a40;
+    --text-color-light: #f8f9fa;
+
+    /* Background Colors */
+    --primary-background-color: #e1e1e1;
+    --secondary-background-color: #f0f0f5;
+    --background-color-white: #fff;
     --background-color: #fff;
     --box-shadow-color: #000;
 
@@ -322,7 +331,7 @@ nav a:active {
 
 .sidebar a {
     display: block;
-    color: var(--text-color);
+    color: var(--text-color-light);
     text-decoration: none;
 }
 
@@ -404,7 +413,7 @@ th, td {
 
 .sidebar a {
     display: block;
-    color: var(--text-color);
+    color: var(--text-color-light);
     text-decoration: none;
     border-radius: 2px;
 }
@@ -1337,7 +1346,7 @@ span {
 }
 
 .jumbotron {
-    background-image: url('../../assets/Images/Background/paralax-stars.jpg');
+    background-image: url('../Images/Backgrounds/paralax-stars.jpg');
     background-size: cover;
     height: 500px;
     display: flex;

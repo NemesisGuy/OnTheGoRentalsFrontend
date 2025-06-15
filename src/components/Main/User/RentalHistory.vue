@@ -1,69 +1,71 @@
 <template>
-  <div class="card-container">
-    <div class="form-container">
-      <div class="rental-history">
-        <div class="form-header">
-          <div v-if="loading">
-            <h2>Loading Rental History...</h2>
-            <hr>
+  <div class="content-container">
+    <div class="page-header">
+      <h1><i class="fas fa-history"></i> Rental History</h1>
+      <p>Here you can view your past and current rentals.</p>
+    </div>
+
+    <div v-if="loading" class="rentals-list">
+      <div v-for="i in 3" :key="i" class="rental-item-shimmer">
+        <div class="shimmer shimmer-indicator"></div>
+        <div class="shimmer-details">
+          <div class="shimmer-header">
+            <div class="shimmer shimmer-line" style="width: 40%; height: 20px;"></div>
+            <div class="shimmer shimmer-line" style="width: 100px; height: 28px; border-radius: 50px;"></div>
           </div>
-          <div v-else>
-            <h2><i class="fas fa-history"></i> Rental History</h2>
-            <hr>
+          <div class="shimmer-body">
+            <div class="shimmer shimmer-line"></div>
+            <div class="shimmer shimmer-line" style="width: 80%;"></div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Loading Modal -->
-        <LoadingModal v-if="loading" show> </LoadingModal>
+    <div v-else-if="rentals.length === 0" class="no-rentals-container">
+      <div class="no-rentals-card">
+        <i class="fas fa-road empty-icon"></i>
+        <h2>Your rental history is empty.</h2>
+        <p>You haven't rented any cars with us yet. Let's find your first ride!</p>
+        <router-link :to="{ name: 'CarList', params: { pricegroup: 'all' } }" class="button find-car-button">
+          <i class="fas fa-search"></i> Find a Car
+        </router-link>
+      </div>
+    </div>
 
-        <div v-if="loading">
-          <!-- Shimmer placeholders -->
-          <div class="shimmer-card">
-            <div class="shimmer-line shimmer" style="width: 100%;"></div>
-            <div class="shimmer-line shimmer" style="width: 90%;"></div>
-            <div class="shimmer-line shimmer" style="width: 70%;"></div>
-            <div class="shimmer-line shimmer" style="width: 50%;"></div>
-            <div class="shimmer-line shimmer" style="width: 30%;"></div>
-            <div class="shimmer-line shimmer" style="width: 20%;"></div>
-            <hr>
+    <div v-else class="rentals-list">
+      <div v-for="rental in sortedRentals" :key="rental.uuid" class="rental-wrapper">
+        <div class="rental-item">
+          <div class="status-indicator" :class="rental.returnedDate ? 'returned' : 'active'">
+            <i :class="rental.returnedDate ? 'fas fa-check' : 'fas fa-road'"></i>
           </div>
-          <div class="shimmer-card">
-            <div class="shimmer-line shimmer" style="width: 100%;"></div>
-            <div class="shimmer-line shimmer" style="width: 90%;"></div>
-            <div class="shimmer-line shimmer" style="width: 70%;"></div>
-            <div class="shimmer-line shimmer" style="width: 50%;"></div>
-            <div class="shimmer-line shimmer" style="width: 30%;"></div>
-            <div class="shimmer-line shimmer" style="width: 20%;"></div>
-            <hr>
-          </div>
-          <div class="shimmer-card">
-            <div class="shimmer-line shimmer" style="width: 100%;"></div>
-            <div class="shimmer-line shimmer" style="width: 90%;"></div>
-            <div class="shimmer-line shimmer" style="width: 70%;"></div>
-            <div class="shimmer-line shimmer" style="width: 50%;"></div>
-            <div class="shimmer-line shimmer" style="width: 30%;"></div>
-            <div class="shimmer-line shimmer" style="width: 20%;"></div>
-            <hr>
+          <div class="rental-info">
+            <div class="info-header">
+              <h3 class="car-title">{{ rental.car.make }} {{ rental.car.model }}</h3>
+              <span :class="['status-badge', rental.returnedDate ? 'status-returned' : 'status-active']">
+                {{ rental.returnedDate ? 'Returned' : 'Active' }}
+              </span>
+            </div>
+            <div class="info-body">
+              <div class="detail-item">
+                <strong><i class="fas fa-calendar-check"></i> PICKUP DATE</strong>
+                <span>{{ formatDateTime(rental.issuedDate) }}</span>
+              </div>
+              <div class="detail-item">
+                <strong><i class="fas fa-calendar-times"></i> RETURN DATE</strong>
+                <span>{{ rental.returnedDate ? formatDateTime(rental.returnedDate) : 'Currently Rented' }}</span>
+              </div>
+            </div>
+            <div class="info-footer">
+              <span>Rental ID: {{ rental.uuid.substring(0, 8) }}...</span>
+              <span>License: {{ rental.car.licensePlate }}</span>
+            </div>
           </div>
         </div>
-
-        <!-- Rental list -->
-        <ol v-else-if="rentals.length">
-          <li v-for="rental in rentals" :key="rental.uuid"> <!-- Assuming uuid is the unique key for rentals -->
-            <p><strong>Rental ID:</strong> {{ rental.uuid }}</p>
-            <p><strong>Car:</strong> {{ rental.car.make }}, {{ rental.car.model }}, {{rental.car.licensePlate}}</p>
-            <p><strong>Start Date:</strong> {{ formatDateTime(rental.issuedDate) }}</p>
-            <p><strong>End Date:</strong> {{ formatDateTime(rental.returnedDate) }}</p>
-            <p><strong>Status:</strong> {{ rental.returnedDate ? 'Returned' : 'Active' }}</p>
-            <hr>
-          </li>
-        </ol>
-
-        <p v-else>No rentals found.</p>
       </div>
-      <div class="button-container">
-        <button class="back-button button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
-      </div>
+    </div>
+
+    <div class="button-container">
+      <button class="button back-button" @click="goBack"><i class="fas fa-arrow-left"></i> Back</button>
     </div>
   </div>
 </template>
@@ -75,85 +77,34 @@ import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 
 export default {
   name: "RentalHistory",
-  components: {
-    LoadingModal,
-  },
+  components: { LoadingModal },
   data() {
     return {
       rentals: [],
-      user: {},
       loading: false,
-      // showLoadingModal is removed as v-if="loading" controls the modal directly
     };
+  },
+  computed: {
+    sortedRentals() {
+      return [...this.rentals].sort((a, b) => new Date(b.issuedDate) - new Date(a.issuedDate));
+    }
   },
   mounted() {
     this.fetchRentalHistory();
   },
   methods: {
     formatDateTime,
-    fetchRentalHistory() {
+    async fetchRentalHistory() {
       this.loading = true;
-
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        console.error("RentalHistory: Token not found");
+      try {
+        const response = await api.get(`/api/v1/users/me/rental-history`);
+        this.rentals = response.data.data || [];
+      } catch (error) {
+        console.error("RentalHistory: Error during API call:", error);
+        this.rentals = [];
+      } finally {
         this.loading = false;
-        // Potentially redirect to login or show an error message
-        return;
       }
-
-      // First, fetch user profile
-      api.get(`/api/v1/users/me/profile`)
-        .then(profileResponse => {
-          // Check if response.data and response.data.data exist
-          if (profileResponse.data && profileResponse.data.data) {
-            this.user = profileResponse.data.data;
-            // console.log("RentalHistory: User profile fetched:", this.user);
-          } else {
-            console.warn("RentalHistory: User profile data not found or in unexpected format.", profileResponse);
-            this.user = {}; // Reset user or handle error appropriately
-          }
-          // After profile is fetched (or attempt is made), fetch rental history
-          return api.get(`/api/v1/users/me/rental-history`);
-        })
-        .then(rentalHistoryResponse => {
-          // console.log("RentalHistory: Rental history response received:", rentalHistoryResponse);
-
-          if (rentalHistoryResponse.status === 204) {
-            console.info("RentalHistory: No rental history found (204 No Content).");
-            this.rentals = [];
-          } else if (rentalHistoryResponse.data && rentalHistoryResponse.data.status === "success") {
-            const rawData = rentalHistoryResponse.data.data;
-            if (Array.isArray(rawData) && rawData.length > 0) {
-              this.rentals = rawData;
-              console.info(`RentalHistory: Successfully fetched ${this.rentals.length} rentals.`);
-            } else {
-              console.info("RentalHistory: Rental history is empty (API success but no data).");
-              this.rentals = [];
-            }
-          } else if (rentalHistoryResponse.data && Array.isArray(rentalHistoryResponse.data.data) && rentalHistoryResponse.data.data.length === 0) {
-            // This case handles scenarios where status might not be "success" but an empty array is still provided.
-            console.info("RentalHistory: Rental history is an empty array.");
-            this.rentals = [];
-          }
-          else {
-            console.warn("RentalHistory: Fetch rental history API response indicates failure or unexpected format.", rentalHistoryResponse.data);
-            this.rentals = []; // Ensure rentals is empty on unexpected response
-          }
-        })
-        .catch(error => {
-          console.error("RentalHistory: Error during API call:", error.response || error.message || error);
-          this.rentals = []; // Reset rentals on error
-          // Optionally reset user as well if profile fetch might have failed earlier in a combined error
-           if (error.config && error.config.url.includes('/api/v1/users/me/profile')) {
-             this.user = {};
-           }
-          // You might want to display an error message to the user here
-        })
-        .finally(() => {
-          this.loading = false;
-          // console.log("RentalHistory: Fetching rental history finished. Loading state:", this.loading);
-        });
     },
     goBack() {
       this.$router.go(-1);
@@ -163,150 +114,253 @@ export default {
 </script>
 
 <style scoped>
-/*.rental-history {
-  padding: 20px;
+.content-container {
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: auto;
 }
 
-.form-container {
-  max-width: 800px; !* Or your preferred max-width *!
-  margin: 20px auto; !* Centers the container *!
-  padding: 20px;
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.page-header h1 {
+  font-weight: 600;
+  color: #343a40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+.page-header p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.no-rentals-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+.no-rentals-card {
+  text-align: center;
+  padding: 3rem 2rem;
   background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  max-width: 600px;
 }
-
-.card-container {
-  padding: 10px; !* Add some padding around the form-container if needed *!
+.empty-icon {
+  font-size: 3.5rem;
+  color: #007bff;
+  margin-bottom: 1.5rem;
 }
-
-
-.form-header {
-  text-align: center;
-  margin-bottom: 20px;
+.no-rentals-card h2 {
+  font-weight: 600;
+  color: #343a40;
 }
-
-.form-header h2 {
-  color: #333;
-  margin-bottom: 5px;
+.no-rentals-card p {
+  color: #6c757d;
+  margin-bottom: 1.5rem;
 }
-
-.form-header hr {
-  border: 0;
-  height: 1px;
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
-  margin-top: 0;
-}
-
-
-.loading {
-  font-size: 1.2em;
-  color: #666;
-  text-align: center;
-  margin-top: 20px;
-}
-
-ol {
-  list-style-type: none;
-  padding-left: 0;
-}
-
-li {
-  background-color: #f9f9f9;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  border-left: 5px solid #007bff; !* Accent color *!
-}
-
-li p {
-  margin: 5px 0;
-  color: #555;
-}
-
-li p strong {
-  color: #333;
-}
-
-li hr {
-  border: 0;
-  height: 1px;
-  background-color: #eee;
-  margin-top: 15px;
-}
-
-
-!* Optional shimmer placeholder *!
-.shimmer-card {
-  background-color: #f9f9f9;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  border-left: 5px solid #e0e0e0; !* Shimmer accent *!
-}
-
-.shimmer-line {
-  height: 20px; !* Or match your text line height *!
-  margin-bottom: 8px; !* Spacing between lines *!
-  background: #e0e0e0; !* Base color *!
-  border-radius: 4px;
-}
-
-.shimmer {
-  !* The actual shimmer animation *!
-  background-image: linear-gradient(
-    to right,
-    #e0e0e0 0%,
-    #f0f0f0 20%, !* Lighter shimmer color *!
-    #e0e0e0 40%,
-    #e0e0e0 100%
-  );
-  background-repeat: no-repeat;
-  background-size: 800px 100%; !* Width of the shimmer wave, adjust as needed *!
-  display: inline-block;
-  position: relative;
-  animation-duration: 1.4s;
-  animation-fill-mode: forwards;
-  animation-iteration-count: infinite;
-  animation-name: shimmerAnimation;
-  animation-timing-function: linear;
-}
-
-
-@keyframes shimmerAnimation {
-  0% {
-    background-position: -400px 0;
-  }
-  100% {
-    background-position: 400px 0;
-  }
-}
-
-.button-container {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s ease;
-}
-
-.back-button {
-  background-color: #6c757d; !* A neutral back button color *!
+.find-car-button {
+  background-color: #007bff;
   color: white;
 }
 
+/* Responsive Grid */
+.rentals-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .rentals-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 992px) {
+  .rentals-list {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.rental-wrapper {
+  width: 100%;
+}
+
+/* Rental Card */
+.rental-item {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 60px;
+  color: white;
+}
+.status-indicator.active { background-color: #28a745; }
+.status-indicator.returned { background-color: #6c757d; }
+.status-indicator i { font-size: 1.5rem; }
+
+.rental-info {
+  padding: 1rem 1.5rem;
+  flex-grow: 1;
+}
+
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+.car-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #343a40;
+}
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+.status-active {
+  background-color: #e9f7ef;
+  color: #28a745;
+  border: 1px solid #a3d9b8;
+}
+.status-returned {
+  background-color: #e9ecef;
+  color: #495057;
+  border: 1px solid #ced4da;
+}
+
+.info-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+.detail-item strong {
+  font-size: 0.75rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.detail-item span {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #343a40;
+}
+
+.info-footer {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f0f2f5;
+  font-size: 0.8rem;
+  color: #adb5bd;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Buttons */
+.button-container {
+  text-align: center;
+  margin-top: 2rem;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid transparent;
+}
+.back-button {
+  background-color: #6c757d;
+  color: white;
+}
 .back-button:hover {
   background-color: #5a6268;
 }
 
-.back-button i {
-  margin-right: 5px;
-}*/
+/* Shimmer Loader */
+.rental-item-shimmer {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 12px;
+}
+.shimmer {
+  background-image: linear-gradient(to right, #f0f0f0 8%, #e0e0e0 18%, #f0f0f0 33%);
+  background-size: 1200px 100%;
+  animation: shimmerAnimation 1.8s infinite linear;
+}
+.shimmer-indicator {
+  width: 60px;
+  height: 100px;
+  border-radius: 8px;
+}
+.shimmer-details {
+  flex-grow: 1;
+}
+.shimmer-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.shimmer-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.shimmer-line {
+  height: 16px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+@keyframes shimmerAnimation {
+  0% {
+    background-position: -1200px 0;
+  }
+  100% {
+    background-position: 1200px 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .info-body {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+
 
 </style>

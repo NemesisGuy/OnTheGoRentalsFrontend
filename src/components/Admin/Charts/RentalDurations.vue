@@ -6,7 +6,7 @@
     <!-- A more informative message to display if there's no data -->
     <div v-if="!isLoading && !chartData" class="no-data">
       <i class="fas fa-calendar-alt"></i>
-      <p>Not enough data to analyze rental durations.</p>
+      <p>No completed rental data available to analyze durations.</p>
     </div>
   </div>
 </template>
@@ -16,13 +16,8 @@ import { Line } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement, Filler } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-// Register the necessary Chart.js components, including the 'Filler' plugin for gradient fills
 ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale, Filler, ChartDataLabels);
 
-/**
- * RentalDurations.vue
- * Displays a line chart showing the average rental duration by month.
- */
 export default {
   name: 'RentalDurations',
   components: { Line },
@@ -63,7 +58,6 @@ export default {
             text: 'Average Rental Duration by Month',
             font: { size: 18 }
           },
-          // Display the average duration above each point on the line
           datalabels: {
             anchor: 'end',
             align: 'top',
@@ -71,7 +65,7 @@ export default {
             font: {
               weight: 'bold',
             },
-            formatter: (value) => value.toFixed(1), // Format to one decimal place
+            formatter: (value) => value.toFixed(1),
           },
           tooltip: {
             callbacks: {
@@ -97,20 +91,31 @@ export default {
     processChartData() {
       this.isLoading = true;
       try {
-        if (!this.rentalsData || this.rentalsData.length === 0) {
+        console.log('[RentalDurations] Received rentalsData:', this.rentalsData); // DEBUG: See what data is coming in
+
+        // THE FIX: 1. Explicitly filter for completed rentals first.
+        const completedRentals = this.rentalsData.filter(
+            rental => rental && rental.issuedDate && rental.returnedDate
+        );
+
+        console.log(`[RentalDurations] Found ${completedRentals.length} completed rentals to process.`); // DEBUG: Check how many rentals are valid
+
+        if (completedRentals.length === 0) {
           this.chartData = null;
           return;
         }
 
-        // Group rental durations by month (e.g., "2023-01")
-        const monthlyDurations = this.rentalsData.reduce((acc, rental) => {
-          if (rental.issuedDate && rental.returnDate) {
-            const startDate = new Date(rental.issuedDate);
-            const returnDate = new Date(rental.returnDate);
+        // 2. Process ONLY the completed rentals.
+        const monthlyDurations = completedRentals.reduce((acc, rental) => {
+          const startDate = new Date(rental.issuedDate);
+          const returnDate = new Date(rental.returnedDate);
+
+          // Check for valid dates before calculating
+          if (!isNaN(startDate) && !isNaN(returnDate)) {
             const duration = (returnDate - startDate) / (1000 * 60 * 60 * 24);
 
             if (duration >= 0) {
-              const month = startDate.toISOString().slice(0, 7);
+              const month = startDate.toISOString().slice(0, 7); // YYYY-MM
               if (!acc[month]) acc[month] = [];
               acc[month].push(duration);
             }
@@ -118,13 +123,14 @@ export default {
           return acc;
         }, {});
 
+        console.log('[RentalDurations] Aggregated monthly durations:', monthlyDurations); // DEBUG: See the aggregated data
+
         const labels = Object.keys(monthlyDurations).sort();
         if (labels.length === 0) {
           this.chartData = null;
           return;
         }
 
-        // Calculate the average duration for each month
         const averageDurations = labels.map(month => {
           const durations = monthlyDurations[month];
           const sum = durations.reduce((a, b) => a + b, 0);
@@ -138,13 +144,14 @@ export default {
             data: averageDurations,
             borderColor: '#36A2EB',
             pointBackgroundColor: '#36A2EB',
-            backgroundColor: 'rgba(54, 162, 235, 0.2)', // Light blue gradient fill
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
             tension: 0.2,
-            fill: true, // Enable the gradient fill
+            fill: true,
           }]
         };
+        console.log('[RentalDurations] Final chart data:', this.chartData); // DEBUG: Check the final output
       } catch (error) {
-        console.error('RentalDurations: Error processing chart data:', error);
+        console.error('[RentalDurations] Error processing chart data:', error);
         this.chartData = null;
       } finally {
         this.isLoading = false;

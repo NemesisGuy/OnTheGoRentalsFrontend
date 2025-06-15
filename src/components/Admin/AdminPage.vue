@@ -2,11 +2,11 @@
   <div class="admin-area">
     <div class="sidebar" :class="{ expanded: isExpanded }">
 
-      <div class="sidebar-container">
+      <div class="sidebar-container text-color">
         <ul>
           <li>
             <!--            <a href="#" @click="toggleSidebar"  class="toggle-button"></a>-->
-            <button class="toggle-button" @click="toggleSidebar">
+            <button class="toggle-button text-color" @click="toggleSidebar">
 
               {{ isExpanded ? 'Collapse' : 'Expand' }}
             </button>
@@ -147,4 +147,28 @@ export default {
 
 <style>
 
+.admin-area {
+  display: flex;
+  height: 100vh;
+  color: #f0f0f0;
+}
+.sidebar {
+  color: #f0f0f0;
+  width: 70px; /* Collapsed width */
+  background-color: #2c3e50; /* Sidebar background */
+  transition: width 0.3s ease; /* Smooth transition for expanding */
+  overflow: hidden;
+}
+.sidebar a {
+  color: #f0f0f0;
+  text-decoration: none;
+}
+.text-color
+{
+  color: #fff;
+}
+.menu-text
+{
+  color: #f0f0f0;
+}
 </style>

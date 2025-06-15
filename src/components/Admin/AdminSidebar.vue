@@ -6,7 +6,7 @@
   <div class="sidebar-container">
     <ul>
       <li>
-        <router-link to="/admin/dashboard">Dashboard</router-link>
+        <router-link to="/admin/dashboard">Dashboards</router-link>
       </li>
       <li>
         <router-link to="/admin/cars">Car Management</router-link>

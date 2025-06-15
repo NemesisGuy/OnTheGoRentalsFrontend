@@ -29,7 +29,7 @@
     <div class="tab-content" v-if="!isLoading && !apiError">
       <!-- Collections Due Today -->
       <div v-if="activeTab === 'collections'" class="operation-section">
-        <h2 class="text-white">Pickups Scheduled for Today</h2>
+        <h2 >Pickups Scheduled for Today</h2>
         <div v-if="collectionsDue.length === 0" class="no-data-subsection">No collections due today.</div>
         <div v-else class="cards-grid">
           <div v-for="booking in collectionsDue" :key="booking.uuid" class="operation-card collection-card">
@@ -61,7 +61,7 @@
 
       <!-- Returns Due Today (Unchanged) -->
       <div v-if="activeTab === 'returns'" class="operation-section">
-        <h2 class="text-white">Returns Expected Today</h2>
+        <h2 >Returns Expected Today</h2>
         <div v-if="returnsDue.length === 0" class="no-data-subsection">No returns due today.</div>
         <div v-else class="cards-grid">
           <div v-for="rental in returnsDue" :key="rental.uuid" class="operation-card return-card">
@@ -83,7 +83,7 @@
 
       <!-- Overdue Rentals (Unchanged) -->
       <div v-if="activeTab === 'overdue'" class="operation-section">
-        <h2 class="text-white">Overdue Rentals</h2>
+        <h2 >Overdue Rentals</h2>
         <div v-if="overdueRentals.length === 0" class="no-data-subsection">No overdue rentals. Well done!</div>
         <div v-else class="cards-grid">
           <div v-for="rental in overdueRentals" :key="rental.uuid" class="operation-card overdue-card">
@@ -215,19 +215,19 @@ export default {
 /* All styles remain the same. The change is purely logical. */
 .staff-operations-dashboard { padding: 20px; }
 .tabs { margin-bottom: 20px; border-bottom: 2px solid #673AB7; }
-.tabs button { padding: 10px 15px; cursor: pointer; border: none; background-color: transparent; font-size: 1.05em; margin-right: 5px; border-bottom: 3px solid transparent; color: var(--bs-gray-400); }
-.tabs button.active { border-bottom-color: #E91E63; font-weight: bold; color: var(--bs-white); }
+.tabs button { padding: 10px 15px; cursor: pointer; border: none; background-color: transparent; font-size: 1.05em; margin-right: 5px; border-bottom: 3px solid transparent; color: var(--bs-gray-600); }
+.tabs button.active { border-bottom-color: #E91E63; font-weight: bold; color: var(--bs-gray-900); }
 .tabs button i { margin-right: 8px; }
 .navigation-tab { padding: 10px 15px; cursor: pointer; border: none; background-color: transparent; font-size: 1.05em; margin-right: 5px; border-bottom: 3px solid transparent; color: #333; transition: color 0.2s ease, background-color 0.2s ease; }
 .navigation-tab:hover { background-color: rgba(103, 58, 183, 0.1); color: #673AB7; }
-.operation-section h2 { font-size: 1.5em; color: #673AB7; margin-top: 0; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+.operation-section h2 { font-size: 1.5em; color: var(--text-color-dark); margin-top: 0; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
 .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 20px; }
 .operation-card { background-color: #fff; border: 1px solid #e0e0e0; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); display: flex; flex-direction: column; transition: box-shadow 0.3s ease; }
 .operation-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
 .operation-card .card-header { background-color: #f8f9fa; padding: 12px 15px; font-weight: bold; border-bottom: 1px solid #e0e0e0; }
 .operation-card .card-body { padding: 15px; flex-grow: 1; font-size: 0.9em; }
-.operation-card .card-body p { margin: 6px 0; color: #555; }
-.operation-card .card-body strong { color: #333; }
+.operation-card .card-body p { margin: 6px 0; color: var(--text-color-dark); }
+.operation-card .card-body strong { color: var(--text-color-dark); }
 .operation-card .card-actions { padding: 12px 15px; border-top: 1px solid #e0e0e0; text-align: right; background-color: #f8f9fa; }
 .no-data-subsection { padding: 25px; text-align: center; color: #777; background-color: #f9f9f9; border-radius: 4px; border: 1px dashed #ddd; font-style: italic; }
 .api-error-message { padding: 15px; background-color: #ffdddd; color: #c82333; border: 1px solid #c82333; border-radius: 5px; margin-bottom: 20px; text-align: center; }
