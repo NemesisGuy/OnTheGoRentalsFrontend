@@ -83,6 +83,11 @@
     --color-background-light: #f4f7f6;
     --color-card-background: #ffffff;
     --color-border-light: #e9ecef;
+
+    --primary-nav-color : #007bff; /* Primary Navigation Color */
+    --secondary-nav-color : #343a40; /* Secondary Navigation Color */
+    --primary-sidebar-color : #407b40; /* Primary Sidebar Color */
+    --secondary-sidebar-color : #343a40; /* Secondary Sidebar Color */
 }
 
 

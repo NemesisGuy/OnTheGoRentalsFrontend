@@ -1,5 +1,10 @@
 <template>
   <div class="content-container">
+
+    <div class="page-header">
+      <h1><i class="fas fa-user-alt"></i> My Account </h1>
+      <p>Here you can view and manage your Account.</p>
+    </div>
     <div v-if="pageState === 'loading'" class="profile-card shimmer-card">
       <!-- Shimmer Loader for the new layout -->
       <div class="shimmer-left">
@@ -26,6 +31,7 @@
       <h2>Failed to Load Profile</h2>
       <p>{{ failModal.message || "We couldn't retrieve your profile information. Please try again later." }}</p>
     </div>
+
 
     <div v-else-if="pageState === 'success' && user" class="profile-card">
       <!-- Left Column: Avatar and Name -->
@@ -148,7 +154,18 @@ export default {
   padding: 2rem;
   min-height: 100%;
 }
-
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.page-header h1 {
+  font-weight: 700;
+  color: #343a40;
+}
+.page-header p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
 .profile-card {
   display: grid;
   grid-template-columns: 280px 1fr; /* Fixed sidebar, flexible main content */
