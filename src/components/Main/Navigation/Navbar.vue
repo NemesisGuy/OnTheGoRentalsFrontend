@@ -201,7 +201,7 @@ export default {
 .toggler-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
 .nav-link { color: rgba(255, 255, 255, 0.85); font-weight: 500; padding: 0.8rem 1rem; border-radius: 8px; transition: background-color 0.2s ease, color 0.2s ease; }
 .nav-link:hover { background-color: rgba(255, 255, 255, 0.1); color: white; }
-.router-link-active { color: white !important; font-weight: 600; }
+.router-link-active { color: var(--bs-green) !important; font-weight: 800; background-color: var(--bs-gray-300) !important; border-radius: 8px; }
 .auth-buttons { display: flex; align-items: center; gap: 0.5rem; }
 .btn-signup { background-color: #fff; color: var(--primary-nav-color, #e83e8c); border-radius: 50px; padding: 0.5rem 1.25rem; font-weight: 600; transition: all 0.2s ease-in-out; }
 .btn-signup:hover { background-color: #f0f0f0; transform: scale(1.05); }

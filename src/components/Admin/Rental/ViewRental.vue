@@ -30,8 +30,8 @@
               <div class="detail-item"><label>Expected Return:</label> <span>{{ formatDateTime(rental.expectedReturnDate) }}</span></div>
               <div v-if="rental.returnedDate" class="detail-item"><label>Actual Return:</label> <span>{{ formatDateTime(rental.returnedDate) }}</span></div>
               <div class="detail-item"><label>Fine:</label> <span>R{{ rental.fine?.toFixed(2) || '0.00' }}</span></div>
-              <div v-if="rental.issuer" class="detail-item"><label>Issued By:</label> <span>{{ rental.issuer.firstName }}</span></div>
-              <div v-if="rental.receiver" class="detail-item"><label>Received By:</label> <span>{{ rental.receiver.firstName }}</span></div>
+              <div v-if="rental.issuer" class="detail-item"><label>Issued By:</label> <span>{{ rental.issuer}}</span></div>
+              <div v-if="rental.receiver" class="detail-item"><label>Received By:</label> <span>{{ rental.receiver }}</span></div>
             </div>
           </div>
 

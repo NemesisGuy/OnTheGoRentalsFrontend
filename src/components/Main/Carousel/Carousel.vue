@@ -141,7 +141,7 @@ export default {
 .carousel-nav:hover { background-color: rgba(0, 0, 0, 0.7); }
 .prev { left: 15px; }
 .next { right: 15px; }
-.carousel-thumbnails { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
+.carousel-thumbnails { display: flex; justify-content: center; gap: 10px; margin: 15px; }
 .thumbnail { width: 80px; height: 50px; object-fit: cover; cursor: pointer; border-radius: 4px; border: 2px solid #ddd; transition: all 0.3s ease; opacity: 0.7; }
 .thumbnail:hover { opacity: 1; border-color: #007bff; }
 .thumbnail.active { opacity: 1; border-color: #0056b3; transform: scale(1.05); box-shadow: 0 0 8px rgba(0, 86, 179, 0.5); }

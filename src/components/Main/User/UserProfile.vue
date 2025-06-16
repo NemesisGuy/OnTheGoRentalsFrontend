@@ -39,7 +39,7 @@
         <img :src="user.profileImageUrl || defaultAvatar" @error="onImageError" alt="Profile Image" class="avatar"/>
         <h2 class="user-name">{{ user.firstName }} {{ user.lastName }}</h2>
         <p class="user-email">{{ user.email }}</p>
-        <button @click="editProfile" class="button edit-button">
+        <button @click="editProfile" class="button  update-button">
           <i class="fa fa-pencil-alt"></i> Edit Profile
         </button>
       </div>
@@ -69,10 +69,10 @@
         <div class="panel">
           <h3 class="panel-title">My Activities</h3>
           <div class="action-grid">
-            <button @click="viewMyBookings" class="button read-button">
+            <button @click="viewMyBookings" class="button edit-button">
               <i class="fas fa-calendar-plus"></i> My Bookings
             </button>
-            <button @click="viewMyRentalHistory" class="button update-button ">
+            <button @click="viewMyRentalHistory" class="button read-button ">
               <i class="fas fa-history"></i> Rental History
             </button>
             <button @click="goBack" class="button back-button">
