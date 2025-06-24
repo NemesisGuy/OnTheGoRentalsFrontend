@@ -227,7 +227,7 @@ export default {
   align-items: center;
   padding: 1rem 1.5rem;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1.1rem;
   color: #343a40;
   background-color: #f8f9fa;
@@ -245,10 +245,13 @@ export default {
 
 .faq-answer {
   padding: 1.5rem;
-  color: #495057;
+  color: var(--text-color-dark);
   line-height: 1.6;
 }
-.faq-answer p { margin: 0; }
+.faq-answer p { margin: 0;
+  color: var(--text-color-dark);
+
+}
 
 .slide-enter-active, .slide-leave-active {
   transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;

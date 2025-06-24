@@ -27,6 +27,9 @@ import Driver from "@/components/Main/Driver/DriverList.vue";
 import adminRoutes from "@/router/adminRoutes";
 import RentalHistory from "@/components/Main/User/RentalHistory.vue";
 import MyBookings from "@/components/Main/User/MyBookings.vue";
+import ForgotPassword from "@/components/Main/User/ForgotPassword.vue";
+import ResetPassword from "@/components/Main/User/ResetPassword.vue";
+import OAuth2RedirectHandler from "@/components/Main/User/OAuth2RedirectHandler.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -74,10 +77,28 @@ const router = createRouter({
             component: CarList,
 
         },
+        // User Profile routes
         {
             path: '/user/profile/profile',
             name: 'UserProfile',
             component: UserProfile,
+        },
+        {
+            path: '/forgot-password', // <-- NEW ROUTE
+            name: 'ForgotPassword',
+            component: ForgotPassword,
+            meta: { requiresAuth: false }
+        },
+        {
+            path: '/reset-password', // <-- NEW ROUTE
+            name: 'ResetPassword',
+            component: ResetPassword,
+            meta: { requiresAuth: false }
+        },
+        {
+            path: '/oauth2/redirect', // <-- The path we configured in the backend success handler
+            name: 'OAuth2Redirect',
+            component: OAuth2RedirectHandler,
         },
         {
             path: '/user/profile/rental-history',

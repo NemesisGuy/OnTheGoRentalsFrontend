@@ -51,6 +51,15 @@
           <i class="fas fa-user-plus"></i> {{ isLoading ? 'Creating Account...' : 'Create Account' }}
         </button>
       </form>
+      <div class="social-login-divider">
+        <span class="divider-text">OR</span>
+      </div>
+      <div class="social-login-buttons">
+        <a :href="googleLoginUrl" class="button google-button">
+          <i class="fab fa-google"></i> Sign Up with Google
+        </a>
+      </div>
+
 
       <div class="form-footer">
         <span>Already have an account?</span>
@@ -70,6 +79,8 @@ import LoadingModal from "@/components/Main/Modals/LoadingModal.vue";
 import SuccessModal from "@/components/Main/Modals/SuccessModal.vue";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
 import api from "@/api";
+import { resolvedApiBaseUrl } from "@/api";
+
 
 export default {
   name: "SignupPage",
@@ -81,6 +92,9 @@ export default {
       successModal: { show: false, message: "" },
       failureModal: { show: false, message: "" },
       validationErrors: {},
+      googleLoginUrl: `${resolvedApiBaseUrl}/oauth2/authorization/google`
+      ,
+
     };
   },
   methods: {
@@ -256,6 +270,36 @@ form {
 }
 .footer-link:hover {
   text-decoration: underline;
+}
+/* --- NEW STYLES FOR SOCIAL LOGIN (can be shared in a global stylesheet) --- */
+.social-login-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #adb5bd;
+  padding: 0 2.5rem;
+  margin-bottom: 1.5rem;
+}
+.social-login-divider::before,
+.social-login-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #dee2e6;
+}
+.divider-text {
+  padding: 0 1rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+.social-login-buttons {
+  padding: 0 2.5rem 1.5rem;
+}
+.google-button {
+  background-color: #db4437;
+  color: white;
+}
+.google-button:hover {
+  background-color: #c23321;
 }
 
 @media (max-width: 576px) {

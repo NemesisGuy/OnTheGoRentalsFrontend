@@ -22,20 +22,23 @@ import router from "@/router";
 const getApiBaseUrl = () => {
     if (window.runtimeConfig && typeof window.runtimeConfig.API_BASE_URL === 'string') {
         console.log("Vue src/api.js: Using runtime API_BASE_URL from config.js:", window.runtimeConfig.API_BASE_URL);
-        return window.runtimeConfig.API_BASE_URL;
+
+        // Ensure runtime config also has no trailing slash
+        return window.runtimeConfig.API_BASE_URL.replace(/\/$/, "");
     }
     const buildTimeApiUrl =
         (typeof import.meta !== 'undefined' ? import.meta.env.VITE_BACKEND_API_URL : process.env.VUE_APP_BACKEND_URL) ||
         'http://localhost:8080/'; // Adjust your dev default
     console.warn("Vue src/api.js: Runtime config not found, using build-time or default fallback API URL:", buildTimeApiUrl);
-    return buildTimeApiUrl;
+    // Also ensure build-time config has no trailing slash
+    return buildTimeApiUrl.replace(/\/$/, "");
 };
 
 /**
  * The API base URL resolved by {@link getApiBaseUrl}.
  * @type {string}
  */
-const resolvedApiBaseUrl = getApiBaseUrl();
+export const resolvedApiBaseUrl = getApiBaseUrl();
 console.log("Vue src/api.js: Axios baseURL will be set to:", resolvedApiBaseUrl);
 
 /**

@@ -84,115 +84,100 @@
   </nav>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import api from "@/api";
 
-export default {
-  name: "Navbar",
-  setup() {
-    const router = useRouter();
-    const isLoggedIn = ref(false);
-    const isAdmin = ref(false);
-    const profileImageUrl = ref(null);
-    const userName = ref('');
+const router = useRouter();
+const isLoggedIn = ref(false);
+const isAdmin = ref(false);
+const profileImageUrl = ref(null);
+const userName = ref('');
 
-    // --- THE FIX IS HERE ---
-    const updateAuthStatus = async () => {
-      const token = localStorage.getItem("accessToken");
-      isLoggedIn.value = !!token;
+const updateAuthStatus = async () => {
+  const token = localStorage.getItem("accessToken");
+  let user = null;
 
-      if (isLoggedIn.value) {
-        let user = null;
-        const userStr = localStorage.getItem("user");
-
-        if (userStr) {
-          try {
-            user = JSON.parse(userStr);
-          } catch (e) {
-            console.error("Could not parse user from localStorage. Logging out.", e);
-            handleLogout(false);
-            return;
-          }
-        }
-
-        // If the stored user is incomplete (missing image URL), fetch the full profile.
-        if (user && (!user.profileImageUrl || !user.firstName)) {
-          console.log("Navbar: Stored user data is incomplete. Fetching full profile...");
-          try {
-            const response = await api.get('/api/v1/users/me/profile');
-            const fullUserProfile = response.data.data || response.data;
-
-            if (fullUserProfile && fullUserProfile.email) {
-              // Replace the incomplete user object with the full one
-              user = fullUserProfile;
-              // Update localStorage so we don't have to fetch again next time
-              localStorage.setItem('user', JSON.stringify(user));
-              console.log("Navbar: Full profile fetched and stored.", user);
-            } else {
-              // If fetching the profile fails, something is wrong, so log out safely.
-              handleLogout(false);
-              return;
-            }
-          } catch (error) {
-            console.error("Navbar: Failed to fetch full user profile. Logging out.", error);
-            handleLogout(false);
-            return;
-          }
-        }
-
-        // Now, proceed with what should be a complete user object
-        if (user) {
-          profileImageUrl.value = user.profileImageUrl || null;
-          userName.value = user.firstName || user.email || 'My Account';
-          const roles = user.roles || [];
-          isAdmin.value = roles.some(role => role === "ADMIN" || role === "SUPERADMIN");
-        } else {
-          console.warn("User is logged in (token exists), but user object is missing. Logging out.");
-          handleLogout(false);
-        }
-
-      } else {
-        // Clear all values if not logged in
-        profileImageUrl.value = null;
-        isAdmin.value = false;
-        userName.value = '';
+  if (token) {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        user = JSON.parse(userStr);
+      } catch (e) {
+        console.error("Malformed user object in localStorage. Clearing session.", e);
+        user = null; // Ensure user is null if parsing fails
       }
-    };
+    }
 
-    const handleLogout = (shouldNavigate = true) => {
-      api.post("/api/v1/auth/logout")
-          .catch((e) => console.error("Logout API call failed:", e))
-          .finally(() => {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("user");
-            // Dispatch event BEFORE updating status to ensure all listeners react to the "logged out" state.
-            window.dispatchEvent(new CustomEvent("auth-change"));
-            // Manually trigger an update right after logout logic.
-            updateAuthStatus();
-            if (shouldNavigate) {
-              router.push("/nav/user/login");
-            }
-          });
-    };
+    // A complete user object from the profile endpoint will have firstName and roles.
+    // The profileImageUrl property will exist (even if its value is null).
+    // An incomplete object (e.g., from login) might be missing these.
+    // We check for `undefined` to see if the *key itself* is missing.
+    const isUserObjectIncomplete = !user || !user.roles || typeof user.firstName === 'undefined' || typeof user.profileImageUrl === 'undefined';
 
-    onMounted(() => {
-      updateAuthStatus();
-      window.addEventListener("auth-change", updateAuthStatus);
-    });
+    if (isUserObjectIncomplete) {
+      console.log("Navbar: User data in localStorage is incomplete. Fetching full profile.");
+      try {
+        const response = await api.get('/api/v1/users/me/profile');
+        const fullUserProfile = response.data.data || response.data;
 
-    onUnmounted(() => {
-      window.removeEventListener("auth-change", updateAuthStatus);
-    });
+        if (fullUserProfile && fullUserProfile.email) {
+          user = fullUserProfile; // Replace whatever we had with the authoritative version.
+          localStorage.setItem('user', JSON.stringify(user)); // Update storage for next time.
+          console.log("Navbar: Full profile fetched and stored.", user);
+        } else {
+          console.error("Navbar: /me/profile did not return a valid user. Logging out.");
+          user = null;
+        }
+      } catch (error) {
+        console.error("Navbar: Failed to fetch full user profile. Token may be expired. Logging out.", error);
+        user = null;
+      }
+    }
+  }
 
-    return { isLoggedIn, isAdmin, profileImageUrl, userName, handleLogout };
-  },
+  // --- Final State Update ---
+  // Now, update all reactive state based on the final, authoritative `user` object.
+  if (user && token) {
+    isLoggedIn.value = true;
+    profileImageUrl.value = user.profileImageUrl || null; // Will now be correct
+    userName.value = user.firstName || user.email || 'My Account';
+    // Ensure roles is an array before using .some()
+    isAdmin.value = Array.isArray(user.roles) && user.roles.some(role => role === "ADMIN" || role === "SUPERADMIN");
+  } else {
+    // Not logged in or a critical error occurred. Clean up everything.
+    isLoggedIn.value = false;
+    profileImageUrl.value = null;
+    userName.value = '';
+    isAdmin.value = false;
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+  }
 };
+
+const handleLogout = () => {
+  api.post("/api/v1/auth/logout")
+      .catch((e) => console.error("Logout API call failed:", e))
+      .finally(() => {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("user");
+        window.dispatchEvent(new CustomEvent("auth-change"));
+        router.push("/nav/user/login");
+      });
+};
+
+onMounted(() => {
+  updateAuthStatus();
+  window.addEventListener("auth-change", updateAuthStatus);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("auth-change", updateAuthStatus);
+});
 </script>
 
 <style scoped>
-/* Styles are unchanged and correct. */
 .navbar-custom { background-color: var(--primary-nav-color, #e83e8c); padding: 0.5rem 1rem; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); }
 .logo { height: 45px; width: auto; transition: transform 0.2s ease-in-out; }
 .logo:hover { transform: scale(1.1); }

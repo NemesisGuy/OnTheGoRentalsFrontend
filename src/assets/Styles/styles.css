@@ -57,6 +57,7 @@
     /* Text Colors */
     --color-text-dark: #343a40;      /* For use on light backgrounds */
     --color-text-light: #f8f9fa;     /* For use on dark backgrounds */
+    --color-text-link: #007bff;     /* For use on dark backgrounds */
 
     /* KPI Card Theme Colors */
     /* Blue for Rentals */
