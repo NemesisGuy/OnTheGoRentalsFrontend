@@ -13,6 +13,9 @@ Welcome to the main documentation hub for the OnTheGoRentals project. Below you 
 *   **[Deployment Guide](DEPLOYMENT.md)**
     *   Detailed instructions on how the frontend application is Dockerized, configured for runtime API settings, and deployed. Aimed at developers and operations personnel responsible for deploying the application.
 
+*   **[File Tree](FILE_TREE.md)**
+    *   Provides an overview of the project's directory structure.
+
 ## Other Important Links
 
 *   **[Main Project README](../README.md)**
