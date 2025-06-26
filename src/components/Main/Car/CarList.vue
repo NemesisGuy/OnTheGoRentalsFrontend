@@ -5,10 +5,24 @@
       <p>Browse our curated selection of quality vehicles.</p>
     </div>
 
-    <loading-modal v-if="loading" show :message="loadingMessage"/>
+    <LoadingModal v-if="loading" show :message="loadingMessage"/>
 
     <!-- Filter and Sort Controls -->
-    <div v-if="!loading && cars.length > 0" class="controls-container">
+    <div class="controls-container">
+      <div class="filter-group date-filter">
+        <div class="date-input">
+          <label for="start-date">Start Date</label>
+          <input type="date" id="start-date" v-model="filters.startDate" :min="today">
+        </div>
+        <div class="date-input">
+          <label for="end-date">End Date</label>
+          <input type="date" id="end-date" v-model="filters.endDate" :min="filters.startDate || today">
+        </div>
+        <button class="button search-button" @click="fetchCars" :disabled="loading || !filters.startDate || !filters.endDate">
+          <i class="fas fa-search"></i> Find Cars
+        </button>
+      </div>
+
       <div class="sort-control">
         <label for="sort-select">Sort by:</label>
         <select id="sort-select" v-model="currentSort" @change="updateSort">
@@ -23,8 +37,8 @@
     <!-- No Cars Message -->
     <div v-if="!loading && cars.length === 0" class="no-cars-message">
       <i class="fas fa-car-crash"></i>
-      <p>No cars available matching your criteria.</p>
-      <button class="button back-button-solid" @click="goBack"><i class="fas fa-arrow-left"></i> Go Back</button>
+      <p v-if="hasSearched">No cars available for the selected dates and filters.</p>
+      <p v-else>An unexpected error occurred or no cars are available.</p>
     </div>
 
     <!-- Car Grid Layout -->
@@ -37,15 +51,13 @@
               alt="Car Image"
               class="car-image"
           />
-          <span :class="['status-badge', car.available ? 'status-available' : 'status-unavailable']">
-            {{ car.available ? 'Available' : 'Rented' }}
-          </span>
+          <span class="status-badge status-available">Available</span>
         </div>
         <div class="car-card-body">
           <h3 class="car-title">{{ car.make }} {{ car.model }}</h3>
           <div class="car-meta">
-            <span><span><i class="fas fa-calendar-alt"></i> </span>{{ car.year }}</span>
-            <span> <span><i class="fas fa-tags"></i> </span>{{ car.priceGroup }}</span>
+            <span><i class="fas fa-calendar-alt"></i>{{ car.year }}</span>
+            <span><i class="fas fa-tags"></i>{{ car.priceGroup }}</span>
           </div>
           <button class="button details-button" @click.stop="viewCarDetails(car.uuid)">
             <i class="fas fa-eye"></i> View Details
@@ -54,18 +66,14 @@
       </div>
     </div>
 
-    <FailureModal v-if="failModal.show"
-                  @close="closeModal"
-                  :show="failModal.show"
-                  :message="failModal.message"/>
+    <FailureModal v-if="failModal.show" @close="closeModal" :show="failModal.show" :message="failModal.message"/>
   </div>
 </template>
 
 <script>
-// The <script> block is unchanged as it was already correct.
 import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
-import api from "@/api";
 import FailureModal from "@/components/Main/Modals/FailureModal.vue";
+import api from "@/api";
 import defaultCarImage from '@/assets/Images/Defaults/default-car-image.png';
 
 export default {
@@ -74,65 +82,33 @@ export default {
   data() {
     return {
       cars: [],
+      filters: {
+        startDate: '',
+        endDate: '',
+        priceGroup: null,
+      },
+      hasSearched: false,
+      currentSort: 'make-asc',
       sortColumn: 'make',
       sortDirection: 'asc',
-      currentSort: 'make-asc',
       loading: true,
-      loadingMessage: 'Fetching cars...',
+      loadingMessage: 'Fetching available cars...',
       failModal: { show: false, message: "" },
       defaultCarImage: defaultCarImage,
-      pageTitle: 'Cars'
     };
   },
-  mounted() { this.fetchCars(); },
-  watch: { '$route'() { this.fetchCars(); } },
-  methods: {
-    fetchCars() {
-      this.loading = true;
-      const adminFilter = this.$route.query.filter;
-      const priceGroupParam = this.$route.params.pricegroup;
-      let endpoint = '';
-      let title = 'Cars';
-      if (this.$route.name === 'AdminCarList') {
-        endpoint = adminFilter === 'available' ? `/api/v1/admin/cars/list/available` : `/api/v1/admin/cars`;
-        title = adminFilter === 'available' ? 'Available Cars (Admin)' : 'All Cars (Admin)';
-      } else {
-        title = 'All Available Cars';
-        endpoint = `/api/v1/cars/available`;
-        if (priceGroupParam && priceGroupParam.toLowerCase() !== 'all') {
-          endpoint = `/api/v1/cars/available/price-group/${priceGroupParam}`;
-          title = `Available ${this.capitalize(priceGroupParam)} Cars`;
-        }
-      }
-      this.pageTitle = title;
-      this.loadingMessage = `Fetching ${title.toLowerCase()}...`;
-      api.get(endpoint)
-          .then(response => { this.cars = Array.isArray(response.data) ? response.data : (response.data?.data || []); })
-          .catch(error => {
-            this.cars = [];
-            this.showFailureModal(error.response?.data?.message || `Failed to fetch car data.`);
-          })
-          .finally(() => this.loading = false);
-    },
-    updateSort() {
-      const [column, direction] = this.currentSort.split('-');
-      this.sortColumn = column;
-      this.sortDirection = direction;
-    },
-    viewCarDetails(uuid) {
-      const detailRouteName = this.$route.path.includes('/admin/') ? 'AdminCarDetails' : 'CarDetail';
-      this.$router.push({ name: detailRouteName, params: { uuid: uuid } });
-    },
-    onImageError(event) { event.target.src = this.defaultCarImage; },
-    showFailureModal(message) { this.failModal = { show: true, message: message }; },
-    closeModal() { this.failModal.show = false; },
-    goBack() { this.$router.go(-1); },
-    capitalize(s) {
-      if (typeof s !== 'string') return '';
-      return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-    }
-  },
   computed: {
+    today() {
+      const d = new Date();
+      return d.toISOString().split('T')[0];
+    },
+    pageTitle() {
+      const group = this.filters.priceGroup;
+      if (group && group.toLowerCase() !== 'all') {
+        return `Available ${this.capitalize(group)} Cars`;
+      }
+      return 'All Available Cars';
+    },
     sortedCars() {
       return [...this.cars].sort((a, b) => {
         let valA = a[this.sortColumn] || '';
@@ -144,6 +120,78 @@ export default {
       });
     },
   },
+  watch: {
+    '$route.params.pricegroup'() {
+      this.initializeAndFetch();
+    }
+  },
+  created() {
+    this.initializeAndFetch();
+  },
+  methods: {
+    initializeAndFetch() {
+      this.filters.priceGroup = this.$route.params.pricegroup || 'all';
+      this.setDefaultDates();
+      this.fetchCars();
+    },
+    setDefaultDates() {
+      const today = new Date();
+      const threeDaysFromNow = new Date();
+      threeDaysFromNow.setDate(today.getDate() + 3);
+      this.filters.startDate = today.toISOString().split('T')[0];
+      this.filters.endDate = threeDaysFromNow.toISOString().split('T')[0];
+    },
+    async fetchCars() {
+      if (!this.filters.startDate || !this.filters.endDate) {
+        this.showFailureModal("Please select both a start and end date.");
+        return;
+      }
+      this.loading = true;
+      this.hasSearched = true;
+      this.loadingMessage = `Searching for available cars...`;
+
+      try {
+        const params = {
+          startDate: this.filters.startDate,
+          endDate: this.filters.endDate,
+        };
+
+        if (this.filters.priceGroup && this.filters.priceGroup.toLowerCase() !== 'all') {
+          params.priceGroup = this.filters.priceGroup.toUpperCase();
+        }
+
+        const response = await api.get('/api/v1/cars/available', { params });
+        this.cars = response.data.data || [];
+      } catch (error) {
+        this.cars = [];
+        this.showFailureModal(error.response?.data?.message || `Failed to fetch car data.`);
+      } finally {
+        this.loading = false;
+      }
+    },
+    updateSort() {
+      const [column, direction] = this.currentSort.split('-');
+      this.sortColumn = column;
+      this.sortDirection = direction;
+    },
+    viewCarDetails(uuid) {
+      this.$router.push({
+        name: 'CarDetail',
+        params: { uuid: uuid },
+        query: {
+          startDate: this.filters.startDate,
+          endDate: this.filters.endDate
+        }
+      });
+    },
+    onImageError(event) { event.target.src = this.defaultCarImage; },
+    showFailureModal(message) { this.failModal = { show: true, message: message }; },
+    closeModal() { this.failModal.show = false; },
+    capitalize(s) {
+      if (typeof s !== 'string') return '';
+      return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+    }
+  },
 };
 </script>
 
@@ -151,7 +199,8 @@ export default {
 .content-container {
   max-width: 1400px;
   margin: auto;
-  padding: 2rem 1rem;
+  padding: 2rem;
+  background-color: var(--ui-background);
 }
 .page-header {
   text-align: center;
@@ -159,43 +208,80 @@ export default {
 }
 .page-header h1 {
   font-weight: 700;
-  color: #343a40;
+  color: var(--text-primary);
 }
 .page-header p {
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 1.1rem;
 }
 
 .controls-container {
   display: flex;
-  justify-content: center; /* Centered sort dropdown */
-  margin-bottom: 2rem;
-}
-.sort-control {
-  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
-}
-.sort-control select {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ced4da;
-  border-radius: 8px;
-  background-color: #fff;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background-color: var(--ui-surface);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px var(--ui-shadow);
+  margin-bottom: 2.5rem;
 }
 
-/* THE FIX: Changed minmax to achieve a 3-column default layout on larger screens */
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.date-input {
+  display: flex;
+  flex-direction: column;
+}
+.date-input label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+.date-input input[type="date"] {
+  padding: 0.5rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 8px;
+  background-color: var(--ui-background);
+}
+
+.search-button {
+  align-self: flex-end;
+  background-color: var(--brand-primary);
+  color: var(--text-on-brand);
+}
+.search-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.sort-control { display: flex; align-items: center; gap: 0.5rem; }
+.sort-control select {
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 8px;
+  background-color: var(--ui-surface);
+}
+
 .car-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 2rem;
 }
 
 .car-card {
-  background-color: #ffffff;
-  border: 1px solid #e9ecef;
+  background-color: var(--ui-surface);
+  border: 1px solid var(--ui-border);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 15px var(--ui-shadow);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
   display: flex;
@@ -203,7 +289,7 @@ export default {
 }
 .car-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
 }
 
 .car-image-container {
@@ -226,10 +312,9 @@ export default {
   border-radius: 50px;
   font-size: 0.8rem;
   font-weight: bold;
-  color: #fff;
 }
-.status-available { background-color: #28a745; }
-.status-unavailable { background-color: #dc3545; }
+.status-available { background-color: var(--status-success-bg); color: var(--status-success-fg); border: 1px solid var(--status-success-fg); }
+.status-unavailable { background-color: var(--status-danger-bg); color: var(--status-danger-fg); border: 1px solid var(--status-danger-fg); }
 
 .car-card-body {
   padding: 1rem 1.5rem;
@@ -241,17 +326,16 @@ export default {
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
-  color: #343a40;
+  color: var(--text-primary);
 }
 
-/* THE FIX: New meta box styling to match screenshot */
 .car-meta {
   display: flex;
   gap: 1.5rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin-bottom: 1rem;
-  background-color: #f8f9fa;
+  background-color: var(--ui-background);
   padding: 0.75rem 1rem;
   border-radius: 6px;
 }
@@ -261,23 +345,25 @@ export default {
 }
 .car-meta i {
   margin-right: 6px;
-  color: #86909c;
+  color: var(--text-secondary);
 }
 
 .details-button {
   width: 100%;
-  margin-top: auto; /* Pushes button to the bottom */
-  background-color: #007bff;
-  color: white;
+  margin-top: auto;
+  background-color: var(--brand-primary);
+  color: var(--text-on-brand);
   font-weight: 500;
 }
 
 .no-cars-message {
   text-align: center;
   padding: 4rem 2rem;
+  background-color: var(--ui-surface);
+  border-radius: 12px;
 }
-.no-cars-message i { font-size: 3rem; margin-bottom: 1rem; color: #007bff; }
-.no-cars-message p { font-size: 1.2rem; color: #6c757d; margin-bottom: 1.5rem; }
+.no-cars-message i { font-size: 3rem; margin-bottom: 1rem; color: var(--brand-primary); }
+.no-cars-message p { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
 
 .button {
   display: inline-flex;
@@ -294,8 +380,8 @@ export default {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
-.back-button {
-  background-color: #6c757d;
-  color: white;
+.back-button-solid {
+  background-color: var(--text-secondary);
+  color: var(--text-on-brand);
 }
 </style>

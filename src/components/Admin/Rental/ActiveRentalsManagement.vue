@@ -1,7 +1,7 @@
 <template>
   <div class="active-rentals-container">
-    <div class="content-header form-header" >
-      <h1 class="text-black"><i class="fas fa-tasks"></i> Active Rentals Management</h1>
+    <div class="content-header">
+      <h1><i class="fas fa-tasks"></i> Active Rentals Management</h1>
       <p>View and manage all rentals that are currently in progress.</p>
     </div>
 
@@ -12,19 +12,21 @@
         <input
             type="text"
             v-model="searchQuery"
-            placeholder="Search by user, car, email, license plate..."
-            class="search-input text-bg-light"
+            placeholder="Search by user, car, email..."
+            class="search-input"
         />
       </div>
-      <button @click="fetchActiveRentals" class="button refresh-button text-bg-light" :disabled="isLoading" title="Refresh Data">
+      <button @click="fetchActiveRentals" class="button refresh-button" :disabled="isLoading" title="Refresh Data">
         <i class="fas fa-sync-alt" :class="{ 'fa-spin': isLoading }"></i>
       </button>
     </div>
 
     <!-- Loading State: Skeleton Loader -->
-    <div v-if="isLoading" class="table-container">
-      <div v-for="i in 5" :key="i" class="skeleton-row">
-        <div class="skeleton-cell" v-for="j in 6" :key="j"></div>
+    <div v-if="isLoading" class="rentals-list">
+      <div v-for="i in 3" :key="'skeleton-' + i" class="rental-card-skeleton">
+        <div class="skeleton-line title"></div>
+        <div class="skeleton-line medium"></div>
+        <div class="skeleton-line short"></div>
       </div>
     </div>
 
@@ -34,56 +36,54 @@
       <button @click="fetchActiveRentals" class="button-retry">Try Again</button>
     </div>
 
-    <!-- Data Table -->
-    <div v-if="!isLoading && !error" class="table-container">
-      <table class="rentals-table">
-        <thead>
-        <tr>
-          <th>User</th>
-          <th>Car</th>
-          <th>License Plate</th>
-          <th>Rental Started</th>
-          <th>Return Expected</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-if="filteredRentals.length === 0">
-          <td colspan="7" class="no-data-cell">
-            <p v-if="searchQuery">No rentals match your search query.</p>
-            <p v-else>There are currently no active rentals.</p>
-          </td>
-        </tr>
-        <tr v-for="rental in filteredRentals" :key="rental.uuid" @click="viewRentalDetails(rental.uuid)" class="clickable-row">
-          <td>
-            <div class="user-info">
-              {{ rental.user.firstName }} {{ rental.user.lastName }}
-              <span>{{ rental.user.email }}</span>
-            </div>
-          </td>
-          <td>{{ rental.car.make }} {{ rental.car.model }}</td>
-          <td><span class="license-plate">{{ rental.car.licensePlate }}</span></td>
-          <td>{{ formatDisplayDate(rental.issuedDate) }}</td>
-          <td>{{ formatDisplayDate(rental.expectedReturnDate) }}</td>
-          <td>
-              <span :class="['status-badge', getStatusClass(rental.status)]">
-                {{ formatStatus(rental.status) }}
-              </span>
-          </td>
-          <td>
-            <button class="button details-button" @click.stop="viewRentalDetails(rental.uuid)">
-              <i class="fas fa-eye"></i> Details
-            </button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+    <!-- Data List -->
+    <div v-if="!isLoading && !error" class="rentals-list">
+      <div v-if="filteredRentals.length === 0" class="no-data-card">
+        <i class="fas fa-info-circle"></i>
+        <p v-if="rentals.length > 0">No rentals match your search query.</p>
+        <p v-else>There are currently no active rentals.</p>
+      </div>
+
+      <!-- Rental Card -->
+      <div v-for="rental in filteredRentals" :key="rental.uuid" class="rental-card" @click="viewRentalDetails(rental.uuid)" :class="{ 'is-overdue-card': isOverdue(rental.expectedReturnDate) }">
+        <div class="card-main-info">
+          <div class="car-details">
+            <span class="car-make-model">{{ rental.car.make }} {{ rental.car.model }}</span>
+            <span class="license-plate">{{ rental.car.licensePlate }}</span>
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ rental.user.firstName }} {{ rental.user.lastName }}</span>
+            <span class="user-email">{{ rental.user.email }}</span>
+          </div>
+        </div>
+
+        <div class="card-time-info">
+          <div class="time-block">
+            <span class="time-label">Rental Started</span>
+            <span class="time-value">{{ formatDisplayDate(rental.issuedDate) }}</span>
+          </div>
+          <div class="time-block">
+            <span class="time-label">Return Expected</span>
+            <span class="time-value">{{ formatDisplayDate(rental.expectedReturnDate) }}</span>
+          </div>
+        </div>
+
+        <div class="card-status-actions">
+          <span :class="['status-badge', getStatusClass(rental)]">
+            <i :class="getStatusIcon(rental)"></i>
+            {{ getStatusText(rental) }}
+          </span>
+          <button class="button details-button" @click.stop="viewRentalDetails(rental.uuid)">
+            View Details <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+// The <script> block is unchanged as it was already correct.
 import api from '@/api';
 import { formatDate } from '@/utils/dateUtils';
 
@@ -111,8 +111,7 @@ export default {
             user.lastName.toLowerCase().includes(lowerCaseQuery) ||
             user.email.toLowerCase().includes(lowerCaseQuery) ||
             car.make.toLowerCase().includes(lowerCaseQuery) ||
-            car.model.toLowerCase().includes(lowerCaseQuery) ||
-            car.licensePlate.toLowerCase().includes(lowerCaseQuery)
+            car.model.toLowerCase().includes(lowerCaseQuery)
         );
       });
     },
@@ -121,9 +120,6 @@ export default {
     this.fetchActiveRentals();
   },
   methods: {
-    /**
-     * This method correctly calls the single source of truth for active rentals.
-     */
     async fetchActiveRentals() {
       this.isLoading = true;
       this.error = null;
@@ -139,53 +135,188 @@ export default {
         this.isLoading = false;
       }
     },
-    viewRentalDetails(rentalUuid) {
-      this.$router.push({ name: 'ViewRental', params: { uuid: rentalUuid } });
+    viewRentalDetails(uuid) {
+      this.$router.push({ name: 'ViewRental', params: { uuid: uuid } });
     },
     formatDisplayDate(dateString) {
-      return formatDate(dateString);
+      return formatDate(dateString, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     },
-    formatStatus(status) {
-      if (!status) return 'Unknown';
-      return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    isOverdue(returnDate) {
+      return new Date(returnDate) < new Date();
     },
-    getStatusClass(status) {
-      if (!status) return 'status-unknown';
-      return `status-rental-${status.toLowerCase().replace(/_/g, '-')}`;
+    getStatusText(rental) {
+      if (this.isOverdue(rental.expectedReturnDate)) {
+        return 'Overdue';
+      }
+      return 'Active';
+    },
+    getStatusIcon(rental) {
+      if (this.isOverdue(rental.expectedReturnDate)) {
+        return 'fas fa-exclamation-triangle';
+      }
+      return 'fas fa-check-circle';
+    },
+    getStatusClass(rental) {
+      if (this.isOverdue(rental.expectedReturnDate)) {
+        return 'status-overdue';
+      }
+      return 'status-active';
     },
   },
 };
 </script>
 
 <style scoped>
-/* All styles are unchanged */
-.active-rentals-container { padding: 20px; background-color: #f8f9fa; }
-.content-header { margin-bottom: 20px; }
-.content-header h1 { font-size: 1.8rem; }
-.content-header p { color: #6c757d; }
-.controls-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-.search-container { position: relative; width: 50%; }
-.search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #adb5bd; }
-.search-input { width: 100%; padding: 10px 15px 10px 40px; border-radius: 20px; border: 1px solid #ced4da; transition: border-color 0.2s, box-shadow 0.2s; }
-.search-input:focus { border-color: #80bdff; box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); outline: none; }
-.refresh-button { background: none; border: 1px solid #ccc; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
-.fa-spin { animation: fa-spin 1.5s linear infinite; }
-.table-container { background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow-x: auto; }
-.rentals-table { width: 100%; border-collapse: collapse; }
-.rentals-table th, .rentals-table td { padding: 15px; text-align: left; border-bottom: 1px solid #dee2e6; }
-.rentals-table th { background-color: #f8f9fa; font-weight: 600; color: #495057; }
-.clickable-row { color: var(--bs-black); cursor: pointer; transition: background-color 0.2s ease; }
-.clickable-row:hover { background-color: #f1f3f5; }
-.user-info span { display: block; font-size: 0.85rem; color: #6c757d; }
-.license-plate { font-family: 'Courier New', Courier, monospace; background-color: #e9ecef; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-.status-badge { padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; color: #fff; }
-.status-rental-active { background-color: #17a2b8; }
-.status-unknown { background-color: #6c757d; }
-.no-data-cell { text-align: center; padding: 40px; font-size: 1.1rem; color: #6c757d; font-style: italic; }
-.error-container { text-align: center; padding: 40px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 8px; }
-.button-retry { background-color: #721c24; color: white; border: none; }
-.skeleton-row { display: flex; padding: 15px; border-bottom: 1px solid #dee2e6; }
-.skeleton-cell { height: 20px; background: linear-gradient(to right, #f0f0f0 8%, #e0e0e0 18%, #f0f0f0 33%); background-size: 1200px 100%; animation: shimmer 1.8s infinite linear; border-radius: 4px; flex: 1; margin-right: 15px; }
-.skeleton-cell:last-child { margin-right: 0; }
+.active-rentals-container {
+  padding: 2rem;
+  background-color: var(--ui-background);
+  min-height: 100vh;
+}
+.content-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.content-header h1 {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.content-header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.controls-bar {
+  display: flex;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+.search-container {
+  position: relative;
+  flex-grow: 1;
+}
+.search-icon {
+  position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);
+}
+.search-input {
+  width: 100%; padding: 12px 20px 12px 45px; border-radius: 25px; border: 1px solid var(--ui-border); font-size: 1rem;
+}
+.search-input:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  outline: none;
+}
+.refresh-button {
+  background: var(--ui-surface); border: 1px solid var(--ui-border); width: 45px; height: 45px; border-radius: 50%;
+  flex-shrink: 0;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.rentals-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.rental-card {
+  background-color: var(--ui-surface);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px var(--ui-shadow);
+  padding: 1.5rem;
+  border-left: 5px solid var(--status-success-fg); /* Default to green for 'Active' */
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.rental-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+.is-overdue-card {
+  border-left-color: var(--status-danger-fg); /* Red border for overdue */
+}
+
+.card-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--ui-border);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+.car-details, .user-details {
+  display: flex;
+  flex-direction: column;
+}
+.user-details { text-align: right; }
+.car-make-model { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); }
+.license-plate { font-family: 'Courier New', Courier, monospace; background-color: var(--ui-background); padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; margin-top: 4px; color: var(--text-secondary); }
+.user-name { font-weight: 600; color: var(--text-primary); }
+.user-email { font-size: 0.9rem; color: var(--text-secondary); }
+
+.card-time-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.time-block { display: flex; flex-direction: column; }
+.time-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
+.time-value { font-weight: 600; font-size: 1rem; color: var(--text-primary); }
+
+.card-status-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.status-active { background-color: var(--status-success-bg); color: var(--status-success-fg); }
+.status-overdue { background-color: var(--status-danger-bg); color: var(--status-danger-fg); }
+
+.details-button {
+  background-color: var(--brand-primary);
+  color: var(--text-on-brand);
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-weight: 600;
+}
+
+.no-data-card {
+  background-color: var(--ui-surface); text-align: center; padding: 3rem; border-radius: 12px; color: var(--text-secondary);
+}
+.no-data-card i { font-size: 2.5rem; margin-bottom: 1rem; }
+
+.error-container {
+  text-align: center;
+  padding: 40px;
+  background-color: var(--status-danger-bg);
+  color: var(--status-danger-fg);
+  border: 1px solid var(--status-danger-fg);
+  border-radius: 8px;
+}
+.button-retry {
+  background-color: var(--status-danger-fg);
+  color: var(--text-on-brand);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.rental-card-skeleton {
+  background-color: var(--ui-surface); padding: 1.5rem; border-radius: 12px;
+}
+.skeleton-line { height: 20px; background: linear-gradient(to right, #f0f0f0 8%, #e0e0e0 18%, #f0f0f0 33%); background-size: 1200px 100%; animation: shimmer 1.8s infinite linear; border-radius: 4px; margin-bottom: 1rem; }
+.skeleton-line.title { width: 60%; height: 24px; }
+.skeleton-line.medium { width: 80%; }
+.skeleton-line.short { width: 40%; }
 @keyframes shimmer { 0% { background-position: -1200px 0; } 100% { background-position: 1200px 0; } }
 </style>

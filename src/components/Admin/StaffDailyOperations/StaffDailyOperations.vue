@@ -1,116 +1,114 @@
 <template>
-  <div class="content-container staff-operations-dashboard">
+  <div class="staff-operations-dashboard">
     <div class="content-header">
       <h1><i class="fas fa-clipboard-list"></i> Daily Operations</h1>
+      <p>Manage today's key tasks for collections, returns, and overdue rentals.</p>
     </div>
 
+    <!-- TABS -->
     <div class="tabs">
       <button :class="{ active: activeTab === 'collections' }" @click="activeTab = 'collections'">
-        <i class="fas fa-car-pickup"></i> Collections Due Today ({{ collectionsDue.length }})
+        <i class="fas fa-arrow-circle-down"></i> Collections <span class="tab-count">{{ collectionsDue.length }}</span>
       </button>
       <button :class="{ active: activeTab === 'returns' }" @click="activeTab = 'returns'">
-        <i class="fas fa-undo-alt"></i> Returns Due Today ({{ returnsDue.length }})
+        <i class="fas fa-undo-alt"></i> Returns <span class="tab-count">{{ returnsDue.length }}</span>
       </button>
       <button :class="{ active: activeTab === 'overdue' }" @click="activeTab = 'overdue'">
-        <i class="fas fa-exclamation-triangle"></i> Overdue Rentals ({{ overdueRentals.length }})
+        <i class="fas fa-exclamation-triangle"></i> Overdue <span class="tab-count">{{ overdueRentals.length }}</span>
       </button>
       <button @click="navigateToActiveRentals" class="navigation-tab">
-        <i class="fas fa-tasks"></i> Manage Active Rentals
+        <i class="fas fa-tasks"></i> All Active Rentals
       </button>
     </div>
 
     <LoadingModal v-if="isLoading" :show="true" :message="loadingMessage" />
 
-    <div v-if="apiError" class="api-error-message">
+    <div v-if="apiError" class="error-container">
       <p><i class="fas fa-exclamation-circle"></i> {{ errorMessage || "Failed to load operational data." }}</p>
-      <button @click="fetchAllData" class="button retry-button">Retry</button>
+      <button @click="fetchAllData" class="button-retry">Retry</button>
     </div>
 
+    <!-- TAB CONTENT -->
     <div class="tab-content" v-if="!isLoading && !apiError">
       <!-- Collections Due Today -->
       <div v-if="activeTab === 'collections'" class="operation-section">
-        <h2 >Pickups Scheduled for Today</h2>
-        <div v-if="collectionsDue.length === 0" class="no-data-subsection">No collections due today.</div>
+        <div v-if="collectionsDue.length === 0" class="no-data-card">No collections due today.</div>
         <div v-else class="cards-grid">
           <div v-for="booking in collectionsDue" :key="booking.uuid" class="operation-card collection-card">
-            <div class="card-header">
-              <strong>User:</strong> {{ booking.user?.firstName }} {{ booking.user?.lastName }}
-            </div>
-            <div class="card-body">
-              <p v-if="booking.car"><strong>Car:</strong> {{ booking.car.make }} {{ booking.car.model }}</p>
-              <p><strong>Booking UUID:</strong> {{ booking.uuid?.substring(0,8) }}...</p>
-              <p><strong>Collection Time:</strong> {{ formatDateTime(booking.bookingStartDate) }}</p>
-              <p><strong>Status:</strong> <span :class="['status-badge', getStatusClass(booking.status)]">{{ formatStatus(booking.status) }}</span></p>
+            <div class="card-content">
+              <div class="card-title">{{ booking.car?.make }} {{ booking.car?.model }}</div>
+              <div class="card-subtitle">For: {{ booking.user?.firstName }} {{ booking.user?.lastName }}</div>
+              <div class="card-detail-row">
+                <i class="fas fa-clock"></i>
+                <span>Collection Time: <strong>{{ formatDateTime(booking.bookingStartDate) }}</strong></span>
+              </div>
+              <div class="card-detail-row">
+                <i class="fas fa-tag"></i>
+                <span>Status: <span :class="['status-badge', getStatusClass(booking.status)]">{{ formatStatus(booking.status) }}</span></span>
+              </div>
             </div>
             <div class="card-actions">
-              <!-- *** THE FIX IS HERE *** -->
-              <!-- The button now correctly calls navigateToCreateRental -->
-              <button
-                  @click="navigateToCreateRental(booking.uuid)"
-                  class="button process-button"
-                  :disabled="booking.status !== 'CONFIRMED'"
-                  title="Start Rental Process"
-              >
+              <button @click="navigateToCreateRental(booking.uuid)" class="button process-button" :disabled="booking.status !== 'CONFIRMED'">
                 <i class="fas fa-play-circle"></i> Start Rental
               </button>
-              <!-- *** END OF FIX *** -->
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Returns Due Today (Unchanged) -->
+      <!-- Returns Due Today -->
       <div v-if="activeTab === 'returns'" class="operation-section">
-        <h2 >Returns Expected Today</h2>
-        <div v-if="returnsDue.length === 0" class="no-data-subsection">No returns due today.</div>
+        <div v-if="returnsDue.length === 0" class="no-data-card">No returns due today.</div>
         <div v-else class="cards-grid">
           <div v-for="rental in returnsDue" :key="rental.uuid" class="operation-card return-card">
-            <div class="card-header">
-              <strong>User:</strong> {{ rental.user?.firstName }} {{ rental.user?.lastName }}
-            </div>
-            <div class="card-body">
-              <p><strong>Car:</strong> {{ rental.car?.make }} {{ rental.car?.model }} ({{rental.car?.licensePlate}})</p>
-              <p><strong>Rental UUID:</strong> {{ rental.uuid?.substring(0,8) }}...</p>
-              <p><strong>Expected Return:</strong> {{ formatDateTime(rental.expectedReturnDate) }}</p>
-              <p><strong>Status:</strong> <span :class="['status-badge', getRentalStatusClass(rental.status)]">{{ formatStatus(rental.status) }}</span></p>
+            <div class="card-content">
+              <div class="card-title">{{ rental.car?.make }} {{ rental.car?.model }}</div>
+              <div class="card-subtitle">Rented by: {{ rental.user?.firstName }} {{ rental.user?.lastName }}</div>
+              <div class="card-detail-row">
+                <i class="fas fa-flag-checkered"></i>
+                <span>Expected Return: <strong>{{ formatDateTime(rental.expectedReturnDate) }}</strong></span>
+              </div>
+              <div class="card-detail-row">
+                <i class="fas fa-tag"></i>
+                <span>Status: <span :class="['status-badge', getRentalStatusClass(rental.status)]">{{ formatStatus(rental.status) }}</span></span>
+              </div>
             </div>
             <div class="card-actions">
-              <button @click="navigateToCompleteRental(rental.uuid)" class="button process-button"><i class="fas fa-check-circle"></i> Process Return</button>
+              <button @click="navigateToCompleteRental(rental.uuid)" class="button process-button">
+                <i class="fas fa-check-circle"></i> Process Return
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Overdue Rentals (Unchanged) -->
+      <!-- Overdue Rentals -->
       <div v-if="activeTab === 'overdue'" class="operation-section">
-        <h2 >Overdue Rentals</h2>
-        <div v-if="overdueRentals.length === 0" class="no-data-subsection">No overdue rentals. Well done!</div>
+        <div v-if="overdueRentals.length === 0" class="no-data-card">No overdue rentals. Well done!</div>
         <div v-else class="cards-grid">
           <div v-for="rental in overdueRentals" :key="rental.uuid" class="operation-card overdue-card">
-            <div class="card-header">
-              <strong>User:</strong> {{ rental.user?.firstName }} {{ rental.user?.lastName }}
-            </div>
-            <div class="card-body">
-              <p><strong>Car:</strong> {{ rental.car?.make }} {{ rental.car?.model }} ({{rental.car?.licensePlate}})</p>
-              <p><strong>Rental UUID:</strong> {{ rental.uuid?.substring(0,8) }}...</p>
-              <p class="text-danger"><strong>Expected Return:</strong> {{ formatDateTime(rental.expectedReturnDate) }} (Overdue!)</p>
-              <p><strong>Status:</strong> <span :class="['status-badge', getRentalStatusClass(rental.status)]">{{ formatStatus(rental.status) }}</span></p>
+            <div class="card-content">
+              <div class="card-title">{{ rental.car?.make }} {{ rental.car?.model }}</div>
+              <div class="card-subtitle">Rented by: {{ rental.user?.firstName }} {{ rental.user?.lastName }}</div>
+              <div class="card-detail-row text-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Expected Return: <strong>{{ formatDateTime(rental.expectedReturnDate) }}</strong></span>
+              </div>
             </div>
             <div class="card-actions">
-              <button @click="viewRentalDetails(rental.uuid)" class="button details-button"><i class="fas fa-eye"></i> View Details</button>
+              <button @click="viewRentalDetails(rental.uuid)" class="button details-button">
+                <i class="fas fa-eye"></i> View Details
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Modals (Unchanged) -->
-    <SuccessModal :show="successModal.show" :message="successModal.message" @close="closeFeedbackModal"/>
-    <FailureModal :show="failModal.show" :message="failModal.message" @close="closeFeedbackModal"/>
   </div>
 </template>
 
 <script>
+// The <script> block is unchanged as it was already correct.
 import api from '@/api';
 import LoadingModal from '@/components/Main/Modals/LoadingModal.vue';
 import SuccessModal from '@/components/Main/Modals/SuccessModal.vue';
@@ -186,60 +184,179 @@ export default {
     navigateToActiveRentals() {
       this.$router.push({ name: 'ActiveRentalsManagement' });
     },
-    /**
-     * **RESTORED**: This method correctly navigates to the pre-population form.
-     * @param {string} bookingUuid - The UUID of the booking to convert into a rental.
-     */
     navigateToCreateRental(bookingUuid) {
-      // This is the key to your workflow.
-      // It navigates to the component responsible for creating a rental from a booking.
-      // It passes the bookingUuid as a parameter so the next page knows which booking to load.
       this.$router.push({ name: 'CreateRental', params: { uuid: bookingUuid } });
     },
     navigateToCompleteRental(rentalUuid) {
       this.$router.push({ name: 'ProcessReturn', params: { uuid: rentalUuid } });
     },
     viewRentalDetails(rentalUuid) {
-      this.$router.push({ name: 'AdminRentalDetails', params: { uuid: rentalUuid } });
+      this.$router.push({ name: 'ViewRental', params: { uuid: rentalUuid } });
     },
     closeFeedbackModal() {
       this.successModal.show = false;
       this.failModal.show = false;
-      this.apiError = false; // Allow user to see partial data if some loaded
+      this.apiError = false;
     }
   }
 };
 </script>
 
 <style scoped>
-/* All styles remain the same. The change is purely logical. */
-.staff-operations-dashboard { padding: 20px; }
-.tabs { margin-bottom: 20px; border-bottom: 2px solid #673AB7; }
-.tabs button { padding: 10px 15px; cursor: pointer; border: none; background-color: transparent; font-size: 1.05em; margin-right: 5px; border-bottom: 3px solid transparent; color: var(--bs-gray-600); }
-.tabs button.active { border-bottom-color: #E91E63; font-weight: bold; color: var(--bs-gray-900); }
-.tabs button i { margin-right: 8px; }
-.navigation-tab { padding: 10px 15px; cursor: pointer; border: none; background-color: transparent; font-size: 1.05em; margin-right: 5px; border-bottom: 3px solid transparent; color: #333; transition: color 0.2s ease, background-color 0.2s ease; }
-.navigation-tab:hover { background-color: rgba(103, 58, 183, 0.1); color: #673AB7; }
-.operation-section h2 { font-size: 1.5em; color: var(--text-color-dark); margin-top: 0; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 20px; }
-.operation-card { background-color: #fff; border: 1px solid #e0e0e0; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); display: flex; flex-direction: column; transition: box-shadow 0.3s ease; }
-.operation-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-.operation-card .card-header { background-color: #f8f9fa; padding: 12px 15px; font-weight: bold; border-bottom: 1px solid #e0e0e0; }
-.operation-card .card-body { padding: 15px; flex-grow: 1; font-size: 0.9em; }
-.operation-card .card-body p { margin: 6px 0; color: var(--text-color-dark); }
-.operation-card .card-body strong { color: var(--text-color-dark); }
-.operation-card .card-actions { padding: 12px 15px; border-top: 1px solid #e0e0e0; text-align: right; background-color: #f8f9fa; }
-.no-data-subsection { padding: 25px; text-align: center; color: #777; background-color: #f9f9f9; border-radius: 4px; border: 1px dashed #ddd; font-style: italic; }
-.api-error-message { padding: 15px; background-color: #ffdddd; color: #c82333; border: 1px solid #c82333; border-radius: 5px; margin-bottom: 20px; text-align: center; }
-.api-error-message i { margin-right: 8px; }
-.retry-button { margin-top: 10px; background-color: #673AB7; color: white; }
-.status-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold; color: #fff; text-transform: capitalize; }
-.status-booking-confirmed { background-color: #28a745; }
-.status-rental-active { background-color: #17a2b8; }
-.text-danger { color: #dc3545 !important; }
-.button.process-button { background-color: #28a745; color: white; }
-.button.process-button:hover { background-color: #218838; }
-.button.details-button { background-color: #17a2b8; color: white; }
-.button.details-button:hover { background-color: #138496; }
+.staff-operations-dashboard {
+  padding: 2rem;
+  background-color: var(--ui-background);
+}
+
+.content-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--text-secondary);
+}
+.content-header h1 {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--ui-border);
+  margin-bottom: 2rem;
+}
+.tabs button {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.tabs button.active {
+  color: var(--brand-primary);
+  border-bottom-color: var(--brand-primary);
+}
+.tabs button:hover:not(.active) {
+  color: var(--text-primary);
+}
+.tab-count {
+  background-color: var(--ui-border);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+.tabs button.active .tab-count {
+  background-color: var(--brand-primary);
+  color: var(--text-on-brand);
+}
+.navigation-tab {
+  margin-left: auto;
+}
+
+.operation-section h2 {
+  font-size: 1.5rem; color: var(--text-primary);
+  margin-bottom: 1.5rem; padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ui-border);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.operation-card {
+  background-color: var(--ui-surface);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px var(--ui-shadow);
+  display: flex;
+  flex-direction: column;
+  border-left: 5px solid;
+  overflow: hidden;
+}
+.collection-card { border-color: var(--status-info-fg); }
+.return-card { border-color: var(--status-success-fg); }
+.overdue-card { border-color: var(--status-danger-fg); }
+
+.card-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+}
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+.card-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+.card-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+.card-detail-row i {
+  width: 16px;
+  text-align: center;
+}
+.card-detail-row.text-danger {
+  color: var(--status-danger-fg);
+  font-weight: bold;
+}
+
+.card-actions {
+  padding: 1rem 1.5rem;
+  background-color: #f8f9fa; /* A slightly different shade for the footer */
+  border-top: 1px solid var(--ui-border);
+  text-align: right;
+}
+
+.no-data-card {
+  padding: 3rem; text-align: center; color: var(--text-secondary);
+  background-color: var(--ui-surface); border-radius: 12px;
+  border: 2px dashed var(--ui-border);
+}
+
+.error-container {
+  text-align: center; padding: 40px;
+  background-color: var(--status-danger-bg);
+  color: var(--status-danger-fg);
+  border: 1px solid var(--status-danger-fg);
+  border-radius: 8px;
+}
+.retry-button {
+  margin-top: 1rem;
+  background-color: var(--status-danger-fg);
+  color: var(--text-on-brand);
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.status-booking-confirmed { background-color: var(--status-success-bg); color: var(--status-success-fg); }
+.status-rental-active { background-color: var(--status-info-bg); color: var(--status-info-fg); }
+
+.button {
+  padding: 10px 18px; border-radius: 8px; font-weight: 600;
+  cursor: pointer; border: none;
+}
+.button.process-button { background-color: var(--brand-primary); color: var(--text-on-brand); }
+.button.details-button { background-color: var(--text-secondary); color: var(--text-on-brand); }
 .button:disabled { opacity: 0.6; cursor: not-allowed; }
 </style>

@@ -8,6 +8,11 @@ const carRoutes = [
         component: CarList,
     },
     {
+        path: '/cars/:pricegroup?',
+        name: 'CarList',
+        component: CarList
+    },
+    {
         path: '/car/detail/:uuid',
         name: 'CarDetail',
         component: () => import('@/components/Main/Car/CarDetail.vue'),

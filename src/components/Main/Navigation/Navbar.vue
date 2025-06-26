@@ -69,7 +69,7 @@
               <i v-else class="fas fa-user-circle user-avatar-icon"></i>
               <span>{{ userName || 'My Account' }}</span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end">
+            <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu">
               <li><router-link to="/user/profile/profile" class="dropdown-item"><i class="fas fa-user-alt"></i> User Profile</router-link></li>
               <li><router-link to="/my-bookings" class="dropdown-item"><i class="fas fa-calendar-check"></i> My Bookings</router-link></li>
               <li v-if="isAdmin"><hr class="dropdown-divider" /></li>
@@ -186,7 +186,8 @@ onUnmounted(() => {
 .toggler-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
 .nav-link { color: rgba(255, 255, 255, 0.85); font-weight: 500; padding: 0.8rem 1rem; border-radius: 8px; transition: background-color 0.2s ease, color 0.2s ease; }
 .nav-link:hover { background-color: rgba(255, 255, 255, 0.1); color: white; }
-.router-link-active { color: var(--bs-green) !important; font-weight: 800; background-color: var(--bs-gray-300) !important; border-radius: 8px; }
+
+
 .auth-buttons { display: flex; align-items: center; gap: 0.5rem; }
 .btn-signup { background-color: #fff; color: var(--primary-nav-color, #e83e8c); border-radius: 50px; padding: 0.5rem 1.25rem; font-weight: 600; transition: all 0.2s ease-in-out; }
 .btn-signup:hover { background-color: #f0f0f0; transform: scale(1.05); }
@@ -202,4 +203,47 @@ onUnmounted(() => {
 .admin-link i, .logout-link i { color: #dc3545; }
 .admin-link:hover, .logout-link:hover { background-color: #f8f9fa; color: #a71d2a; }
 .admin-link:hover i, .logout-link:hover i { color: #a71d2a; }
+/* Main nav active links (inside .navbar-nav but NOT dropdown-menu) */
+.navbar-nav > .nav-item > .router-link-active {
+  color: white !important;
+  font-weight: 700;
+  background-color: rgba(255, 255, 255, 0.15) !important; /* soft white */
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dropdown menu active links (inside .dropdown-menu) */
+.dropdown-menu .router-link-active {
+  color: var(--bs-green) !important; /* green text */
+  font-weight: 600;
+  background-color: rgba(40, 167, 69, 0.2) !important; /* very light green */
+  border-radius: 6px;
+  box-shadow: none;
+  padding-left: 1rem; /* keep some padding */
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-menu .router-link-active:hover {
+  background-color: rgba(40, 167, 69, 0.3) !important;
+}
+.navbar-custom .navbar-brand:hover {
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+
+  background-color: rgba(255, 255, 255, 0.15) !important; /* soft white */
+}
+.navbar-custom .navbar-brand img {
+  transition: transform 0.2s ease-in-out;
+}
+.user-dropdown-menu {
+  width: auto !important;      /* let it grow with content */
+  min-width: 170px !important;     /* remove any min-width */
+  white-space: nowrap;         /* prevent wrapping, so width is as wide as the longest item */
+  padding: 0.5rem 0;           /* optional: keep padding */
+  max-width: 300px; /* or something reasonable */
+  overflow-x: auto;
+}
+
 </style>

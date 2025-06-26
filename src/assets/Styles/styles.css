@@ -89,6 +89,88 @@
     --secondary-nav-color : #343a40; /* Secondary Navigation Color */
     --primary-sidebar-color : #407b40; /* Primary Sidebar Color */
     --secondary-sidebar-color : #343a40; /* Secondary Sidebar Color */
+
+
+
+
+    /* ==========================================================================
+    1. Brand & Accent Colors
+    ========================================================================== */
+    /* The main colors that define the application's identity. */
+
+    --brand-primary: #007bff;        /* A strong, accessible blue for primary actions. */
+    --brand-secondary: #6f42c1;     /* A deep purple for secondary elements or highlights. */
+    --brand-accent: #e83e8c;         /* A vibrant pink for special accents or calls to action. */
+
+    /* ==========================================================================
+       2. UI & Layout Colors
+       ========================================================================== */
+    /* Colors for general UI elements like backgrounds, borders, and cards. */
+
+    --ui-background: #f4f7f6;        /* A very light, neutral gray for the main page background. */
+    --ui-surface: #ffffff;          /* The background for cards, modals, and other content surfaces. */
+    --ui-border: #dee2e6;          /* A light gray for borders and dividers. */
+    --ui-shadow: rgba(0, 0, 0, 0.08); /* A soft, subtle shadow for cards. */
+
+    /* ==========================================================================
+       3. Text & Typography Colors
+       ========================================================================== */
+    /* Ensures high contrast and readability. */
+
+    --text-primary: #212529;         /* The default text color for high contrast on light backgrounds. */
+    --text-secondary: #6c757d;      /* A muted gray for secondary text, labels, and descriptions. */
+    --text-on-brand: #ffffff;         /* The text color to use on top of primary/brand colored backgrounds. */
+    --text-link: var(--brand-primary);/* Link color, tied to the primary brand color. */
+    --text-link-hover: #0056b3;      /* A darker shade for link hover states. */
+    --text-error: #721c24;            /* Text color specifically for error messages. */
+
+    /* ==========================================================================
+       4. Status & Feedback Colors
+       ========================================================================== */
+    /* Used for alerts, badges, and validation states. */
+
+    /* --- Success --- */
+    --status-success-bg: #d1e7dd;    /* Light green background for success alerts. */
+    --status-success-fg: #0a3622;    /* Dark green foreground (text/icons) for high contrast. */
+
+    /* --- Danger / Error --- */
+    --status-danger-bg: #f8d7da;     /* Light red background for error alerts. */
+    --status-danger-fg: #58151c;     /* Dark red foreground for high contrast. */
+
+    /* --- Warning --- */
+    --status-warning-bg: #fff3cd;    /* Light yellow background for warnings. */
+    --status-warning-fg: #664d03;    /* Dark yellow/brown foreground for high contrast. */
+
+    /* --- Info --- */
+    --status-info-bg: #cff4fc;       /* Light blue background for info alerts. */
+    --status-info-fg: #055160;       /* Dark cyan foreground for high contrast. */
+
+    /* ==========================================================================
+       5. Component-Specific Colors
+       ========================================================================== */
+    /* Overrides or specific variables for key components like the navbar or dashboard. */
+
+    /* --- Navigation --- */
+    --nav-background: var(--brand-primary);
+    --nav-text: var(--text-on-brand);
+    --nav-link-active-bg: rgba(255, 255, 255, 0.2);
+
+    /* --- Admin Sidebar --- */
+    --sidebar-background: #2c3e50;  /* A dark slate for the admin sidebar. */
+    --sidebar-text: #ecf0f1;
+    --sidebar-link-hover-bg: #34495e;
+    --sidebar-link-active-bg: var(--brand-primary);
+
+    /* --- Admin Dashboard KPI Cards --- */
+    --kpi-rentals-bg: #007bff;
+    --kpi-available-bg: #28a745;
+    --kpi-overdue-bg: #dc3545;
+    --kpi-collections-bg: #ffc107;
+    --kpi-files-bg: #6f42c1;
+    --kpi-text-light: #ffffff;
+    --kpi-text-dark: #212529; /* For the yellow collections card */
+
+
 }
 
 
