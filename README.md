@@ -87,7 +87,7 @@ We welcome contributions to enhance OnTheGoRentals! If you'd like to contribute,
 
 See our [Contributors](Contributions-README.md).
 
-More detailed guidelines for developers can be found in the [Developer Guide](docs/DEVELOPER_GUIDE.md) (once created).
+More detailed guidelines for developers can be found in the [Developer Guide](docs/DEVELOPER_GUIDE.md).
 
 ## License
 

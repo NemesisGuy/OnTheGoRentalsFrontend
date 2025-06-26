@@ -13,7 +13,6 @@ This guide provides information for developers working on the OnTheGoRentals fro
 *   **Recommended IDE**: [VSCode](https://code.visualstudio.com/) with the following extensions:
     *   [Volar (Vue)](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
     *   [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin)
-    *   (Add any other common extensions like ESLint, Prettier if they are set up for the project)
 
 ### 2.2. Installation
 1.  **Clone the repository:**
@@ -26,21 +25,20 @@ This guide provides information for developers working on the OnTheGoRentals fro
     npm install
     ```
 3.  **Environment Variables:**
-    *   The application uses `.env` files for environment-specific configurations, particularly for the API URL during development.
-    *   Copy `.env.development.example` (if one exists) to `.env.development` and update the variables as needed.
-    *   Key variables:
-        *   `VITE_API_BASE_URL` (or similar, check `src/api.js` or `vite.config.js` for actual usage): Sets the backend API URL for local development.
+    *   The application uses environment configuration files located in the `env/` directory. For local development, configure `env/.env.development`.
+    *   Key variable for local development:
+        *   `VITE_API_BASE_URL`: Sets the backend API URL (e.g., `VITE_API_BASE_URL=http://localhost:8080/api`). This is used by `src/api.js`.
     *   **Note:** For production builds, the API URL is injected at runtime. See the [Deployment Guide](DEPLOYMENT.md).
 
 
 ## 3. Architecture Overview
 
 *   **Framework**: Vue 3 with Vite.
-*   **Language**: JavaScript (and potentially TypeScript if used).
+*   **Language**: JavaScript.
 *   **Routing**: `vue-router` is used for client-side navigation. Configurations are in `src/router/`.
-*   **State Management**: Pinia (or Vuex, check `src/store/`) is used for global state management. Store modules are typically located in `src/store/`.
+*   **State Management**: Vuex is included as a project dependency (`vuex: ^4.1.0`), and a store file exists at `src/store/store.js`. However, the store file content is currently commented out, and the store is not registered with the Vue application in `src/main.js`. Global state management might be handled through other means or is minimal at present.
 *   **API Communication**: `axios` is used for making HTTP requests to the backend. The primary Axios instance and interceptors are configured in `src/api.js`.
-*   **Styling**: (Describe the styling approach, e.g., "Global CSS in `src/assets/Styles/styles.css`, component-scoped styles within Vue components").
+*   **Styling**: Styling primarily uses global CSS in `src/assets/Styles/styles.css`, Bootstrap v5 (via `bootstrap` and `bootstrap-vue-next` packages), and Font Awesome icons (via `@fortawesome/fontawesome-free`). Components may also use scoped styles.
 
 ## 4. Key Directories and Files
 
@@ -51,14 +49,13 @@ Refer to the "Project Structure" section in the main [README.md](../README.md) f
     *   **`App.vue`**: The root Vue component.
     *   **`api.js`**: Axios configuration for backend API calls. This is where the runtime API URL configuration (see `DEPLOYMENT.md`) is primarily consumed.
     *   **`router/index.js`**: Defines all application routes.
-    *   **`store/store.js`** (or `src/stores/` for Pinia): Defines the state management setup.
+    *   **`store/store.js`**: Contains a commented-out Vuex store setup.
     *   **`components/`**: Contains reusable UI components, organized into:
         *   `Admin/`: Components specific to the admin interface.
         *   `Main/`: Components for the main user-facing application.
     *   **`assets/`**: Static assets like images, global stylesheets.
-    *   **`views/`** (or `pages/`): (If this convention is used) Higher-level components that represent application pages/views. Otherwise, components in `components/` might serve this role directly.
 *   **`public/`**: Static assets that are copied directly to the build output. `index.html` and `config.js` (generated at runtime in Docker) are key files here.
-*   **`configs/`**: May contain configuration files used by other services (e.g., Nginx).
+*   **`configs/`**: Contains configuration files used by other services (e.g., Nginx).
 *   **`docker/`**: Contains Docker-related files (`Dockerfile`, `docker-compose*.yml`).
 *   **`docs/`**: Project documentation.
 
@@ -71,29 +68,25 @@ npm run dev
 This will start the Vite development server, usually on `http://localhost:5173` (check your `vite.config.js` or terminal output). It supports Hot Module Replacement (HMR) for a fast development experience.
 
 ### 5.2. Linting and Formatting
-*(If ESLint, Prettier, or other tools are configured)*
-*   "The project uses ESLint for code linting and Prettier for code formatting."
-*   "Run linters: `npm run lint` (if script exists)"
-*   "Run formatters: `npm run format` (if script exists)"
-*   "It's recommended to configure your IDE to format on save."
+*   The project does not have explicit linting (e.g., ESLint) or formatting (e.g., Prettier) scripts or dependencies configured in `package.json`.
+*   Developers should manually adhere to the existing code style and conventions found in the codebase.
+*   Consider setting up these tools if a more consistent code style is desired.
 
 ### 5.3. Creating New Components/Routes/Store Modules
-*   Follow the existing patterns in `src/components/`, `src/router/`, and `src/store/`.
-*   (Add any specific naming conventions or patterns if they exist).
+*   Follow the existing patterns in `src/components/`, `src/router/`.
+*   If Vuex is to be implemented, uncomment and complete the setup in `src/store/store.js` and register it in `src/main.js`.
 
 ## 6. API Integration
 
 *   The frontend communicates with the backend via a RESTful API.
 *   The `axios` instance is configured in `src/api.js`. This file handles setting the `baseURL` and any interceptors (e.g., for adding auth tokens, error handling).
-*   For local development, the API base URL is typically set via an environment variable in a `.env.development` file (e.g., `VITE_API_BASE_URL`).
+*   For local development, the API base URL is set via the `VITE_API_BASE_URL` variable in `env/.env.development`.
 *   In deployed environments (Docker), the API URL is injected at runtime via `public/config.js`. Refer to [Deployment Guide](DEPLOYMENT.md) for details.
 
 ## 7. State Management
 
-*   The application uses [Pinia/Vuex] for managing global application state.
-*   The main store setup is in `src/store/store.js` (or `src/stores/index.js` for Pinia).
-*   Modules are used to organize state for different features (e.g., user authentication, car data).
-*   When adding new global state, consider if it belongs in an existing module or if a new one is needed.
+*   Vuex is a dependency (`vuex: ^4.1.0`), and a basic store structure is present in `src/store/store.js`, but its contents are commented out and it's not currently integrated with the Vue application in `src/main.js`.
+*   If global state management is needed, the Vuex setup in `src/store/store.js` can be completed and registered with the Vue app.
 
 ## 8. Routing
 
@@ -105,22 +98,14 @@ This will start the Vite development server, usually on `http://localhost:5173` 
 ## 9. Styling
 
 *   Global styles are defined in `src/assets/Styles/styles.css`.
+*   The project uses Bootstrap v5 (`bootstrap`, `bootstrap-vue-next`) for UI components and styling.
+*   Font Awesome (`@fortawesome/fontawesome-free`) is used for icons.
 *   Components typically use scoped CSS within their `<style scoped>` tags to avoid style conflicts.
-*   (Mention any CSS frameworks like Tailwind CSS, Bootstrap, or UI component libraries like Vuetify, Quasar if they are used).
 
 ## 10. Testing
 
-*(This section needs to be adapted based on the project's actual testing setup)*
-*   **If no tests exist:** "Currently, there is no formal testing suite set up for this project. Contributions in this area are welcome."
-*   **If tests exist (e.g., Vitest, Jest, Cypress):**
-    *   "The project uses [Testing Framework, e.g., Vitest] for unit tests and [E2E Testing Framework, e.g., Cypress] for end-to-end tests."
-    *   "Unit test files are typically located alongside the components/modules they test (e.g., `*.spec.js` or `*.test.js`)."
-    *   "E2E tests are in the `tests/e2e` directory (or similar)."
-    *   **Running Tests:**
-        *   `npm run test` (or specific scripts like `npm run test:unit`, `npm run test:e2e`)
-    *   **Writing Tests:**
-        *   (Provide brief guidelines or link to more detailed testing documentation if available).
-        *   "Ensure new features and bug fixes are accompanied by relevant tests."
+*   Currently, there is no formal testing suite (e.g., Vitest, Jest, Cypress) set up for this project, and no testing-related dependencies or scripts are found in `package.json`.
+*   Contributions in this area, such as setting up a testing framework and writing tests, are welcome.
 
 ## 11. Contribution Guidelines
 
@@ -138,9 +123,8 @@ We welcome contributions to OnTheGoRentals! Please adhere to the following guide
 9.  Participate in the code review process.
 
 ### 11.2. Code Style
-*   Follow the existing code style.
-*   If ESLint and Prettier are configured, ensure your code passes linting and formatting checks.
-*   (Add any other specific style guidelines).
+*   Follow the existing code style apparent in the codebase.
+*   As there is no automated linting/formatting, pay close attention to consistency.
 
 ### 11.3. Commit Messages
 *   Use conventional commit messages if adopted (e.g., `feat: add new login button`, `fix: resolve issue with booking dates`).

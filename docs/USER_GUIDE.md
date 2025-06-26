@@ -10,130 +10,130 @@ Welcome to OnTheGoRentals! This guide is designed to help you understand how to 
 
 ### 2.1. Creating an Account
 
-*   Navigate to the Sign-Up Page: [Link to Sign-Up Page or describe how to find it, e.g., "Click on the 'Sign Up' button on the homepage."]
-*   Fill in the required information:
+*   Navigate to the Sign-Up Page: Look for a "Sign Up" or "Register" button or link, typically found in the website's header or main navigation menu.
+*   Fill in the required information, which commonly includes:
     *   Full Name
     *   Email Address
     *   Password
-    *   (Any other required fields, e.g., Phone Number, Driver's License)
-*   Agree to the Terms and Conditions.
-*   Click "Register" or "Create Account".
-*   (Mention email verification if applicable)
+    *   You may also be asked for other details like Phone Number or Driver's License information.
+*   If required, agree to the Terms and Conditions.
+*   Click the "Register" or "Create Account" button.
+*   Be aware that you might need to verify your email address by clicking a link sent to you.
 
 ### 2.2. Logging In
 
-*   Navigate to the Login Page: [Link to Login Page or describe, e.g., "Click on the 'Login' button."]
+*   Navigate to the Login Page: Look for a "Login" or "Sign In" button or link, usually in the website's header.
 *   Enter your registered Email Address and Password.
 *   Click "Login".
-*   (Mention "Forgot Password?" functionality if available)
+*   If you've forgotten your password, look for a "Forgot Password?" link to reset it. The application includes functionality for password recovery.
 
 ## 3. Finding and Booking a Vehicle
 
 ### 3.1. Browsing Cars
 
-*   Once logged in, you'll typically land on the main dashboard or car listing page.
-*   View available cars, often displayed with images, make, model, and daily rates.
+*   Once logged in, you will typically be directed to the main dashboard or a car listing page.
+*   Here, you can view available cars, which are often displayed with images, make, model, and daily rental rates.
 
 ### 3.2. Searching and Filtering
 
 *   Use the search bar (if available) to look for specific car models or features.
-*   Utilize filter options to narrow down your search:
+*   Utilize filter options (if available) to narrow down your search. Common filters include:
     *   Date Range (Pick-up and Drop-off dates)
     *   Car Type (e.g., Sedan, SUV, Van)
     *   Price Range
     *   Location (if multiple pick-up locations are supported)
-    *   Other features (e.g., Automatic/Manual, GPS, Child Seat)
+    *   Other features (e.g., Automatic/Manual transmission, GPS, Child Seat).
 
 ### 3.3. Viewing Car Details
 
-*   Click on a car listing to view more detailed information:
+*   Click on a car listing to view more detailed information, which may include:
     *   Multiple images of the vehicle.
-    *   Detailed specifications (engine, seating capacity, luggage space).
-    *   Rental terms and conditions specific to that car.
-    *   Customer reviews or ratings (if applicable).
+    *   Detailed specifications (e.g., engine size, seating capacity, luggage space).
+    *   Specific rental terms and conditions for that car.
+    *   Customer reviews or ratings (if this feature is implemented).
     *   Pick-up location details.
 
 ### 3.4. Making a Reservation
 
-*   Select your desired pick-up and drop-off dates and times.
-*   Confirm the rental duration and total price.
-*   Add any optional extras (e.g., insurance, GPS, child seat).
-*   Proceed to checkout.
-*   Enter payment information (describe supported payment methods).
-*   Review your booking details one last time.
-*   Confirm your booking. You should receive a confirmation email and see the booking in your account.
+*   Select your desired pick-up and drop-off dates and times for the chosen vehicle.
+*   Confirm the rental duration and the total price.
+*   Add any optional extras if offered (e.g., insurance, GPS, child seat).
+*   Proceed to the checkout process.
+*   Enter your payment information. (The platform will specify supported payment methods).
+*   Review all your booking details carefully one last time.
+*   Confirm your booking. You should receive a confirmation (e.g., via email) and the booking should appear in your user account section.
 
 ## 4. Managing Your Bookings
 
 ### 4.1. Viewing Your Bookings
 
-*   Navigate to your "My Bookings" or "Rental History" section in your user profile.
-*   Here you'll see a list of your upcoming, ongoing, and past rentals.
+*   Navigate to a section like "My Bookings" or "Rental History" in your user profile or account area.
+*   This section will typically display a list of your upcoming, ongoing, and past rentals.
 
-### 4.2. Modifying a Booking (if supported)
+### 4.2. Modifying a Booking
 
-*   Select the booking you wish to modify.
-*   Look for options like "Change Dates," "Change Vehicle," or "Edit Booking."
-*   (Describe any limitations or conditions for modifications, e.g., subject to availability, modification fees).
+*   If the platform supports booking modifications:
+    *   Select the booking you wish to modify from your list of bookings.
+    *   Look for options such as "Change Dates," "Change Vehicle," or "Edit Booking."
+    *   Be aware that modifications may be subject to vehicle availability, and there might be conditions or fees associated with changes.
 
-### 4.3. Canceling a Booking (if supported)
+### 4.3. Canceling a Booking
 
-*   Select the booking you wish to cancel.
-*   Find the "Cancel Booking" option.
-*   Review the cancellation policy (e.g., refund eligibility, cancellation fees).
-*   Confirm cancellation.
+*   If the platform supports booking cancellations:
+    *   Select the booking you wish to cancel.
+    *   Find the "Cancel Booking" option.
+    *   Carefully review the cancellation policy, which will outline any refund eligibility or cancellation fees.
+    *   Confirm the cancellation.
 
 ## 5. User Profile and Account Management
 
 ### 5.1. Accessing Your Profile
 
-*   Click on your name or profile icon, usually in the navigation bar.
-*   Select "Profile," "Account Settings," or similar.
+*   Access your user profile by clicking on your name or a profile icon, usually located in the website's navigation bar.
+*   Select an option like "Profile," "My Account," or "Account Settings."
 
 ### 5.2. Updating Personal Information
 
-*   Edit details like your name, contact number, and address.
-*   Update your password.
+*   In your profile section, you should be able to edit personal details such as your name, contact number, and address.
+*   You should also be able to update your password.
 
 ### 5.3. Payment Methods
 
-*   Add, update, or remove payment methods (if the system stores them).
+*   If the system supports storing payment methods, you may find options to add, update, or remove them in your account settings.
 
 ### 5.4. Viewing Rental History
 
-*   A detailed log of all your past rentals and their details.
+*   Your profile area should provide access to a detailed log of all your past rentals and their details.
 
 ## 6. Driver-Specific Features (Optional)
 
-*(This section should be filled out if there are features specifically for users who are also drivers, e.g., managing driver profiles, uploading documents. If not applicable, this section can be removed or stated as "Not applicable at this time.")*
-
-*   Example: Managing driver documents (license, insurance).
-*   Example: Viewing assigned routes or schedules (if applicable to the business model).
+*   This section can be expanded if specific features for drivers (beyond standard rental users, such as chauffeurs or employees using company vehicles) are implemented in the OnTheGoRentals platform. Currently, the primary focus is on general user rental functionality.
 
 ## 7. Troubleshooting and Support
 
 ### 7.1. Common Issues
 
 *   **Login Problems:**
-    *   Ensure correct email and password.
-    *   Try the "Forgot Password?" link.
-    *   Check for Caps Lock.
+    *   Double-check that you are entering the correct email and password.
+    *   Use the "Forgot Password?" link if you cannot recall your password.
+    *   Ensure Caps Lock is not accidentally enabled on your keyboard.
 *   **Booking Errors:**
-    *   Ensure all required fields are filled.
-    *   Check if the selected dates are valid and available.
-    *   Verify payment information.
+    *   Make sure all required fields in the booking form are filled correctly.
+    *   Verify that the selected dates and times are valid and the vehicle is available for that period.
+    *   Double-check your payment information for accuracy.
 *   **Website Not Loading Correctly:**
-    *   Try clearing your browser cache and cookies.
-    *   Ensure you have a stable internet connection.
-    *   Try a different browser.
+    *   Try clearing your browser's cache and cookies.
+    *   Ensure you have a stable and active internet connection.
+    *   Try accessing the website using a different web browser.
 
 ### 7.2. Contacting Support
 
-*   If you encounter issues you can't resolve, please contact our support team:
-    *   [Link to Contact Us page]
-    *   [Support Email Address]
-    *   [Support Phone Number (if available)]
+*   If you encounter issues you can't resolve using this guide, please look for a "Contact Us" or "Support" section on the website.
+*   This section should provide information on how to reach the support team, such as:
+    *   A link to a Contact Us page or form.
+    *   A support email address: `[Support Email Address - To be filled by project maintainers]`
+    *   A support phone number: `[Support Phone Number - To be filled by project maintainers]`
 
 ---
 
-*This User Guide is a living document and may be updated as new features are added to OnTheGoRentals.*
+*This User Guide is a living document and may be updated as new features are added or existing ones are modified in the OnTheGoRentals platform.*
